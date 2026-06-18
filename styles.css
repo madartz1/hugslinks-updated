@@ -24,3 +24,35 @@ background:transparent;
 .roof{
 display:none;
 }
+/* HUGS Custom Header Logo - Sitewide */
+
+.header-logo{
+height:58px;
+width:auto;
+display:block;
+}
+
+.seal{
+width:62px;
+height:58px;
+display:flex;
+align-items:center;
+justify-content:center;
+margin:auto;
+background:transparent;
+}
+
+/* Hide old CSS-generated house logo */
+
+.seal:before,
+.seal:after,
+.roof{
+display:none;
+}
+
+/* Apply logo across all pages by targeting the header logo container sitewide */
+header .seal,
+.site-header .seal,
+.navbar .seal{
+display:flex;
+}
