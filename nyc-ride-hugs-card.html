@@ -1,0 +1,484 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <title>NYC Ride — Send a HUG | HUGSLinks</title>
+
+  <meta
+    name="description"
+    content="NYC Ride — Send a HUG. A cinematic animated HUGS Card from HUGSLinks."
+  />
+
+  <link rel="stylesheet" href="styles.css" />
+
+  <style>
+    :root {
+      --hugs-navy: #0b2f59;
+      --hugs-blue: #74b9f4;
+      --hugs-light: #eef7ff;
+      --hugs-cream: #f8f5ee;
+      --hugs-white: #ffffff;
+      --hugs-text: #23374d;
+      --hugs-muted: #60758a;
+      --hugs-gold: #f2b84b;
+      --hugs-border: #dce8f2;
+    }
+
+    body {
+      margin: 0;
+      background: var(--hugs-cream);
+      color: var(--hugs-text);
+      font-family: Arial, Helvetica, sans-serif;
+    }
+
+    .product-page {
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 28px 18px 60px;
+    }
+
+    .back-link {
+      display: inline-block;
+      margin-bottom: 22px;
+      text-decoration: none;
+      color: var(--hugs-navy);
+      font-weight: 800;
+    }
+
+    .product-layout {
+      display: grid;
+      grid-template-columns: 1fr 0.9fr;
+      gap: 34px;
+      align-items: start;
+    }
+
+    .product-image-card {
+      background: var(--hugs-white);
+      border-radius: 24px;
+      overflow: hidden;
+      border: 1px solid var(--hugs-border);
+      box-shadow: 0 16px 40px rgba(11, 47, 89, 0.12);
+    }
+
+    .product-image-card img {
+      display: block;
+      width: 100%;
+      aspect-ratio: 9 / 16;
+      object-fit: cover;
+    }
+
+    .product-details {
+      background: var(--hugs-white);
+      border-radius: 24px;
+      padding: 28px;
+      border: 1px solid var(--hugs-border);
+      box-shadow: 0 16px 40px rgba(11, 47, 89, 0.08);
+    }
+
+    .badge {
+      display: inline-block;
+      background: var(--hugs-light);
+      color: var(--hugs-navy);
+      border-radius: 999px;
+      padding: 7px 12px;
+      font-size: 12px;
+      font-weight: 900;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      margin-bottom: 15px;
+    }
+
+    .product-details h1 {
+      margin: 0;
+      color: var(--hugs-navy);
+      font-size: clamp(36px, 7vw, 56px);
+      line-height: 1.02;
+      letter-spacing: -1px;
+    }
+
+    .product-type {
+      margin-top: 14px;
+      color: var(--hugs-blue);
+      font-size: 20px;
+      font-weight: 900;
+    }
+
+    .price {
+      margin: 8px 0 18px;
+      color: var(--hugs-navy);
+      font-size: 32px;
+      font-weight: 900;
+    }
+
+    .description {
+      color: var(--hugs-muted);
+      line-height: 1.7;
+      font-size: 16px;
+      margin-bottom: 22px;
+    }
+
+    .features {
+      list-style: none;
+      padding: 0;
+      margin: 0 0 22px;
+    }
+
+    .features li {
+      margin: 10px 0;
+      color: #435a70;
+    }
+
+    .features li::before {
+      content: "✓";
+      color: var(--hugs-blue);
+      font-weight: 900;
+      margin-right: 9px;
+    }
+
+    .preview-button {
+      width: 100%;
+      border: none;
+      background: var(--hugs-navy);
+      color: white;
+      border-radius: 999px;
+      padding: 15px 18px;
+      font-size: 16px;
+      font-weight: 900;
+      cursor: pointer;
+      margin-bottom: 14px;
+    }
+
+    .preview-button:hover {
+      background: var(--hugs-blue);
+      color: var(--hugs-navy);
+    }
+
+    .preview-box {
+      display: none;
+      margin-bottom: 18px;
+      background: #07111e;
+      border-radius: 20px;
+      padding: 12px;
+    }
+
+    .preview-box.open {
+      display: block;
+    }
+
+    .preview-box video {
+      display: block;
+      width: 100%;
+      border-radius: 14px;
+      background: #000;
+    }
+
+    .buy-button {
+      display: block;
+      text-align: center;
+      text-decoration: none;
+      background: var(--hugs-gold);
+      color: #17212c;
+      border-radius: 999px;
+      padding: 15px 18px;
+      font-size: 16px;
+      font-weight: 900;
+      margin-top: 8px;
+    }
+
+    .buy-button:hover {
+      filter: brightness(0.96);
+    }
+
+    .delivery-info {
+      margin-top: 22px;
+      padding-top: 18px;
+      border-top: 1px solid var(--hugs-border);
+      display: grid;
+      gap: 10px;
+      color: #536b81;
+      font-size: 14px;
+    }
+
+    .delivery-info strong {
+      color: var(--hugs-navy);
+    }
+
+    .small-note {
+      margin-top: 14px;
+      color: #7d90a4;
+      font-size: 12px;
+      line-height: 1.5;
+    }
+
+    .message-section {
+      margin-top: 42px;
+      background: var(--hugs-light);
+      border-radius: 24px;
+      padding: 28px 22px;
+      text-align: center;
+    }
+
+    .message-section h2 {
+      margin-top: 0;
+      color: var(--hugs-navy);
+    }
+
+    .message-section p {
+      max-width: 760px;
+      margin: 0 auto;
+      color: #536b81;
+      line-height: 1.7;
+    }
+
+    @media (max-width: 800px) {
+      .product-layout {
+        grid-template-columns: 1fr;
+      }
+
+      .product-details {
+        padding: 22px;
+      }
+
+      .product-page {
+        padding-left: 14px;
+        padding-right: 14px;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+  <!-- MAIN NAVIGATION -->
+  <header>
+    <nav>
+      <a href="index.html">Home</a>
+      <a href="shop.html">Shop</a>
+      <a href="hugs-cards.html">HUGS Cards</a>
+      <a href="art-community.html">Art</a>
+      <a href="food-support.html">Food</a>
+      <a href="housing-help.html">Housing</a>
+      <a href="business-services.html">Business</a>
+      <a href="help-app.html">Help App</a>
+      <a href="resources.html">Resources</a>
+      <a href="about.html">About</a>
+      <a href="contact.html">Contact</a>
+    </nav>
+  </header>
+
+  <main class="product-page">
+
+    <a href="hugs-cards.html" class="back-link">
+      ← Back to HUGS Cards
+    </a>
+
+    <section class="product-layout">
+
+      <!-- PRODUCT COVER -->
+      <div class="product-image-card">
+
+        <img
+          src="assets/nyc-ride-hugs-card-cover.jpg"
+          alt="NYC Ride — Send a HUG animated HUGS Card"
+        />
+
+      </div>
+
+
+      <!-- PRODUCT DETAILS -->
+      <div class="product-details">
+
+        <span class="badge">
+          Animated HUGS Card
+        </span>
+
+        <h1>
+          NYC Ride — Send a HUG
+        </h1>
+
+        <div class="product-type">
+          Ready to Send
+        </div>
+
+        <div class="price">
+          $6.99
+        </div>
+
+        <p class="description">
+          Send someone a cinematic HUG through New York City.
+          HUGS Bear rides toward a glowing sunset as warm city lights,
+          floating hearts and a radiant trail of love transform the
+          journey into a message of connection, encouragement and support.
+        </p>
+
+        <ul class="features">
+          <li>Full animated HUGS Card</li>
+          <li>Cinematic NYC HUGS Bear experience</li>
+          <li>Music and sound design included</li>
+          <li>Ready to send digitally</li>
+          <li>Perfect for sharing by phone or message</li>
+        </ul>
+
+
+        <!-- WATCH PREVIEW -->
+        <button
+          class="preview-button"
+          type="button"
+          onclick="togglePreview()"
+          id="previewButton"
+        >
+          ▶ Watch Preview
+        </button>
+
+
+        <!-- 10–15 SECOND PREVIEW VIDEO -->
+        <div
+          class="preview-box"
+          id="previewBox"
+        >
+
+          <video
+            id="previewVideo"
+            controls
+            playsinline
+            preload="metadata"
+            poster="assets/nyc-ride-hugs-card-cover.jpg"
+          >
+
+            <source
+              src="assets/nyc-ride-hugs-preview.mp4"
+              type="video/mp4"
+            />
+
+            Your browser does not support video playback.
+
+          </video>
+
+        </div>
+
+
+        <!-- STRIPE PURCHASE BUTTON -->
+        <!-- Replace # with the Stripe payment link -->
+        <a
+          href="#"
+          class="buy-button"
+          id="buyButton"
+        >
+          Send This HUG — $6.99
+        </a>
+
+
+        <div class="delivery-info">
+
+          <div>
+            <strong>Format:</strong>
+            Digital animated HUGS Card
+          </div>
+
+          <div>
+            <strong>Theme:</strong>
+            NYC Ride / Love / Encouragement
+          </div>
+
+          <div>
+            <strong>Delivery:</strong>
+            Ready-to-send digital experience
+          </div>
+
+          <div>
+            <strong>Brand:</strong>
+            HUGSLinks
+          </div>
+
+        </div>
+
+
+        <div class="small-note">
+          After purchase, customers will receive access to the full
+          Ready-to-Send HUGS Card. Add your Stripe Payment Link to the
+          purchase button before publishing.
+        </div>
+
+      </div>
+
+    </section>
+
+
+    <!-- BRAND MESSAGE -->
+    <section class="message-section">
+
+      <h2>
+        Give a Hug. Get a Hug.
+      </h2>
+
+      <p>
+        HUGS Cards are designed to make digital messages feel more
+        meaningful. Send encouragement, love, celebration or support
+        through an original HUGSLinks visual experience.
+      </p>
+
+    </section>
+
+  </main>
+
+
+  <footer>
+
+    <p>
+      © 2026 HUGSLinks · Give a Hug. Get a Hug.
+    </p>
+
+  </footer>
+
+
+  <script src="script.js"></script>
+
+  <script>
+    function togglePreview() {
+
+      const previewBox =
+        document.getElementById("previewBox");
+
+      const previewVideo =
+        document.getElementById("previewVideo");
+
+      const previewButton =
+        document.getElementById("previewButton");
+
+
+      const isOpen =
+        previewBox.classList.contains("open");
+
+
+      if (isOpen) {
+
+        previewBox.classList.remove("open");
+
+        previewVideo.pause();
+
+        previewButton.textContent =
+          "▶ Watch Preview";
+
+      }
+
+      else {
+
+        previewBox.classList.add("open");
+
+        previewButton.textContent =
+          "Hide Preview";
+
+        previewBox.scrollIntoView({
+          behavior: "smooth",
+          block: "center"
+        });
+
+      }
+
+    }
+  </script>
+
+</body>
+</html>
