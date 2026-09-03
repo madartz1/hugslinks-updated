@@ -4,9 +4,13 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
-  <title>HUGS Cards | HUGSLinks</title>
+  <title>NYC Ride — Send a HUG | HUGSLinks</title>
 
-  <!-- Existing HUGSLinks stylesheet -->
+  <meta
+    name="description"
+    content="NYC Ride — Send a HUG. A cinematic animated HUGS Card from HUGSLinks."
+  />
+
   <link rel="stylesheet" href="styles.css" />
 
   <style>
@@ -15,237 +19,229 @@
       --hugs-blue: #74b9f4;
       --hugs-light: #eef7ff;
       --hugs-cream: #f8f5ee;
-      --hugs-text: #23374d;
-      --hugs-gold: #f2b84b;
       --hugs-white: #ffffff;
+      --hugs-text: #23374d;
+      --hugs-muted: #60758a;
+      --hugs-gold: #f2b84b;
+      --hugs-border: #dce8f2;
     }
 
     body {
       margin: 0;
       background: var(--hugs-cream);
       color: var(--hugs-text);
+      font-family: Arial, Helvetica, sans-serif;
     }
 
-    .hugs-card-page {
-      max-width: 1180px;
+    .product-page {
+      max-width: 1100px;
       margin: 0 auto;
-      padding: 32px 18px 60px;
+      padding: 28px 18px 60px;
     }
 
-    .hugs-card-hero {
-      text-align: center;
-      padding: 46px 20px 34px;
-    }
-
-    .hugs-card-logo {
-      width: 110px;
-      max-width: 28vw;
-      margin-bottom: 18px;
-    }
-
-    .hugs-card-hero h1 {
-      margin: 0;
-      font-size: clamp(38px, 8vw, 64px);
-      line-height: 1;
+    .back-link {
+      display: inline-block;
+      margin-bottom: 22px;
+      text-decoration: none;
       color: var(--hugs-navy);
-    }
-
-    .hugs-card-hero .tagline {
-      margin: 14px 0 0;
-      color: var(--hugs-blue);
-      font-size: 22px;
       font-weight: 800;
     }
 
-    .hugs-card-hero .intro {
-      max-width: 720px;
-      margin: 18px auto 0;
-      font-size: 17px;
-      line-height: 1.7;
-      color: #526579;
-    }
-
-    .hugs-card-grid {
+    .product-layout {
       display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 20px;
-      margin-top: 20px;
+      grid-template-columns: 1fr 0.9fr;
+      gap: 34px;
+      align-items: start;
     }
 
-    .hugs-option {
+    .product-image-card {
       background: var(--hugs-white);
       border-radius: 24px;
-      padding: 28px 22px;
-      box-shadow: 0 12px 34px rgba(11, 47, 89, 0.1);
-      border: 1px solid #dbe8f3;
-      display: flex;
-      flex-direction: column;
-      min-height: 100%;
+      overflow: hidden;
+      border: 1px solid var(--hugs-border);
+      box-shadow: 0 16px 40px rgba(11, 47, 89, 0.12);
     }
 
-    .hugs-option.featured {
-      border: 2px solid var(--hugs-blue);
-      position: relative;
-    }
-
-    .hugs-badge {
-      position: absolute;
-      top: 14px;
-      right: 14px;
-      background: var(--hugs-blue);
-      color: var(--hugs-navy);
-      border-radius: 999px;
-      padding: 6px 10px;
-      font-size: 11px;
-      font-weight: 900;
-      text-transform: uppercase;
-    }
-
-    .product-image {
+    .product-image-card img {
+      display: block;
       width: 100%;
       aspect-ratio: 9 / 16;
       object-fit: cover;
-      border-radius: 18px;
-      margin-bottom: 18px;
-      box-shadow: 0 8px 24px rgba(11, 47, 89, 0.12);
     }
 
-    .hugs-icon {
-      font-size: 36px;
-      margin-bottom: 14px;
+    .product-details {
+      background: var(--hugs-white);
+      border-radius: 24px;
+      padding: 28px;
+      border: 1px solid var(--hugs-border);
+      box-shadow: 0 16px 40px rgba(11, 47, 89, 0.08);
     }
 
-    .hugs-option h2 {
-      margin: 0;
-      font-size: 26px;
+    .badge {
+      display: inline-block;
+      background: var(--hugs-light);
       color: var(--hugs-navy);
-    }
-
-    .product-name {
-      margin: 8px 0 0;
-      font-size: 18px;
-      font-weight: 800;
-      color: #40556a;
-    }
-
-    .hugs-price {
-      margin: 10px 0 12px;
-      font-size: 29px;
+      border-radius: 999px;
+      padding: 7px 12px;
+      font-size: 12px;
       font-weight: 900;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      margin-bottom: 15px;
+    }
+
+    .product-details h1 {
+      margin: 0;
+      color: var(--hugs-navy);
+      font-size: clamp(36px, 7vw, 56px);
+      line-height: 1.02;
+      letter-spacing: -1px;
+    }
+
+    .product-type {
+      margin-top: 14px;
       color: var(--hugs-blue);
+      font-size: 20px;
+      font-weight: 900;
     }
 
-    .hugs-option p {
-      color: #5e6f80;
-      line-height: 1.6;
+    .price {
+      margin: 8px 0 18px;
+      color: var(--hugs-navy);
+      font-size: 32px;
+      font-weight: 900;
     }
 
-    .hugs-features {
-      margin: 16px 0 22px;
-      padding: 0;
+    .description {
+      color: var(--hugs-muted);
+      line-height: 1.7;
+      font-size: 16px;
+      margin-bottom: 22px;
+    }
+
+    .features {
       list-style: none;
+      padding: 0;
+      margin: 0 0 22px;
     }
 
-    .hugs-features li {
-      margin: 9px 0;
-      color: #40556a;
+    .features li {
+      margin: 10px 0;
+      color: #435a70;
     }
 
-    .hugs-features li::before {
+    .features li::before {
       content: "✓";
       color: var(--hugs-blue);
       font-weight: 900;
-      margin-right: 8px;
+      margin-right: 9px;
     }
 
-    .hugs-button {
-      margin-top: auto;
-      display: inline-block;
-      text-align: center;
-      text-decoration: none;
+    .preview-button {
+      width: 100%;
+      border: none;
       background: var(--hugs-navy);
-      color: var(--hugs-white);
+      color: white;
       border-radius: 999px;
-      padding: 14px 18px;
-      font-weight: 800;
-      transition: 0.2s ease;
+      padding: 15px 18px;
+      font-size: 16px;
+      font-weight: 900;
+      cursor: pointer;
+      margin-bottom: 14px;
     }
 
-    .hugs-button:hover {
+    .preview-button:hover {
       background: var(--hugs-blue);
       color: var(--hugs-navy);
     }
 
-    .hugs-button.gold {
-      background: var(--hugs-gold);
-      color: #1a2430;
+    .preview-box {
+      display: none;
+      margin-bottom: 18px;
+      background: #07111e;
+      border-radius: 20px;
+      padding: 12px;
     }
 
-    .hugs-button.premium {
-      background: linear-gradient(90deg, #0b2f59, #2f7fc3);
-    }
-
-    .how-it-works {
-      margin-top: 44px;
-      background: var(--hugs-light);
-      border-radius: 24px;
-      padding: 28px 20px;
-      text-align: center;
-    }
-
-    .how-it-works h2 {
-      color: var(--hugs-navy);
-      margin-top: 0;
-    }
-
-    .steps {
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 14px;
-      margin-top: 20px;
-    }
-
-    .step {
-      background: white;
-      border-radius: 18px;
-      padding: 20px 12px;
-      border: 1px solid #d9e8f4;
-    }
-
-    .step strong {
+    .preview-box.open {
       display: block;
-      font-size: 30px;
-      color: var(--hugs-blue);
-      margin-bottom: 6px;
     }
 
-    .mission {
-      margin-top: 34px;
-      background: var(--hugs-navy);
-      color: white;
+    .preview-box video {
+      display: block;
+      width: 100%;
+      border-radius: 14px;
+      background: #000;
+    }
+
+    .buy-button {
+      display: block;
+      text-align: center;
+      text-decoration: none;
+      background: var(--hugs-gold);
+      color: #17212c;
+      border-radius: 999px;
+      padding: 15px 18px;
+      font-size: 16px;
+      font-weight: 900;
+      margin-top: 8px;
+    }
+
+    .buy-button:hover {
+      filter: brightness(0.96);
+    }
+
+    .delivery-info {
+      margin-top: 22px;
+      padding-top: 18px;
+      border-top: 1px solid var(--hugs-border);
+      display: grid;
+      gap: 10px;
+      color: #536b81;
+      font-size: 14px;
+    }
+
+    .delivery-info strong {
+      color: var(--hugs-navy);
+    }
+
+    .small-note {
+      margin-top: 14px;
+      color: #7d90a4;
+      font-size: 12px;
+      line-height: 1.5;
+    }
+
+    .message-section {
+      margin-top: 42px;
+      background: var(--hugs-light);
       border-radius: 24px;
       padding: 28px 22px;
       text-align: center;
     }
 
-    .mission h2 {
+    .message-section h2 {
       margin-top: 0;
+      color: var(--hugs-navy);
     }
 
-    .mission p {
+    .message-section p {
       max-width: 760px;
       margin: 0 auto;
+      color: #536b81;
       line-height: 1.7;
-      color: #d9e7f5;
     }
 
     @media (max-width: 800px) {
-      .hugs-card-grid,
-      .steps {
+      .product-layout {
         grid-template-columns: 1fr;
       }
 
-      .hugs-card-page {
+      .product-details {
+        padding: 22px;
+      }
+
+      .product-page {
         padding-left: 14px;
         padding-right: 14px;
       }
@@ -272,167 +268,136 @@
     </nav>
   </header>
 
-  <main class="hugs-card-page">
+  <main class="product-page">
 
-    <!-- HERO -->
-    <section class="hugs-card-hero">
+    <a href="hugs-cards.html" class="back-link">
+      ← Back to HUGS Cards
+    </a>
 
-      <img
-        src="assets/hugslinks-house-logo.png"
-        alt="HUGSLinks House Heart Logo"
-        class="hugs-card-logo"
-      />
+    <section class="product-layout">
 
-      <h1>HUGS Cards</h1>
-
-      <div class="tagline">
-        Give a Hug. Get a Hug.
-      </div>
-
-      <p class="intro">
-        Send more than a greeting. Send a visual experience created to
-        celebrate, encourage, inspire and connect. Choose a finished HUGS
-        Card, personalize one for someone special, or create a premium
-        custom card built around your story.
-      </p>
-
-    </section>
-
-    <!-- CARD OPTIONS -->
-    <section class="hugs-card-grid">
-
-      <!-- READY TO SEND -->
-      <article class="hugs-option">
+      <!-- PRODUCT COVER -->
+      <div class="product-image-card">
 
         <img
           src="assets/nyc-ride-hugs-card-cover.jpg"
-          alt="NYC Ride — Send a HUG"
-          class="product-image"
+          alt="NYC Ride — Send a HUG animated HUGS Card"
         />
 
-        <div class="hugs-icon">💌</div>
+      </div>
 
-        <h2>Ready to Send</h2>
 
-        <div class="product-name">
+      <!-- PRODUCT DETAILS -->
+      <div class="product-details">
+
+        <span class="badge">
+          Animated HUGS Card
+        </span>
+
+        <h1>
           NYC Ride — Send a HUG
+        </h1>
+
+        <div class="product-type">
+          Ready to Send
         </div>
 
-        <div class="hugs-price">$6.99</div>
+        <div class="price">
+          $6.99
+        </div>
 
-        <p>
-          Send a cinematic HUG through New York City. HUGS Bear rides
-          toward a glowing sunset surrounded by hearts, warm city lights
-          and a radiant trail of love.
+        <p class="description">
+          Send someone a cinematic HUG through New York City.
+          HUGS Bear rides toward a glowing sunset as warm city lights,
+          floating hearts and a radiant trail of love transform the
+          journey into a message of connection, encouragement and support.
         </p>
 
-        <ul class="hugs-features">
-          <li>Animated HUGS Card</li>
-          <li>Finished digital experience</li>
-          <li>Watch a preview before purchasing</li>
-          <li>Ready to send and share</li>
+        <ul class="features">
+          <li>Full animated HUGS Card</li>
+          <li>Cinematic NYC HUGS Bear experience</li>
+          <li>Music and sound design included</li>
+          <li>Ready to send digitally</li>
+          <li>Perfect for sharing by phone or message</li>
         </ul>
 
-        <a
-          href="nyc-ride-hugs-card.html"
-          class="hugs-button"
+
+        <!-- WATCH PREVIEW -->
+        <button
+          class="preview-button"
+          type="button"
+          onclick="togglePreview()"
+          id="previewButton"
         >
-          View NYC Ride Card
+          ▶ Watch Preview
+        </button>
+
+
+        <!-- 10–15 SECOND PREVIEW VIDEO -->
+        <div
+          class="preview-box"
+          id="previewBox"
+        >
+
+          <video
+            id="previewVideo"
+            controls
+            playsinline
+            preload="metadata"
+            poster="assets/nyc-ride-hugs-card-cover.jpg"
+          >
+
+            <source
+              src="assets/nyc-ride-hugs-preview.mp4"
+              type="video/mp4"
+            />
+
+            Your browser does not support video playback.
+
+          </video>
+
+        </div>
+
+
+        <!-- LIVE STRIPE PURCHASE BUTTON -->
+        <a
+          href="https://buy.stripe.com/cNi4gy1yA0s00e30488ww04"
+          class="buy-button"
+          id="buyButton"
+        >
+          Send This HUG — $6.99
         </a>
 
-      </article>
 
+        <div class="delivery-info">
 
-      <!-- PERSONALIZED -->
-      <article class="hugs-option featured">
+          <div>
+            <strong>Format:</strong>
+            Digital animated HUGS Card
+          </div>
 
-        <div class="hugs-badge">
-          Most Popular
+          <div>
+            <strong>Theme:</strong>
+            NYC Ride / Love / Encouragement
+          </div>
+
+          <div>
+            <strong>Delivery:</strong>
+            Ready-to-send digital experience
+          </div>
+
+          <div>
+            <strong>Brand:</strong>
+            HUGSLinks
+          </div>
+
         </div>
 
-        <div class="hugs-icon">✨</div>
 
-        <h2>Personalized HUGS Card</h2>
-
-        <div class="hugs-price">$16.99</div>
-
-        <p>
-          Make the HUG personal with the recipient's name, your message
-          and who the card is from.
-        </p>
-
-        <ul class="hugs-features">
-          <li>Recipient name</li>
-          <li>Sender name</li>
-          <li>Your personal message</li>
-          <li>Customized visual HUGS Card</li>
-        </ul>
-
-        <a
-          href="#"
-          class="hugs-button gold"
-        >
-          Personalize a HUG
-        </a>
-
-      </article>
-
-
-      <!-- PREMIUM -->
-      <article class="hugs-option">
-
-        <div class="hugs-icon">👑</div>
-
-        <h2>Custom / Premium</h2>
-
-        <div class="hugs-price">
-          From $39
-        </div>
-
-        <p>
-          Create a one-of-a-kind HUGS Card designed around a special
-          person, occasion, story or creative idea.
-        </p>
-
-        <ul class="hugs-features">
-          <li>Custom concept and direction</li>
-          <li>Premium visual customization</li>
-          <li>Custom message and theme</li>
-          <li>Designed for special milestones</li>
-        </ul>
-
-        <a
-          href="#"
-          class="hugs-button premium"
-        >
-          Create a Custom HUG
-        </a>
-
-      </article>
-
-    </section>
-
-
-    <!-- HOW IT WORKS -->
-    <section class="how-it-works">
-
-      <h2>How HUGS Cards Work</h2>
-
-      <div class="steps">
-
-        <div class="step">
-          <strong>1</strong>
-          Choose your HUGS Card style.
-        </div>
-
-        <div class="step">
-          <strong>2</strong>
-          Personalize it when desired.
-        </div>
-
-        <div class="step">
-          <strong>3</strong>
-          Purchase, receive and share your HUG.
+        <div class="small-note">
+          Complete your secure purchase through Stripe.
+          Your purchase supports the growing HUGSLinks mission
+          of creativity, connection, community and good business.
         </div>
 
       </div>
@@ -440,16 +405,17 @@
     </section>
 
 
-    <!-- MISSION -->
-    <section class="mission">
+    <!-- BRAND MESSAGE -->
+    <section class="message-section">
 
-      <h2>More Than a Card</h2>
+      <h2>
+        Give a Hug. Get a Hug.
+      </h2>
 
       <p>
-        HUGSLinks connects creativity, community and good business.
-        Through visual experiences, local partnerships, artists and
-        community support, every HUG creates another opportunity to
-        connect people and make a positive impact.
+        HUGS Cards are designed to make digital messages feel more
+        meaningful. Send encouragement, love, celebration or support
+        through an original HUGSLinks visual experience.
       </p>
 
     </section>
@@ -458,12 +424,58 @@
 
 
   <footer>
+
     <p>
       © 2026 HUGSLinks · Give a Hug. Get a Hug.
     </p>
+
   </footer>
 
+
   <script src="script.js"></script>
+
+  <script>
+    function togglePreview() {
+
+      const previewBox =
+        document.getElementById("previewBox");
+
+      const previewVideo =
+        document.getElementById("previewVideo");
+
+      const previewButton =
+        document.getElementById("previewButton");
+
+
+      const isOpen =
+        previewBox.classList.contains("open");
+
+
+      if (isOpen) {
+
+        previewBox.classList.remove("open");
+
+        previewVideo.pause();
+
+        previewButton.textContent =
+          "▶ Watch Preview";
+
+      } else {
+
+        previewBox.classList.add("open");
+
+        previewButton.textContent =
+          "Hide Preview";
+
+        previewBox.scrollIntoView({
+          behavior: "smooth",
+          block: "center"
+        });
+
+      }
+
+    }
+  </script>
 
 </body>
 </html>
