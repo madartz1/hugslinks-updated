@@ -3,9 +3,10 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
   <title>HUGS Cards | HUGSLinks</title>
 
-  <!-- Uses your existing HUGSLinks stylesheet -->
+  <!-- Existing HUGSLinks stylesheet -->
   <link rel="stylesheet" href="styles.css" />
 
   <style>
@@ -20,6 +21,7 @@
     }
 
     body {
+      margin: 0;
       background: var(--hugs-cream);
       color: var(--hugs-text);
     }
@@ -99,6 +101,15 @@
       text-transform: uppercase;
     }
 
+    .product-image {
+      width: 100%;
+      aspect-ratio: 9 / 16;
+      object-fit: cover;
+      border-radius: 18px;
+      margin-bottom: 18px;
+      box-shadow: 0 8px 24px rgba(11, 47, 89, 0.12);
+    }
+
     .hugs-icon {
       font-size: 36px;
       margin-bottom: 14px;
@@ -108,6 +119,13 @@
       margin: 0;
       font-size: 26px;
       color: var(--hugs-navy);
+    }
+
+    .product-name {
+      margin: 8px 0 0;
+      font-size: 18px;
+      font-weight: 800;
+      color: #40556a;
     }
 
     .hugs-price {
@@ -237,11 +255,12 @@
 
 <body>
 
-  <!-- HEADER -->
+  <!-- MAIN NAVIGATION -->
   <header>
     <nav>
       <a href="index.html">Home</a>
       <a href="shop.html">Shop</a>
+      <a href="hugs-cards.html">HUGS Cards</a>
       <a href="art-community.html">Art</a>
       <a href="food-support.html">Food</a>
       <a href="housing-help.html">Housing</a>
@@ -255,9 +274,9 @@
 
   <main class="hugs-card-page">
 
+    <!-- HERO -->
     <section class="hugs-card-hero">
 
-      <!-- Upload your new house-heart logo into assets and rename it hugslinks-house-logo.png -->
       <img
         src="assets/hugslinks-house-logo.png"
         alt="HUGSLinks House Heart Logo"
@@ -279,32 +298,46 @@
 
     </section>
 
+    <!-- CARD OPTIONS -->
     <section class="hugs-card-grid">
 
       <!-- READY TO SEND -->
       <article class="hugs-option">
 
+        <img
+          src="assets/nyc-ride-hugs-card-cover.jpg"
+          alt="NYC Ride — Send a HUG"
+          class="product-image"
+        />
+
         <div class="hugs-icon">💌</div>
 
         <h2>Ready to Send</h2>
 
+        <div class="product-name">
+          NYC Ride — Send a HUG
+        </div>
+
         <div class="hugs-price">$6.99</div>
 
         <p>
-          Choose from our available HUGS Card collection and send a
-          meaningful digital card right away.
+          Send a cinematic HUG through New York City. HUGS Bear rides
+          toward a glowing sunset surrounded by hearts, warm city lights
+          and a radiant trail of love.
         </p>
 
         <ul class="hugs-features">
-          <li>Finished digital HUGS Card</li>
-          <li>Choose from available themes</li>
-          <li>Fast digital delivery</li>
-          <li>Perfect for sharing by phone or social media</li>
+          <li>Animated HUGS Card</li>
+          <li>Finished digital experience</li>
+          <li>Watch a preview before purchasing</li>
+          <li>Ready to send and share</li>
         </ul>
 
-        <!-- Replace # with Stripe Payment Link -->
-        <a href="#" class="hugs-button">
-          Browse Ready-to-Send Cards
+        <a
+          href="nyc-ride-hugs-card.html"
+          class="hugs-button"
+        >
+          View NYC Ride Card
         </a>
 
       </article>
@@ -313,7 +346,9 @@
       <!-- PERSONALIZED -->
       <article class="hugs-option featured">
 
-        <div class="hugs-badge">Most Popular</div>
+        <div class="hugs-badge">
+          Most Popular
+        </div>
 
         <div class="hugs-icon">✨</div>
 
@@ -333,8 +368,10 @@
           <li>Customized visual HUGS Card</li>
         </ul>
 
-        <!-- Replace # with Stripe Payment Link -->
-        <a href="#" class="hugs-button gold">
+        <a
+          href="#"
+          class="hugs-button gold"
+        >
           Personalize a HUG
         </a>
 
@@ -348,7 +385,9 @@
 
         <h2>Custom / Premium</h2>
 
-        <div class="hugs-price">From $39</div>
+        <div class="hugs-price">
+          From $39
+        </div>
 
         <p>
           Create a one-of-a-kind HUGS Card designed around a special
@@ -362,8 +401,10 @@
           <li>Designed for special milestones</li>
         </ul>
 
-        <!-- Replace # with Stripe Payment Link -->
-        <a href="#" class="hugs-button premium">
+        <a
+          href="#"
+          class="hugs-button premium"
+        >
           Create a Custom HUG
         </a>
 
@@ -372,6 +413,7 @@
     </section>
 
 
+    <!-- HOW IT WORKS -->
     <section class="how-it-works">
 
       <h2>How HUGS Cards Work</h2>
@@ -398,6 +440,7 @@
     </section>
 
 
+    <!-- MISSION -->
     <section class="mission">
 
       <h2>More Than a Card</h2>
