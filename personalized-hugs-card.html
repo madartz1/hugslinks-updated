@@ -1,0 +1,822 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <title>Personalized HUGS Card | HUGSLinks</title>
+
+  <meta
+    name="description"
+    content="Create a personalized animated HUGS Card with the recipient's name, your message and who the HUG is from."
+  />
+
+  <link rel="stylesheet" href="styles.css" />
+
+  <style>
+    :root {
+      --hugs-navy: #0b2f59;
+      --hugs-blue: #74b9f4;
+      --hugs-light: #eef7ff;
+      --hugs-cream: #f8f5ee;
+      --hugs-white: #ffffff;
+      --hugs-text: #23374d;
+      --hugs-muted: #60758a;
+      --hugs-gold: #f2b84b;
+      --hugs-border: #dce8f2;
+      --hugs-green: #2f8f62;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      background: var(--hugs-cream);
+      color: var(--hugs-text);
+      font-family: Arial, Helvetica, sans-serif;
+    }
+
+    .page {
+      max-width: 1050px;
+      margin: 0 auto;
+      padding: 28px 18px 70px;
+    }
+
+    .back-link {
+      display: inline-block;
+      margin-bottom: 22px;
+      text-decoration: none;
+      color: var(--hugs-navy);
+      font-weight: 800;
+    }
+
+    .hero {
+      text-align: center;
+      margin-bottom: 34px;
+    }
+
+    .badge {
+      display: inline-block;
+      padding: 7px 12px;
+      border-radius: 999px;
+      background: var(--hugs-blue);
+      color: var(--hugs-navy);
+      font-size: 12px;
+      font-weight: 900;
+      text-transform: uppercase;
+      letter-spacing: 0.6px;
+      margin-bottom: 14px;
+    }
+
+    .hero h1 {
+      margin: 0;
+      color: var(--hugs-navy);
+      font-size: clamp(38px, 8vw, 60px);
+      line-height: 1;
+    }
+
+    .tagline {
+      color: var(--hugs-blue);
+      font-size: 21px;
+      font-weight: 900;
+      margin-top: 13px;
+    }
+
+    .hero p {
+      max-width: 700px;
+      margin: 18px auto 0;
+      color: var(--hugs-muted);
+      line-height: 1.7;
+      font-size: 16px;
+    }
+
+    .layout {
+      display: grid;
+      grid-template-columns: 0.85fr 1.15fr;
+      gap: 30px;
+      align-items: start;
+    }
+
+    .product-card,
+    .form-card {
+      background: white;
+      border: 1px solid var(--hugs-border);
+      border-radius: 25px;
+      box-shadow: 0 14px 38px rgba(11, 47, 89, 0.09);
+    }
+
+    .product-card {
+      overflow: hidden;
+    }
+
+    .product-card img {
+      display: block;
+      width: 100%;
+      aspect-ratio: 9 / 16;
+      object-fit: cover;
+    }
+
+    .product-copy {
+      padding: 22px;
+    }
+
+    .product-copy h2 {
+      margin: 0;
+      color: var(--hugs-navy);
+      font-size: 25px;
+    }
+
+    .price {
+      color: var(--hugs-blue);
+      font-size: 31px;
+      font-weight: 900;
+      margin: 9px 0 13px;
+    }
+
+    .product-copy p {
+      color: var(--hugs-muted);
+      line-height: 1.6;
+    }
+
+    .features {
+      list-style: none;
+      padding: 0;
+      margin: 17px 0 0;
+    }
+
+    .features li {
+      margin: 9px 0;
+      color: #486078;
+      font-size: 14px;
+    }
+
+    .features li::before {
+      content: "✓";
+      color: var(--hugs-blue);
+      font-weight: 900;
+      margin-right: 8px;
+    }
+
+    .form-card {
+      padding: 28px;
+    }
+
+    .form-card h2 {
+      margin: 0 0 6px;
+      color: var(--hugs-navy);
+      font-size: 27px;
+    }
+
+    .form-intro {
+      margin: 0 0 22px;
+      color: var(--hugs-muted);
+      line-height: 1.55;
+    }
+
+    label {
+      display: block;
+      margin: 17px 0 7px;
+      color: var(--hugs-navy);
+      font-size: 14px;
+      font-weight: 800;
+    }
+
+    input,
+    textarea,
+    select {
+      width: 100%;
+      border: 1px solid #ccdbe7;
+      border-radius: 14px;
+      padding: 14px;
+      background: #fbfdff;
+      color: var(--hugs-text);
+      font: inherit;
+      outline: none;
+    }
+
+    input:focus,
+    textarea:focus,
+    select:focus {
+      border-color: var(--hugs-blue);
+      box-shadow: 0 0 0 3px rgba(116, 185, 244, 0.17);
+    }
+
+    textarea {
+      min-height: 115px;
+      resize: vertical;
+    }
+
+    .counter {
+      text-align: right;
+      margin-top: 5px;
+      color: #8192a2;
+      font-size: 11px;
+    }
+
+    .summary {
+      margin-top: 24px;
+      padding: 18px;
+      border-radius: 18px;
+      background: var(--hugs-light);
+    }
+
+    .summary strong {
+      color: var(--hugs-navy);
+    }
+
+    .summary p {
+      margin: 7px 0 0;
+      color: #576d81;
+      line-height: 1.5;
+      font-size: 13px;
+    }
+
+    .checkout-button {
+      width: 100%;
+      margin-top: 20px;
+      border: none;
+      border-radius: 999px;
+      padding: 16px 20px;
+      background: var(--hugs-gold);
+      color: #152231;
+      font-size: 16px;
+      font-weight: 900;
+      cursor: pointer;
+    }
+
+    .checkout-button:hover {
+      filter: brightness(0.97);
+    }
+
+    .secure {
+      margin-top: 11px;
+      text-align: center;
+      color: #768a9d;
+      font-size: 12px;
+    }
+
+    .status {
+      display: none;
+      margin-top: 15px;
+      padding: 13px;
+      border-radius: 12px;
+      background: #eaf7f0;
+      color: var(--hugs-green);
+      font-weight: 700;
+      font-size: 13px;
+    }
+
+    .mission {
+      margin-top: 40px;
+      background: var(--hugs-navy);
+      border-radius: 25px;
+      padding: 30px 24px;
+      color: white;
+      text-align: center;
+    }
+
+    .mission h2 {
+      margin: 0 0 11px;
+    }
+
+    .mission p {
+      max-width: 760px;
+      margin: 0 auto;
+      color: #dce8f4;
+      line-height: 1.7;
+    }
+
+    .mission strong {
+      color: var(--hugs-gold);
+    }
+
+    footer {
+      padding: 28px 18px 40px;
+      text-align: center;
+      color: #74889b;
+    }
+
+    @media (max-width: 800px) {
+      .layout {
+        grid-template-columns: 1fr;
+      }
+
+      .page {
+        padding-left: 14px;
+        padding-right: 14px;
+      }
+
+      .form-card {
+        padding: 22px;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+  <!-- MAIN NAVIGATION -->
+  <header>
+    <nav>
+      <a href="index.html">Home</a>
+      <a href="shop.html">Shop</a>
+      <a href="hugs-cards.html">HUGS Cards</a>
+      <a href="art-community.html">Art</a>
+      <a href="food-support.html">Food</a>
+      <a href="housing-help.html">Housing</a>
+      <a href="business-services.html">Business</a>
+      <a href="help-app.html">Help App</a>
+      <a href="resources.html">Resources</a>
+      <a href="about.html">About</a>
+      <a href="contact.html">Contact</a>
+    </nav>
+  </header>
+
+
+  <main class="page">
+
+    <a
+      href="shop.html#products"
+      class="back-link"
+    >
+      ← Back to Shop HUGS
+    </a>
+
+
+    <!-- HERO -->
+    <section class="hero">
+
+      <span class="badge">
+        Most Popular
+      </span>
+
+      <h1>
+        Personalized HUGS Card
+      </h1>
+
+      <div class="tagline">
+        Make Your HUG Personal
+      </div>
+
+      <p>
+        Add the recipient's name, your own message and who the
+        HUG is from. We'll turn your message into a personalized
+        HUGSLinks digital experience made especially for them.
+      </p>
+
+    </section>
+
+
+    <section class="layout">
+
+      <!-- PRODUCT PREVIEW -->
+      <article class="product-card">
+
+        <img
+          src="assets/nyc-ride-hugs-card-cover.jpg"
+          alt="Personalized HUGS Card preview"
+        />
+
+        <div class="product-copy">
+
+          <h2>
+            Personalized HUG
+          </h2>
+
+          <div class="price">
+            $16.99
+          </div>
+
+          <p>
+            Start with a HUGSLinks visual card and make the
+            experience personal for someone important to you.
+          </p>
+
+          <ul class="features">
+
+            <li>
+              Recipient's name
+            </li>
+
+            <li>
+              Your personal message
+            </li>
+
+            <li>
+              Sender's name
+            </li>
+
+            <li>
+              Personalized visual experience
+            </li>
+
+            <li>
+              Digital delivery
+            </li>
+
+          </ul>
+
+        </div>
+
+      </article>
+
+
+      <!-- PERSONALIZATION FORM -->
+      <section class="form-card">
+
+        <h2>
+          Personalize Your HUG
+        </h2>
+
+        <p class="form-intro">
+          Tell us who the HUG is for and what you want to say.
+        </p>
+
+
+        <form
+          id="personalizedHugForm"
+          name="personalized-hug-order"
+          method="POST"
+          data-netlify="true"
+          netlify-honeypot="bot-field"
+        >
+
+          <!-- Required by Netlify Forms -->
+          <input
+            type="hidden"
+            name="form-name"
+            value="personalized-hug-order"
+          />
+
+
+          <!-- SPAM PROTECTION -->
+          <p style="display:none;">
+            <label>
+              Don't fill this out:
+              <input name="bot-field" />
+            </label>
+          </p>
+
+
+          <!-- CARD THEME -->
+          <label for="theme">
+            Choose Your HUGS Card
+          </label>
+
+          <select
+            id="theme"
+            name="card_theme"
+            required
+          >
+
+            <option value="">
+              Select a card
+            </option>
+
+            <option value="NYC Ride">
+              NYC Ride — Send a HUG
+            </option>
+
+            <option value="Love and Support">
+              Love & Support
+            </option>
+
+            <option value="Celebration">
+              Celebration
+            </option>
+
+          </select>
+
+
+          <!-- RECIPIENT -->
+          <label for="recipient">
+            Recipient's Name
+          </label>
+
+          <input
+            type="text"
+            id="recipient"
+            name="recipient_name"
+            placeholder="Who is receiving the HUG?"
+            maxlength="50"
+            required
+          />
+
+
+          <!-- SENDER -->
+          <label for="sender">
+            Who Is This HUG From?
+          </label>
+
+          <input
+            type="text"
+            id="sender"
+            name="sender_name"
+            placeholder="Your name"
+            maxlength="50"
+            required
+          />
+
+
+          <!-- MESSAGE -->
+          <label for="message">
+            Your Personal Message
+          </label>
+
+          <textarea
+            id="message"
+            name="personal_message"
+            maxlength="280"
+            placeholder="Write the message you want included in their HUG..."
+            required
+          ></textarea>
+
+          <div
+            class="counter"
+            id="messageCounter"
+          >
+            0 / 280
+          </div>
+
+
+          <!-- CUSTOMER EMAIL -->
+          <label for="email">
+            Your Email
+          </label>
+
+          <input
+            type="email"
+            id="email"
+            name="customer_email"
+            placeholder="Where we can contact you about your order"
+            required
+          />
+
+
+          <!-- OPTIONAL OCCASION -->
+          <label for="occasion">
+            Occasion
+          </label>
+
+          <select
+            id="occasion"
+            name="occasion"
+          >
+
+            <option value="Just Because">
+              Just Because
+            </option>
+
+            <option value="Birthday">
+              Birthday
+            </option>
+
+            <option value="Love">
+              Love
+            </option>
+
+            <option value="Encouragement">
+              Encouragement
+            </option>
+
+            <option value="Thank You">
+              Thank You
+            </option>
+
+            <option value="Congratulations">
+              Congratulations
+            </option>
+
+            <option value="Get Well">
+              Get Well
+            </option>
+
+            <option value="Other">
+              Other
+            </option>
+
+          </select>
+
+
+          <div class="summary">
+
+            <strong>
+              Personalized HUG — $16.99
+            </strong>
+
+            <p>
+              Your personalization request will be saved before
+              you continue to secure Stripe checkout.
+            </p>
+
+          </div>
+
+
+          <button
+            type="submit"
+            class="checkout-button"
+            id="checkoutButton"
+          >
+            Save Personalization & Continue — $16.99
+          </button>
+
+
+          <div class="secure">
+            🔒 Secure checkout powered by Stripe
+          </div>
+
+
+          <div
+            class="status"
+            id="statusMessage"
+          >
+            Your personalization has been saved.
+            Taking you to secure checkout…
+          </div>
+
+        </form>
+
+      </section>
+
+    </section>
+
+
+    <!-- MISSION -->
+    <section class="mission">
+
+      <h2>
+        Your HUG Helps Build Something Bigger
+      </h2>
+
+      <p>
+        HUGSLinks was created to connect people through creativity,
+        community and good business. Your support helps us continue
+        developing projects intended to support people experiencing
+        homelessness, community entrepreneurs, local artists and
+        people in need.
+        <strong>
+          Thank you for supporting HUGSLinks.
+        </strong>
+      </p>
+
+    </section>
+
+  </main>
+
+
+  <footer>
+    © 2026 HUGSLinks · Give a Hug. Get a Hug.
+  </footer>
+
+
+  <script src="script.js"></script>
+
+
+  <script>
+
+    /*
+      PERSONALIZED HUGS CARD STRIPE CHECKOUT
+
+      After we create the $16.99 Stripe product,
+      replace this URL with the live Stripe Payment Link.
+    */
+
+    const PERSONALIZED_STRIPE_URL =
+      "YOUR_PERSONALIZED_HUGS_STRIPE_LINK";
+
+
+    /*
+      MESSAGE CHARACTER COUNTER
+    */
+
+    const message =
+      document.getElementById("message");
+
+    const messageCounter =
+      document.getElementById("messageCounter");
+
+
+    message.addEventListener("input", function () {
+
+      messageCounter.textContent =
+        message.value.length + " / 280";
+
+    });
+
+
+
+    /*
+      SUBMIT PERSONALIZATION TO NETLIFY
+      THEN REDIRECT TO STRIPE
+    */
+
+    const form =
+      document.getElementById("personalizedHugForm");
+
+    const checkoutButton =
+      document.getElementById("checkoutButton");
+
+    const statusMessage =
+      document.getElementById("statusMessage");
+
+
+    form.addEventListener(
+      "submit",
+      async function(event) {
+
+        event.preventDefault();
+
+
+        /*
+          Make sure Stripe has been connected
+        */
+
+        if (
+          PERSONALIZED_STRIPE_URL
+          .startsWith("YOUR_")
+        ) {
+
+          alert(
+            "The Personalized HUGS Card checkout is being connected. Please try again shortly."
+          );
+
+          return;
+
+        }
+
+
+        checkoutButton.disabled = true;
+
+        checkoutButton.textContent =
+          "Saving Your HUG…";
+
+
+        const formData =
+          new FormData(form);
+
+
+        try {
+
+          await fetch("/", {
+
+            method: "POST",
+
+            headers: {
+              "Content-Type":
+                "application/x-www-form-urlencoded"
+            },
+
+            body:
+              new URLSearchParams(
+                formData
+              ).toString()
+
+          });
+
+
+          statusMessage.style.display =
+            "block";
+
+
+          checkoutButton.textContent =
+            "Opening Secure Checkout…";
+
+
+          setTimeout(function () {
+
+            window.location.href =
+              PERSONALIZED_STRIPE_URL;
+
+          }, 900);
+
+
+        }
+
+        catch(error) {
+
+          console.error(error);
+
+
+          checkoutButton.disabled =
+            false;
+
+
+          checkoutButton.textContent =
+            "Save Personalization & Continue — $16.99";
+
+
+          alert(
+            "We could not save your personalization. Please try again."
+          );
+
+        }
+
+      }
+    );
+
+  </script>
+
+</body>
+</html>
