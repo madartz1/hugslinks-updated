@@ -469,49 +469,45 @@
   <script src="script.js"></script>
 
   <script>
-    function togglePreview() {
+  function togglePreview() {
 
-      const previewBox =
-        document.getElementById("previewBox");
+    const box =
+      document.getElementById("previewBox");
 
-      const previewVideo =
-        document.getElementById("previewVideo");
+    const video =
+      document.getElementById("previewVideo");
 
-      const previewButton =
-        document.getElementById("previewButton");
-
-
-      const isOpen =
-        previewBox.classList.contains("open");
+    const button =
+      document.getElementById("previewButton");
 
 
-      if (isOpen) {
+    if (box.style.display === "block") {
 
-        previewBox.classList.remove("open");
+      box.style.display = "none";
 
-        previewVideo.pause();
+      video.pause();
 
-        previewButton.textContent =
-          "▶ Watch Preview";
+      button.textContent =
+        "▶ Watch Preview";
 
-      }
+    } else {
 
-      else {
+      box.style.display = "block";
 
-        previewBox.classList.add("open");
+      button.textContent =
+        "Hide Preview";
 
-        previewButton.textContent =
-          "Hide Preview";
+      video.load();
 
-        previewBox.scrollIntoView({
-          behavior: "smooth",
-          block: "center"
-        });
-
-      }
+      box.scrollIntoView({
+        behavior: "smooth",
+        block: "center"
+      });
 
     }
-  </script>
+
+  }
+</script>
 
 </body>
 </html>
