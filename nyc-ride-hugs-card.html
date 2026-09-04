@@ -26,6 +26,10 @@
       --hugs-border: #dce8f2;
     }
 
+    * {
+      box-sizing: border-box;
+    }
+
     body {
       margin: 0;
       background: var(--hugs-cream);
@@ -163,10 +167,6 @@
       padding: 12px;
     }
 
-    .preview-box.open {
-      display: block;
-    }
-
     .preview-box video {
       display: block;
       width: 100%;
@@ -232,6 +232,12 @@
       line-height: 1.7;
     }
 
+    footer {
+      text-align: center;
+      padding: 24px 18px 40px;
+      color: #6e8295;
+    }
+
     @media (max-width: 800px) {
       .product-layout {
         grid-template-columns: 1fr;
@@ -251,7 +257,6 @@
 
 <body>
 
-  <!-- MAIN NAVIGATION -->
   <header>
     <nav>
       <a href="index.html">Home</a>
@@ -276,18 +281,13 @@
 
     <section class="product-layout">
 
-      <!-- PRODUCT COVER -->
       <div class="product-image-card">
-
         <img
           src="assets/nyc-ride-hugs-card-cover.jpg"
           alt="NYC Ride — Send a HUG animated HUGS Card"
         />
-
       </div>
 
-
-      <!-- PRODUCT DETAILS -->
       <div class="product-details">
 
         <span class="badge">
@@ -309,8 +309,8 @@
         <p class="description">
           Send someone a cinematic HUG through New York City.
           HUGS Bear rides toward a glowing sunset as warm city lights,
-          floating hearts and a radiant trail of love transform the
-          journey into a message of connection, encouragement and support.
+          floating hearts and a radiant trail of love transform the journey
+          into a message of connection, encouragement and support.
         </p>
 
         <ul class="features">
@@ -321,145 +321,44 @@
           <li>Perfect for sharing by phone or message</li>
         </ul>
 
+        <!-- WATCH PREVIEW BUTTON -->
+        <button
+          class="preview-button"
+          type="button"
+          id="previewButton"
+          onclick="togglePreview()"
+        >
+          ▶ Watch Preview
+        </button>
 
-        <!-- WATCH PREVIEW -->
-        <!-- WATCH PREVIEW -->
-<button
-  <!-- WATCH PREVIEW -->
-<!-- WATCH PREVIEW -->
-<button
-  class="preview-button"
-  type="button"
-  id="previewButton"
-  onclick="togglePreview()"
->
-  ▶ Watch Preview
-</button>
-
-
-<!-- PREVIEW VIDEO -->
-<div
-  id="previewBox"
-  style="
-    display:none;
-    margin-bottom:18px;
-    background:#07111e;
-    border-radius:20px;
-    padding:12px;
-  "
->
-
-  <video
-    id="previewVideo"
-    controls
-    playsinline
-    preload="metadata"
-    poster="assets/nyc-ride-hugs-card-cover.jpg"
-    style="
-      display:block;
-      width:100%;
-      border-radius:14px;
-      background:#000;
-    "
-  >
-
-    <source
-      src="assets/nyc-ride-hugs-preview.mp4"
-      type="video/mp4"
-    />
-
-    Your browser does not support video playback.
-
-  </video>
-
-</div>
-
-
-<!-- LIVE STRIPE PURCHASE BUTTON -->
-<a
-  href="https://buy.stripe.com/cNi4gy1yA0s00e30488ww04"
-  class="buy-button"
-  id="buyButton"
->
-  Send This HUG — $6.99
-</a>
-</a>class="preview-button"
-  type="button"
-  id="previewButton"
-  onclick="togglePreview()"
->
-  ▶ Watch Preview
-</button>
-
-<!-- PREVIEW VIDEO -->
-<div
-  id="previewBox"
-  style="
-    display:none;
-    margin-bottom:18px;
-    background:#07111e;
-    border-radius:20px;
-    padding:12px;
-  "
->
-  <video
-    id="previewVideo"
-    controls
-    playsinline
-    preload="metadata"
-    poster="assets/nyc-ride-hugs-card-cover.jpg"
-    style="
-      display:block;
-      width:100%;
-      border-radius:14px;
-      background:#000;
-    "
-  >
-    <source
-      src="assets/nyc-ride-hugs-preview.mp4"
-      type="video/mp4"
-    />
-
-    Your browser does not support video playback.
-  </video>
-</div>
-
-<!-- LIVE STRIPE PURCHASE BUTTON -->
-<a
-  href="https://buy.stripe.com/cNi4gy1yA0s00e30488ww04"
-  class="buy-button"
-  id="buyButton"
->
-  Send This HUG — $6.99
-</a>
+        <!-- PREVIEW VIDEO -->
+        <div
+          class="preview-box"
+          id="previewBox"
+        >
+          <video
+            id="previewVideo"
             controls
             playsinline
             preload="metadata"
             poster="assets/nyc-ride-hugs-card-cover.jpg"
           >
-
             <source
               src="assets/nyc-ride-hugs-preview.mp4"
               type="video/mp4"
             />
-
             Your browser does not support video playback.
-
           </video>
-
         </div>
 
-
-        <!-- STRIPE PURCHASE BUTTON -->
-        <!-- Replace # with the Stripe payment link -->
+        <!-- LIVE STRIPE PURCHASE BUTTON -->
         <a
-          href="#"
+          href="https://buy.stripe.com/cNi4gy1yA0s00e30488ww04"
           class="buy-button"
           id="buyButton"
         >
           Send This HUG — $6.99
         </a>
-
 
         <div class="delivery-info">
 
@@ -485,19 +384,16 @@
 
         </div>
 
-
         <div class="small-note">
-          After purchase, customers will receive access to the full
-          Ready-to-Send HUGS Card. Add your Stripe Payment Link to the
-          purchase button before publishing.
+          Complete your purchase securely through Stripe.
+          Your support helps HUGSLinks continue building creative
+          community projects and services for people in need.
         </div>
 
       </div>
 
     </section>
 
-
-    <!-- BRAND MESSAGE -->
     <section class="message-section">
 
       <h2>
@@ -514,58 +410,36 @@
 
   </main>
 
-
   <footer>
-
     <p>
       © 2026 HUGSLinks · Give a Hug. Get a Hug.
     </p>
-
   </footer>
-
 
   <script src="script.js"></script>
 
   <script>
-  function togglePreview() {
+    function togglePreview() {
+      const box = document.getElementById("previewBox");
+      const video = document.getElementById("previewVideo");
+      const button = document.getElementById("previewButton");
 
-    const box =
-      document.getElementById("previewBox");
+      if (box.style.display === "block") {
+        box.style.display = "none";
+        video.pause();
+        button.textContent = "▶ Watch Preview";
+      } else {
+        box.style.display = "block";
+        button.textContent = "Hide Preview";
+        video.load();
 
-    const video =
-      document.getElementById("previewVideo");
-
-    const button =
-      document.getElementById("previewButton");
-
-
-    if (box.style.display === "block") {
-
-      box.style.display = "none";
-
-      video.pause();
-
-      button.textContent =
-        "▶ Watch Preview";
-
-    } else {
-
-      box.style.display = "block";
-
-      button.textContent =
-        "Hide Preview";
-
-      video.load();
-
-      box.scrollIntoView({
-        behavior: "smooth",
-        block: "center"
-      });
-
+        box.scrollIntoView({
+          behavior: "smooth",
+          block: "center"
+        });
+      }
     }
-
-  }
-</script>
+  </script>
 
 </body>
 </html>
