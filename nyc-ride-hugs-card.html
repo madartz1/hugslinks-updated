@@ -325,7 +325,65 @@
         <!-- WATCH PREVIEW -->
         <!-- WATCH PREVIEW -->
 <button
+  <!-- WATCH PREVIEW -->
+<!-- WATCH PREVIEW -->
+<button
   class="preview-button"
+  type="button"
+  id="previewButton"
+  onclick="togglePreview()"
+>
+  ▶ Watch Preview
+</button>
+
+
+<!-- PREVIEW VIDEO -->
+<div
+  id="previewBox"
+  style="
+    display:none;
+    margin-bottom:18px;
+    background:#07111e;
+    border-radius:20px;
+    padding:12px;
+  "
+>
+
+  <video
+    id="previewVideo"
+    controls
+    playsinline
+    preload="metadata"
+    poster="assets/nyc-ride-hugs-card-cover.jpg"
+    style="
+      display:block;
+      width:100%;
+      border-radius:14px;
+      background:#000;
+    "
+  >
+
+    <source
+      src="assets/nyc-ride-hugs-preview.mp4"
+      type="video/mp4"
+    />
+
+    Your browser does not support video playback.
+
+  </video>
+
+</div>
+
+
+<!-- LIVE STRIPE PURCHASE BUTTON -->
+<a
+  href="https://buy.stripe.com/cNi4gy1yA0s00e30488ww04"
+  class="buy-button"
+  id="buyButton"
+>
+  Send This HUG — $6.99
+</a>
+</a>class="preview-button"
   type="button"
   id="previewButton"
   onclick="togglePreview()"
