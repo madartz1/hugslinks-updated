@@ -1,0 +1,425 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <title>Memorial Ride — Send a HUG | HUGSLinks</title>
+
+  <meta
+    name="description"
+    content="Memorial Ride — Send a HUG. A heartfelt HUGSLinks memorial tribute card created for remembrance, love, and honoring loved ones."
+  />
+
+  <link rel="stylesheet" href="styles.css" />
+
+  <style>
+    :root {
+      --hugs-navy: #0b2f59;
+      --hugs-blue: #74b9f4;
+      --hugs-light: #eef7ff;
+      --hugs-cream: #f8f5ee;
+      --hugs-white: #ffffff;
+      --hugs-text: #23374d;
+      --hugs-muted: #60758a;
+      --hugs-gold: #f2b84b;
+      --hugs-border: #dce8f2;
+      --hugs-dark: #07111e;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      background: var(--hugs-cream);
+      color: var(--hugs-text);
+      font-family: Arial, Helvetica, sans-serif;
+    }
+
+    .product-page {
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 28px 18px 60px;
+    }
+
+    .back-link {
+      display: inline-block;
+      margin-bottom: 22px;
+      text-decoration: none;
+      color: var(--hugs-navy);
+      font-weight: 800;
+    }
+
+    .product-layout {
+      display: grid;
+      grid-template-columns: 1fr 0.92fr;
+      gap: 34px;
+      align-items: start;
+    }
+
+    .product-image-card {
+      background: var(--hugs-white);
+      border-radius: 24px;
+      overflow: hidden;
+      border: 1px solid var(--hugs-border);
+      box-shadow: 0 16px 40px rgba(11, 47, 89, 0.12);
+    }
+
+    .product-image-card img {
+      display: block;
+      width: 100%;
+      aspect-ratio: 9 / 16;
+      object-fit: cover;
+    }
+
+    .product-details {
+      background: var(--hugs-white);
+      border-radius: 24px;
+      padding: 28px;
+      border: 1px solid var(--hugs-border);
+      box-shadow: 0 16px 40px rgba(11, 47, 89, 0.08);
+    }
+
+    .badge {
+      display: inline-block;
+      background: var(--hugs-light);
+      color: var(--hugs-navy);
+      border-radius: 999px;
+      padding: 8px 12px;
+      font-size: 12px;
+      font-weight: 900;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      margin-bottom: 15px;
+    }
+
+    .product-details h1 {
+      margin: 0;
+      color: var(--hugs-navy);
+      font-size: clamp(34px, 6vw, 54px);
+      line-height: 1.02;
+      letter-spacing: -1px;
+    }
+
+    .product-type {
+      margin-top: 14px;
+      color: var(--hugs-blue);
+      font-size: 20px;
+      font-weight: 900;
+    }
+
+    .price {
+      margin: 8px 0 18px;
+      color: var(--hugs-navy);
+      font-size: 32px;
+      font-weight: 900;
+    }
+
+    .description {
+      color: var(--hugs-muted);
+      line-height: 1.7;
+      font-size: 16px;
+      margin-bottom: 22px;
+    }
+
+    .features {
+      list-style: none;
+      padding: 0;
+      margin: 0 0 22px;
+    }
+
+    .features li {
+      margin: 10px 0;
+      color: #435a70;
+    }
+
+    .features li::before {
+      content: "✓";
+      color: var(--hugs-blue);
+      font-weight: 900;
+      margin-right: 9px;
+    }
+
+    .preview-button {
+      width: 100%;
+      border: none;
+      background: var(--hugs-navy);
+      color: white;
+      border-radius: 999px;
+      padding: 15px 18px;
+      font-size: 16px;
+      font-weight: 900;
+      cursor: pointer;
+      margin-bottom: 14px;
+    }
+
+    .preview-button:hover {
+      background: var(--hugs-blue);
+      color: var(--hugs-navy);
+    }
+
+    .preview-box {
+      display: none;
+      margin-bottom: 18px;
+      background: var(--hugs-dark);
+      border-radius: 20px;
+      padding: 12px;
+    }
+
+    .preview-box video {
+      display: block;
+      width: 100%;
+      border-radius: 14px;
+      background: #000;
+    }
+
+    .buy-button {
+      display: block;
+      width: 100%;
+      text-align: center;
+      text-decoration: none;
+      background: var(--hugs-gold);
+      color: #17212c;
+      border-radius: 999px;
+      padding: 15px 18px;
+      font-size: 16px;
+      font-weight: 900;
+      margin-top: 8px;
+    }
+
+    .buy-button:hover {
+      filter: brightness(0.96);
+    }
+
+    .delivery-info {
+      margin-top: 22px;
+      padding-top: 18px;
+      border-top: 1px solid var(--hugs-border);
+      display: grid;
+      gap: 10px;
+      color: #536b81;
+      font-size: 14px;
+    }
+
+    .delivery-info strong {
+      color: var(--hugs-navy);
+    }
+
+    .small-note {
+      margin-top: 14px;
+      color: #7d90a4;
+      font-size: 12px;
+      line-height: 1.5;
+    }
+
+    .message-section {
+      margin-top: 42px;
+      background: var(--hugs-light);
+      border-radius: 24px;
+      padding: 28px 22px;
+      text-align: center;
+    }
+
+    .message-section h2 {
+      margin-top: 0;
+      color: var(--hugs-navy);
+      font-size: 30px;
+    }
+
+    .message-section p {
+      max-width: 760px;
+      margin: 0 auto;
+      color: #536b81;
+      line-height: 1.7;
+    }
+
+    @media (max-width: 800px) {
+      .product-layout {
+        grid-template-columns: 1fr;
+      }
+
+      .product-details {
+        padding: 22px;
+      }
+
+      .product-page {
+        padding-left: 14px;
+        padding-right: 14px;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+  <!-- MAIN NAVIGATION -->
+  <header>
+    <nav>
+      <a href="index.html">Home</a>
+      <a href="shop.html">Shop</a>
+      <a href="hugs-cards.html">HUGS Cards</a>
+      <a href="art-community.html">Art</a>
+      <a href="food-support.html">Food</a>
+      <a href="housing-help.html">Housing</a>
+      <a href="business-services.html">Business</a>
+      <a href="help-app.html">Help App</a>
+      <a href="resources.html">Resources</a>
+      <a href="about.html">About</a>
+      <a href="contact.html">Contact</a>
+    </nav>
+  </header>
+
+  <main class="product-page">
+
+    <a href="hugs-cards.html" class="back-link">
+      ← Back to HUGS Cards
+    </a>
+
+    <section class="product-layout">
+
+      <!-- PRODUCT COVER -->
+      <div class="product-image-card">
+        <img
+          src="assets/memorial-hugs-card-cover.png"
+          alt="Memorial Ride — Send a HUG memorial tribute cover"
+        />
+      </div>
+
+      <!-- PRODUCT DETAILS -->
+      <div class="product-details">
+
+        <span class="badge">Memorial HUGS Card</span>
+
+        <h1>Memorial Ride — Send a HUG</h1>
+
+        <div class="product-type">Ready to Send</div>
+
+        <div class="price">$6.99</div>
+
+        <p class="description">
+          A heartfelt memorial tribute from HUGSLinks created for remembrance,
+          comfort, and honoring loved ones. This HUGS Card is designed to help
+          family and friends send support, love, and reflection through a
+          meaningful visual experience.
+        </p>
+
+        <ul class="features">
+          <li>Memorial-themed HUGS Card</li>
+          <li>Made for tribute, remembrance, and support</li>
+          <li>Thoughtful digital card experience</li>
+          <li>Ready to send by phone, message, or email</li>
+          <li>Perfect for loved ones, family, and friends</li>
+        </ul>
+
+        <!-- WATCH PREVIEW -->
+        <button
+          class="preview-button"
+          type="button"
+          id="previewButton"
+          onclick="togglePreview()"
+        >
+          ▶ Watch Preview
+        </button>
+
+        <!-- PREVIEW VIDEO -->
+        <div class="preview-box" id="previewBox">
+          <video
+            id="previewVideo"
+            controls
+            playsinline
+            preload="metadata"
+            poster="assets/memorial-hugs-card-cover.png"
+          >
+            <source
+              src="assets/memorial-hugs-preview.mp4"
+              type="video/mp4"
+            />
+            Your browser does not support video playback.
+          </video>
+        </div>
+
+        <!-- STRIPE PURCHASE BUTTON -->
+        <a
+          href="YOUR_MEMORIAL_STRIPE_LINK_HERE"
+          class="buy-button"
+          id="buyButton"
+        >
+          Send This Memorial HUG — $6.99
+        </a>
+
+        <div class="delivery-info">
+          <div>
+            <strong>Format:</strong>
+            Digital memorial HUGS Card
+          </div>
+
+          <div>
+            <strong>Theme:</strong>
+            Memorial / Tribute / Remembrance
+          </div>
+
+          <div>
+            <strong>Delivery:</strong>
+            Ready-to-send digital experience
+          </div>
+
+          <div>
+            <strong>Brand:</strong>
+            HUGSLinks
+          </div>
+        </div>
+
+        <div class="small-note">
+          Replace the purchase link with your live Stripe memorial product link.
+          If your preview video is not ready yet, you can still leave the page
+          published and upload <strong>memorial-hugs-preview.mp4</strong> later.
+        </div>
+
+      </div>
+
+    </section>
+
+    <!-- BRAND MESSAGE -->
+    <section class="message-section">
+      <h2>Honor. Love. Remembrance.</h2>
+      <p>
+        HUGSLinks memorial cards are made to help people express compassion,
+        remembrance, and support in a more meaningful way. Every HUG helps
+        strengthen connection and supports the mission behind HUGSLinks.
+      </p>
+    </section>
+
+  </main>
+
+  <footer>
+    <p>© 2026 HUGSLinks · Give a Hug. Get a Hug.</p>
+  </footer>
+
+  <script src="script.js"></script>
+
+  <script>
+    function togglePreview() {
+      const box = document.getElementById("previewBox");
+      const video = document.getElementById("previewVideo");
+      const button = document.getElementById("previewButton");
+
+      if (box.style.display === "block") {
+        box.style.display = "none";
+        video.pause();
+        button.textContent = "▶ Watch Preview";
+      } else {
+        box.style.display = "block";
+        button.textContent = "Hide Preview";
+        video.load();
+        box.scrollIntoView({
+          behavior: "smooth",
+          block: "center"
+        });
+      }
+    }
+  </script>
+
+</body>
+</html>
