@@ -8,7 +8,7 @@
 
   <meta
     name="description"
-    content="Create a personalized animated HUGS Card with the recipient's name, your message and who the HUG is from."
+    content="Choose a Love or Memorial theme and create a personalized HUGS Card from HUGSLinks."
   />
 
   <link rel="stylesheet" href="styles.css" />
@@ -24,6 +24,8 @@
       --hugs-muted: #60758a;
       --hugs-gold: #f2b84b;
       --hugs-border: #dce8f2;
+      --hugs-love: #ef425c;
+      --hugs-memorial: #d99a32;
       --hugs-green: #2f8f62;
     }
 
@@ -39,7 +41,7 @@
     }
 
     .page {
-      max-width: 1050px;
+      max-width: 1120px;
       margin: 0 auto;
       padding: 28px 18px 70px;
     }
@@ -52,9 +54,19 @@
       font-weight: 800;
     }
 
+    /* HERO */
+
     .hero {
       text-align: center;
-      margin-bottom: 34px;
+      padding: 28px 16px 38px;
+    }
+
+    .hero-cover {
+      width: 150px;
+      max-width: 42vw;
+      border-radius: 24px;
+      margin-bottom: 18px;
+      box-shadow: 0 14px 35px rgba(11, 47, 89, 0.12);
     }
 
     .badge {
@@ -73,28 +85,125 @@
     .hero h1 {
       margin: 0;
       color: var(--hugs-navy);
-      font-size: clamp(38px, 8vw, 60px);
+      font-size: clamp(40px, 8vw, 62px);
       line-height: 1;
     }
 
     .tagline {
       color: var(--hugs-blue);
-      font-size: 21px;
+      font-size: 22px;
       font-weight: 900;
-      margin-top: 13px;
+      margin-top: 14px;
     }
 
     .hero p {
-      max-width: 700px;
+      max-width: 720px;
       margin: 18px auto 0;
       color: var(--hugs-muted);
       line-height: 1.7;
       font-size: 16px;
     }
 
-    .layout {
+    /* THEME SELECTOR */
+
+    .theme-selector {
+      margin-top: 10px;
+    }
+
+    .section-heading {
+      text-align: center;
+      margin-bottom: 24px;
+    }
+
+    .section-heading h2 {
+      margin: 0;
+      color: var(--hugs-navy);
+      font-size: 32px;
+    }
+
+    .section-heading p {
+      max-width: 660px;
+      margin: 10px auto 0;
+      color: var(--hugs-muted);
+      line-height: 1.6;
+    }
+
+    .theme-grid {
       display: grid;
-      grid-template-columns: 0.85fr 1.15fr;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 22px;
+    }
+
+    .theme-card {
+      background: white;
+      border: 2px solid transparent;
+      border-radius: 26px;
+      padding: 26px 20px;
+      text-align: center;
+      box-shadow: 0 13px 34px rgba(11, 47, 89, 0.09);
+      transition: 0.2s ease;
+      cursor: pointer;
+    }
+
+    .theme-card:hover {
+      transform: translateY(-4px);
+    }
+
+    .theme-card.selected {
+      border-color: var(--hugs-blue);
+      box-shadow: 0 16px 40px rgba(116, 185, 244, 0.22);
+    }
+
+    .theme-card img {
+      width: 110px;
+      height: 110px;
+      object-fit: contain;
+      border-radius: 23px;
+      margin-bottom: 14px;
+    }
+
+    .theme-card h3 {
+      margin: 0;
+      color: var(--hugs-navy);
+      font-size: 27px;
+    }
+
+    .theme-card p {
+      margin: 10px auto 18px;
+      max-width: 320px;
+      color: var(--hugs-muted);
+      line-height: 1.6;
+    }
+
+    .theme-button {
+      border: none;
+      border-radius: 999px;
+      padding: 12px 20px;
+      background: var(--hugs-navy);
+      color: white;
+      font-weight: 900;
+      cursor: pointer;
+    }
+
+    .theme-button:hover {
+      background: var(--hugs-blue);
+      color: var(--hugs-navy);
+    }
+
+    .theme-card.love.selected {
+      border-color: var(--hugs-love);
+    }
+
+    .theme-card.memorial.selected {
+      border-color: var(--hugs-memorial);
+    }
+
+    /* FORM AREA */
+
+    .order-section {
+      margin-top: 42px;
+      display: grid;
+      grid-template-columns: 0.82fr 1.18fr;
       gap: 30px;
       align-items: start;
     }
@@ -103,7 +212,7 @@
     .form-card {
       background: white;
       border: 1px solid var(--hugs-border);
-      border-radius: 25px;
+      border-radius: 26px;
       box-shadow: 0 14px 38px rgba(11, 47, 89, 0.09);
     }
 
@@ -125,7 +234,7 @@
     .product-copy h2 {
       margin: 0;
       color: var(--hugs-navy);
-      font-size: 25px;
+      font-size: 26px;
     }
 
     .price {
@@ -159,20 +268,32 @@
       margin-right: 8px;
     }
 
+    /* FORM */
+
     .form-card {
       padding: 28px;
     }
 
     .form-card h2 {
-      margin: 0 0 6px;
+      margin: 0 0 7px;
       color: var(--hugs-navy);
-      font-size: 27px;
+      font-size: 28px;
     }
 
     .form-intro {
       margin: 0 0 22px;
       color: var(--hugs-muted);
-      line-height: 1.55;
+      line-height: 1.6;
+    }
+
+    .selected-theme-box {
+      display: none;
+      padding: 14px 16px;
+      border-radius: 16px;
+      margin-bottom: 18px;
+      background: var(--hugs-light);
+      color: var(--hugs-navy);
+      font-weight: 800;
     }
 
     label {
@@ -200,7 +321,7 @@
     textarea:focus,
     select:focus {
       border-color: var(--hugs-blue);
-      box-shadow: 0 0 0 3px rgba(116, 185, 244, 0.17);
+      box-shadow: 0 0 0 3px rgba(116, 185, 244, 0.16);
     }
 
     textarea {
@@ -246,8 +367,9 @@
       cursor: pointer;
     }
 
-    .checkout-button:hover {
-      filter: brightness(0.97);
+    .checkout-button:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
     }
 
     .secure {
@@ -268,17 +390,19 @@
       font-size: 13px;
     }
 
+    /* MISSION */
+
     .mission {
-      margin-top: 40px;
+      margin-top: 42px;
       background: var(--hugs-navy);
-      border-radius: 25px;
+      border-radius: 26px;
       padding: 30px 24px;
       color: white;
       text-align: center;
     }
 
     .mission h2 {
-      margin: 0 0 11px;
+      margin: 0 0 12px;
     }
 
     .mission p {
@@ -299,7 +423,8 @@
     }
 
     @media (max-width: 800px) {
-      .layout {
+      .theme-grid,
+      .order-section {
         grid-template-columns: 1fr;
       }
 
@@ -337,10 +462,7 @@
 
   <main class="page">
 
-    <a
-      href="shop.html#products"
-      class="back-link"
-    >
+    <a href="shop.html#products" class="back-link">
       ← Back to Shop HUGS
     </a>
 
@@ -348,30 +470,127 @@
     <!-- HERO -->
     <section class="hero">
 
+      <img
+        src="assets/personalized-hugs-card-cover.jpg"
+        alt="Personalized HUGS Card"
+        class="hero-cover"
+      />
+
+      <br />
+
       <span class="badge">
-        Most Popular
+        Personalized HUGS Card
       </span>
 
       <h1>
-        Personalized HUGS Card
+        Choose Your HUG
       </h1>
 
       <div class="tagline">
-        Make Your HUG Personal
+        Make Their HUG Personal
       </div>
 
       <p>
-        Add the recipient's name, your own message and who the
-        HUG is from. We'll turn your message into a personalized
-        HUGSLinks digital experience made especially for them.
+        Choose a HUGS theme, then personalize the card with the
+        recipient's name, your message, who the HUG is from and
+        the occasion.
       </p>
 
     </section>
 
 
-    <section class="layout">
+    <!-- THEME SELECTOR -->
+    <section class="theme-selector">
 
-      <!-- PRODUCT PREVIEW -->
+      <div class="section-heading">
+
+        <h2>
+          Choose Your Theme
+        </h2>
+
+        <p>
+          We're starting with Love and Memorial.
+          More HUGS Card themes will be added as the collection grows.
+        </p>
+
+      </div>
+
+
+      <div class="theme-grid">
+
+        <!-- LOVE -->
+        <article
+          class="theme-card love"
+          id="loveThemeCard"
+        >
+
+          <img
+            src="assets/icon-love.png"
+            alt="Love HUGS Card theme"
+          />
+
+          <h3>
+            Love
+          </h3>
+
+          <p>
+            For relationships, family, friendship,
+            affection, encouragement and meaningful connection.
+          </p>
+
+          <button
+            type="button"
+            class="theme-button"
+            onclick="chooseTheme('Love')"
+          >
+            Choose Love
+          </button>
+
+        </article>
+
+
+        <!-- MEMORIAL -->
+        <article
+          class="theme-card memorial"
+          id="memorialThemeCard"
+        >
+
+          <img
+            src="assets/icon-memorial.png"
+            alt="Memorial HUGS Card theme"
+          />
+
+          <h3>
+            Memorial
+          </h3>
+
+          <p>
+            Honor a life, preserve a memory and send
+            comfort during meaningful moments of remembrance.
+          </p>
+
+          <button
+            type="button"
+            class="theme-button"
+            onclick="chooseTheme('Memorial')"
+          >
+            Choose Memorial
+          </button>
+
+        </article>
+
+      </div>
+
+    </section>
+
+
+    <!-- ORDER SECTION -->
+    <section
+      class="order-section"
+      id="personalizeSection"
+    >
+
+      <!-- PRODUCT INFO -->
       <article class="product-card">
 
         <img
@@ -390,32 +609,18 @@
           </div>
 
           <p>
-            Start with a HUGSLinks visual card and make the
-            experience personal for someone important to you.
+            Choose your theme and personalize a HUGSLinks visual
+            experience for someone important to you.
           </p>
 
           <ul class="features">
-
-            <li>
-              Recipient's name
-            </li>
-
-            <li>
-              Your personal message
-            </li>
-
-            <li>
-              Sender's name
-            </li>
-
-            <li>
-              Personalized visual experience
-            </li>
-
-            <li>
-              Digital delivery
-            </li>
-
+            <li>Theme choice</li>
+            <li>Recipient name</li>
+            <li>Sender name</li>
+            <li>Personal message</li>
+            <li>Occasion</li>
+            <li>Personalized closing</li>
+            <li>Digital delivery</li>
           </ul>
 
         </div>
@@ -431,8 +636,18 @@
         </h2>
 
         <p class="form-intro">
-          Tell us who the HUG is for and what you want to say.
+          Choose Love or Memorial above, then tell us who this HUG
+          is for and what you want to say.
         </p>
+
+
+        <div
+          class="selected-theme-box"
+          id="selectedThemeBox"
+        >
+          Selected Theme:
+          <span id="selectedThemeText"></span>
+        </div>
 
 
         <form
@@ -443,7 +658,7 @@
           netlify-honeypot="bot-field"
         >
 
-          <!-- Required by Netlify Forms -->
+          <!-- NETLIFY FORM NAME -->
           <input
             type="hidden"
             name="form-name"
@@ -451,43 +666,22 @@
           />
 
 
-          <!-- SPAM PROTECTION -->
+          <!-- SELECTED THEME -->
+          <input
+            type="hidden"
+            id="selectedTheme"
+            name="card_theme"
+            value=""
+          />
+
+
+          <!-- BOT PROTECTION -->
           <p style="display:none;">
             <label>
               Don't fill this out:
               <input name="bot-field" />
             </label>
           </p>
-
-
-          <!-- CARD THEME -->
-          <label for="theme">
-            Choose Your HUGS Card
-          </label>
-
-          <select
-            id="theme"
-            name="card_theme"
-            required
-          >
-
-            <option value="">
-              Select a card
-            </option>
-
-            <option value="NYC Ride">
-              NYC Ride — Send a HUG
-            </option>
-
-            <option value="Love and Support">
-              Love & Support
-            </option>
-
-            <option value="Celebration">
-              Celebration
-            </option>
-
-          </select>
 
 
           <!-- RECIPIENT -->
@@ -541,7 +735,21 @@
           </div>
 
 
-          <!-- CUSTOMER EMAIL -->
+          <!-- CLOSING -->
+          <label for="closing">
+            Personalized Closing
+          </label>
+
+          <input
+            type="text"
+            id="closing"
+            name="personalized_closing"
+            maxlength="80"
+            placeholder="Example: Love always, John"
+          />
+
+
+          <!-- EMAIL -->
           <label for="email">
             Your Email
           </label>
@@ -555,7 +763,7 @@
           />
 
 
-          <!-- OPTIONAL OCCASION -->
+          <!-- OCCASION -->
           <label for="occasion">
             Occasion
           </label>
@@ -569,28 +777,28 @@
               Just Because
             </option>
 
-            <option value="Birthday">
-              Birthday
-            </option>
-
             <option value="Love">
               Love
+            </option>
+
+            <option value="Anniversary">
+              Anniversary
+            </option>
+
+            <option value="Thinking of You">
+              Thinking of You
             </option>
 
             <option value="Encouragement">
               Encouragement
             </option>
 
-            <option value="Thank You">
-              Thank You
+            <option value="Memorial">
+              Memorial
             </option>
 
-            <option value="Congratulations">
-              Congratulations
-            </option>
-
-            <option value="Get Well">
-              Get Well
+            <option value="In Loving Memory">
+              In Loving Memory
             </option>
 
             <option value="Other">
@@ -603,24 +811,24 @@
           <div class="summary">
 
             <strong>
-              Personalized HUG — $16.99
+              Personalized HUGS Card — $16.99
             </strong>
 
             <p>
-              Your personalization request will be saved before
-              you continue to secure Stripe checkout.
+              Your personalization details are saved with HUGSLinks
+              before you continue to secure Stripe checkout.
             </p>
 
           </div>
 
 
           <button
-  type="submit"
-  class="checkout-button"
-  id="checkoutButton"
->
-  Save Personalization & Continue to Secure Checkout— $16.99
-</button>
+            type="submit"
+            class="checkout-button"
+            id="checkoutButton"
+          >
+            Save Personalization & Continue to Secure Checkout — $16.99
+          </button>
 
 
           <div class="secure">
@@ -651,11 +859,10 @@
       </h2>
 
       <p>
-        HUGSLinks was created to connect people through creativity,
-        community and good business. Your support helps us continue
-        developing projects intended to support people experiencing
-        homelessness, community entrepreneurs, local artists and
-        people in need.
+        HUGSLinks connects creativity, community and good business.
+        Your support helps us continue developing projects intended
+        to support people experiencing homelessness, community
+        entrepreneurs, local artists and people in need.
         <strong>
           Thank you for supporting HUGSLinks.
         </strong>
@@ -677,10 +884,7 @@
   <script>
 
     /*
-      PERSONALIZED HUGS CARD STRIPE CHECKOUT
-
-      After we create the $16.99 Stripe product,
-      replace this URL with the live Stripe Payment Link.
+      LIVE PERSONALIZED STRIPE CHECKOUT
     */
 
     const PERSONALIZED_STRIPE_URL =
@@ -688,7 +892,68 @@
 
 
     /*
-      MESSAGE CHARACTER COUNTER
+      THEME SELECTION
+    */
+
+    function chooseTheme(theme) {
+
+      const selectedTheme =
+        document.getElementById("selectedTheme");
+
+      const selectedThemeText =
+        document.getElementById("selectedThemeText");
+
+      const selectedThemeBox =
+        document.getElementById("selectedThemeBox");
+
+      const loveCard =
+        document.getElementById("loveThemeCard");
+
+      const memorialCard =
+        document.getElementById("memorialThemeCard");
+
+
+      selectedTheme.value = theme;
+
+      selectedThemeText.textContent = theme;
+
+      selectedThemeBox.style.display = "block";
+
+
+      loveCard.classList.remove("selected");
+
+      memorialCard.classList.remove("selected");
+
+
+      if (theme === "Love") {
+        loveCard.classList.add("selected");
+
+        document.getElementById("occasion").value =
+          "Love";
+      }
+
+
+      if (theme === "Memorial") {
+        memorialCard.classList.add("selected");
+
+        document.getElementById("occasion").value =
+          "Memorial";
+      }
+
+
+      document
+        .getElementById("personalizeSection")
+        .scrollIntoView({
+          behavior: "smooth",
+          block: "start"
+        });
+
+    }
+
+
+
+    /*
+      CHARACTER COUNTER
     */
 
     const message =
@@ -698,18 +963,20 @@
       document.getElementById("messageCounter");
 
 
-    message.addEventListener("input", function () {
+    message.addEventListener(
+      "input",
+      function() {
 
-      messageCounter.textContent =
-        message.value.length + " / 280";
+        messageCounter.textContent =
+          message.value.length + " / 280";
 
-    });
+      }
+    );
 
 
 
     /*
-      SUBMIT PERSONALIZATION TO NETLIFY
-      THEN REDIRECT TO STRIPE
+      NETLIFY FORM + STRIPE
     */
 
     const form =
@@ -730,17 +997,24 @@
 
 
         /*
-          Make sure Stripe has been connected
+          REQUIRE THEME
         */
 
-        if (
-          PERSONALIZED_STRIPE_URL
-          .startsWith("YOUR_")
-        ) {
+        const theme =
+          document.getElementById("selectedTheme").value;
+
+
+        if (!theme) {
 
           alert(
-            "The Personalized HUGS Card checkout is being connected. Please try again shortly."
+            "Please choose Love or Memorial before continuing."
           );
+
+          document
+            .querySelector(".theme-selector")
+            .scrollIntoView({
+              behavior: "smooth"
+            });
 
           return;
 
@@ -784,17 +1058,18 @@
             "Opening Secure Checkout…";
 
 
-          setTimeout(function () {
+          setTimeout(
+            function() {
 
-            window.location.href =
-              PERSONALIZED_STRIPE_URL;
+              window.location.href =
+                PERSONALIZED_STRIPE_URL;
 
-          }, 900);
+            },
+            900
+          );
 
 
-        }
-
-        catch(error) {
+        } catch(error) {
 
           console.error(error);
 
@@ -804,7 +1079,7 @@
 
 
           checkoutButton.textContent =
-            "Save Personalization & Continue — $16.99";
+            "Save Personalization & Continue to Secure Checkout — $16.99";
 
 
           alert(
