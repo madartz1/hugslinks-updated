@@ -1,0 +1,453 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <title>Love HUGS Cards | HUGSLinks</title>
+
+  <meta
+    name="description"
+    content="Send love through HUGSLinks. Explore Love HUGS Cards including NYC Ride — Send a HUG."
+  />
+
+  <link rel="stylesheet" href="styles.css" />
+
+  <style>
+    :root {
+      --navy: #0b2f59;
+      --blue: #74b9f4;
+      --cream: #f8f5ee;
+      --white: #ffffff;
+      --text: #23374d;
+      --muted: #60758a;
+      --gold: #f2b84b;
+      --border: #dce8f2;
+      --love: #ef425c;
+      --soft-love: #fff1f4;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      background: var(--cream);
+      color: var(--text);
+      font-family: Arial, Helvetica, sans-serif;
+    }
+
+    .page {
+      max-width: 1080px;
+      margin: 0 auto;
+      padding: 28px 18px 70px;
+    }
+
+    .back-link {
+      display: inline-block;
+      margin-bottom: 22px;
+      color: var(--navy);
+      text-decoration: none;
+      font-weight: 800;
+    }
+
+    .hero {
+      text-align: center;
+      padding: 30px 15px 40px;
+    }
+
+    .love-icon {
+      width: 130px;
+      max-width: 38vw;
+      border-radius: 26px;
+      margin-bottom: 18px;
+      box-shadow: 0 15px 36px rgba(239, 66, 92, 0.16);
+    }
+
+    .hero h1 {
+      margin: 0;
+      color: var(--navy);
+      font-size: clamp(42px, 8vw, 66px);
+      line-height: 1;
+    }
+
+    .tagline {
+      margin-top: 13px;
+      color: var(--love);
+      font-size: 22px;
+      font-weight: 900;
+    }
+
+    .hero p {
+      max-width: 700px;
+      margin: 18px auto 0;
+      color: var(--muted);
+      font-size: 17px;
+      line-height: 1.7;
+    }
+
+    .section-heading {
+      text-align: center;
+      margin: 20px 0 25px;
+    }
+
+    .section-heading h2 {
+      margin: 0;
+      color: var(--navy);
+      font-size: 32px;
+    }
+
+    .section-heading p {
+      max-width: 620px;
+      margin: 10px auto 0;
+      color: var(--muted);
+      line-height: 1.6;
+    }
+
+    .product {
+      max-width: 700px;
+      margin: 0 auto;
+      background: var(--white);
+      border: 1px solid var(--border);
+      border-radius: 28px;
+      overflow: hidden;
+      box-shadow: 0 16px 42px rgba(11, 47, 89, 0.10);
+    }
+
+    .product-cover {
+      width: 100%;
+      display: block;
+      aspect-ratio: 9 / 13;
+      object-fit: cover;
+      object-position: center;
+    }
+
+    .product-content {
+      padding: 26px 24px 30px;
+    }
+
+    .badge {
+      display: inline-block;
+      padding: 7px 11px;
+      border-radius: 999px;
+      background: var(--soft-love);
+      color: var(--love);
+      font-size: 11px;
+      font-weight: 900;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      margin-bottom: 12px;
+    }
+
+    .product h2 {
+      margin: 0;
+      color: var(--navy);
+      font-size: 30px;
+    }
+
+    .product-price {
+      margin: 9px 0 14px;
+      color: var(--blue);
+      font-size: 31px;
+      font-weight: 900;
+    }
+
+    .product-description {
+      color: var(--muted);
+      line-height: 1.7;
+      margin-bottom: 20px;
+    }
+
+    .features {
+      list-style: none;
+      padding: 0;
+      margin: 0 0 24px;
+    }
+
+    .features li {
+      margin: 10px 0;
+      color: #486078;
+    }
+
+    .features li::before {
+      content: "✓";
+      color: var(--love);
+      font-weight: 900;
+      margin-right: 9px;
+    }
+
+    .button {
+      display: block;
+      text-align: center;
+      text-decoration: none;
+      border-radius: 999px;
+      padding: 15px 18px;
+      font-weight: 900;
+      margin-top: 12px;
+    }
+
+    .view-button {
+      background: var(--navy);
+      color: white;
+    }
+
+    .view-button:hover {
+      background: var(--blue);
+      color: var(--navy);
+    }
+
+    .buy-button {
+      background: var(--gold);
+      color: #17212c;
+    }
+
+    .personalize {
+      margin-top: 42px;
+      padding: 30px 24px;
+      border-radius: 26px;
+      background: var(--navy);
+      color: white;
+      text-align: center;
+    }
+
+    .personalize h2 {
+      margin: 0 0 12px;
+      font-size: 30px;
+    }
+
+    .personalize p {
+      max-width: 700px;
+      margin: 0 auto 20px;
+      color: #dce8f4;
+      line-height: 1.7;
+    }
+
+    .personalize-button {
+      display: inline-block;
+      padding: 14px 22px;
+      border-radius: 999px;
+      background: var(--gold);
+      color: #17212c;
+      font-weight: 900;
+      text-decoration: none;
+    }
+
+    .coming-soon {
+      margin-top: 34px;
+      padding: 24px;
+      text-align: center;
+      border-radius: 22px;
+      background: var(--soft-love);
+      border: 1px solid #f7d7df;
+    }
+
+    .coming-soon h3 {
+      margin: 0 0 8px;
+      color: var(--navy);
+    }
+
+    .coming-soon p {
+      margin: 0;
+      color: var(--muted);
+      line-height: 1.6;
+    }
+
+    footer {
+      text-align: center;
+      padding: 30px 18px 40px;
+      color: #74889b;
+    }
+
+    @media (max-width: 700px) {
+      .page {
+        padding-left: 14px;
+        padding-right: 14px;
+      }
+
+      .product-content {
+        padding: 22px 18px 26px;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+  <!-- MAIN NAVIGATION -->
+  <header>
+    <nav>
+      <a href="index.html">Home</a>
+      <a href="shop.html">Shop</a>
+      <a href="hugs-cards.html">HUGS Cards</a>
+      <a href="art-community.html">Art</a>
+      <a href="food-support.html">Food</a>
+      <a href="housing-help.html">Housing</a>
+      <a href="business-services.html">Business</a>
+      <a href="help-app.html">Help App</a>
+      <a href="resources.html">Resources</a>
+      <a href="about.html">About</a>
+      <a href="contact.html">Contact</a>
+    </nav>
+  </header>
+
+  <main class="page">
+
+    <a
+      href="personalized-hugs-card.html"
+      class="back-link"
+    >
+      ← Back to HUGS Card Themes
+    </a>
+
+
+    <!-- LOVE HERO -->
+    <section class="hero">
+
+      <img
+        src="assets/icon-love.png"
+        alt="Love HUGS Card"
+        class="love-icon"
+      />
+
+      <h1>Love HUGS Cards</h1>
+
+      <div class="tagline">
+        Give Love. Send a HUG.
+      </div>
+
+      <p>
+        Share affection, encouragement, appreciation and connection
+        through a HUGSLinks Love Card. Our Love collection will continue
+        growing with new visual experiences for partners, family,
+        friendships and meaningful moments.
+      </p>
+
+    </section>
+
+
+    <!-- AVAILABLE CARD -->
+    <section>
+
+      <div class="section-heading">
+
+        <h2>
+          Available Now
+        </h2>
+
+        <p>
+          Our first animated Love HUGS Card is ready to send today.
+        </p>
+
+      </div>
+
+
+      <article class="product">
+
+        <img
+          src="assets/nyc-ride-hugs-card-cover.jpg"
+          alt="NYC Ride — Send a HUG"
+          class="product-cover"
+        />
+
+        <div class="product-content">
+
+          <span class="badge">
+            Ready to Send
+          </span>
+
+          <h2>
+            NYC Ride — Send a HUG
+          </h2>
+
+          <div class="product-price">
+            $6.99
+          </div>
+
+          <p class="product-description">
+            HUGS Bear rides through New York City toward a glowing
+            sunset while hearts and golden light fill the streets.
+            Send someone a cinematic message of love, encouragement
+            and connection.
+          </p>
+
+          <ul class="features">
+            <li>Animated HUGS Card</li>
+            <li>Full music and sound experience</li>
+            <li>Ready to send immediately</li>
+            <li>No personalization required</li>
+            <li>Watch the preview before purchasing</li>
+          </ul>
+
+
+          <!-- LINK TO EXISTING NYC RIDE PRODUCT PAGE -->
+          <a
+            href="nyc-ride-hugs-card.html"
+            class="button view-button"
+          >
+            ▶ View NYC Ride & Watch Preview
+          </a>
+
+
+          <!-- LIVE STRIPE CHECKOUT -->
+          <a
+            href="https://buy.stripe.com/cNi4gy1yA0s00e30488ww04"
+            class="button buy-button"
+          >
+            Send This HUG — $6.99
+          </a>
+
+        </div>
+
+      </article>
+
+    </section>
+
+
+    <!-- PERSONALIZED OPTION -->
+    <section class="personalize">
+
+      <h2>
+        Want a Personalized Love HUG?
+      </h2>
+
+      <p>
+        Choose the Love theme and customize the recipient's name,
+        your personal message, who the HUG is from and other details
+        for a more personal HUGS Card experience.
+      </p>
+
+      <a
+        href="personalized-hugs-card.html"
+        class="personalize-button"
+      >
+        Personalize a Love HUG — $16.99
+      </a>
+
+    </section>
+
+
+    <!-- FUTURE COLLECTION -->
+    <section class="coming-soon">
+
+      <h3>
+        ❤️ More Love HUGS Coming
+      </h3>
+
+      <p>
+        Future Love HUGS Cards can include romance, anniversaries,
+        family love, friendship, long-distance love, encouragement,
+        proposals and other meaningful moments.
+      </p>
+
+    </section>
+
+  </main>
+
+
+  <footer>
+    © 2026 HUGSLinks · Give a Hug. Get a Hug.
+  </footer>
+
+</body>
+</html>
