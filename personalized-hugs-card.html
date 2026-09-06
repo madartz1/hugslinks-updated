@@ -2,13 +2,17 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
-  <title>Personalized HUGS Card | HUGSLinks</title>
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0"
+  />
+
+  <title>Personalized HUGS Cards | HUGSLinks</title>
 
   <meta
     name="description"
-    content="Choose a Love or Memorial theme and create a personalized HUGS Card from HUGSLinks."
+    content="Choose a Love or Memorial HUGS Card theme from HUGSLinks. Explore ready-to-send and personalized digital HUGS Card experiences."
   />
 
   <link rel="stylesheet" href="styles.css" />
@@ -24,9 +28,12 @@
       --hugs-muted: #60758a;
       --hugs-gold: #f2b84b;
       --hugs-border: #dce8f2;
-      --hugs-love: #ef425c;
-      --hugs-memorial: #d99a32;
-      --hugs-green: #2f8f62;
+
+      --love-red: #ef425c;
+      --love-soft: #fff0f3;
+
+      --memorial-gold: #d99a32;
+      --memorial-soft: #fff6e5;
     }
 
     * {
@@ -40,6 +47,33 @@
       font-family: Arial, Helvetica, sans-serif;
     }
 
+    /* ======================================
+       HEADER LOGO
+    ====================================== */
+
+    .header-logo {
+      width: 58px;
+      height: 58px;
+      object-fit: contain;
+      display: block;
+    }
+
+    .seal {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .seal a {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    /* ======================================
+       PAGE
+    ====================================== */
+
     .page {
       max-width: 1120px;
       margin: 0 auto;
@@ -48,383 +82,342 @@
 
     .back-link {
       display: inline-block;
-      margin-bottom: 22px;
-      text-decoration: none;
+      margin-bottom: 20px;
       color: var(--hugs-navy);
-      font-weight: 800;
+      text-decoration: none;
+      font-weight: 900;
     }
 
-    /* HERO */
+    /* ======================================
+       HERO
+    ====================================== */
 
     .hero {
       text-align: center;
-      padding: 28px 16px 38px;
+      padding: 30px 16px 42px;
     }
 
     .hero-cover {
-      width: 150px;
-      max-width: 42vw;
-      border-radius: 24px;
-      margin-bottom: 18px;
-      box-shadow: 0 14px 35px rgba(11, 47, 89, 0.12);
+      width: 160px;
+      max-width: 43vw;
+      border-radius: 26px;
+      margin-bottom: 20px;
+      box-shadow:
+        0 16px 38px
+        rgba(11, 47, 89, 0.13);
     }
 
-    .badge {
+    .hero-badge {
       display: inline-block;
-      padding: 7px 12px;
+      padding: 8px 13px;
       border-radius: 999px;
       background: var(--hugs-blue);
       color: var(--hugs-navy);
       font-size: 12px;
       font-weight: 900;
       text-transform: uppercase;
-      letter-spacing: 0.6px;
-      margin-bottom: 14px;
+      letter-spacing: 0.7px;
+      margin-bottom: 16px;
     }
 
     .hero h1 {
       margin: 0;
       color: var(--hugs-navy);
-      font-size: clamp(40px, 8vw, 62px);
+      font-size: clamp(42px, 8vw, 66px);
       line-height: 1;
     }
 
-    .tagline {
-      color: var(--hugs-blue);
-      font-size: 22px;
-      font-weight: 900;
+    .hero-tagline {
       margin-top: 14px;
+      color: var(--hugs-blue);
+      font-size: 23px;
+      font-weight: 900;
     }
 
     .hero p {
-      max-width: 720px;
+      max-width: 760px;
       margin: 18px auto 0;
       color: var(--hugs-muted);
       line-height: 1.7;
-      font-size: 16px;
+      font-size: 17px;
     }
 
-    /* THEME SELECTOR */
-
-    .theme-selector {
-      margin-top: 10px;
-    }
+    /* ======================================
+       THEME SECTION
+    ====================================== */
 
     .section-heading {
       text-align: center;
-      margin-bottom: 24px;
+      margin-bottom: 28px;
     }
 
     .section-heading h2 {
       margin: 0;
       color: var(--hugs-navy);
-      font-size: 32px;
+      font-size: 34px;
     }
 
     .section-heading p {
-      max-width: 660px;
-      margin: 10px auto 0;
+      max-width: 700px;
+      margin: 11px auto 0;
       color: var(--hugs-muted);
-      line-height: 1.6;
+      line-height: 1.65;
     }
 
     .theme-grid {
       display: grid;
       grid-template-columns: repeat(2, 1fr);
-      gap: 22px;
+      gap: 24px;
     }
 
     .theme-card {
-      background: white;
-      border: 2px solid transparent;
-      border-radius: 26px;
-      padding: 26px 20px;
+      background: var(--hugs-white);
+      border-radius: 28px;
+      padding: 30px 24px;
       text-align: center;
-      box-shadow: 0 13px 34px rgba(11, 47, 89, 0.09);
-      transition: 0.2s ease;
-      cursor: pointer;
+      box-shadow:
+        0 14px 38px
+        rgba(11, 47, 89, 0.09);
+      transition:
+        transform 0.2s ease,
+        box-shadow 0.2s ease;
     }
 
     .theme-card:hover {
-      transform: translateY(-4px);
+      transform: translateY(-5px);
+      box-shadow:
+        0 20px 45px
+        rgba(11, 47, 89, 0.14);
     }
 
-    .theme-card.selected {
-      border-color: var(--hugs-blue);
-      box-shadow: 0 16px 40px rgba(116, 185, 244, 0.22);
+    .theme-card.love {
+      border: 2px solid #f3c5ce;
     }
 
-    .theme-card img {
-      width: 110px;
-      height: 110px;
+    .theme-card.memorial {
+      border: 2px solid #ecd59d;
+    }
+
+    .theme-icon {
+      width: 145px;
+      height: 145px;
+      max-width: 45vw;
       object-fit: contain;
-      border-radius: 23px;
-      margin-bottom: 14px;
+      border-radius: 28px;
+      margin-bottom: 18px;
+    }
+
+    .theme-label {
+      display: inline-block;
+      padding: 7px 12px;
+      border-radius: 999px;
+      font-size: 11px;
+      font-weight: 900;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      margin-bottom: 13px;
+    }
+
+    .love .theme-label {
+      background: var(--love-soft);
+      color: var(--love-red);
+    }
+
+    .memorial .theme-label {
+      background: var(--memorial-soft);
+      color: #865c15;
     }
 
     .theme-card h3 {
       margin: 0;
       color: var(--hugs-navy);
-      font-size: 27px;
+      font-size: 30px;
     }
 
     .theme-card p {
-      margin: 10px auto 18px;
-      max-width: 320px;
+      max-width: 390px;
+      margin: 12px auto 22px;
       color: var(--hugs-muted);
-      line-height: 1.6;
+      line-height: 1.65;
+    }
+
+    .theme-price {
+      margin-bottom: 18px;
+      color: var(--hugs-blue);
+      font-size: 18px;
+      font-weight: 900;
     }
 
     .theme-button {
-      border: none;
+      display: block;
+      width: 100%;
+      padding: 15px 20px;
       border-radius: 999px;
-      padding: 12px 20px;
+      text-align: center;
+      text-decoration: none;
+      font-weight: 900;
+      transition: 0.2s ease;
+    }
+
+    .love-button {
       background: var(--hugs-navy);
       color: white;
-      font-weight: 900;
-      cursor: pointer;
     }
 
-    .theme-button:hover {
-      background: var(--hugs-blue);
-      color: var(--hugs-navy);
+    .love-button:hover {
+      background: var(--love-red);
     }
 
-    .theme-card.love.selected {
-      border-color: var(--hugs-love);
+    .memorial-button {
+      background: var(--hugs-gold);
+      color: #17212c;
     }
 
-    .theme-card.memorial.selected {
-      border-color: var(--hugs-memorial);
+    .memorial-button:hover {
+      filter: brightness(0.95);
     }
 
-    /* FORM AREA */
+    /* ======================================
+       HOW IT WORKS
+    ====================================== */
 
-    .order-section {
-      margin-top: 42px;
-      display: grid;
-      grid-template-columns: 0.82fr 1.18fr;
-      gap: 30px;
-      align-items: start;
-    }
-
-    .product-card,
-    .form-card {
+    .how-it-works {
+      margin-top: 48px;
       background: white;
       border: 1px solid var(--hugs-border);
-      border-radius: 26px;
-      box-shadow: 0 14px 38px rgba(11, 47, 89, 0.09);
+      border-radius: 28px;
+      padding: 30px 26px;
+      text-align: center;
+      box-shadow:
+        0 12px 32px
+        rgba(11, 47, 89, 0.07);
     }
 
-    .product-card {
-      overflow: hidden;
-    }
-
-    .product-card img {
-      display: block;
-      width: 100%;
-      aspect-ratio: 9 / 16;
-      object-fit: cover;
-    }
-
-    .product-copy {
-      padding: 22px;
-    }
-
-    .product-copy h2 {
-      margin: 0;
+    .how-it-works h2 {
+      margin: 0 0 12px;
       color: var(--hugs-navy);
-      font-size: 26px;
+      font-size: 30px;
     }
 
-    .price {
-      color: var(--hugs-blue);
-      font-size: 31px;
-      font-weight: 900;
-      margin: 9px 0 13px;
-    }
-
-    .product-copy p {
+    .how-it-works > p {
+      max-width: 720px;
+      margin: 0 auto 26px;
       color: var(--hugs-muted);
-      line-height: 1.6;
+      line-height: 1.7;
     }
 
-    .features {
-      list-style: none;
-      padding: 0;
-      margin: 17px 0 0;
+    .steps {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 18px;
     }
 
-    .features li {
-      margin: 9px 0;
-      color: #486078;
-      font-size: 14px;
+    .step {
+      padding: 20px 16px;
+      border-radius: 20px;
+      background: var(--hugs-light);
     }
 
-    .features li::before {
-      content: "✓";
-      color: var(--hugs-blue);
+    .step-number {
+      width: 38px;
+      height: 38px;
+      margin: 0 auto 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 50%;
+      background: var(--hugs-navy);
+      color: white;
       font-weight: 900;
-      margin-right: 8px;
     }
 
-    /* FORM */
-
-    .form-card {
-      padding: 28px;
-    }
-
-    .form-card h2 {
+    .step h3 {
       margin: 0 0 7px;
       color: var(--hugs-navy);
-      font-size: 28px;
+      font-size: 18px;
     }
 
-    .form-intro {
-      margin: 0 0 22px;
+    .step p {
+      margin: 0;
       color: var(--hugs-muted);
-      line-height: 1.6;
-    }
-
-    .selected-theme-box {
-      display: none;
-      padding: 14px 16px;
-      border-radius: 16px;
-      margin-bottom: 18px;
-      background: var(--hugs-light);
-      color: var(--hugs-navy);
-      font-weight: 800;
-    }
-
-    label {
-      display: block;
-      margin: 17px 0 7px;
-      color: var(--hugs-navy);
       font-size: 14px;
-      font-weight: 800;
+      line-height: 1.55;
     }
 
-    input,
-    textarea,
-    select {
-      width: 100%;
-      border: 1px solid #ccdbe7;
-      border-radius: 14px;
-      padding: 14px;
-      background: #fbfdff;
-      color: var(--hugs-text);
-      font: inherit;
-      outline: none;
-    }
+    /* ======================================
+       PERSONALIZED INFO
+    ====================================== */
 
-    input:focus,
-    textarea:focus,
-    select:focus {
-      border-color: var(--hugs-blue);
-      box-shadow: 0 0 0 3px rgba(116, 185, 244, 0.16);
-    }
-
-    textarea {
-      min-height: 115px;
-      resize: vertical;
-    }
-
-    .counter {
-      text-align: right;
-      margin-top: 5px;
-      color: #8192a2;
-      font-size: 11px;
-    }
-
-    .summary {
-      margin-top: 24px;
-      padding: 18px;
-      border-radius: 18px;
-      background: var(--hugs-light);
-    }
-
-    .summary strong {
-      color: var(--hugs-navy);
-    }
-
-    .summary p {
-      margin: 7px 0 0;
-      color: #576d81;
-      line-height: 1.5;
-      font-size: 13px;
-    }
-
-    .checkout-button {
-      width: 100%;
-      margin-top: 20px;
-      border: none;
-      border-radius: 999px;
-      padding: 16px 20px;
-      background: var(--hugs-gold);
-      color: #152231;
-      font-size: 16px;
-      font-weight: 900;
-      cursor: pointer;
-    }
-
-    .checkout-button:disabled {
-      opacity: 0.6;
-      cursor: not-allowed;
-    }
-
-    .secure {
-      margin-top: 11px;
-      text-align: center;
-      color: #768a9d;
-      font-size: 12px;
-    }
-
-    .status {
-      display: none;
-      margin-top: 15px;
-      padding: 13px;
-      border-radius: 12px;
-      background: #eaf7f0;
-      color: var(--hugs-green);
-      font-weight: 700;
-      font-size: 13px;
-    }
-
-    /* MISSION */
-
-    .mission {
+    .personalized-info {
       margin-top: 42px;
+      padding: 32px 25px;
+      border-radius: 28px;
       background: var(--hugs-navy);
-      border-radius: 26px;
-      padding: 30px 24px;
       color: white;
       text-align: center;
     }
 
-    .mission h2 {
+    .personalized-info h2 {
       margin: 0 0 12px;
+      font-size: 31px;
     }
 
-    .mission p {
+    .personalized-price {
+      margin-bottom: 12px;
+      color: var(--hugs-gold);
+      font-size: 29px;
+      font-weight: 900;
+    }
+
+    .personalized-info p {
       max-width: 760px;
       margin: 0 auto;
       color: #dce8f4;
       line-height: 1.7;
     }
 
+    /* ======================================
+       MISSION
+    ====================================== */
+
+    .mission {
+      margin-top: 30px;
+      padding: 27px 22px;
+      border-radius: 25px;
+      background: var(--hugs-light);
+      text-align: center;
+    }
+
+    .mission h2 {
+      margin: 0 0 10px;
+      color: var(--hugs-navy);
+      font-size: 27px;
+    }
+
+    .mission p {
+      max-width: 760px;
+      margin: 0 auto;
+      color: var(--hugs-muted);
+      line-height: 1.7;
+    }
+
     .mission strong {
-      color: var(--hugs-gold);
+      color: var(--hugs-navy);
     }
 
     footer {
-      padding: 28px 18px 40px;
+      padding: 30px 18px 42px;
       text-align: center;
       color: #74889b;
     }
 
+    /* ======================================
+       MOBILE
+    ====================================== */
+
     @media (max-width: 800px) {
       .theme-grid,
-      .order-section {
+      .steps {
         grid-template-columns: 1fr;
       }
 
@@ -433,8 +426,8 @@
         padding-right: 14px;
       }
 
-      .form-card {
-        padding: 22px;
+      .theme-card {
+        padding: 26px 18px;
       }
     }
   </style>
@@ -442,99 +435,168 @@
 
 <body>
 
-  <!-- MAIN NAVIGATION -->
+  <!-- ======================================
+       HOME-STYLE HEADER
+  ====================================== -->
+
   <header class="topbar">
-  <nav class="nav">
 
-    <a class="brand" href="index.html">
-      Hugslinks
-    </a>
+    <nav class="nav">
 
-    <div class="seal">
-      <img
-        src="assets/HUGS_Header_Logo_Transparent.png"
-        alt="HUGS Logo"
-        class="header-logo"
-      />
-    </div>
+      <a
+        class="brand"
+        href="index.html"
+      >
+        Hugslinks
+      </a>
 
-    <button
-      class="menu"
-      type="button"
-      aria-label="Open navigation menu"
-    >
-      Menu
-    </button>
 
-    <div class="navlinks">
-      <a href="index.html">Home</a>
-      <a href="shop.html">Shop</a>
-      <a href="hugs-cards.html">HUGS Cards</a>
-      <a href="art-community.html">Art</a>
-      <a href="food-support.html">Food</a>
-      <a href="housing-help.html">Housing</a>
-      <a href="business-services.html">Business</a>
-      <a href="help-app.html">Help App</a>
-      <a href="resources.html">Resources</a>
-      <a href="about.html">About</a>
-      <a href="contact.html">Contact</a>
-    </div>
+      <div class="seal">
 
-  </nav>
-</header>
+        <a
+          href="index.html"
+          aria-label="HUGSLinks Home"
+        >
+
+          <img
+            src="assets/hugslinks-header-logo.PNG"
+            alt="HUGSLinks house and heart logo"
+            class="header-logo"
+          />
+
+        </a>
+
+      </div>
+
+
+      <button
+        class="menu"
+        type="button"
+        aria-label="Open navigation menu"
+      >
+        Menu
+      </button>
+
+
+      <div class="navlinks">
+
+        <a href="index.html">
+          Home
+        </a>
+
+        <a href="shop.html">
+          Shop
+        </a>
+
+        <a href="hugs-cards.html">
+          HUGS Cards
+        </a>
+
+        <a href="art-community.html">
+          Art
+        </a>
+
+        <a href="food-support.html">
+          Food
+        </a>
+
+        <a href="housing-help.html">
+          Housing
+        </a>
+
+        <a href="business-services.html">
+          Business
+        </a>
+
+        <a href="help-app.html">
+          Help App
+        </a>
+
+        <a href="resources.html">
+          Resources
+        </a>
+
+        <a href="about.html">
+          About
+        </a>
+
+        <a href="contact.html">
+          Contact
+        </a>
+
+      </div>
+
+    </nav>
+
+  </header>
 
 
   <main class="page">
 
-    <a href="shop.html#products" class="back-link">
+    <!-- BACK -->
+
+    <a
+      href="shop.html#products"
+      class="back-link"
+    >
       ← Back to Shop HUGS
     </a>
 
 
-    <!-- HERO -->
+    <!-- ======================================
+         HERO
+    ====================================== -->
+
     <section class="hero">
 
       <img
         src="assets/personalized-hugs-card-cover.jpg"
-        alt="Personalized HUGS Card"
+        alt="Personalized HUGS Cards"
         class="hero-cover"
       />
 
       <br />
 
-      <span class="badge">
-        Personalized HUGS Card
+      <span class="hero-badge">
+        HUGS Card Collection
       </span>
+
 
       <h1>
         Choose Your HUG
       </h1>
 
-      <div class="tagline">
-        Make Their HUG Personal
+
+      <div class="hero-tagline">
+        Love • Memorial • Connection
       </div>
 
+
       <p>
-        Choose a HUGS theme, then personalize the card with the
-        recipient's name, your message, who the HUG is from and
-        the occasion.
+        Start by choosing the kind of HUG you want to send.
+        Each collection takes you to its own HUGS Card experience,
+        where you can view the available card and choose the
+        option that's right for your message.
       </p>
 
     </section>
 
 
-    <!-- THEME SELECTOR -->
-    <section class="theme-selector">
+    <!-- ======================================
+         THEMES
+    ====================================== -->
+
+    <section>
 
       <div class="section-heading">
 
         <h2>
-          Choose Your Theme
+          Choose a HUGS Card Theme
         </h2>
 
         <p>
-          We're starting with Love and Memorial.
-          More HUGS Card themes will be added as the collection grows.
+          We're launching with Love and Memorial.
+          More HUGS Card collections will be added as HUGSLinks grows.
         </p>
 
       </div>
@@ -542,357 +604,228 @@
 
       <div class="theme-grid">
 
-        <!-- LOVE -->
-        <article
-          class="theme-card love"
-          id="loveThemeCard"
-        >
+
+        <!-- ==================================
+             LOVE
+        =================================== -->
+
+        <article class="theme-card love">
 
           <img
-            src="assets/icon-love.PNG
-            alt="Love HUGS Card theme"
+            src="assets/icon-love.PNG"
+            alt="Love HUGS Cards"
+            class="theme-icon"
           />
 
+
+          <div class="theme-label">
+            Love Collection
+          </div>
+
+
           <h3>
-            Love
+            Love HUGS
           </h3>
 
+
           <p>
-            For relationships, family, friendship,
-            affection, encouragement and meaningful connection.
+            Send affection, encouragement, appreciation and
+            meaningful connection to partners, family,
+            friends and the people who matter most.
           </p>
 
-          <button
-            type="button"
-            class="theme-button"
-            onclick="chooseTheme('Love')"
+
+          <div class="theme-price">
+            Ready-to-Send Card Available — $6.99
+          </div>
+
+
+          <a
+            href="love-hugs-card.html"
+            class="theme-button love-button"
           >
-            Choose Love
-          </button>
+            ❤️ View Love HUGS
+          </a>
 
         </article>
 
 
-        <!-- MEMORIAL -->
-        <article
-          class="theme-card memorial"
-          id="memorialThemeCard"
-        >
+        <!-- ==================================
+             MEMORIAL
+        =================================== -->
+
+        <article class="theme-card memorial">
 
           <img
             src="assets/icon-memorial.PNG"
-            alt="Memorial HUGS Card theme"
+            alt="Memorial HUGS Cards"
+            class="theme-icon"
           />
 
+
+          <div class="theme-label">
+            Memorial Collection
+          </div>
+
+
           <h3>
-            Memorial
+            Memorial HUGS
           </h3>
 
+
           <p>
-            Honor a life, preserve a memory and send
-            comfort during meaningful moments of remembrance.
+            Honor loved ones, preserve memories and send
+            comfort, remembrance and support to family
+            and friends during meaningful moments.
           </p>
 
-          <button
-            type="button"
-            class="theme-button"
-            onclick="chooseTheme('Memorial')"
+
+          <div class="theme-price">
+            Memorial Ride HUGS Card
+          </div>
+
+
+          <a
+            href="memorial-hugs-card.html"
+            class="theme-button memorial-button"
           >
-            Choose Memorial
-          </button>
+            🕯️ View Memorial HUGS
+          </a>
 
         </article>
+
 
       </div>
 
     </section>
 
 
-    <!-- ORDER SECTION -->
-    <section
-      class="order-section"
-      id="personalizeSection"
-    >
+    <!-- ======================================
+         HOW IT WORKS
+    ====================================== -->
 
-      <!-- PRODUCT INFO -->
-      <article class="product-card">
+    <section class="how-it-works">
 
-        <img
-          src="assets/personalized-hugs-card-cover.jpg"
-          alt="Personalized HUGS Card"
-        />
+      <h2>
+        How HUGS Cards Work
+      </h2>
 
-        <div class="product-copy">
 
-          <h2>
-            Personalized HUGS Card
-          </h2>
+      <p>
+        Choose the kind of message you want to send,
+        explore the available HUGS Card and then choose
+        between a ready-to-send or personalized experience
+        when available.
+      </p>
 
-          <div class="price">
-            $16.99
+
+      <div class="steps">
+
+
+        <article class="step">
+
+          <div class="step-number">
+            1
           </div>
+
+          <h3>
+            Choose a Theme
+          </h3>
 
           <p>
-            Choose your theme and personalize a HUGSLinks visual
-            experience for someone important to you.
+            Start with Love or Memorial.
           </p>
 
-          <ul class="features">
-            <li>Theme choice</li>
-            <li>Recipient name</li>
-            <li>Sender name</li>
-            <li>Personal message</li>
-            <li>Occasion</li>
-            <li>Personalized closing</li>
-            <li>Digital delivery</li>
-          </ul>
-
-        </div>
-
-      </article>
+        </article>
 
 
-      <!-- PERSONALIZATION FORM -->
-      <section class="form-card">
+        <article class="step">
 
-        <h2>
-          Personalize Your HUG
-        </h2>
+          <div class="step-number">
+            2
+          </div>
 
-        <p class="form-intro">
-          Choose Love or Memorial above, then tell us who this HUG
-          is for and what you want to say.
-        </p>
+          <h3>
+            Choose Your Card
+          </h3>
 
-
-        <div
-          class="selected-theme-box"
-          id="selectedThemeBox"
-        >
-          Selected Theme:
-          <span id="selectedThemeText"></span>
-        </div>
-
-
-        <form
-          id="personalizedHugForm"
-          name="personalized-hug-order"
-          method="POST"
-          data-netlify="true"
-          netlify-honeypot="bot-field"
-        >
-
-          <!-- NETLIFY FORM NAME -->
-          <input
-            type="hidden"
-            name="form-name"
-            value="personalized-hug-order"
-          />
-
-
-          <!-- SELECTED THEME -->
-          <input
-            type="hidden"
-            id="selectedTheme"
-            name="card_theme"
-            value=""
-          />
-
-
-          <!-- BOT PROTECTION -->
-          <p style="display:none;">
-            <label>
-              Don't fill this out:
-              <input name="bot-field" />
-            </label>
+          <p>
+            View the artwork, story and preview for the HUG.
           </p>
 
-
-          <!-- RECIPIENT -->
-          <label for="recipient">
-            Recipient's Name
-          </label>
-
-          <input
-            type="text"
-            id="recipient"
-            name="recipient_name"
-            placeholder="Who is receiving the HUG?"
-            maxlength="50"
-            required
-          />
+        </article>
 
 
-          <!-- SENDER -->
-          <label for="sender">
-            Who Is This HUG From?
-          </label>
+        <article class="step">
 
-          <input
-            type="text"
-            id="sender"
-            name="sender_name"
-            placeholder="Your name"
-            maxlength="50"
-            required
-          />
-
-
-          <!-- MESSAGE -->
-          <label for="message">
-            Your Personal Message
-          </label>
-
-          <textarea
-            id="message"
-            name="personal_message"
-            maxlength="280"
-            placeholder="Write the message you want included in their HUG..."
-            required
-          ></textarea>
-
-          <div
-            class="counter"
-            id="messageCounter"
-          >
-            0 / 280
+          <div class="step-number">
+            3
           </div>
 
+          <h3>
+            Send Your HUG
+          </h3>
 
-          <!-- CLOSING -->
-          <label for="closing">
-            Personalized Closing
-          </label>
+          <p>
+            Purchase securely and share the digital HUG with someone special.
+          </p>
 
-          <input
-            type="text"
-            id="closing"
-            name="personalized_closing"
-            maxlength="80"
-            placeholder="Example: Love always, John"
-          />
+        </article>
 
 
-          <!-- EMAIL -->
-          <label for="email">
-            Your Email
-          </label>
-
-          <input
-            type="email"
-            id="email"
-            name="customer_email"
-            placeholder="Where we can contact you about your order"
-            required
-          />
-
-
-          <!-- OCCASION -->
-          <label for="occasion">
-            Occasion
-          </label>
-
-          <select
-            id="occasion"
-            name="occasion"
-          >
-
-            <option value="Just Because">
-              Just Because
-            </option>
-
-            <option value="Love">
-              Love
-            </option>
-
-            <option value="Anniversary">
-              Anniversary
-            </option>
-
-            <option value="Thinking of You">
-              Thinking of You
-            </option>
-
-            <option value="Encouragement">
-              Encouragement
-            </option>
-
-            <option value="Memorial">
-              Memorial
-            </option>
-
-            <option value="In Loving Memory">
-              In Loving Memory
-            </option>
-
-            <option value="Other">
-              Other
-            </option>
-
-          </select>
-
-
-          <div class="summary">
-
-            <strong>
-              Personalized HUGS Card — $16.99
-            </strong>
-
-            <p>
-              Your personalization details are saved with HUGSLinks
-              before you continue to secure Stripe checkout.
-            </p>
-
-          </div>
-
-
-          <button
-            type="submit"
-            class="checkout-button"
-            id="checkoutButton"
-          >
-            Save Personalization & Continue to Secure Checkout — $16.99
-          </button>
-
-
-          <div class="secure">
-            🔒 Secure checkout powered by Stripe
-          </div>
-
-
-          <div
-            class="status"
-            id="statusMessage"
-          >
-            Your personalization has been saved.
-            Taking you to secure checkout…
-          </div>
-
-        </form>
-
-      </section>
+      </div>
 
     </section>
 
 
-    <!-- MISSION -->
+    <!-- ======================================
+         PERSONALIZED
+    ====================================== -->
+
+    <section class="personalized-info">
+
+      <h2>
+        Want to Make Their HUG Personal?
+      </h2>
+
+
+      <div class="personalized-price">
+        Personalized HUGS Cards — $16.99
+      </div>
+
+
+      <p>
+        Personalized versions can include the recipient's name,
+        sender name, your personal message, occasion and a special
+        closing. Choose Love or Memorial above to begin with the
+        HUGS Card style you want.
+      </p>
+
+    </section>
+
+
+    <!-- ======================================
+         MISSION
+    ====================================== -->
+
     <section class="mission">
 
       <h2>
-        Your HUG Helps Build Something Bigger
+        Every HUG Can Create Impact
       </h2>
 
+
       <p>
-        HUGSLinks connects creativity, community and good business.
-        Your support helps us continue developing projects intended
-        to support people experiencing homelessness, community
-        entrepreneurs, local artists and people in need.
+        Your support helps HUGSLinks continue developing projects
+        intended to support people experiencing homelessness,
+        community entrepreneurs, local artists and people in need.
         <strong>
           Thank you for supporting HUGSLinks.
         </strong>
       </p>
 
     </section>
+
 
   </main>
 
@@ -903,219 +836,6 @@
 
 
   <script src="script.js"></script>
-
-
-  <script>
-
-    /*
-      LIVE PERSONALIZED STRIPE CHECKOUT
-    */
-
-    const PERSONALIZED_STRIPE_URL =
-      "https://buy.stripe.com/9B64gy2CE4Ig3qf3gk8ww05";
-
-
-    /*
-      THEME SELECTION
-    */
-
-    function chooseTheme(theme) {
-
-      const selectedTheme =
-        document.getElementById("selectedTheme");
-
-      const selectedThemeText =
-        document.getElementById("selectedThemeText");
-
-      const selectedThemeBox =
-        document.getElementById("selectedThemeBox");
-
-      const loveCard =
-        document.getElementById("loveThemeCard");
-
-      const memorialCard =
-        document.getElementById("memorialThemeCard");
-
-
-      selectedTheme.value = theme;
-
-      selectedThemeText.textContent = theme;
-
-      selectedThemeBox.style.display = "block";
-
-
-      loveCard.classList.remove("selected");
-
-      memorialCard.classList.remove("selected");
-
-
-      if (theme === "Love") {
-        loveCard.classList.add("selected");
-
-        document.getElementById("occasion").value =
-          "Love";
-      }
-
-
-      if (theme === "Memorial") {
-        memorialCard.classList.add("selected");
-
-        document.getElementById("occasion").value =
-          "Memorial";
-      }
-
-
-      document
-        .getElementById("personalizeSection")
-        .scrollIntoView({
-          behavior: "smooth",
-          block: "start"
-        });
-
-    }
-
-
-
-    /*
-      CHARACTER COUNTER
-    */
-
-    const message =
-      document.getElementById("message");
-
-    const messageCounter =
-      document.getElementById("messageCounter");
-
-
-    message.addEventListener(
-      "input",
-      function() {
-
-        messageCounter.textContent =
-          message.value.length + " / 280";
-
-      }
-    );
-
-
-
-    /*
-      NETLIFY FORM + STRIPE
-    */
-
-    const form =
-      document.getElementById("personalizedHugForm");
-
-    const checkoutButton =
-      document.getElementById("checkoutButton");
-
-    const statusMessage =
-      document.getElementById("statusMessage");
-
-
-    form.addEventListener(
-      "submit",
-      async function(event) {
-
-        event.preventDefault();
-
-
-        /*
-          REQUIRE THEME
-        */
-
-        const theme =
-          document.getElementById("selectedTheme").value;
-
-
-        if (!theme) {
-
-          alert(
-            "Please choose Love or Memorial before continuing."
-          );
-
-          document
-            .querySelector(".theme-selector")
-            .scrollIntoView({
-              behavior: "smooth"
-            });
-
-          return;
-
-        }
-
-
-        checkoutButton.disabled = true;
-
-        checkoutButton.textContent =
-          "Saving Your HUG…";
-
-
-        const formData =
-          new FormData(form);
-
-
-        try {
-
-          await fetch("/", {
-
-            method: "POST",
-
-            headers: {
-              "Content-Type":
-                "application/x-www-form-urlencoded"
-            },
-
-            body:
-              new URLSearchParams(
-                formData
-              ).toString()
-
-          });
-
-
-          statusMessage.style.display =
-            "block";
-
-
-          checkoutButton.textContent =
-            "Opening Secure Checkout…";
-
-
-          setTimeout(
-            function() {
-
-              window.location.href =
-                PERSONALIZED_STRIPE_URL;
-
-            },
-            900
-          );
-
-
-        } catch(error) {
-
-          console.error(error);
-
-
-          checkoutButton.disabled =
-            false;
-
-
-          checkoutButton.textContent =
-            "Save Personalization & Continue to Secure Checkout — $16.99";
-
-
-          alert(
-            "We could not save your personalization. Please try again."
-          );
-
-        }
-
-      }
-    );
-
-  </script>
 
 </body>
 </html>
