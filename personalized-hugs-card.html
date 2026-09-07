@@ -60,11 +60,9 @@
       max-width: 1180px;
       margin: 0 auto;
       padding: 12px 18px;
-
       display: grid;
       grid-template-columns: 1fr auto 1fr;
       align-items: center;
-
       position: relative;
     }
 
@@ -93,18 +91,13 @@
 
     .menu {
       justify-self: end;
-
       border: 1px solid var(--hugs-border);
       border-radius: 999px;
-
       background: var(--hugs-navy);
       color: white;
-
       padding: 10px 18px;
-
       font-size: 14px;
       font-weight: 900;
-
       cursor: pointer;
     }
 
@@ -113,48 +106,61 @@
       color: var(--hugs-navy);
     }
 
-    .navlinks {
-      position: absolute;
-      top: calc(100% + 8px);
-      right: 18px;
+    /* =========================
+       COMPACT DROPDOWN MENU
+       OVERRIDES GLOBAL DRAWER
+    ========================= */
 
-      width: min(290px, calc(100vw - 36px));
+    .topbar .navlinks {
+      position: absolute !important;
+      top: calc(100% + 8px) !important;
+      right: 12px !important;
+      left: auto !important;
 
-      display: none;
-      flex-direction: column;
-      gap: 4px;
+      width: min(290px, calc(100vw - 24px)) !important;
+      height: auto !important;
+      min-height: 0 !important;
+      max-height: calc(100vh - 110px) !important;
 
-      padding: 12px;
+      display: none !important;
+      flex-direction: column !important;
+      gap: 4px !important;
 
-      background: white;
+      padding: 12px !important;
+      margin: 0 !important;
 
-      border: 1px solid var(--hugs-border);
-      border-radius: 20px;
+      background: #ffffff !important;
+      border: 1px solid var(--hugs-border) !important;
+      border-radius: 18px !important;
 
-      box-shadow: 0 18px 45px rgba(11, 47, 89, 0.14);
+      box-shadow: 0 18px 45px rgba(11, 47, 89, 0.18) !important;
+
+      overflow-y: auto !important;
+
+      transform: none !important;
+      translate: none !important;
+
+      z-index: 2000 !important;
     }
 
-    .navlinks.open {
-      display: flex;
+    .topbar .navlinks.open {
+      display: flex !important;
     }
 
-    .navlinks a {
-      display: block;
-
-      padding: 12px 14px;
-
-      border-radius: 12px;
-
-      text-decoration: none;
-
-      color: var(--hugs-text);
-
-      font-weight: 800;
+    .topbar .navlinks a {
+      display: block !important;
+      width: 100% !important;
+      padding: 12px 14px !important;
+      border-radius: 12px !important;
+      background: transparent !important;
+      color: var(--hugs-text) !important;
+      text-decoration: none !important;
+      font-weight: 800 !important;
     }
 
-    .navlinks a:hover {
-      background: var(--hugs-light);
-      color: var(--hugs-navy);
+    .topbar .navlinks a:hover {
+      background: var(--hugs-light) !important;
+      color: var(--hugs-navy) !important;
     }
 
     /* =========================
@@ -260,12 +266,8 @@
       border-radius: 28px;
       padding: 30px 24px;
       text-align: center;
-
       box-shadow: 0 14px 38px rgba(11, 47, 89, 0.09);
-
-      transition:
-        transform 0.2s ease,
-        box-shadow 0.2s ease;
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
     }
 
     .theme-card:hover {
@@ -403,11 +405,9 @@
       width: 38px;
       height: 38px;
       margin: 0 auto 10px;
-
       display: flex;
       align-items: center;
       justify-content: center;
-
       border-radius: 50%;
       background: var(--hugs-navy);
       color: white;
@@ -532,8 +532,9 @@
         padding: 9px 14px;
       }
 
-      .navlinks {
-        right: 12px;
+      .topbar .navlinks {
+        right: 10px !important;
+        width: min(280px, calc(100vw - 20px)) !important;
       }
     }
   </style>
@@ -542,11 +543,10 @@
 <body>
 
   <!-- =========================
-       HUGSLINKS HEADER
+       HEADER
   ========================= -->
 
   <header class="topbar">
-
     <div class="nav">
 
       <a
@@ -570,6 +570,7 @@
 
       <button
         class="menu"
+        id="menuButton"
         type="button"
         aria-label="Open navigation menu"
         aria-expanded="false"
@@ -577,8 +578,10 @@
         Menu
       </button>
 
-      <div class="navlinks">
-
+      <div
+        class="navlinks"
+        id="navLinks"
+      >
         <a href="index.html">Home</a>
         <a href="shop.html">Shop</a>
         <a href="hugs-cards.html">HUGS Cards</a>
@@ -590,11 +593,9 @@
         <a href="resources.html">Resources</a>
         <a href="about.html">About</a>
         <a href="contact.html">Contact</a>
-
       </div>
 
     </div>
-
   </header>
 
 
@@ -608,9 +609,7 @@
     </a>
 
 
-    <!-- =========================
-         HERO
-    ========================= -->
+    <!-- HERO -->
 
     <section class="hero">
 
@@ -644,9 +643,7 @@
     </section>
 
 
-    <!-- =========================
-         THEMES
-    ========================= -->
+    <!-- THEMES -->
 
     <section>
 
@@ -672,7 +669,7 @@
         <article class="theme-card love">
 
           <img
-            src="assets/icon-love.PNG"
+            src="assets/icon-love.jpg"
             alt="Love HUGS Cards"
             class="theme-icon"
           />
@@ -747,9 +744,7 @@
     </section>
 
 
-    <!-- =========================
-         HOW IT WORKS
-    ========================= -->
+    <!-- HOW IT WORKS -->
 
     <section class="how-it-works">
 
@@ -821,9 +816,7 @@
     </section>
 
 
-    <!-- =========================
-         PERSONALIZED INFO
-    ========================= -->
+    <!-- PERSONALIZED INFO -->
 
     <section class="personalized-info">
 
@@ -845,9 +838,7 @@
     </section>
 
 
-    <!-- =========================
-         MISSION
-    ========================= -->
+    <!-- MISSION -->
 
     <section class="mission">
 
@@ -874,8 +865,52 @@
   </footer>
 
 
-  <!-- EXISTING SITE MENU SCRIPT -->
-  <script src="script.js"></script>
+  <!-- PAGE-SPECIFIC MENU SCRIPT -->
+  <script>
+    const menuButton =
+      document.getElementById("menuButton");
+
+    const navLinks =
+      document.getElementById("navLinks");
+
+    menuButton.addEventListener(
+      "click",
+      function (event) {
+
+        event.stopPropagation();
+
+        const isOpen =
+          navLinks.classList.toggle("open");
+
+        menuButton.setAttribute(
+          "aria-expanded",
+          isOpen ? "true" : "false"
+        );
+
+      }
+    );
+
+    navLinks.addEventListener(
+      "click",
+      function (event) {
+        event.stopPropagation();
+      }
+    );
+
+    document.addEventListener(
+      "click",
+      function () {
+
+        navLinks.classList.remove("open");
+
+        menuButton.setAttribute(
+          "aria-expanded",
+          "false"
+        );
+
+      }
+    );
+  </script>
 
 </body>
 </html>
