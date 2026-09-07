@@ -39,108 +39,6 @@
     }
 
     /* =========================
-       HUGSLINKS HEADER
-    ========================= */
-
-    .topbar {
-      width: 100%;
-      background: #ffffff;
-      border-bottom: 1px solid var(--border);
-      position: sticky;
-      top: 0;
-      z-index: 1000;
-    }
-
-    .nav {
-      max-width: 1180px;
-      margin: 0 auto;
-      padding: 12px 18px;
-
-      display: grid;
-      grid-template-columns: 1fr auto 1fr;
-      align-items: center;
-
-      position: relative;
-    }
-
-    .brand {
-      justify-self: start;
-      text-decoration: none;
-      color: var(--navy);
-      font-size: 24px;
-      font-weight: 900;
-    }
-
-    .seal {
-      justify-self: center;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      text-decoration: none;
-    }
-
-    .header-logo {
-      width: 58px;
-      height: 58px;
-      object-fit: contain;
-      display: block;
-    }
-
-    .menu {
-      justify-self: end;
-      border: 1px solid var(--border);
-      border-radius: 999px;
-      background: var(--navy);
-      color: white;
-      padding: 10px 18px;
-      font-size: 14px;
-      font-weight: 900;
-      cursor: pointer;
-    }
-
-    .menu:hover {
-      background: var(--blue);
-      color: var(--navy);
-    }
-
-    .navlinks {
-      position: absolute;
-      top: calc(100% + 8px);
-      right: 18px;
-      width: min(290px, calc(100vw - 36px));
-
-      display: none;
-      flex-direction: column;
-      gap: 4px;
-
-      padding: 12px;
-
-      background: white;
-      border: 1px solid var(--border);
-      border-radius: 20px;
-
-      box-shadow: 0 18px 45px rgba(11, 47, 89, 0.14);
-    }
-
-    .navlinks.open {
-      display: flex;
-    }
-
-    .navlinks a {
-      display: block;
-      padding: 12px 14px;
-      border-radius: 12px;
-      text-decoration: none;
-      color: var(--text);
-      font-weight: 800;
-    }
-
-    .navlinks a:hover {
-      background: #eef7ff;
-      color: var(--navy);
-    }
-
-    /* =========================
        PAGE
     ========================= */
 
@@ -386,7 +284,7 @@
     }
 
     /* =========================
-       MOBILE
+       MOBILE PAGE LAYOUT
     ========================= */
 
     @media (max-width: 700px) {
@@ -399,41 +297,18 @@
         padding: 22px 18px 26px;
       }
     }
-
-    @media (max-width: 600px) {
-      .nav {
-        padding: 10px 12px;
-      }
-
-      .brand {
-        font-size: 20px;
-      }
-
-      .header-logo {
-        width: 52px;
-        height: 52px;
-      }
-
-      .menu {
-        padding: 9px 14px;
-      }
-
-      .navlinks {
-        right: 12px;
-      }
-    }
   </style>
 </head>
 
 <body>
 
   <!-- =========================
-       HUGSLINKS HEADER
+       SAME HEADER SYSTEM
+       AS HOMEPAGE
   ========================= -->
 
   <header class="topbar">
-
-    <div class="nav">
+    <nav class="nav">
 
       <a
         class="brand"
@@ -442,47 +317,71 @@
         Hugslinks
       </a>
 
-      <a
-        class="seal"
-        href="index.html"
-        aria-label="HUGSLinks Home"
-      >
+      <div class="seal">
         <img
           src="assets/HUGS_Header_Logo_Transparent.png"
-          alt="HUGSLinks logo"
-          class="header-logo"
+          alt="HUGS logo"
         />
-      </a>
+      </div>
 
       <button
         class="menu"
-        id="menuButton"
         type="button"
-        aria-label="Open navigation menu"
         aria-expanded="false"
+        aria-label="Open navigation menu"
       >
         Menu
       </button>
 
-      <div
-        class="navlinks"
-        id="navLinks"
-      >
-        <a href="index.html">Home</a>
-        <a href="shop.html">Shop</a>
-        <a href="hugs-cards.html">HUGS Cards</a>
-        <a href="art-community.html">Art</a>
-        <a href="food-support.html">Food</a>
-        <a href="housing-help.html">Housing</a>
-        <a href="business-services.html">Business</a>
-        <a href="help-app.html">Help App</a>
-        <a href="resources.html">Resources</a>
-        <a href="about.html">About</a>
-        <a href="contact.html">Contact</a>
+      <div class="navlinks">
+
+        <a href="index.html">
+          Home
+        </a>
+
+        <a href="shop.html">
+          Shop
+        </a>
+
+        <a href="hugs-cards.html">
+          HUGS Cards
+        </a>
+
+        <a href="art-community.html">
+          Art
+        </a>
+
+        <a href="food-support.html">
+          Food
+        </a>
+
+        <a href="housing-help.html">
+          Housing
+        </a>
+
+        <a href="business-services.html">
+          Business
+        </a>
+
+        <a href="help-app.html">
+          Help App
+        </a>
+
+        <a href="resources.html">
+          Resources
+        </a>
+
+        <a href="about.html">
+          About
+        </a>
+
+        <a href="contact.html">
+          Contact
+        </a>
+
       </div>
 
-    </div>
-
+    </nav>
   </header>
 
 
@@ -496,7 +395,9 @@
     </a>
 
 
-    <!-- LOVE HERO -->
+    <!-- =========================
+         LOVE HERO
+    ========================= -->
 
     <section class="hero">
 
@@ -524,7 +425,9 @@
     </section>
 
 
-    <!-- AVAILABLE CARD -->
+    <!-- =========================
+         AVAILABLE CARD
+    ========================= -->
 
     <section>
 
@@ -599,7 +502,9 @@
     </section>
 
 
-    <!-- PERSONALIZED OPTION -->
+    <!-- =========================
+         PERSONALIZED OPTION
+    ========================= -->
 
     <section class="personalize">
 
@@ -623,7 +528,9 @@
     </section>
 
 
-    <!-- FUTURE COLLECTION -->
+    <!-- =========================
+         FUTURE COLLECTION
+    ========================= -->
 
     <section class="coming-soon">
 
@@ -647,51 +554,12 @@
   </footer>
 
 
+  <!-- =========================
+       SAME MENU SCRIPT
+       AS HOMEPAGE
+  ========================= -->
+
   <script src="script.js"></script>
-
-  <script>
-    const menuButton =
-      document.getElementById("menuButton");
-
-    const navLinks =
-      document.getElementById("navLinks");
-
-    menuButton.addEventListener(
-      "click",
-      function () {
-
-        const isOpen =
-          navLinks.classList.toggle("open");
-
-        menuButton.setAttribute(
-          "aria-expanded",
-          isOpen ? "true" : "false"
-        );
-
-      }
-    );
-
-    document.addEventListener(
-      "click",
-      function (event) {
-
-        if (
-          !navLinks.contains(event.target) &&
-          !menuButton.contains(event.target)
-        ) {
-
-          navLinks.classList.remove("open");
-
-          menuButton.setAttribute(
-            "aria-expanded",
-            "false"
-          );
-
-        }
-
-      }
-    );
-  </script>
 
 </body>
 </html>
