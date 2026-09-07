@@ -3,10 +3,14 @@ import { getStore } from "@netlify/blobs";
 export default async (req) => {
   if (req.method !== "POST") {
     return new Response(
-      JSON.stringify({ error: "Method not allowed" }),
+      JSON.stringify({
+        error: "Method not allowed"
+      }),
       {
         status: 405,
-        headers: { "Content-Type": "application/json" }
+        headers: {
+          "Content-Type": "application/json"
+        }
       }
     );
   }
@@ -23,7 +27,8 @@ export default async (req) => {
       occasion,
       personal_message,
       special_closing,
-      special_instructions
+      special_instructions,
+      test_mode
     } = data;
 
     if (
@@ -40,7 +45,9 @@ export default async (req) => {
         }),
         {
           status: 400,
-          headers: { "Content-Type": "application/json" }
+          headers: {
+            "Content-Type": "application/json"
+          }
         }
       );
     }
@@ -50,20 +57,38 @@ export default async (req) => {
       consistency: "strong"
     });
 
+    const isTestOrder =
+      test_mode === true ||
+      order_id.startsWith("HUG-TEST-");
+
     const order = {
       order_id,
 
-      product:
-        "NYC Ride Personalized HUGS Card",
+      test_mode:
+        isTestOrder,
 
-      price: "16.99",
+      environment:
+        isTestOrder
+          ? "test"
+          : "live",
+
+      product:
+        isTestOrder
+          ? "NYC Ride Personalized HUGS Card TEST"
+          : "NYC Ride Personalized HUGS Card",
+
+      price:
+        "16.99",
 
       card_asset:
         "https://hugslinks.com/assets/nyc-ride-hugs-full.mp4",
 
       customer_name,
+
       customer_email,
+
       recipient_name,
+
       sender_name,
 
       occasion:
@@ -95,10 +120,25 @@ export default async (req) => {
       order
     );
 
+    console.log(
+      "HUG order saved:",
+      {
+        order_id,
+        test_mode:
+          isTestOrder,
+        environment:
+          order.environment
+      }
+    );
+
     return new Response(
       JSON.stringify({
         success: true,
-        order_id
+        order_id,
+        test_mode:
+          isTestOrder,
+        environment:
+          order.environment
       }),
       {
         status: 200,
@@ -107,7 +147,9 @@ export default async (req) => {
         }
       }
     );
+
   } catch (error) {
+
     console.error(
       "Save HUG order error:",
       error
