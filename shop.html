@@ -26,12 +26,135 @@
       --hugs-border: #dce8f2;
     }
 
+    * {
+      box-sizing: border-box;
+    }
+
     body {
       margin: 0;
       background: var(--hugs-cream);
       color: var(--hugs-text);
       font-family: Arial, Helvetica, sans-serif;
     }
+
+    /* =========================
+       HUGSLINKS HEADER
+    ========================= */
+
+    .topbar {
+      width: 100%;
+      background: #ffffff;
+      border-bottom: 1px solid var(--hugs-border);
+      position: sticky;
+      top: 0;
+      z-index: 1000;
+    }
+
+    .nav {
+      max-width: 1180px;
+      margin: 0 auto;
+      padding: 12px 18px;
+
+      display: grid;
+      grid-template-columns: 1fr auto 1fr;
+      align-items: center;
+
+      position: relative;
+    }
+
+    .brand {
+      justify-self: start;
+      text-decoration: none;
+      color: var(--hugs-navy);
+      font-size: 24px;
+      font-weight: 900;
+    }
+
+    .seal {
+      justify-self: center;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      text-decoration: none;
+    }
+
+    .header-logo {
+      width: 58px;
+      height: 58px;
+      object-fit: contain;
+      display: block;
+    }
+
+    .menu {
+      justify-self: end;
+
+      border: 1px solid var(--hugs-border);
+      border-radius: 999px;
+
+      background: var(--hugs-navy);
+      color: white;
+
+      padding: 10px 18px;
+
+      font-size: 14px;
+      font-weight: 900;
+
+      cursor: pointer;
+    }
+
+    .menu:hover {
+      background: var(--hugs-blue);
+      color: var(--hugs-navy);
+    }
+
+    .navlinks {
+      position: absolute;
+
+      top: calc(100% + 8px);
+      right: 18px;
+
+      width: min(290px, calc(100vw - 36px));
+
+      display: none;
+      flex-direction: column;
+      gap: 4px;
+
+      padding: 12px;
+
+      background: white;
+
+      border: 1px solid var(--hugs-border);
+      border-radius: 20px;
+
+      box-shadow: 0 18px 45px rgba(11, 47, 89, 0.14);
+    }
+
+    .navlinks.open {
+      display: flex;
+    }
+
+    .navlinks a {
+      display: block;
+
+      padding: 12px 14px;
+
+      border-radius: 12px;
+
+      text-decoration: none;
+
+      color: var(--hugs-text);
+
+      font-weight: 800;
+    }
+
+    .navlinks a:hover {
+      background: var(--hugs-light);
+      color: var(--hugs-navy);
+    }
+
+    /* =========================
+       SHOP PAGE
+    ========================= */
 
     .shop-page {
       max-width: 1180px;
@@ -109,13 +232,13 @@
     }
 
     .product-image {
-  width: 100%;
-  display: block;
-  aspect-ratio: 4 / 5;
-  object-fit: cover;
-  object-position: top center;
-  background: var(--hugs-light);
-}
+      width: 100%;
+      display: block;
+      aspect-ratio: 4 / 5;
+      object-fit: cover;
+      object-position: top center;
+      background: var(--hugs-light);
+    }
 
     .placeholder-art {
       aspect-ratio: 9 / 12;
@@ -227,6 +350,7 @@
         #0b2f59,
         #347fc0
       );
+      color: white;
     }
 
     .coming-note {
@@ -316,35 +440,141 @@
         padding-right: 14px;
       }
     }
+
+    @media (max-width: 600px) {
+      .nav {
+        padding: 10px 12px;
+      }
+
+      .brand {
+        font-size: 20px;
+      }
+
+      .header-logo {
+        width: 52px;
+        height: 52px;
+      }
+
+      .menu {
+        padding: 9px 14px;
+      }
+
+      .navlinks {
+        right: 12px;
+      }
+    }
   </style>
 </head>
 
 <body>
 
-  <!-- MAIN NAVIGATION -->
-  <header>
-    <nav>
-      <a href="index.html">Home</a>
-      <a href="shop.html">Shop</a>
-      <a href="hugs-cards.html">HUGS Cards</a>
-      <a href="art-community.html">Art</a>
-      <a href="food-support.html">Food</a>
-      <a href="housing-help.html">Housing</a>
-      <a href="business-services.html">Business</a>
-      <a href="help-app.html">Help App</a>
-      <a href="resources.html">Resources</a>
-      <a href="about.html">About</a>
-      <a href="contact.html">Contact</a>
-    </nav>
+  <!-- =========================
+       HOME-STYLE HEADER
+  ========================= -->
+
+  <header class="topbar">
+
+    <div class="nav">
+
+      <a
+        class="brand"
+        href="index.html"
+      >
+        Hugslinks
+      </a>
+
+
+      <a
+        class="seal"
+        href="index.html"
+        aria-label="HUGSLinks Home"
+      >
+        <img
+          src="assets/hugslinks-header-logo.PNG"
+          alt="HUGSLinks logo"
+          class="header-logo"
+        />
+      </a>
+
+
+      <button
+        class="menu"
+        id="menuButton"
+        type="button"
+        aria-label="Open navigation menu"
+        aria-expanded="false"
+      >
+        Menu
+      </button>
+
+
+      <div
+        class="navlinks"
+        id="navLinks"
+      >
+
+        <a href="index.html">
+          Home
+        </a>
+
+        <a href="shop.html">
+          Shop
+        </a>
+
+        <a href="hugs-cards.html">
+          HUGS Cards
+        </a>
+
+        <a href="art-community.html">
+          Art
+        </a>
+
+        <a href="food-support.html">
+          Food
+        </a>
+
+        <a href="housing-help.html">
+          Housing
+        </a>
+
+        <a href="business-services.html">
+          Business
+        </a>
+
+        <a href="help-app.html">
+          Help App
+        </a>
+
+        <a href="resources.html">
+          Resources
+        </a>
+
+        <a href="about.html">
+          About
+        </a>
+
+        <a href="contact.html">
+          Contact
+        </a>
+
+      </div>
+
+    </div>
+
   </header>
 
 
   <main class="shop-page">
 
-    <!-- HERO -->
+    <!-- =========================
+         HERO
+    ========================= -->
+
     <section class="shop-hero">
 
-      <h1>Shop HUGS</h1>
+      <h1>
+        Shop HUGS
+      </h1>
 
       <div class="shop-tagline">
         Products With Purpose
@@ -360,7 +590,10 @@
     </section>
 
 
-    <!-- HUGS CARDS -->
+    <!-- =========================
+         HUGS CARDS
+    ========================= -->
+
     <section
       class="section"
       id="products"
@@ -382,7 +615,10 @@
 
       <div class="product-grid">
 
-        <!-- READY TO SEND -->
+        <!-- =====================
+             READY TO SEND
+        ====================== -->
+
         <article class="product-card">
 
           <img
@@ -443,14 +679,17 @@
         </article>
 
 
-        <!-- PERSONALIZED -->
+        <!-- =====================
+             PERSONALIZED
+        ====================== -->
+
         <article class="product-card featured">
 
           <img
-  src="assets/personalized-hugs-card-cover.jpg"
-  alt="Personalized HUGS Card"
-  class="product-image"
-/>
+            src="assets/personalized-hugs-card-cover.jpg"
+            alt="Personalized HUGS Card"
+            class="product-image"
+          />
 
           <div class="product-content">
 
@@ -467,12 +706,16 @@
             </div>
 
             <p>
-              Take a HUGS Card and make it personal with the
-              recipient's name, your message and who the HUG
-              is from.
+              Choose a HUGS theme and make the experience personal
+              with the recipient's name, your message and who the
+              HUG is from.
             </p>
 
             <ul class="features">
+
+              <li>
+                Choose Love or Memorial
+              </li>
 
               <li>
                 Recipient name
@@ -486,36 +729,31 @@
                 Personal message
               </li>
 
-              <li>
-                Customized visual delivery
-              </li>
-
             </ul>
 
             <a
               href="personalized-hugs-card.html"
               class="product-button gold"
             >
-              Personalize a HUG
+              Choose Your HUG
             </a>
-
-            <div class="coming-note">
-              Product page being added next.
-            </div>
 
           </div>
 
         </article>
 
 
-        <!-- CUSTOM / PREMIUM -->
+        <!-- =====================
+             CUSTOM / PREMIUM
+        ====================== -->
+
         <article class="product-card">
 
           <img
-  src="assets/custom-hugs-card-cover.png"
-  alt="Custom HUGS Card"
-  class="product-image"
-/>
+            src="assets/custom-hugs-card-cover.png"
+            alt="Custom HUGS Card"
+            class="product-image"
+          />
 
           <div class="product-content">
 
@@ -576,7 +814,10 @@
     </section>
 
 
-    <!-- OTHER COLLECTIONS -->
+    <!-- =========================
+         OTHER COLLECTIONS
+    ========================= -->
+
     <section class="section">
 
       <div class="section-heading">
@@ -595,7 +836,9 @@
 
       <div class="collection-grid">
 
+
         <!-- ART -->
+
         <article class="collection-card">
 
           <div class="collection-icon">
@@ -623,6 +866,7 @@
 
 
         <!-- SUPPORTERS -->
+
         <article class="collection-card">
 
           <div class="collection-icon">
@@ -653,7 +897,10 @@
     </section>
 
 
-    <!-- IMPACT -->
+    <!-- =========================
+         IMPACT
+    ========================= -->
+
     <section class="impact">
 
       <h2>
@@ -686,6 +933,57 @@
 
 
   <script src="script.js"></script>
+
+
+  <!-- =========================
+       HEADER MENU
+  ========================= -->
+
+  <script>
+    const menuButton =
+      document.getElementById("menuButton");
+
+    const navLinks =
+      document.getElementById("navLinks");
+
+
+    menuButton.addEventListener(
+      "click",
+      function () {
+
+        const isOpen =
+          navLinks.classList.toggle("open");
+
+        menuButton.setAttribute(
+          "aria-expanded",
+          isOpen ? "true" : "false"
+        );
+
+      }
+    );
+
+
+    document.addEventListener(
+      "click",
+      function (event) {
+
+        if (
+          !navLinks.contains(event.target) &&
+          !menuButton.contains(event.target)
+        ) {
+
+          navLinks.classList.remove("open");
+
+          menuButton.setAttribute(
+            "aria-expanded",
+            "false"
+          );
+
+        }
+
+      }
+    );
+  </script>
 
 </body>
 </html>
