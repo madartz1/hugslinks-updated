@@ -1,0 +1,642 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <title>Personalize NYC Ride | HUGSLinks</title>
+
+  <meta
+    name="description"
+    content="Personalize the NYC Ride HUGS Card with the recipient's name, sender name, personal message and special details."
+  />
+
+  <link rel="stylesheet" href="styles.css" />
+
+  <style>
+    :root {
+      --navy: #0b2f59;
+      --blue: #74b9f4;
+      --cream: #f8f5ee;
+      --white: #ffffff;
+      --text: #23374d;
+      --muted: #60758a;
+      --gold: #f2b84b;
+      --border: #dce8f2;
+      --soft: #eef7ff;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      background: var(--cream);
+      color: var(--text);
+      font-family: Arial, Helvetica, sans-serif;
+    }
+
+    .page {
+      max-width: 920px;
+      margin: 0 auto;
+      padding: 28px 18px 70px;
+    }
+
+    .back-link {
+      display: inline-block;
+      margin-bottom: 22px;
+      color: var(--navy);
+      text-decoration: none;
+      font-weight: 800;
+    }
+
+    .hero {
+      text-align: center;
+      padding: 22px 10px 36px;
+    }
+
+    .hero-cover {
+      width: min(280px, 72vw);
+      border-radius: 28px;
+      box-shadow: 0 16px 42px rgba(11, 47, 89, 0.14);
+      margin-bottom: 22px;
+    }
+
+    .badge {
+      display: inline-block;
+      padding: 8px 13px;
+      border-radius: 999px;
+      background: var(--blue);
+      color: var(--navy);
+      font-size: 12px;
+      font-weight: 900;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      margin-bottom: 14px;
+    }
+
+    .hero h1 {
+      margin: 0;
+      color: var(--navy);
+      font-size: clamp(38px, 7vw, 58px);
+      line-height: 1.05;
+    }
+
+    .price {
+      margin-top: 14px;
+      color: var(--gold);
+      font-size: 30px;
+      font-weight: 900;
+    }
+
+    .hero p {
+      max-width: 680px;
+      margin: 16px auto 0;
+      color: var(--muted);
+      line-height: 1.7;
+      font-size: 17px;
+    }
+
+    .form-card {
+      background: var(--white);
+      border: 1px solid var(--border);
+      border-radius: 28px;
+      padding: 30px 24px;
+      box-shadow: 0 16px 42px rgba(11, 47, 89, 0.10);
+    }
+
+    .form-card h2 {
+      margin: 0 0 10px;
+      color: var(--navy);
+      font-size: 30px;
+      text-align: center;
+    }
+
+    .form-intro {
+      max-width: 680px;
+      margin: 0 auto 28px;
+      color: var(--muted);
+      line-height: 1.65;
+      text-align: center;
+    }
+
+    .form-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 18px;
+    }
+
+    .field {
+      display: flex;
+      flex-direction: column;
+      gap: 7px;
+    }
+
+    .field.full {
+      grid-column: 1 / -1;
+    }
+
+    label {
+      color: var(--navy);
+      font-weight: 900;
+    }
+
+    input,
+    select,
+    textarea {
+      width: 100%;
+      padding: 14px 15px;
+      border: 1px solid #cddce8;
+      border-radius: 14px;
+      background: white;
+      color: var(--text);
+      font: inherit;
+      outline: none;
+    }
+
+    input:focus,
+    select:focus,
+    textarea:focus {
+      border-color: var(--blue);
+      box-shadow: 0 0 0 3px rgba(116, 185, 244, 0.18);
+    }
+
+    textarea {
+      min-height: 140px;
+      resize: vertical;
+    }
+
+    .help {
+      color: #7c8ea0;
+      font-size: 12px;
+      line-height: 1.45;
+    }
+
+    .order-summary {
+      margin-top: 28px;
+      padding: 22px;
+      border-radius: 20px;
+      background: var(--soft);
+      border: 1px solid var(--border);
+    }
+
+    .order-summary h3 {
+      margin: 0 0 10px;
+      color: var(--navy);
+      font-size: 22px;
+    }
+
+    .order-summary p {
+      margin: 7px 0;
+      color: var(--muted);
+      line-height: 1.55;
+    }
+
+    .checkout-button {
+      width: 100%;
+      margin-top: 24px;
+      border: 0;
+      border-radius: 999px;
+      padding: 16px 20px;
+      background: var(--gold);
+      color: #17212c;
+      font-size: 18px;
+      font-weight: 900;
+      cursor: pointer;
+    }
+
+    .checkout-button:hover {
+      filter: brightness(0.96);
+    }
+
+    .notice {
+      margin-top: 16px;
+      text-align: center;
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 1.5;
+    }
+
+    footer {
+      text-align: center;
+      padding: 30px 18px 42px;
+      color: #74889b;
+    }
+
+    @media (max-width: 700px) {
+      .page {
+        padding-left: 14px;
+        padding-right: 14px;
+      }
+
+      .form-card {
+        padding: 24px 18px;
+      }
+
+      .form-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .field.full {
+        grid-column: auto;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+  <!-- SAME HEADER / MENU SYSTEM AS HOMEPAGE -->
+
+  <header class="topbar">
+    <nav class="nav">
+
+      <a class="brand" href="index.html">
+        Hugslinks
+      </a>
+
+      <div class="seal">
+        <img
+          src="assets/HUGS_Header_Logo_Transparent.png"
+          alt="HUGS logo"
+        />
+      </div>
+
+      <button
+        class="menu"
+        type="button"
+        aria-expanded="false"
+        aria-label="Open navigation menu"
+      >
+        Menu
+      </button>
+
+      <div class="navlinks">
+        <a href="index.html">Home</a>
+        <a href="shop.html">Shop</a>
+        <a href="hugs-cards.html">HUGS Cards</a>
+        <a href="art-community.html">Art</a>
+        <a href="food-support.html">Food</a>
+        <a href="housing-help.html">Housing</a>
+        <a href="business-services.html">Business</a>
+        <a href="help-app.html">Help App</a>
+        <a href="resources.html">Resources</a>
+        <a href="about.html">About</a>
+        <a href="contact.html">Contact</a>
+      </div>
+
+    </nav>
+  </header>
+
+
+  <main class="page">
+
+    <a
+      href="love-hugs-card.html"
+      class="back-link"
+    >
+      ← Back to Love HUGS Cards
+    </a>
+
+
+    <section class="hero">
+
+      <img
+        src="assets/nyc-ride-hugs-card-cover.jpg"
+        alt="NYC Ride — Personalized HUGS Card"
+        class="hero-cover"
+      />
+
+      <div class="badge">
+        Personalized NYC Ride
+      </div>
+
+      <h1>
+        Make This HUG Personal
+      </h1>
+
+      <div class="price">
+        $16.99
+      </div>
+
+      <p>
+        Personalize the NYC Ride HUGS Bear card with the recipient's
+        name, your name, a heartfelt message and special details.
+      </p>
+
+    </section>
+
+
+    <section class="form-card">
+
+      <h2>
+        Personalization Details
+      </h2>
+
+      <p class="form-intro">
+        Fill in the details exactly as you want them to appear in your
+        personalized HUGS Card.
+      </p>
+
+
+      <form
+        id="personalizedHugForm"
+        name="personalized-nyc-ride-order"
+        method="POST"
+        data-netlify="true"
+        netlify-honeypot="bot-field"
+      >
+
+        <input
+          type="hidden"
+          name="form-name"
+          value="personalized-nyc-ride-order"
+        />
+
+        <input
+          type="hidden"
+          name="product"
+          value="NYC Ride Personalized HUGS Card"
+        />
+
+        <input
+          type="hidden"
+          name="price"
+          value="$16.99"
+        />
+
+        <p style="display:none;">
+          <label>
+            Don't fill this out:
+            <input name="bot-field" />
+          </label>
+        </p>
+
+
+        <div class="form-grid">
+
+          <div class="field">
+            <label for="customerName">
+              Your Name
+            </label>
+
+            <input
+              id="customerName"
+              name="customer_name"
+              type="text"
+              required
+              placeholder="Your full name"
+            />
+          </div>
+
+
+          <div class="field">
+            <label for="customerEmail">
+              Your Email
+            </label>
+
+            <input
+              id="customerEmail"
+              name="customer_email"
+              type="email"
+              required
+              placeholder="you@example.com"
+            />
+          </div>
+
+
+          <div class="field">
+            <label for="recipientName">
+              Recipient's Name
+            </label>
+
+            <input
+              id="recipientName"
+              name="recipient_name"
+              type="text"
+              required
+              placeholder="Who is receiving the HUG?"
+            />
+          </div>
+
+
+          <div class="field">
+            <label for="senderName">
+              Name From
+            </label>
+
+            <input
+              id="senderName"
+              name="sender_name"
+              type="text"
+              required
+              placeholder="Example: Love, John"
+            />
+          </div>
+
+
+          <div class="field">
+            <label for="occasion">
+              Occasion
+            </label>
+
+            <select
+              id="occasion"
+              name="occasion"
+            >
+              <option value="Just Because">
+                Just Because
+              </option>
+
+              <option value="Love">
+                Love
+              </option>
+
+              <option value="Anniversary">
+                Anniversary
+              </option>
+
+              <option value="Encouragement">
+                Encouragement
+              </option>
+
+              <option value="Friendship">
+                Friendship
+              </option>
+
+              <option value="Long Distance">
+                Long Distance
+              </option>
+
+              <option value="Thinking of You">
+                Thinking of You
+              </option>
+
+              <option value="Other">
+                Other
+              </option>
+            </select>
+          </div>
+
+
+          <div class="field">
+            <label for="closing">
+              Special Closing
+            </label>
+
+            <input
+              id="closing"
+              name="special_closing"
+              type="text"
+              placeholder="Example: Always & Forever"
+            />
+
+            <span class="help">
+              Optional.
+            </span>
+          </div>
+
+
+          <div class="field full">
+            <label for="personalMessage">
+              Personal Message
+            </label>
+
+            <textarea
+              id="personalMessage"
+              name="personal_message"
+              required
+              maxlength="500"
+              placeholder="Write the personal message you want included in the HUG..."
+            ></textarea>
+
+            <span class="help">
+              Maximum 500 characters.
+            </span>
+          </div>
+
+
+          <div class="field full">
+            <label for="specialInstructions">
+              Special Instructions
+            </label>
+
+            <textarea
+              id="specialInstructions"
+              name="special_instructions"
+              placeholder="Anything else you want us to know about the card?"
+            ></textarea>
+
+            <span class="help">
+              Optional.
+            </span>
+          </div>
+
+        </div>
+
+
+        <div class="order-summary">
+
+          <h3>
+            Your Order
+          </h3>
+
+          <p>
+            <strong>Card:</strong>
+            NYC Ride — Personalized HUGS Card
+          </p>
+
+          <p>
+            <strong>Price:</strong>
+            $16.99
+          </p>
+
+          <p>
+            Your personalization details will be submitted before
+            you continue to secure Stripe checkout.
+          </p>
+
+        </div>
+
+
+        <button
+          type="submit"
+          class="checkout-button"
+        >
+          Continue to Secure Checkout — $16.99
+        </button>
+
+        <p class="notice">
+          Your personalization information is submitted to HUGSLinks,
+          then you will be redirected to Stripe to complete payment.
+        </p>
+
+      </form>
+
+    </section>
+
+  </main>
+
+
+  <footer>
+    © 2026 HUGSLinks · Give a Hug. Get a Hug.
+  </footer>
+
+
+  <script src="script.js"></script>
+
+
+  <script>
+    const personalizedHugForm =
+      document.getElementById("personalizedHugForm");
+
+    personalizedHugForm.addEventListener(
+      "submit",
+      async function (event) {
+
+        event.preventDefault();
+
+        const formData =
+          new FormData(personalizedHugForm);
+
+        const encodedData =
+          new URLSearchParams(formData).toString();
+
+        try {
+
+          const response =
+            await fetch("/", {
+              method: "POST",
+              headers: {
+                "Content-Type":
+                  "application/x-www-form-urlencoded"
+              },
+              body: encodedData
+            });
+
+          if (!response.ok) {
+            throw new Error(
+              "The personalization form could not be submitted."
+            );
+          }
+
+          window.location.href =
+            "https://buy.stripe.com/9B64gy2CE4Ig3qf3gk8ww05";
+
+        } catch (error) {
+
+          alert(
+            "We could not submit your personalization details. Please try again."
+          );
+
+          console.error(error);
+
+        }
+
+      }
+    );
+  </script>
+
+</body>
+</html>
