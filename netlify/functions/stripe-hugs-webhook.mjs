@@ -7,18 +7,9 @@ const stripe = new Stripe(
 
 export default async (req) => {
 
-  /*
-   * Stripe sends the webhook signature
-   * in this request header.
-   */
   const signature =
     req.headers.get("stripe-signature");
 
-  /*
-   * IMPORTANT:
-   * Stripe signature verification needs
-   * the original raw request body.
-   */
   const rawBody =
     await req.text();
 
@@ -57,6 +48,7 @@ export default async (req) => {
   /*
    * Only process completed payments.
    */
+
   if (
     event.type !== "checkout.session.completed" &&
     event.type !== "checkout.session.async_payment_succeeded"
@@ -83,8 +75,9 @@ export default async (req) => {
 
 
     /*
-     * Do not fulfill an unpaid order.
+     * Do not fulfill unpaid orders.
      */
+
     if (
       session.payment_status === "unpaid"
     ) {
@@ -105,10 +98,9 @@ export default async (req) => {
 
 
     /*
-     * This is the HUG order ID that
-     * personalize-nyc-ride.html attached
-     * to Stripe checkout.
+     * Get HUG order ID from Stripe.
      */
+
     const orderId =
       session.client_reference_id;
 
@@ -116,15 +108,16 @@ export default async (req) => {
     if (!orderId) {
 
       throw new Error(
-        "Stripe session is missing client_reference_id"
+        "Missing client_reference_id"
       );
 
     }
 
 
     /*
-     * Read the saved personalization.
+     * Open saved HUG orders.
      */
+
     const store =
       getStore({
         name: "hugs-orders",
@@ -152,14 +145,11 @@ export default async (req) => {
 
 
     /*
-     * Prevent duplicate fulfillment.
-     *
-     * Stripe may retry webhook events.
+     * Avoid duplicate processing.
      */
+
     if (
-      order.render_status === "rendering" ||
-      order.render_status === "succeeded" ||
-      order.fulfillment_status === "delivered"
+      order.payment_status === "paid"
     ) {
 
       return new Response(
@@ -180,8 +170,9 @@ export default async (req) => {
 
 
     /*
-     * Record successful payment.
+     * Mark order paid.
      */
+
     order.payment_status =
       "paid";
 
@@ -198,131 +189,33 @@ export default async (req) => {
 
 
     /*
-     * Save payment state first.
+     * Until automated rendering
+     * is connected, this order
+     * waits for manual fulfillment.
      */
+
+    order.render_status =
+      "not-started";
+
+    order.fulfillment_status =
+      "manual-pending";
+
+
     await store.setJSON(
       orderId,
       order
     );
 
 
-    /*
-     * Start personalized video render.
-     *
-     * These element names must match
-     * the dynamic names that we create
-     * later inside Creatomate.
-     */
-    const renderResponse =
-      await fetch(
-        "https://api.creatomate.com/v2/renders",
-        {
-          method: "POST",
-
-          headers: {
-            "Content-Type":
-              "application/json",
-
-            "Authorization":
-              `Bearer ${process.env.CREATOMATE_API_KEY}`
-          },
-
-          body:
-            JSON.stringify({
-
-              template_id:
-                process.env.CREATOMATE_TEMPLATE_ID,
-
-              modifications: {
-
-                "Background-Video":
-                  "https://hugslinks.com/assets/nyc-ride-hugs-full.mp4",
-
-                "Recipient-Name":
-                  `A HUG for ${order.recipient_name}`,
-
-                "Occasion":
-                  order.occasion || "",
-
-                "Personal-Message":
-                  order.personal_message,
-
-                "Sender-Name":
-                  `With Love, ${order.sender_name}`,
-
-                "Special-Closing":
-                  order.special_closing || ""
-
-              },
-
-              webhook_url:
-                "https://hugslinks.com/.netlify/functions/creatomate-hugs-webhook",
-
-              metadata:
-                orderId
-
-            })
-        }
-      );
-
-
-    /*
-     * Catch rendering-service errors.
-     */
-    if (!renderResponse.ok) {
-
-      const renderError =
-        await renderResponse.text();
-
-      order.render_status =
-        "failed-to-start";
-
-      order.render_error =
-        renderError;
-
-      await store.setJSON(
-        orderId,
-        order
-      );
-
-      throw new Error(
-        "Creatomate render request failed: " +
-        renderError
-      );
-
-    }
-
-
-    const renderResult =
-      await renderResponse.json();
-
-
-    /*
-     * Creatomate may return an array
-     * containing the render.
-     */
-    const render =
-      Array.isArray(renderResult)
-        ? renderResult[0]
-        : renderResult;
-
-
-    /*
-     * Save render information.
-     */
-    order.render_status =
-      "rendering";
-
-    order.render_id =
-      render?.id || "";
-
-    order.render_started_at =
-      new Date().toISOString();
-
-
-    await store.setJSON(
-      orderId,
-      order
+    console.log(
+      "Paid personalized HUG order saved:",
+      {
+        order_id: orderId,
+        customer_email:
+          order.customer_email,
+        recipient:
+          order.recipient_name
+      }
     );
 
 
@@ -330,8 +223,9 @@ export default async (req) => {
       JSON.stringify({
         received: true,
         order_id: orderId,
-        render_status: "rendering",
-        render_id: render?.id || ""
+        payment_status: "paid",
+        fulfillment_status:
+          "manual-pending"
       }),
       {
         status: 200,
@@ -352,7 +246,7 @@ export default async (req) => {
     return new Response(
       JSON.stringify({
         error:
-          "HUG fulfillment could not start"
+          "Could not process HUG payment"
       }),
       {
         status: 500,
