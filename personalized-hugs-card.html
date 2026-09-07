@@ -44,7 +44,7 @@
     }
 
     /* =========================
-       HUGSLINKS HEADER
+       HEADER
     ========================= */
 
     .topbar {
@@ -93,13 +93,18 @@
 
     .menu {
       justify-self: end;
+
       border: 1px solid var(--hugs-border);
       border-radius: 999px;
+
       background: var(--hugs-navy);
       color: white;
+
       padding: 10px 18px;
+
       font-size: 14px;
       font-weight: 900;
+
       cursor: pointer;
     }
 
@@ -112,6 +117,7 @@
       position: absolute;
       top: calc(100% + 8px);
       right: 18px;
+
       width: min(290px, calc(100vw - 36px));
 
       display: none;
@@ -119,7 +125,9 @@
       gap: 4px;
 
       padding: 12px;
-      background: #ffffff;
+
+      background: white;
+
       border: 1px solid var(--hugs-border);
       border-radius: 20px;
 
@@ -132,10 +140,15 @@
 
     .navlinks a {
       display: block;
+
       padding: 12px 14px;
+
       border-radius: 12px;
+
       text-decoration: none;
+
       color: var(--hugs-text);
+
       font-weight: 800;
     }
 
@@ -215,7 +228,7 @@
     }
 
     /* =========================
-       THEME SECTION
+       THEMES
     ========================= */
 
     .section-heading {
@@ -247,8 +260,12 @@
       border-radius: 28px;
       padding: 30px 24px;
       text-align: center;
+
       box-shadow: 0 14px 38px rgba(11, 47, 89, 0.09);
-      transition: transform 0.2s ease, box-shadow 0.2s ease;
+
+      transition:
+        transform 0.2s ease,
+        box-shadow 0.2s ease;
     }
 
     .theme-card:hover {
@@ -553,7 +570,6 @@
 
       <button
         class="menu"
-        id="menuButton"
         type="button"
         aria-label="Open navigation menu"
         aria-expanded="false"
@@ -561,10 +577,8 @@
         Menu
       </button>
 
-      <div
-        class="navlinks"
-        id="navLinks"
-      >
+      <div class="navlinks">
+
         <a href="index.html">Home</a>
         <a href="shop.html">Shop</a>
         <a href="hugs-cards.html">HUGS Cards</a>
@@ -576,6 +590,7 @@
         <a href="resources.html">Resources</a>
         <a href="about.html">About</a>
         <a href="contact.html">Contact</a>
+
       </div>
 
     </div>
@@ -651,12 +666,13 @@
 
       <div class="theme-grid">
 
+
         <!-- LOVE -->
 
         <article class="theme-card love">
 
           <img
-            src="assets/icon-love.jpg"
+            src="assets/icon-love.PNG"
             alt="Love HUGS Cards"
             class="theme-icon"
           />
@@ -858,52 +874,8 @@
   </footer>
 
 
+  <!-- EXISTING SITE MENU SCRIPT -->
   <script src="script.js"></script>
-
-
-  <script>
-    const menuButton =
-      document.getElementById("menuButton");
-
-    const navLinks =
-      document.getElementById("navLinks");
-
-    menuButton.addEventListener(
-      "click",
-      function () {
-
-        const isOpen =
-          navLinks.classList.toggle("open");
-
-        menuButton.setAttribute(
-          "aria-expanded",
-          isOpen ? "true" : "false"
-        );
-
-      }
-    );
-
-    document.addEventListener(
-      "click",
-      function (event) {
-
-        if (
-          !navLinks.contains(event.target) &&
-          !menuButton.contains(event.target)
-        ) {
-
-          navLinks.classList.remove("open");
-
-          menuButton.setAttribute(
-            "aria-expanded",
-            "false"
-          );
-
-        }
-
-      }
-    );
-  </script>
 
 </body>
 </html>
