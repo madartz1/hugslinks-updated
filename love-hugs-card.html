@@ -4,11 +4,11 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
-  <title>Love HUGS Cards | HUGSLinks</title>
+  <title>Personalized Love HUGS Cards | HUGSLinks</title>
 
   <meta
     name="description"
-    content="Send love through HUGSLinks. Explore Love HUGS Cards including NYC Ride — Send a HUG."
+    content="Choose and personalize a Love HUGS Card from HUGSLinks. Personalize NYC Ride with names, a message, occasion and special closing."
   />
 
   <link rel="stylesheet" href="styles.css" />
@@ -25,6 +25,7 @@
       --border: #dce8f2;
       --love: #ef425c;
       --soft-love: #fff1f4;
+      --soft-blue: #eef7ff;
     }
 
     * {
@@ -37,10 +38,6 @@
       color: var(--text);
       font-family: Arial, Helvetica, sans-serif;
     }
-
-    /* =========================
-       PAGE
-    ========================= */
 
     .page {
       max-width: 1080px;
@@ -62,7 +59,7 @@
 
     .hero {
       text-align: center;
-      padding: 30px 15px 40px;
+      padding: 30px 15px 42px;
     }
 
     .love-icon {
@@ -76,8 +73,8 @@
     .hero h1 {
       margin: 0;
       color: var(--navy);
-      font-size: clamp(42px, 8vw, 66px);
-      line-height: 1;
+      font-size: clamp(40px, 8vw, 64px);
+      line-height: 1.05;
     }
 
     .tagline {
@@ -87,8 +84,15 @@
       font-weight: 900;
     }
 
+    .hero-price {
+      margin-top: 18px;
+      color: var(--gold);
+      font-size: 34px;
+      font-weight: 900;
+    }
+
     .hero p {
-      max-width: 700px;
+      max-width: 720px;
       margin: 18px auto 0;
       color: var(--muted);
       font-size: 17px;
@@ -111,7 +115,7 @@
     }
 
     .section-heading p {
-      max-width: 620px;
+      max-width: 650px;
       margin: 10px auto 0;
       color: var(--muted);
       line-height: 1.6;
@@ -164,8 +168,8 @@
 
     .product-price {
       margin: 9px 0 14px;
-      color: var(--blue);
-      font-size: 31px;
+      color: var(--gold);
+      font-size: 33px;
       font-weight: 900;
     }
 
@@ -203,6 +207,12 @@
       margin-top: 12px;
     }
 
+    .personalize-button {
+      background: var(--gold);
+      color: #17212c;
+      font-size: 18px;
+    }
+
     .view-button {
       background: var(--navy);
       color: white;
@@ -213,44 +223,101 @@
       color: var(--navy);
     }
 
-    .buy-button {
-      background: var(--gold);
-      color: #17212c;
+    /* =========================
+       READY TO SEND
+    ========================= */
+
+    .ready-option {
+      max-width: 700px;
+      margin: 34px auto 0;
+      padding: 26px 22px;
+      border-radius: 24px;
+      background: var(--soft-blue);
+      border: 1px solid var(--border);
+      text-align: center;
+    }
+
+    .ready-option h3 {
+      margin: 0;
+      color: var(--navy);
+      font-size: 25px;
+    }
+
+    .ready-price {
+      margin: 10px 0 12px;
+      color: var(--blue);
+      font-size: 29px;
+      font-weight: 900;
+    }
+
+    .ready-option p {
+      max-width: 600px;
+      margin: 0 auto 18px;
+      color: var(--muted);
+      line-height: 1.65;
+    }
+
+    .ready-button {
+      display: inline-block;
+      padding: 13px 20px;
+      border-radius: 999px;
+      background: white;
+      border: 2px solid var(--navy);
+      color: var(--navy);
+      font-weight: 900;
+      text-decoration: none;
     }
 
     /* =========================
-       PERSONALIZE
+       PRICE GUIDE
     ========================= */
 
-    .personalize {
+    .price-guide {
       margin-top: 42px;
-      padding: 30px 24px;
+      padding: 30px 22px;
       border-radius: 26px;
       background: var(--navy);
       color: white;
       text-align: center;
     }
 
-    .personalize h2 {
-      margin: 0 0 12px;
+    .price-guide h2 {
+      margin: 0 0 18px;
       font-size: 30px;
     }
 
-    .personalize p {
-      max-width: 700px;
-      margin: 0 auto 20px;
-      color: #dce8f4;
-      line-height: 1.7;
+    .price-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 14px;
+      max-width: 760px;
+      margin: 0 auto;
     }
 
-    .personalize-button {
-      display: inline-block;
-      padding: 14px 22px;
-      border-radius: 999px;
-      background: var(--gold);
-      color: #17212c;
+    .price-box {
+      padding: 18px 14px;
+      border-radius: 18px;
+      background: rgba(255, 255, 255, 0.08);
+    }
+
+    .price-box strong {
+      display: block;
+      font-size: 19px;
+      margin-bottom: 6px;
+    }
+
+    .price-box span {
+      display: block;
+      color: #dce8f4;
+      font-size: 14px;
+      line-height: 1.5;
+    }
+
+    .price-box .amount {
+      margin-top: 8px;
+      color: var(--gold);
+      font-size: 22px;
       font-weight: 900;
-      text-decoration: none;
     }
 
     /* =========================
@@ -283,10 +350,6 @@
       color: #74889b;
     }
 
-    /* =========================
-       MOBILE PAGE LAYOUT
-    ========================= */
-
     @media (max-width: 700px) {
       .page {
         padding-left: 14px;
@@ -295,6 +358,10 @@
 
       .product-content {
         padding: 22px 18px 26px;
+      }
+
+      .price-grid {
+        grid-template-columns: 1fr;
       }
     }
   </style>
@@ -369,35 +436,39 @@
       />
 
       <h1>
-        Love HUGS Cards
+        Choose Your Personalized Love HUG
       </h1>
 
       <div class="tagline">
-        Give Love. Send a HUG.
+        Give Love. Make It Personal.
+      </div>
+
+      <div class="hero-price">
+        Personalized HUGS Cards — $16.99
       </div>
 
       <p>
-        Share affection, encouragement, appreciation and connection
-        through a HUGSLinks Love Card. Our Love collection will continue
-        growing with new visual experiences for partners, family,
-        friendships and meaningful moments.
+        Choose a Love HUGS Card and make it personal with the
+        recipient's name, your name, a heartfelt message, occasion
+        and special closing.
       </p>
 
     </section>
 
 
-    <!-- AVAILABLE CARD -->
+    <!-- PERSONALIZED CARD -->
 
     <section>
 
       <div class="section-heading">
 
         <h2>
-          Available Now
+          Available to Personalize Now
         </h2>
 
         <p>
-          Our first animated Love HUGS Card is ready to send today.
+          Our first personalized animated Love HUGS Card is ready
+          for you to customize.
         </p>
 
       </div>
@@ -407,51 +478,52 @@
 
         <img
           src="assets/nyc-ride-hugs-card-cover.jpg"
-          alt="NYC Ride — Send a HUG"
+          alt="NYC Ride Personalized HUGS Card"
           class="product-cover"
         />
 
         <div class="product-content">
 
           <span class="badge">
-            Ready to Send
+            Personalized HUGS Card
           </span>
 
           <h2>
-            NYC Ride — Send a HUG
+            NYC Ride — Personalized HUG
           </h2>
 
           <div class="product-price">
-            $6.99
+            $16.99
           </div>
 
           <p class="product-description">
             HUGS Bear rides through New York City toward a glowing
             sunset while hearts and golden light fill the streets.
-            Send someone a cinematic message of love, encouragement
-            and connection.
+            Turn NYC Ride into a personal HUG made especially for
+            someone you care about.
           </p>
 
           <ul class="features">
-            <li>Animated HUGS Card</li>
-            <li>Full music and sound experience</li>
-            <li>Ready to send immediately</li>
-            <li>No personalization required</li>
-            <li>Watch the preview before purchasing</li>
+            <li>Add the recipient's name</li>
+            <li>Add your personal message</li>
+            <li>Add who the HUG is from</li>
+            <li>Choose the occasion</li>
+            <li>Add a special closing</li>
+            <li>Animated HUGS Card with music and sound</li>
           </ul>
+
+          <a
+            href="personalize-nyc-ride.html"
+            class="button personalize-button"
+          >
+            Personalize NYC Ride — $16.99
+          </a>
 
           <a
             href="nyc-ride-hugs-card.html"
             class="button view-button"
           >
-            ▶ View NYC Ride & Watch Preview
-          </a>
-
-          <a
-            href="https://buy.stripe.com/cNi4gy1yA0s00e30488ww04"
-            class="button buy-button"
-          >
-            Send This HUG — $6.99
+            ▶ Watch NYC Ride Preview
           </a>
 
         </div>
@@ -461,26 +533,88 @@
     </section>
 
 
-    <!-- PERSONALIZED OPTION -->
+    <!-- READY TO SEND SECONDARY OPTION -->
 
-    <section class="personalize">
+    <section class="ready-option">
 
-      <h2>
-        Want a Personalized NYC Ride HUG?
-      </h2>
+      <h3>
+        Prefer the Ready-to-Send Version?
+      </h3>
+
+      <div class="ready-price">
+        NYC Ride — $6.99
+      </div>
 
       <p>
-        Personalize this HUGS Bear rider card with the recipient's
-        name, your name, a heartfelt message, occasion and special
-        closing for a more personal HUGS Card experience.
+        Send the original NYC Ride HUGS Card exactly as created.
+        No names or personal message are added.
       </p>
 
       <a
-        href="personalize-nyc-ride.html"
-        class="personalize-button"
+        href="https://buy.stripe.com/cNi4gy1yA0s00e30488ww04"
+        class="ready-button"
       >
-        Personalize NYC Ride — $16.99
+        Send Ready-to-Send NYC Ride — $6.99
       </a>
+
+    </section>
+
+
+    <!-- PRICE GUIDE -->
+
+    <section class="price-guide">
+
+      <h2>
+        Choose the Right HUG
+      </h2>
+
+      <div class="price-grid">
+
+        <div class="price-box">
+          <strong>
+            Ready to Send
+          </strong>
+
+          <span>
+            Send the finished HUGS Card exactly as created.
+          </span>
+
+          <div class="amount">
+            $6.99
+          </div>
+        </div>
+
+
+        <div class="price-box">
+          <strong>
+            Personalized
+          </strong>
+
+          <span>
+            Add names, a message, occasion and closing.
+          </span>
+
+          <div class="amount">
+            $16.99
+          </div>
+        </div>
+
+
+        <div class="price-box">
+          <strong>
+            Custom HUG
+          </strong>
+
+          <span>
+            A more fully customized HUGS Card created for you.
+          </span>
+
+          <div class="amount">
+            From $39
+          </div>
+        </div>
+
+      </div>
 
     </section>
 
@@ -509,7 +643,6 @@
   </footer>
 
 
-  <!-- SAME MENU SCRIPT AS HOMEPAGE -->
   <script src="script.js"></script>
 
 </body>
