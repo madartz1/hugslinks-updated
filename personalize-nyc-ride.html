@@ -4,11 +4,11 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
-  <title>TEST — Personalize NYC Ride | HUGSLinks</title>
+  <title>Personalize NYC Ride | HUGSLinks</title>
 
   <meta
     name="description"
-    content="Test mode for the personalized NYC Ride HUGS Card."
+    content="Personalize the NYC Ride HUGS Card with a recipient name, message, sender name, occasion and special closing."
   />
 
   <link rel="stylesheet" href="styles.css" />
@@ -24,8 +24,6 @@
       --gold: #f2b84b;
       --border: #dce8f2;
       --soft: #eef7ff;
-      --test: #6f42c1;
-      --test-light: #f2ebff;
     }
 
     * {
@@ -37,15 +35,6 @@
       background: var(--cream);
       color: var(--text);
       font-family: Arial, Helvetica, sans-serif;
-    }
-
-    .test-banner {
-      background: var(--test);
-      color: white;
-      text-align: center;
-      padding: 12px 16px;
-      font-weight: 900;
-      letter-spacing: 0.3px;
     }
 
     .page {
@@ -78,8 +67,8 @@
       display: inline-block;
       padding: 8px 13px;
       border-radius: 999px;
-      background: var(--test-light);
-      color: var(--test);
+      background: var(--soft);
+      color: var(--navy);
       font-size: 12px;
       font-weight: 900;
       text-transform: uppercase;
@@ -107,17 +96,6 @@
       color: var(--muted);
       line-height: 1.7;
       font-size: 17px;
-    }
-
-    .test-note {
-      max-width: 680px;
-      margin: 18px auto 0;
-      background: var(--test-light);
-      color: var(--test);
-      border-radius: 16px;
-      padding: 14px 16px;
-      font-weight: 800;
-      line-height: 1.5;
     }
 
     .form-card {
@@ -221,11 +199,15 @@
       border: 0;
       border-radius: 999px;
       padding: 16px 20px;
-      background: var(--test);
+      background: var(--navy);
       color: white;
       font-size: 18px;
       font-weight: 900;
       cursor: pointer;
+    }
+
+    .checkout-button:hover {
+      filter: brightness(1.05);
     }
 
     .checkout-button:disabled {
@@ -281,10 +263,6 @@
 </head>
 
 <body>
-
-  <div class="test-banner">
-    TEST MODE — NO REAL CHARGE
-  </div>
 
   <header class="topbar">
     <nav class="nav">
@@ -344,7 +322,7 @@
       />
 
       <div class="badge">
-        TEST Personalized HUGS Card
+        Personalized HUGS Card
       </div>
 
       <h1>
@@ -352,32 +330,26 @@
       </h1>
 
       <div class="price">
-        $16.99 TEST
+        $16.99
       </div>
 
       <p>
-        This temporary page tests the full personalized HUGS Card
-        ordering and Shotstack rendering flow.
+        Turn NYC Ride into a personal HUG by adding the recipient's name,
+        your message, your name, the occasion and a special closing.
       </p>
-
-      <div class="test-note">
-        Use Stripe test card:
-        4242 4242 4242 4242
-        <br />
-        Any future expiration date, any CVC and any ZIP.
-      </div>
 
     </section>
 
     <section class="form-card">
 
       <h2>
-        Test Personalization Details
+        Personalization Details
       </h2>
 
       <p class="form-intro">
-        Enter test details below. This order will be saved with a
-        HUG-TEST order number and sent to Stripe Test Mode.
+        Enter the details you would like included in your personalized
+        NYC Ride HUGS Card. Your order details are saved before checkout
+        and matched to your Stripe payment using a unique HUG order number.
       </p>
 
       <form id="personalizedHugForm">
@@ -385,19 +357,25 @@
         <div class="form-grid">
 
           <div class="field">
-            <label for="customerName">Your Name</label>
+            <label for="customerName">
+              Your Name
+            </label>
+
             <input
               id="customerName"
               name="customer_name"
               type="text"
               required
               autocomplete="name"
-              placeholder="Test customer"
+              placeholder="Your name"
             />
           </div>
 
           <div class="field">
-            <label for="customerEmail">Your Email</label>
+            <label for="customerEmail">
+              Your Email
+            </label>
+
             <input
               id="customerEmail"
               name="customer_email"
@@ -409,78 +387,72 @@
           </div>
 
           <div class="field">
-            <label for="recipientName">Recipient's Name</label>
+            <label for="recipientName">
+              Recipient's Name
+            </label>
+
             <input
               id="recipientName"
               name="recipient_name"
               type="text"
               required
               maxlength="60"
-              placeholder="TEST MOM"
+              placeholder="Who is this HUG for?"
             />
           </div>
 
           <div class="field">
-            <label for="senderName">Name From</label>
+            <label for="senderName">
+              Name From
+            </label>
+
             <input
               id="senderName"
               name="sender_name"
               type="text"
               required
               maxlength="60"
-              placeholder="TEST POPPA"
+              placeholder="Your name or nickname"
             />
           </div>
 
           <div class="field">
-            <label for="occasion">Occasion</label>
+            <label for="occasion">
+              Occasion
+            </label>
+
             <select
               id="occasion"
               name="occasion"
             >
-              <option value="Birthday">
-                Birthday
-              </option>
-
-              <option value="Just Because">
-                Just Because
-              </option>
-
-              <option value="Love">
-                Love
-              </option>
-
-              <option value="Anniversary">
-                Anniversary
-              </option>
-
-              <option value="Encouragement">
-                Encouragement
-              </option>
-
-              <option value="Friendship">
-                Friendship
-              </option>
-
-              <option value="Thinking of You">
-                Thinking of You
-              </option>
-
-              <option value="Other">
-                Other
-              </option>
+              <option value="Just Because">Just Because</option>
+              <option value="Love">Love</option>
+              <option value="Anniversary">Anniversary</option>
+              <option value="Encouragement">Encouragement</option>
+              <option value="Friendship">Friendship</option>
+              <option value="Long Distance">Long Distance</option>
+              <option value="Thinking of You">Thinking of You</option>
+              <option value="Birthday">Birthday</option>
+              <option value="Other">Other</option>
             </select>
           </div>
 
           <div class="field">
-            <label for="closing">Special Closing</label>
+            <label for="closing">
+              Special Closing
+            </label>
+
             <input
               id="closing"
               name="special_closing"
               type="text"
               maxlength="100"
-              placeholder="LOVE ALWAYS TEST"
+              placeholder="Forever yours, Love always..."
             />
+
+            <span class="help">
+              Optional.
+            </span>
           </div>
 
           <div class="field full">
@@ -493,8 +465,12 @@
               name="personal_message"
               required
               maxlength="500"
-              placeholder="SHOTSTACK TEST WORKED"
+              placeholder="Write the message you want your recipient to receive."
             ></textarea>
+
+            <span class="help">
+              Maximum 500 characters.
+            </span>
           </div>
 
           <div class="field full">
@@ -506,8 +482,12 @@
               id="specialInstructions"
               name="special_instructions"
               maxlength="500"
-              placeholder="Optional test notes"
+              placeholder="Anything else you would like us to know?"
             ></textarea>
+
+            <span class="help">
+              Optional.
+            </span>
           </div>
 
         </div>
@@ -515,21 +495,22 @@
         <div class="order-summary">
 
           <h3>
-            Test Order
+            Your Order
           </h3>
 
           <p>
             <strong>Card:</strong>
-            NYC Ride — Personalized HUGS Card TEST
+            NYC Ride — Personalized HUGS Card
           </p>
 
           <p>
             <strong>Price:</strong>
-            $16.99 TEST
+            $16.99
           </p>
 
           <p>
-            This uses Stripe Test Mode. No real payment will be charged.
+            Your personalization information is securely matched
+            to your payment using a unique HUG order number.
           </p>
 
         </div>
@@ -539,19 +520,19 @@
           type="submit"
           class="checkout-button"
         >
-          Continue to TEST Checkout — $16.99
+          Continue to Secure Checkout — $16.99
         </button>
 
         <div
           id="formError"
           class="error-message"
         >
-          We could not save the test personalization order.
+          We could not save your personalization order.
           Please try again.
         </div>
 
         <p class="notice">
-          TEST MODE ONLY — no real charge.
+          Your payment is processed securely by Stripe.
         </p>
 
       </form>
@@ -587,10 +568,10 @@
         checkoutButton.disabled = true;
 
         checkoutButton.textContent =
-          "Saving Test HUG...";
+          "Saving Your HUG...";
 
         const orderId =
-          "HUG-TEST-" +
+          "HUG-" +
           Date.now()
             .toString(36)
             .toUpperCase() +
@@ -606,10 +587,8 @@
         const order = {
           order_id: orderId,
 
-          test_mode: true,
-
           product:
-            "NYC Ride Personalized HUGS Card TEST",
+            "NYC Ride Personalized HUGS Card",
 
           price: "16.99",
 
@@ -665,12 +644,12 @@
           ) {
             throw new Error(
               result.error ||
-              "Test order could not be saved."
+              "Order could not be saved."
             );
           }
 
           const stripeLink =
-            "https://buy.stripe.com/test_dRm9ASa56deM7GvaIM8ww00";
+            "https://buy.stripe.com/9B64gy2CE4Ig3qf3gk8ww05";
 
           const checkoutUrl =
             stripeLink +
@@ -678,21 +657,21 @@
             encodeURIComponent(orderId);
 
           checkoutButton.textContent =
-            "Opening TEST Checkout...";
+            "Opening Secure Checkout...";
 
           window.location.href =
             checkoutUrl;
 
         } catch (error) {
           console.error(
-            "HUG test order error:",
+            "HUG order error:",
             error
           );
 
           checkoutButton.disabled = false;
 
           checkoutButton.textContent =
-            "Continue to TEST Checkout — $16.99";
+            "Continue to Secure Checkout — $16.99";
 
           formError.style.display =
             "block";
