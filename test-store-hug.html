@@ -1,138 +1,72 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8" />
-  <meta
-    name="viewport"
-    content="width=device-width, initial-scale=1.0"
-  />
+<script>
+  const button =
+    document.getElementById("testButton");
 
-  <title>Test HUG Storage</title>
+  const result =
+    document.getElementById("result");
 
-  <style>
-    body {
-      font-family: Arial, Helvetica, sans-serif;
-      padding: 30px 18px;
-      background: #f8f5ee;
-      color: #23374d;
-      text-align: center;
-    }
+  button.addEventListener(
+    "click",
+    async function () {
 
-    button {
-      border: 0;
-      border-radius: 999px;
-      padding: 16px 22px;
-      background: #0b2f59;
-      color: white;
-      font-size: 17px;
-      font-weight: 800;
-      cursor: pointer;
-    }
+      button.disabled = true;
 
-    button:disabled {
-      opacity: 0.6;
-    }
+      result.textContent =
+        "Uploading to R2...";
 
-    pre {
-      margin-top: 24px;
-      padding: 18px;
-      background: white;
-      border-radius: 16px;
-      text-align: left;
-      white-space: pre-wrap;
-      word-break: break-word;
-    }
-  </style>
-</head>
+      try {
 
-<body>
+        const response =
+          await fetch(
+            "/.netlify/functions/overwrite-test-hug",
+            {
+              method: "POST",
 
-  <h1>Test HUG R2 Storage</h1>
+              headers: {
+                "Content-Type":
+                  "application/json"
+              },
 
-  <p>
-    This temporary page tests storing the completed HUG video in Cloudflare R2.
-  </p>
+              body: JSON.stringify({
+                order_id:
+                  "HUG-TEST-MTTL0NE5-M4JUS4"
+              })
+            }
+          );
 
-  <button id="testButton">
-    Overwrite With Full NYC Ride
-  </button>
+        const text =
+          await response.text();
 
-  <pre id="result">
-Waiting for test...
-  </pre>
-
-  <script>
-    const button =
-      document.getElementById("testButton");
-
-    const result =
-      document.getElementById("result");
-
-    button.addEventListener(
-      "click",
-      async function () {
-
-        button.disabled = true;
-
-        result.textContent =
-          "Uploading to R2...";
+        let data;
 
         try {
-
-          const response =
-            await fetch(
-              ""/.netlify/functions/overwrite-test-hug",
-              {
-                method: "POST",
-
-                headers: {
-                  "Content-Type":
-                    "application/json"
-                },
-
-                body: JSON.stringify({
-                  order_id:
-                    "HUG-TEST-MTTL0NE5-M4JUS4"
-                })
-              }
-            );
-
-          const text =
-            await response.text();
-
-          let data;
-
-          try {
-            data =
-              JSON.parse(text);
-          } catch {
-            data = {
-              raw_response: text
-            };
-          }
-
-          result.textContent =
-            JSON.stringify(
-              data,
-              null,
-              2
-            );
-
-        } catch (error) {
-
-          result.textContent =
-            "ERROR: " +
-            error.message;
-
-        } finally {
-
-          button.disabled = false;
-
+          data =
+            JSON.parse(text);
+        } catch {
+          data = {
+            raw_response: text
+          };
         }
 
-      }
-    );
-  </script>
+        result.textContent =
+          JSON.stringify(
+            data,
+            null,
+            2
+          );
 
-</body>
-</html>
+      } catch (error) {
+
+        result.textContent =
+          "ERROR: " +
+          error.message;
+
+      } finally {
+
+        button.disabled = false;
+
+      }
+
+    }
+  );
+</script>
