@@ -3,10 +3,18 @@ import { getStore } from "@netlify/blobs";
 const SHOTSTACK_TEMPLATE_ID =
   "dcbf5c47-a34c-4f75-b1f0-2ed4a2074ee4";
 
+const SHOTSTACK_CALLBACK_URL =
+  "https://hugslinks.com/.netlify/functions/shotstack-hugs-callback";
+
+const SHOTSTACK_BASE =
+  "https://api.shotstack.io/edit/v1";
+
 export default async (req) => {
   if (req.method !== "POST") {
     return new Response(
-      JSON.stringify({ error: "Method not allowed" }),
+      JSON.stringify({
+        error: "Method not allowed"
+      }),
       {
         status: 405,
         headers: {
@@ -39,15 +47,22 @@ export default async (req) => {
       );
     }
 
-    const store = getStore({
+    /*
+     * Open HUG order store.
+     */
+
+    const orderStore = getStore({
       name: "hugs-orders",
       consistency: "strong"
     });
 
-    const order = await store.get(order_id, {
-      type: "json",
-      consistency: "strong"
-    });
+    const order = await orderStore.get(
+      order_id,
+      {
+        type: "json",
+        consistency: "strong"
+      }
+    );
 
     if (!order) {
       return new Response(
@@ -63,6 +78,10 @@ export default async (req) => {
       );
     }
 
+    /*
+     * Never render an unpaid order.
+     */
+
     if (order.payment_status !== "paid") {
       return new Response(
         JSON.stringify({
@@ -77,6 +96,10 @@ export default async (req) => {
       );
     }
 
+    /*
+     * Duplicate protection.
+     */
+
     if (
       order.render_status === "queued" ||
       order.render_status === "rendering" ||
@@ -87,8 +110,10 @@ export default async (req) => {
           success: true,
           duplicate: true,
           order_id,
-          render_status: order.render_status,
-          render_id: order.render_id || null
+          render_status:
+            order.render_status,
+          render_id:
+            order.render_id || null
         }),
         {
           status: 200,
@@ -99,38 +124,138 @@ export default async (req) => {
       );
     }
 
+    const shotstackHeaders = {
+      "Content-Type": "application/json",
+      Accept: "application/json",
+      "x-api-key":
+        process.env.SHOTSTACK_API_KEY
+    };
+
+    /*
+     * Get the current Shotstack template.
+     */
+
+    const templateResponse = await fetch(
+      `${SHOTSTACK_BASE}/templates/${SHOTSTACK_TEMPLATE_ID}`,
+      {
+        method: "GET",
+        headers: shotstackHeaders
+      }
+    );
+
+    const templateData =
+      await templateResponse.json();
+
+    if (!templateResponse.ok) {
+      console.error(
+        "Could not retrieve Shotstack template:",
+        templateData
+      );
+
+      throw new Error(
+        "Could not retrieve Shotstack template"
+      );
+    }
+
+    const template =
+      templateData?.response?.template;
+
+    const templateName =
+      templateData?.response?.name ||
+      "NYC Ride Personalized HUGS";
+
+    if (!template) {
+      throw new Error(
+        "Shotstack template data missing"
+      );
+    }
+
+    /*
+     * Make sure Shotstack knows where
+     * to report render completion.
+     */
+
+    if (
+      template.callback !==
+      SHOTSTACK_CALLBACK_URL
+    ) {
+      template.callback =
+        SHOTSTACK_CALLBACK_URL;
+
+      const updateTemplateResponse =
+        await fetch(
+          `${SHOTSTACK_BASE}/templates/${SHOTSTACK_TEMPLATE_ID}`,
+          {
+            method: "PUT",
+            headers: shotstackHeaders,
+            body: JSON.stringify({
+              name: templateName,
+              template
+            })
+          }
+        );
+
+      const updateTemplateData =
+        await updateTemplateResponse.json();
+
+      if (!updateTemplateResponse.ok) {
+        console.error(
+          "Could not add Shotstack callback:",
+          updateTemplateData
+        );
+
+        throw new Error(
+          "Could not configure Shotstack callback"
+        );
+      }
+
+      console.log(
+        "Shotstack callback configured"
+      );
+    }
+
+    /*
+     * Customer personalization.
+     */
+
     const merge = [
       {
         find: "RECIPIENT_NAME",
-        replace: order.recipient_name || ""
+        replace:
+          order.recipient_name || ""
       },
       {
         find: "OCCASION",
-        replace: order.occasion || "Just Because"
+        replace:
+          order.occasion ||
+          "Just Because"
       },
       {
         find: "PERSONAL_MESSAGE",
-        replace: order.personal_message || ""
+        replace:
+          order.personal_message || ""
       },
       {
         find: "SENDER_NAME",
-        replace: order.sender_name || ""
+        replace:
+          order.sender_name || ""
       },
       {
         find: "SPECIAL_CLOSING",
-        replace: order.special_closing || ""
+        replace:
+          order.special_closing || ""
       }
     ];
 
-    const shotstackResponse = await fetch(
-      "https://api.shotstack.io/edit/v1/templates/render",
+    /*
+     * Start Shotstack render.
+     */
+
+    const renderResponse = await fetch(
+      `${SHOTSTACK_BASE}/templates/render`,
       {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Accept: "application/json",
-          "x-api-key": process.env.SHOTSTACK_API_KEY
-        },
+        headers: shotstackHeaders,
         body: JSON.stringify({
           id: SHOTSTACK_TEMPLATE_ID,
           merge
@@ -138,25 +263,27 @@ export default async (req) => {
       }
     );
 
-    const shotstackData = await shotstackResponse.json();
+    const renderData =
+      await renderResponse.json();
 
-    if (!shotstackResponse.ok) {
+    if (!renderResponse.ok) {
       console.error(
         "Shotstack render request failed:",
-        shotstackData
+        renderData
       );
 
       throw new Error(
-        "Shotstack rejected the render request"
+        "Shotstack rejected render request"
       );
     }
 
-    const renderId = shotstackData?.response?.id;
+    const renderId =
+      renderData?.response?.id;
 
     if (!renderId) {
       console.error(
         "Shotstack response missing render ID:",
-        shotstackData
+        renderData
       );
 
       throw new Error(
@@ -164,13 +291,50 @@ export default async (req) => {
       );
     }
 
-    order.render_status = "queued";
-    order.fulfillment_status = "rendering";
-    order.render_id = renderId;
+    /*
+     * Save render ID -> order ID mapping.
+     *
+     * The Shotstack callback sends us the
+     * render ID, so this lets us identify
+     * which HUG order belongs to that render.
+     */
+
+    const renderMapStore =
+      getStore({
+        name: "hugs-render-map",
+        consistency: "strong"
+      });
+
+    await renderMapStore.setJSON(
+      renderId,
+      {
+        render_id: renderId,
+        order_id,
+        created_at:
+          new Date().toISOString()
+      }
+    );
+
+    /*
+     * Update HUG order.
+     */
+
+    order.render_status =
+      "queued";
+
+    order.fulfillment_status =
+      "rendering";
+
+    order.render_id =
+      renderId;
+
     order.render_queued_at =
       new Date().toISOString();
 
-    await store.setJSON(order_id, order);
+    await orderStore.setJSON(
+      order_id,
+      order
+    );
 
     console.log(
       "HUG Shotstack render queued:",
@@ -194,6 +358,7 @@ export default async (req) => {
         }
       }
     );
+
   } catch (error) {
     console.error(
       "Render HUG card error:",
@@ -202,7 +367,8 @@ export default async (req) => {
 
     return new Response(
       JSON.stringify({
-        error: "Could not start HUG card render"
+        error:
+          "Could not start HUG card render"
       }),
       {
         status: 500,
