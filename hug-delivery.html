@@ -45,10 +45,7 @@
           #ffffff 100%
         );
       color: var(--text);
-      font-family:
-        Arial,
-        Helvetica,
-        sans-serif;
+      font-family: Arial, Helvetica, sans-serif;
     }
 
     .page {
@@ -293,10 +290,7 @@
   <header class="topbar">
     <nav class="nav">
 
-      <a
-        class="brand"
-        href="index.html"
-      >
+      <a class="brand" href="index.html">
         Hugslinks
       </a>
 
@@ -333,6 +327,7 @@
     </nav>
   </header>
 
+
   <main class="page">
 
     <section class="hero">
@@ -366,8 +361,8 @@
       </h2>
 
       <p class="intro">
-        Your HUG order number was created when you
-        personalized your card.
+        Enter the order number created when your
+        personalized HUG was purchased.
       </p>
 
       <form id="deliveryForm">
@@ -410,6 +405,7 @@
 
       </form>
 
+
       <div
         id="errorMessage"
         class="message error"
@@ -440,6 +436,7 @@
         id="recipient"
         class="recipient"
       ></div>
+
 
       <div class="video-frame">
 
@@ -493,7 +490,7 @@
           ✓ Your personalized HUG is ready.
         </div>
 
-        <div>
+        <div id="storageMessage">
           Watch it here, open it full screen,
           or save the video to your device.
         </div>
@@ -519,6 +516,7 @@
   <script src="script.js"></script>
 
   <script>
+
     const deliveryForm =
       document.getElementById(
         "deliveryForm"
@@ -567,6 +565,11 @@
     const recipient =
       document.getElementById(
         "recipient"
+      );
+
+    const storageMessage =
+      document.getElementById(
+        "storageMessage"
       );
 
 
@@ -656,7 +659,7 @@
 
 
           if (
-            !result.render_url
+            !result.video_url
           ) {
 
             throw new Error(
@@ -665,14 +668,21 @@
           }
 
 
+          /*
+           * Permanent R2 delivery URL
+           * is preferred by the function.
+           */
+
           hugVideo.src =
-            result.render_url;
+            result.video_url;
+
+          hugVideo.load();
 
           watchButton.href =
-            result.render_url;
+            result.video_url;
 
           downloadButton.href =
-            result.render_url;
+            result.video_url;
 
 
           if (
@@ -687,6 +697,26 @@
 
             recipient.textContent =
               "";
+
+          }
+
+
+          /*
+           * Let customer know whether
+           * permanent storage is ready.
+           */
+
+          if (
+            result.video_source === "r2"
+          ) {
+
+            storageMessage.textContent =
+              "Your HUG is permanently stored and ready to watch, download or share.";
+
+          } else {
+
+            storageMessage.textContent =
+              "Your HUG is ready. Permanent storage is still being prepared.";
 
           }
 
@@ -735,6 +765,14 @@
           watchButton.href;
 
         if (
+          !url ||
+          url === "#"
+        ) {
+          return;
+        }
+
+
+        if (
           navigator.share
         ) {
 
@@ -743,8 +781,10 @@
             await navigator.share({
               title:
                 "A HUGSLinks HUG for You",
+
               text:
                 "Someone sent you a personalized HUG.",
+
               url
             });
 
@@ -768,8 +808,10 @@
 
             setTimeout(
               function () {
+
                 shareButton.textContent =
                   "Share Your HUG";
+
               },
               2000
             );
@@ -787,6 +829,7 @@
 
       }
     );
+
   </script>
 
 </body>
