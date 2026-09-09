@@ -18,10 +18,17 @@ export default async (req) => {
   try {
     const payload = await req.json();
 
-    const renderId = payload.id;
-    const status = payload.status;
-    const renderUrl = payload.url || null;
-    const renderError = payload.error || null;
+    const renderId =
+      payload.id;
+
+    const status =
+      payload.status;
+
+    const renderUrl =
+      payload.url || null;
+
+    const renderError =
+      payload.error || null;
 
     if (!renderId) {
       return new Response(
@@ -37,16 +44,39 @@ export default async (req) => {
       );
     }
 
-    const orderId =
-      new URL(req.url).searchParams.get("order_id");
+    /*
+     * Look up which HUG order belongs
+     * to this Shotstack render ID.
+     */
 
-    if (!orderId) {
+    const renderMapStore =
+      getStore({
+        name: "hugs-render-map",
+        consistency: "strong"
+      });
+
+    const renderMap =
+      await renderMapStore.get(
+        renderId,
+        {
+          type: "json",
+          consistency: "strong"
+        }
+      );
+
+    if (!renderMap?.order_id) {
+      console.error(
+        "No HUG order mapping found for render:",
+        renderId
+      );
+
       return new Response(
         JSON.stringify({
-          error: "Missing order_id"
+          error:
+            "Render mapping not found"
         }),
         {
-          status: 400,
+          status: 404,
           headers: {
             "Content-Type": "application/json"
           }
@@ -54,18 +84,27 @@ export default async (req) => {
       );
     }
 
-    const store = getStore({
-      name: "hugs-orders",
-      consistency: "strong"
-    });
+    const orderId =
+      renderMap.order_id;
 
-    const order = await store.get(
-      orderId,
-      {
-        type: "json",
+    /*
+     * Load the HUG order.
+     */
+
+    const orderStore =
+      getStore({
+        name: "hugs-orders",
         consistency: "strong"
-      }
-    );
+      });
+
+    const order =
+      await orderStore.get(
+        orderId,
+        {
+          type: "json",
+          consistency: "strong"
+        }
+      );
 
     if (!order) {
       return new Response(
@@ -81,13 +120,30 @@ export default async (req) => {
       );
     }
 
+    /*
+     * Confirm this callback belongs
+     * to the render saved on the order.
+     */
+
     if (
       order.render_id &&
       order.render_id !== renderId
     ) {
+      console.error(
+        "Shotstack render ID mismatch:",
+        {
+          order_id: orderId,
+          expected:
+            order.render_id,
+          received:
+            renderId
+        }
+      );
+
       return new Response(
         JSON.stringify({
-          error: "Render ID does not match order"
+          error:
+            "Render ID does not match order"
         }),
         {
           status: 400,
@@ -98,12 +154,21 @@ export default async (req) => {
       );
     }
 
-    if (status === "done") {
-      order.render_status = "completed";
+    /*
+     * Render finished successfully.
+     */
+
+    if (
+      status === "done"
+    ) {
+      order.render_status =
+        "completed";
+
       order.fulfillment_status =
         "render-complete";
 
-      order.render_url = renderUrl;
+      order.render_url =
+        renderUrl;
 
       order.render_completed_at =
         new Date().toISOString();
@@ -111,12 +176,26 @@ export default async (req) => {
       console.log(
         "Personalized HUG render completed:",
         {
-          order_id: orderId,
-          render_id: renderId
+          order_id:
+            orderId,
+          render_id:
+            renderId,
+          render_url:
+            renderUrl
         }
       );
-    } else if (status === "failed") {
-      order.render_status = "failed";
+    }
+
+    /*
+     * Render failed.
+     */
+
+    else if (
+      status === "failed"
+    ) {
+      order.render_status =
+        "failed";
+
       order.fulfillment_status =
         "render-error";
 
@@ -130,20 +209,41 @@ export default async (req) => {
       console.error(
         "Personalized HUG render failed:",
         {
-          order_id: orderId,
-          render_id: renderId,
-          error: order.render_error
+          order_id:
+            orderId,
+          render_id:
+            renderId,
+          error:
+            order.render_error
         }
       );
-    } else {
+    }
+
+    /*
+     * Any other Shotstack state.
+     */
+
+    else {
       order.render_status =
         status || "rendering";
 
       order.fulfillment_status =
         "rendering";
+
+      console.log(
+        "Personalized HUG render update:",
+        {
+          order_id:
+            orderId,
+          render_id:
+            renderId,
+          status:
+            order.render_status
+        }
+      );
     }
 
-    await store.setJSON(
+    await orderStore.setJSON(
       orderId,
       order
     );
@@ -151,8 +251,10 @@ export default async (req) => {
     return new Response(
       JSON.stringify({
         success: true,
-        order_id: orderId,
-        render_id: renderId,
+        order_id:
+          orderId,
+        render_id:
+          renderId,
         render_status:
           order.render_status
       }),
@@ -163,6 +265,7 @@ export default async (req) => {
         }
       }
     );
+
   } catch (error) {
     console.error(
       "Shotstack callback error:",
