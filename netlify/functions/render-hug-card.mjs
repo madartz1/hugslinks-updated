@@ -9,7 +9,9 @@ export default async (req) => {
       JSON.stringify({ error: "Method not allowed" }),
       {
         status: 405,
-        headers: { "Content-Type": "application/json" }
+        headers: {
+          "Content-Type": "application/json"
+        }
       }
     );
   }
@@ -19,11 +21,21 @@ export default async (req) => {
 
     if (!order_id) {
       return new Response(
-        JSON.stringify({ error: "Missing order_id" }),
+        JSON.stringify({
+          error: "Missing order_id"
+        }),
         {
           status: 400,
-          headers: { "Content-Type": "application/json" }
+          headers: {
+            "Content-Type": "application/json"
+          }
         }
+      );
+    }
+
+    if (!process.env.SHOTSTACK_API_KEY) {
+      throw new Error(
+        "SHOTSTACK_API_KEY environment variable is missing"
       );
     }
 
@@ -39,10 +51,14 @@ export default async (req) => {
 
     if (!order) {
       return new Response(
-        JSON.stringify({ error: "HUG order not found" }),
+        JSON.stringify({
+          error: "HUG order not found"
+        }),
         {
           status: 404,
-          headers: { "Content-Type": "application/json" }
+          headers: {
+            "Content-Type": "application/json"
+          }
         }
       );
     }
@@ -54,7 +70,9 @@ export default async (req) => {
         }),
         {
           status: 400,
-          headers: { "Content-Type": "application/json" }
+          headers: {
+            "Content-Type": "application/json"
+          }
         }
       );
     }
@@ -74,51 +92,48 @@ export default async (req) => {
         }),
         {
           status: 200,
-          headers: { "Content-Type": "application/json" }
+          headers: {
+            "Content-Type": "application/json"
+          }
         }
       );
     }
 
-    if (!process.env.SHOTSTACK_API_KEY) {
-      throw new Error("SHOTSTACK_API_KEY is not configured");
-    }
+    const merge = [
+      {
+        find: "RECIPIENT_NAME",
+        replace: order.recipient_name || ""
+      },
+      {
+        find: "OCCASION",
+        replace: order.occasion || "Just Because"
+      },
+      {
+        find: "PERSONAL_MESSAGE",
+        replace: order.personal_message || ""
+      },
+      {
+        find: "SENDER_NAME",
+        replace: order.sender_name || ""
+      },
+      {
+        find: "SPECIAL_CLOSING",
+        replace: order.special_closing || ""
+      }
+    ];
 
     const shotstackResponse = await fetch(
       "https://api.shotstack.io/edit/v1/templates/render",
       {
         method: "POST",
-
         headers: {
           "Content-Type": "application/json",
           Accept: "application/json",
           "x-api-key": process.env.SHOTSTACK_API_KEY
         },
-
         body: JSON.stringify({
           id: SHOTSTACK_TEMPLATE_ID,
-
-          merge: [
-            {
-              find: "RECIPIENT_NAME",
-              replace: order.recipient_name || ""
-            },
-            {
-              find: "OCCASION",
-              replace: order.occasion || "Just Because"
-            },
-            {
-              find: "PERSONAL_MESSAGE",
-              replace: order.personal_message || ""
-            },
-            {
-              find: "SENDER_NAME",
-              replace: order.sender_name || ""
-            },
-            {
-              find: "SPECIAL_CLOSING",
-              replace: order.special_closing || ""
-            }
-          ]
+          merge
         })
       }
     );
@@ -131,7 +146,9 @@ export default async (req) => {
         shotstackData
       );
 
-      throw new Error("Shotstack rejected render request");
+      throw new Error(
+        "Shotstack rejected the render request"
+      );
     }
 
     const renderId = shotstackData?.response?.id;
@@ -142,20 +159,26 @@ export default async (req) => {
         shotstackData
       );
 
-      throw new Error("Shotstack render ID missing");
+      throw new Error(
+        "Shotstack render ID missing"
+      );
     }
 
     order.render_status = "queued";
     order.fulfillment_status = "rendering";
     order.render_id = renderId;
-    order.render_queued_at = new Date().toISOString();
+    order.render_queued_at =
+      new Date().toISOString();
 
     await store.setJSON(order_id, order);
 
-    console.log("HUG Shotstack render queued:", {
-      order_id,
-      render_id: renderId
-    });
+    console.log(
+      "HUG Shotstack render queued:",
+      {
+        order_id,
+        render_id: renderId
+      }
+    );
 
     return new Response(
       JSON.stringify({
@@ -166,11 +189,16 @@ export default async (req) => {
       }),
       {
         status: 200,
-        headers: { "Content-Type": "application/json" }
+        headers: {
+          "Content-Type": "application/json"
+        }
       }
     );
   } catch (error) {
-    console.error("Render HUG card error:", error);
+    console.error(
+      "Render HUG card error:",
+      error
+    );
 
     return new Response(
       JSON.stringify({
@@ -178,7 +206,9 @@ export default async (req) => {
       }),
       {
         status: 500,
-        headers: { "Content-Type": "application/json" }
+        headers: {
+          "Content-Type": "application/json"
+        }
       }
     );
   }
