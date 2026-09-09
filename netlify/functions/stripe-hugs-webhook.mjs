@@ -6,7 +6,6 @@ const stripe = new Stripe(
 );
 
 export default async (req) => {
-
   const signature =
     req.headers.get("stripe-signature");
 
@@ -16,16 +15,13 @@ export default async (req) => {
   let event;
 
   try {
-
     event =
       stripe.webhooks.constructEvent(
         rawBody,
         signature,
         process.env.STRIPE_HUGS_WEBHOOK_SECRET
       );
-
   } catch (error) {
-
     console.error(
       "Stripe webhook signature failed:",
       error.message
@@ -44,16 +40,10 @@ export default async (req) => {
     );
   }
 
-
-  /*
-   * Only process completed payments.
-   */
-
   if (
     event.type !== "checkout.session.completed" &&
     event.type !== "checkout.session.async_payment_succeeded"
   ) {
-
     return new Response(
       JSON.stringify({
         received: true
@@ -67,21 +57,13 @@ export default async (req) => {
     );
   }
 
-
   try {
-
     const session =
       event.data.object;
-
-
-    /*
-     * Do not fulfill unpaid orders.
-     */
 
     if (
       session.payment_status === "unpaid"
     ) {
-
       return new Response(
         JSON.stringify({
           received: true,
@@ -96,34 +78,20 @@ export default async (req) => {
       );
     }
 
-
-    /*
-     * Get HUG order ID from Stripe.
-     */
-
     const orderId =
       session.client_reference_id;
 
-
     if (!orderId) {
-
       throw new Error(
         "Missing client_reference_id"
       );
-
     }
-
-
-    /*
-     * Open saved HUG orders.
-     */
 
     const store =
       getStore({
         name: "hugs-orders",
         consistency: "strong"
       });
-
 
     const order =
       await store.get(
@@ -134,29 +102,22 @@ export default async (req) => {
         }
       );
 
-
     if (!order) {
-
       throw new Error(
         "HUG order not found: " + orderId
       );
-
     }
-
-
-    /*
-     * Avoid duplicate processing.
-     */
 
     if (
       order.payment_status === "paid"
     ) {
-
       return new Response(
         JSON.stringify({
           received: true,
           duplicate: true,
-          order_id: orderId
+          order_id: orderId,
+          render_status:
+            order.render_status || null
         }),
         {
           status: 200,
@@ -165,13 +126,7 @@ export default async (req) => {
           }
         }
       );
-
     }
-
-
-    /*
-     * Mark order paid.
-     */
 
     order.payment_status =
       "paid";
@@ -187,25 +142,16 @@ export default async (req) => {
     order.paid_at =
       new Date().toISOString();
 
-
-    /*
-     * Until automated rendering
-     * is connected, this order
-     * waits for manual fulfillment.
-     */
-
     order.render_status =
       "not-started";
 
     order.fulfillment_status =
-      "manual-pending";
-
+      "render-pending";
 
     await store.setJSON(
       orderId,
       order
     );
-
 
     console.log(
       "Paid personalized HUG order saved:",
@@ -218,14 +164,93 @@ export default async (req) => {
       }
     );
 
+    /*
+     * Start Shotstack render.
+     */
+
+    let renderStarted = false;
+    let renderResponseData = null;
+
+    try {
+      const siteUrl =
+        process.env.URL ||
+        "https://hugslinks.com";
+
+      const renderResponse =
+        await fetch(
+          `${siteUrl}/.netlify/functions/render-hug-card`,
+          {
+            method: "POST",
+            headers: {
+              "Content-Type":
+                "application/json"
+            },
+            body: JSON.stringify({
+              order_id: orderId
+            })
+          }
+        );
+
+      renderResponseData =
+        await renderResponse.json();
+
+      if (!renderResponse.ok) {
+        throw new Error(
+          "Render function returned non-200 response"
+        );
+      }
+
+      renderStarted = true;
+
+      console.log(
+        "Shotstack render function triggered:",
+        {
+          order_id: orderId,
+          render_response:
+            renderResponseData
+        }
+      );
+    } catch (renderError) {
+      console.error(
+        "Could not start Shotstack render:",
+        renderError
+      );
+
+      const latestOrder =
+        await store.get(
+          orderId,
+          {
+            type: "json",
+            consistency: "strong"
+          }
+        );
+
+      if (latestOrder) {
+        latestOrder.render_status =
+          "start-failed";
+
+        latestOrder.fulfillment_status =
+          "render-error";
+
+        latestOrder.render_error_at =
+          new Date().toISOString();
+
+        await store.setJSON(
+          orderId,
+          latestOrder
+        );
+      }
+    }
 
     return new Response(
       JSON.stringify({
         received: true,
         order_id: orderId,
         payment_status: "paid",
-        fulfillment_status:
-          "manual-pending"
+        render_started:
+          renderStarted,
+        render_response:
+          renderResponseData
       }),
       {
         status: 200,
@@ -234,10 +259,7 @@ export default async (req) => {
         }
       }
     );
-
-
   } catch (error) {
-
     console.error(
       "HUG Stripe fulfillment error:",
       error
@@ -255,7 +277,5 @@ export default async (req) => {
         }
       }
     );
-
   }
-
 };
