@@ -1,7 +1,7 @@
 import { getStore } from "@netlify/blobs";
 
 const SHOTSTACK_TEMPLATE_ID =
-  "dcbf5c47-a34c-4f75-b1f0-2ed4a2074ee4";
+  "c314c3f3-dd48-42c2-baea-599c24670b5d";
 
 const SHOTSTACK_CALLBACK_URL =
   "https://hugslinks.com/.netlify/functions/shotstack-hugs-callback";
@@ -47,10 +47,6 @@ export default async (req) => {
       );
     }
 
-    /*
-     * Open HUG order store.
-     */
-
     const orderStore = getStore({
       name: "hugs-orders",
       consistency: "strong"
@@ -78,10 +74,6 @@ export default async (req) => {
       );
     }
 
-    /*
-     * Never render an unpaid order.
-     */
-
     if (order.payment_status !== "paid") {
       return new Response(
         JSON.stringify({
@@ -95,10 +87,6 @@ export default async (req) => {
         }
       );
     }
-
-    /*
-     * Duplicate protection.
-     */
 
     if (
       order.render_status === "queued" ||
@@ -131,10 +119,6 @@ export default async (req) => {
         process.env.SHOTSTACK_API_KEY
     };
 
-    /*
-     * Get the current Shotstack template.
-     */
-
     const templateResponse = await fetch(
       `${SHOTSTACK_BASE}/templates/${SHOTSTACK_TEMPLATE_ID}`,
       {
@@ -162,18 +146,13 @@ export default async (req) => {
 
     const templateName =
       templateData?.response?.name ||
-      "NYC Ride Personalized HUGS";
+      "NYC Ride Callback TEST";
 
     if (!template) {
       throw new Error(
         "Shotstack template data missing"
       );
     }
-
-    /*
-     * Make sure Shotstack knows where
-     * to report render completion.
-     */
 
     if (
       template.callback !==
@@ -208,15 +187,7 @@ export default async (req) => {
           "Could not configure Shotstack callback"
         );
       }
-
-      console.log(
-        "Shotstack callback configured"
-      );
     }
-
-    /*
-     * Customer personalization.
-     */
 
     const merge = [
       {
@@ -225,31 +196,11 @@ export default async (req) => {
           order.recipient_name || ""
       },
       {
-        find: "OCCASION",
-        replace:
-          order.occasion ||
-          "Just Because"
-      },
-      {
         find: "PERSONAL_MESSAGE",
         replace:
           order.personal_message || ""
-      },
-      {
-        find: "SENDER_NAME",
-        replace:
-          order.sender_name || ""
-      },
-      {
-        find: "SPECIAL_CLOSING",
-        replace:
-          order.special_closing || ""
       }
     ];
-
-    /*
-     * Start Shotstack render.
-     */
 
     const renderResponse = await fetch(
       `${SHOTSTACK_BASE}/templates/render`,
@@ -281,23 +232,10 @@ export default async (req) => {
       renderData?.response?.id;
 
     if (!renderId) {
-      console.error(
-        "Shotstack response missing render ID:",
-        renderData
-      );
-
       throw new Error(
         "Shotstack render ID missing"
       );
     }
-
-    /*
-     * Save render ID -> order ID mapping.
-     *
-     * The Shotstack callback sends us the
-     * render ID, so this lets us identify
-     * which HUG order belongs to that render.
-     */
 
     const renderMapStore =
       getStore({
@@ -314,10 +252,6 @@ export default async (req) => {
           new Date().toISOString()
       }
     );
-
-    /*
-     * Update HUG order.
-     */
 
     order.render_status =
       "queued";
@@ -337,7 +271,7 @@ export default async (req) => {
     );
 
     console.log(
-      "HUG Shotstack render queued:",
+      "HUG Shotstack TEST render queued:",
       {
         order_id,
         render_id: renderId
@@ -349,7 +283,8 @@ export default async (req) => {
         success: true,
         order_id,
         render_status: "queued",
-        render_id: renderId
+        render_id: renderId,
+        test_template: true
       }),
       {
         status: 200,
