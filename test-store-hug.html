@@ -1,72 +1,148 @@
-<script>
-  const button =
-    document.getElementById("testButton");
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0"
+  />
 
-  const result =
-    document.getElementById("result");
+  <title>Overwrite Test HUG</title>
 
-  button.addEventListener(
-    "click",
-    async function () {
+  <style>
+    body {
+      font-family: Arial, Helvetica, sans-serif;
+      padding: 30px 18px;
+      background: #f8f5ee;
+      color: #23374d;
+      text-align: center;
+    }
 
-      button.disabled = true;
+    h1 {
+      color: #0b2f59;
+    }
 
-      result.textContent =
-        "Uploading to R2...";
+    button {
+      border: 0;
+      border-radius: 999px;
+      padding: 16px 22px;
+      background: #0b2f59;
+      color: white;
+      font-size: 17px;
+      font-weight: 800;
+      cursor: pointer;
+    }
 
-      try {
+    button:disabled {
+      opacity: 0.6;
+    }
 
-        const response =
-          await fetch(
-            "/.netlify/functions/overwrite-test-hug",
-            {
-              method: "POST",
+    pre {
+      max-width: 700px;
+      margin: 24px auto 0;
+      padding: 18px;
+      background: white;
+      border-radius: 16px;
+      text-align: left;
+      white-space: pre-wrap;
+      word-break: break-word;
+      border: 1px solid #dce8f2;
+    }
+  </style>
+</head>
 
-              headers: {
-                "Content-Type":
-                  "application/json"
-              },
+<body>
 
-              body: JSON.stringify({
-                order_id:
-                  "HUG-TEST-MTTL0NE5-M4JUS4"
-              })
-            }
-          );
+  <h1>Overwrite Test HUG</h1>
 
-        const text =
-          await response.text();
+  <p>
+    Replace the 10-second R2 test video with the full NYC Ride video.
+  </p>
 
-        let data;
+  <button
+    id="testButton"
+    type="button"
+  >
+    Overwrite With Full NYC Ride
+  </button>
+
+  <pre id="result">Waiting...</pre>
+
+  <script>
+    const button =
+      document.getElementById("testButton");
+
+    const result =
+      document.getElementById("result");
+
+    button.addEventListener(
+      "click",
+      async function () {
+
+        button.disabled = true;
+
+        button.textContent =
+          "Uploading Full Video...";
+
+        result.textContent =
+          "Uploading to Cloudflare R2...";
 
         try {
-          data =
-            JSON.parse(text);
-        } catch {
-          data = {
-            raw_response: text
-          };
+
+          const response =
+            await fetch(
+              "/.netlify/functions/overwrite-test-hug",
+              {
+                method: "POST",
+                headers: {
+                  "Content-Type":
+                    "application/json"
+                },
+                body: JSON.stringify({
+                  order_id:
+                    "HUG-TEST-MTTL0NE5-M4JUS4"
+                })
+              }
+            );
+
+          const text =
+            await response.text();
+
+          let data;
+
+          try {
+            data = JSON.parse(text);
+          } catch {
+            data = {
+              raw_response: text
+            };
+          }
+
+          result.textContent =
+            JSON.stringify(
+              data,
+              null,
+              2
+            );
+
+        } catch (error) {
+
+          result.textContent =
+            "ERROR: " +
+            error.message;
+
+        } finally {
+
+          button.disabled = false;
+
+          button.textContent =
+            "Overwrite With Full NYC Ride";
+
         }
 
-        result.textContent =
-          JSON.stringify(
-            data,
-            null,
-            2
-          );
-
-      } catch (error) {
-
-        result.textContent =
-          "ERROR: " +
-          error.message;
-
-      } finally {
-
-        button.disabled = false;
-
       }
+    );
+  </script>
 
-    }
-  );
-</script>
+</body>
+</html>
