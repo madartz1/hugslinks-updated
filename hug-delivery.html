@@ -80,7 +80,7 @@
 
     .primary-btn {
       background: #0f2742;
-      color: #ffffff;
+      color: white;
     }
 
     .action-btn {
@@ -88,31 +88,32 @@
       color: #0f2742;
     }
 
-    .video-box {
-      margin-top: 28px;
-      display: none;
-    }
-
-    video {
-      width: 100%;
-      border-radius: 16px;
-      background: #000;
-    }
-
     .status {
+      display: none;
       margin-top: 20px;
       padding: 14px;
       border-radius: 12px;
       background: #eef3f8;
       line-height: 1.5;
-      display: none;
+      word-break: break-word;
     }
 
     .details {
+      display: none;
       margin-top: 20px;
       line-height: 1.7;
       color: #42556b;
+    }
+
+    .video-box {
       display: none;
+      margin-top: 28px;
+    }
+
+    video {
+      width: 100%;
+      border-radius: 16px;
+      background: black;
     }
 
     .button-group {
@@ -121,6 +122,7 @@
     }
 
     .small-note {
+      display: none;
       margin-top: 18px;
       font-size: 14px;
       line-height: 1.5;
@@ -128,6 +130,7 @@
     }
   </style>
 </head>
+
 
 <body>
 
@@ -143,10 +146,12 @@
       </a>
 
       <div class="seal">
+
         <img
           src="assets/HUGS_Header_Logo_Transparent.png"
           alt="HUGS logo"
         >
+
       </div>
 
       <button
@@ -188,49 +193,41 @@
       </h1>
 
       <p class="intro">
-        Enter the order number and purchase
-        email from your HUGSLinks delivery
-        email to open your personalized HUG.
+        Enter your order number and the
+        purchase email from your HUGSLinks
+        delivery email.
       </p>
 
 
-      <form id="deliveryForm">
+      <label for="orderId">
+        Order number
+      </label>
 
-        <label for="orderId">
-          Order number
-        </label>
-
-        <input
-          id="orderId"
-          name="order_id"
-          type="text"
-          autocomplete="off"
-          required
-        >
+      <input
+        id="orderId"
+        type="text"
+        autocomplete="off"
+      >
 
 
-        <label for="email">
-          Purchase email
-        </label>
+      <label for="email">
+        Purchase email
+      </label>
 
-        <input
-          id="email"
-          name="email"
-          type="email"
-          autocomplete="email"
-          required
-        >
+      <input
+        id="email"
+        type="email"
+        autocomplete="email"
+      >
 
 
-        <button
-          class="primary-btn"
-          id="openButton"
-          type="submit"
-        >
-          Open My HUG
-        </button>
-
-      </form>
+      <button
+        id="openButton"
+        class="primary-btn"
+        type="button"
+      >
+        Open My HUG
+      </button>
 
 
       <div
@@ -297,7 +294,6 @@
       <p
         id="storageNote"
         class="small-note"
-        style="display:none;"
       >
         Your HUG is stored permanently
         for delivery.
@@ -313,70 +309,41 @@
 
   <script>
 
-    const form =
-      document.getElementById(
-        "deliveryForm"
-      );
-
     const orderInput =
-      document.getElementById(
-        "orderId"
-      );
+      document.getElementById("orderId");
 
     const emailInput =
-      document.getElementById(
-        "email"
-      );
+      document.getElementById("email");
 
     const openButton =
-      document.getElementById(
-        "openButton"
-      );
+      document.getElementById("openButton");
 
     const statusBox =
-      document.getElementById(
-        "status"
-      );
+      document.getElementById("status");
 
     const details =
-      document.getElementById(
-        "details"
-      );
+      document.getElementById("details");
 
     const videoBox =
-      document.getElementById(
-        "videoBox"
-      );
+      document.getElementById("videoBox");
 
     const video =
-      document.getElementById(
-        "hugVideo"
-      );
+      document.getElementById("hugVideo");
 
     const buttonGroup =
-      document.getElementById(
-        "buttonGroup"
-      );
+      document.getElementById("buttonGroup");
 
     const fullscreenButton =
-      document.getElementById(
-        "fullscreenButton"
-      );
+      document.getElementById("fullscreenButton");
 
     const downloadButton =
-      document.getElementById(
-        "downloadButton"
-      );
+      document.getElementById("downloadButton");
 
     const shareButton =
-      document.getElementById(
-        "shareButton"
-      );
+      document.getElementById("shareButton");
 
     const storageNote =
-      document.getElementById(
-        "storageNote"
-      );
+      document.getElementById("storageNote");
 
 
     let currentVideoUrl = "";
@@ -406,6 +373,17 @@
     }
 
 
+    function escapeHtml(value) {
+
+      return String(value || "")
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&#039;");
+    }
+
+
     function resetDelivery() {
 
       details.style.display =
@@ -429,11 +407,9 @@
     }
 
 
-    form.addEventListener(
-      "submit",
-      async (event) => {
-
-        event.preventDefault();
+    openButton.addEventListener(
+      "click",
+      async function () {
 
         resetDelivery();
 
@@ -482,21 +458,37 @@
                 },
 
                 body: JSON.stringify({
-                  order_id:
-                    orderId,
-
-                  email:
-                    email
+                  order_id: orderId,
+                  email: email
                 })
               }
             );
 
 
-          const result =
-            await response.json();
+          const text =
+            await response.text();
 
 
-          if (response.status === 202) {
+          let result;
+
+
+          try {
+
+            result =
+              JSON.parse(text);
+
+          } catch {
+
+            throw new Error(
+              text ||
+              "The HUG delivery service returned an invalid response."
+            );
+          }
+
+
+          if (
+            response.status === 202
+          ) {
 
             showStatus(
               result.message ||
@@ -513,25 +505,25 @@
           ) {
 
             throw new Error(
-  result.details ||
-  result.error ||
-  "Unable to open this HUG."
-);
+              result.details ||
+              result.error ||
+              "Unable to open this HUG."
+            );
+          }
 
 
           currentVideoUrl =
             result.video_url || "";
 
+
           currentDownloadUrl =
-            result.download_url ||
-            result.video_url ||
-            "";
+            result.download_url || "";
 
 
           if (!currentVideoUrl) {
 
             throw new Error(
-              "Video link is unavailable."
+              "The HUG video link is unavailable."
             );
           }
 
@@ -543,52 +535,57 @@
             "block";
 
 
-          downloadButton.href =
-            currentDownloadUrl;
+          if (currentDownloadUrl) {
+
+            downloadButton.href =
+              currentDownloadUrl;
+
+            downloadButton.style.display =
+              "block";
+
+          } else {
+
+            downloadButton.style.display =
+              "none";
+          }
 
 
-          /*
-            We intentionally do not rely
-            on HTML's download attribute.
-
-            The R2 download object itself
-            sends:
-
-            Content-Disposition: attachment
-
-            which is what makes Safari
-            and iPhone treat the MP4 as
-            a downloadable file.
-          */
+          let detailText = "";
 
 
-          details.innerHTML = `
+          if (result.recipient_name) {
 
-            <strong>
-              ${result.recipient_name
-                ? `For ${escapeHtml(
-                    result.recipient_name
-                  )}`
-                : "Your personalized HUG"}
-            </strong>
+            detailText +=
+              "<strong>For " +
+              escapeHtml(
+                result.recipient_name
+              ) +
+              "</strong>";
+          }
 
-            ${
-              result.occasion
-                ? `<br>Occasion: ${escapeHtml(
-                    result.occasion
-                  )}`
-                : ""
-            }
 
-            ${
-              result.sender_name
-                ? `<br>From: ${escapeHtml(
-                    result.sender_name
-                  )}`
-                : ""
-            }
+          if (result.occasion) {
 
-          `;
+            detailText +=
+              "<br>Occasion: " +
+              escapeHtml(
+                result.occasion
+              );
+          }
+
+
+          if (result.sender_name) {
+
+            detailText +=
+              "<br>From: " +
+              escapeHtml(
+                result.sender_name
+              );
+          }
+
+
+          details.innerHTML =
+            detailText;
 
 
           details.style.display =
@@ -634,21 +631,21 @@
 
     fullscreenButton.addEventListener(
       "click",
-      async () => {
+      function () {
 
         try {
 
           if (
-            video.requestFullscreen
-          ) {
-
-            await video.requestFullscreen();
-
-          } else if (
             video.webkitEnterFullscreen
           ) {
 
             video.webkitEnterFullscreen();
+
+          } else if (
+            video.requestFullscreen
+          ) {
+
+            video.requestFullscreen();
           }
 
         } catch (error) {
@@ -664,7 +661,7 @@
 
     shareButton.addEventListener(
       "click",
-      async () => {
+      async function () {
 
         if (!currentVideoUrl) {
           return;
@@ -688,9 +685,11 @@
 
           } else {
 
-            await navigator.clipboard.writeText(
-              currentVideoUrl
-            );
+            await navigator.clipboard
+              .writeText(
+                currentVideoUrl
+              );
+
 
             showStatus(
               "HUG link copied."
@@ -711,17 +710,6 @@
         }
       }
     );
-
-
-    function escapeHtml(value = "") {
-
-      return String(value)
-        .replaceAll("&", "&amp;")
-        .replaceAll("<", "&lt;")
-        .replaceAll(">", "&gt;")
-        .replaceAll('"', "&quot;")
-        .replaceAll("'", "&#039;");
-    }
 
   </script>
 
