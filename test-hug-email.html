@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0"
+  >
+
+  <title>HUGS Email Test</title>
+
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      max-width: 600px;
+      margin: 0 auto;
+      padding: 40px 20px;
+      background: #f5f7fa;
+      color: #0f2742;
+    }
+
+    .card {
+      background: white;
+      padding: 30px;
+      border-radius: 18px;
+      text-align: center;
+    }
+
+    button {
+      width: 100%;
+      padding: 16px;
+      border: none;
+      border-radius: 999px;
+      background: #0f2742;
+      color: white;
+      font-size: 18px;
+      font-weight: bold;
+    }
+
+    #result {
+      margin-top: 25px;
+      white-space: pre-wrap;
+      word-break: break-word;
+      text-align: left;
+    }
+  </style>
+</head>
+
+<body>
+
+  <div class="card">
+
+    <h1>HUGSLinks Email Test</h1>
+
+    <p>
+      This will send the delivery email
+      for the existing stored test HUG.
+    </p>
+
+    <button id="sendButton">
+      Send Test Delivery Email
+    </button>
+
+    <div id="result"></div>
+
+  </div>
+
+
+  <script>
+
+    const button =
+      document.getElementById("sendButton");
+
+    const result =
+      document.getElementById("result");
+
+
+    button.addEventListener(
+      "click",
+      async () => {
+
+        button.disabled = true;
+
+        button.textContent =
+          "Sending...";
+
+        result.textContent = "";
+
+
+        try {
+
+          const response = await fetch(
+            "/.netlify/functions/send-hug-delivery",
+            {
+              method: "POST",
+
+              headers: {
+                "Content-Type":
+                  "application/json"
+              },
+
+              body: JSON.stringify({
+                order_id:
+                  "HUG-TEST-MTTL0NE5-M4JUS4"
+              })
+            }
+          );
+
+
+          const data =
+            await response.json();
+
+
+          result.textContent =
+            JSON.stringify(
+              data,
+              null,
+              2
+            );
+
+
+          if (
+            response.ok &&
+            data.success
+          ) {
+
+            button.textContent =
+              "Email Sent ✓";
+
+          } else {
+
+            button.textContent =
+              "Test Failed";
+
+          }
+
+
+        } catch (error) {
+
+          result.textContent =
+            error.message;
+
+          button.textContent =
+            "Test Failed";
+        }
+
+
+        button.disabled = false;
+      }
+    );
+
+  </script>
+
+</body>
+
+</html>
