@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0"
+  >
+
+  <title>Prepare HUG Download</title>
+
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      max-width: 600px;
+      margin: 0 auto;
+      padding: 40px 20px;
+      background: #f5f7fa;
+      color: #0f2742;
+    }
+
+    .card {
+      background: white;
+      padding: 30px;
+      border-radius: 18px;
+      text-align: center;
+    }
+
+    button {
+      width: 100%;
+      padding: 16px;
+      border: 0;
+      border-radius: 999px;
+      background: #0f2742;
+      color: white;
+      font-size: 18px;
+      font-weight: bold;
+    }
+
+    #result {
+      margin-top: 24px;
+      white-space: pre-wrap;
+      word-break: break-word;
+      text-align: left;
+    }
+  </style>
+</head>
+
+<body>
+
+  <div class="card">
+
+    <h1>Prepare Download Copy</h1>
+
+    <p>
+      This creates the downloadable R2 copy
+      for the existing HUG.
+    </p>
+
+    <button id="prepareButton">
+      Prepare Download
+    </button>
+
+    <div id="result"></div>
+
+  </div>
+
+
+  <script>
+
+    const button =
+      document.getElementById(
+        "prepareButton"
+      );
+
+    const result =
+      document.getElementById(
+        "result"
+      );
+
+
+    button.addEventListener(
+      "click",
+      async () => {
+
+        button.disabled = true;
+        button.textContent =
+          "Preparing...";
+
+        result.textContent = "";
+
+
+        try {
+
+          const response =
+            await fetch(
+              "/.netlify/functions/store-hug-video",
+              {
+                method: "POST",
+
+                headers: {
+                  "Content-Type":
+                    "application/json"
+                },
+
+                body: JSON.stringify({
+                  order_id:
+                    "HUG-TEST-MTTL0NE5-M4JUS4"
+                })
+              }
+            );
+
+
+          const text =
+            await response.text();
+
+
+          let data;
+
+          try {
+            data = JSON.parse(text);
+          } catch {
+            data = {
+              response: text
+            };
+          }
+
+
+          result.textContent =
+            JSON.stringify(
+              data,
+              null,
+              2
+            );
+
+
+          if (
+            response.ok &&
+            data.success
+          ) {
+
+            button.textContent =
+              "Download Ready ✓";
+
+          } else {
+
+            button.textContent =
+              "Preparation Failed";
+          }
+
+
+        } catch (error) {
+
+          result.textContent =
+            error.message;
+
+          button.textContent =
+            "Preparation Failed";
+        }
+
+
+        button.disabled = false;
+      }
+    );
+
+  </script>
+
+</body>
+
+</html>
