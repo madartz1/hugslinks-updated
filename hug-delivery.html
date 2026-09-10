@@ -513,10 +513,10 @@
           ) {
 
             throw new Error(
-              result.error ||
-              "Unable to open this HUG."
-            );
-          }
+  result.details ||
+  result.error ||
+  "Unable to open this HUG."
+);
 
 
           currentVideoUrl =
