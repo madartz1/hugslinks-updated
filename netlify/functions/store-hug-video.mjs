@@ -47,8 +47,9 @@ function json(statusCode, payload) {
 async function triggerDeliveryEmail(orderId) {
 
   const siteUrl =
-    process.env.URL ||
-    "https://hugslinks.com";
+  process.env.DEPLOY_PRIME_URL ||
+  process.env.URL ||
+  "https://hugslinks-web-build.netlify.app";
 
   const response = await fetch(
     `${siteUrl}/.netlify/functions/send-hug-delivery`,
