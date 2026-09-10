@@ -1,26 +1,28 @@
 import { getStore } from "@netlify/blobs";
 
 
-function json(statusCode, payload) {
-  return {
-    statusCode,
-
-    headers: {
-      "Content-Type": "application/json",
-      "Cache-Control": "no-store"
-    },
-
-    body: JSON.stringify(payload)
-  };
+function json(payload, status = 200) {
+  return Response.json(
+    payload,
+    {
+      status,
+      headers: {
+        "Cache-Control": "no-store"
+      }
+    }
+  );
 }
 
 
 export default async (req) => {
 
   if (req.method !== "POST") {
-    return json(405, {
-      error: "Method not allowed"
-    });
+    return json(
+      {
+        error: "Method not allowed"
+      },
+      405
+    );
   }
 
 
@@ -31,27 +33,37 @@ export default async (req) => {
     try {
       body = await req.json();
     } catch {
-      return json(400, {
-        error: "Invalid JSON body"
-      });
+      return json(
+        {
+          error: "Invalid JSON body"
+        },
+        400
+      );
     }
 
 
     const orderId =
-      String(body?.order_id || "").trim();
+      String(
+        body?.order_id || ""
+      ).trim();
 
 
     const email =
-      String(body?.email || "")
+      String(
+        body?.email || ""
+      )
         .trim()
         .toLowerCase();
 
 
     if (!orderId || !email) {
-      return json(400, {
-        error:
-          "Order number and email are required"
-      });
+      return json(
+        {
+          error:
+            "Order number and email are required"
+        },
+        400
+      );
     }
 
 
@@ -69,9 +81,13 @@ export default async (req) => {
 
 
     if (!order) {
-      return json(404, {
-        error: "HUG order not found"
-      });
+      return json(
+        {
+          error:
+            "HUG order not found"
+        },
+        404
+      );
     }
 
 
@@ -89,20 +105,26 @@ export default async (req) => {
       !customerEmail ||
       customerEmail !== email
     ) {
-      return json(403, {
-        error:
-          "Order number and email do not match"
-      });
+      return json(
+        {
+          error:
+            "Order number and email do not match"
+        },
+        403
+      );
     }
 
 
     if (
       order.payment_status !== "paid"
     ) {
-      return json(409, {
-        error:
-          "This HUG order has not been paid"
-      });
+      return json(
+        {
+          error:
+            "This HUG order has not been paid"
+        },
+        409
+      );
     }
 
 
@@ -111,21 +133,27 @@ export default async (req) => {
       order.fulfillment_status ===
         "render-error"
     ) {
-      return json(500, {
-        error:
-          "There was a problem preparing this HUG"
-      });
+      return json(
+        {
+          error:
+            "There was a problem preparing this HUG"
+        },
+        500
+      );
     }
 
 
     if (
       order.render_status !== "completed"
     ) {
-      return json(202, {
-        ready: false,
-        message:
-          "Your HUG is still being prepared."
-      });
+      return json(
+        {
+          ready: false,
+          message:
+            "Your HUG is still being prepared."
+        },
+        202
+      );
     }
 
 
@@ -155,16 +183,18 @@ export default async (req) => {
 
 
     if (!videoUrl) {
-      return json(202, {
-        ready: false,
-        message:
-          "Your HUG is being finalized."
-      });
+      return json(
+        {
+          ready: false,
+          message:
+            "Your HUG is being finalized."
+        },
+        202
+      );
     }
 
 
-    return json(200, {
-
+    return json({
       success: true,
       ready: true,
 
@@ -205,9 +235,16 @@ export default async (req) => {
     );
 
 
-    return json(500, {
-      error:
-        "Unable to open this HUG."
-    });
+    return json(
+      {
+        error:
+          "Unable to open this HUG.",
+
+        details:
+          error?.message ||
+          "Unknown error"
+      },
+      500
+    );
   }
 };
