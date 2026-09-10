@@ -524,14 +524,18 @@ export default async (req) => {
       error
     );
 
+return json(500, {
+  error:
+    "Unable to load HUG delivery",
 
-    return json(500, {
-      error:
-        "Unable to load HUG delivery",
+  details:
+    error?.message ||
+    "Unknown error",
 
-      details:
-        error?.message ||
-        "Unknown error"
-    });
+  stack:
+    error?.stack ||
+    null
+});
+    
   }
 };
