@@ -23,7 +23,7 @@ const r2 = new S3Client({
 
 
 /* =========================================
-   JSON RESPONSE HELPER
+   JSON RESPONSE
 ========================================= */
 
 function json(statusCode, payload) {
@@ -47,9 +47,10 @@ function json(statusCode, payload) {
 async function triggerDeliveryEmail(orderId) {
 
   const siteUrl =
-  process.env.DEPLOY_PRIME_URL ||
-  process.env.URL ||
-  "https://hugslinks-web-build.netlify.app";
+    process.env.DEPLOY_PRIME_URL ||
+    process.env.URL ||
+    "https://hugslinks-web-build.netlify.app";
+
 
   const response = await fetch(
     `${siteUrl}/.netlify/functions/send-hug-delivery`,
@@ -79,12 +80,42 @@ async function triggerDeliveryEmail(orderId) {
   if (!response.ok) {
     throw new Error(
       result.error ||
-      `Delivery email request failed with status ${response.status}`
+      `Delivery email failed with status ${response.status}`
     );
   }
 
 
   return result;
+}
+
+
+/* =========================================
+   UPLOAD DOWNLOAD COPY
+========================================= */
+
+async function uploadDownloadCopy({
+  videoBuffer,
+  objectKey,
+  filename
+}) {
+
+  await r2.send(
+    new PutObjectCommand({
+      Bucket: process.env.R2_BUCKET_NAME,
+
+      Key: objectKey,
+
+      Body: videoBuffer,
+
+      ContentType: "video/mp4",
+
+      ContentDisposition:
+        `attachment; filename="${filename}"`,
+
+      CacheControl:
+        "private, max-age=0, must-revalidate"
+    })
+  );
 }
 
 
@@ -104,7 +135,7 @@ export default async (req) => {
   try {
 
     /* =====================================
-       CHECK REQUIRED ENVIRONMENT VARIABLES
+       ENVIRONMENT VARIABLES
     ===================================== */
 
     const requiredEnv = [
@@ -116,12 +147,14 @@ export default async (req) => {
     ];
 
 
-    const missingEnv = requiredEnv.filter(
-      (name) => !process.env[name]
-    );
+    const missingEnv =
+      requiredEnv.filter(
+        name => !process.env[name]
+      );
 
 
     if (missingEnv.length > 0) {
+
       return json(500, {
         error: "Missing R2 environment variables",
         missing: missingEnv
@@ -130,7 +163,7 @@ export default async (req) => {
 
 
     /* =====================================
-       READ REQUEST
+       REQUEST
     ===================================== */
 
     let body;
@@ -149,6 +182,7 @@ export default async (req) => {
 
 
     if (!orderId) {
+
       return json(400, {
         error: "Missing order_id"
       });
@@ -170,6 +204,7 @@ export default async (req) => {
 
 
     if (!order) {
+
       return json(404, {
         error: "HUG order not found",
         order_id: orderId
@@ -185,17 +220,54 @@ export default async (req) => {
       order.render_status !== "completed" ||
       !order.render_url
     ) {
+
       return json(409, {
-        error: "HUG render is not ready for storage",
+        error: "HUG render is not ready",
         order_id: orderId,
-        render_status: order.render_status || null
+        render_status:
+          order.render_status || null
       });
     }
 
 
+    const safeOrderId =
+      orderId.replace(
+        /[^a-zA-Z0-9_-]/g,
+        "-"
+      );
+
+
+    const publicBase =
+      process.env.R2_PUBLIC_BASE_URL
+        .replace(/\/+$/, "");
+
+
+    const streamingKey =
+      `hugs-cards/${safeOrderId}.mp4`;
+
+
+    const downloadKey =
+      `hugs-downloads/${safeOrderId}.mp4`;
+
+
+    const deliveryUrl =
+      `${publicBase}/${streamingKey}`;
+
+
+    const downloadUrl =
+      `${publicBase}/${downloadKey}`;
+
+
+    const downloadFilename =
+      `HUGSLinks-${safeOrderId}.mp4`;
+
+
     /* =====================================
        ALREADY STORED
-       ALSO RECOVER EMAIL IF NEEDED
+
+       If this is an older order without
+       download_url, create its download
+       copy now.
     ===================================== */
 
     if (
@@ -203,22 +275,81 @@ export default async (req) => {
       order.delivery_url
     ) {
 
+      if (!order.download_url) {
+
+        const existingVideo =
+          await fetch(order.delivery_url);
+
+
+        if (!existingVideo.ok) {
+
+          return json(502, {
+            error:
+              "Unable to prepare downloadable HUG",
+            order_id: orderId
+          });
+        }
+
+
+        const arrayBuffer =
+          await existingVideo.arrayBuffer();
+
+
+        const videoBuffer =
+          Buffer.from(arrayBuffer);
+
+
+        await uploadDownloadCopy({
+          videoBuffer,
+          objectKey: downloadKey,
+          filename: downloadFilename
+        });
+
+
+        order.download_url =
+          downloadUrl;
+
+        order.download_key =
+          downloadKey;
+
+        order.download_ready_at =
+          new Date().toISOString();
+
+
+        await ordersStore.setJSON(
+          orderId,
+          order
+        );
+      }
+
+
+      /* ===================================
+         RECOVER EMAIL IF NEEDED
+      =================================== */
+
       let emailResult = null;
 
 
-      if (order.delivery_email_status !== "sent") {
+      if (
+        order.delivery_email_status !== "sent"
+      ) {
 
         try {
 
           emailResult =
-            await triggerDeliveryEmail(orderId);
+            await triggerDeliveryEmail(
+              orderId
+            );
 
         } catch (emailError) {
 
           const latestOrder =
-            await ordersStore.get(orderId, {
-              type: "json"
-            }) || order;
+            await ordersStore.get(
+              orderId,
+              {
+                type: "json"
+              }
+            ) || order;
 
 
           latestOrder.delivery_email_status =
@@ -242,9 +373,14 @@ export default async (req) => {
             duplicate: true,
             stored: true,
             order_id: orderId,
-            delivery_url: order.delivery_url,
+            delivery_url:
+              order.delivery_url,
+            download_url:
+              order.download_url ||
+              downloadUrl,
             email_sent: false,
-            email_error: emailError.message
+            email_error:
+              emailError.message
           });
         }
       }
@@ -255,19 +391,26 @@ export default async (req) => {
         duplicate: true,
         stored: true,
         order_id: orderId,
-        delivery_url: order.delivery_url,
+        delivery_url:
+          order.delivery_url,
+        download_url:
+          order.download_url ||
+          downloadUrl,
         email_sent:
-          order.delivery_email_status === "sent" ||
+          order.delivery_email_status ===
+            "sent" ||
           emailResult?.success === true
       });
     }
 
 
     /* =====================================
-       MARK DOWNLOAD STARTED
+       MARK STORAGE STARTED
     ===================================== */
 
-    order.storage_status = "downloading";
+    order.storage_status =
+      "downloading";
+
     order.storage_started_at =
       new Date().toISOString();
 
@@ -288,7 +431,9 @@ export default async (req) => {
 
     if (!videoResponse.ok) {
 
-      order.storage_status = "failed";
+      order.storage_status =
+        "failed";
+
       order.storage_error =
         `Unable to download rendered video. HTTP ${videoResponse.status}`;
 
@@ -303,7 +448,8 @@ export default async (req) => {
 
 
       return json(502, {
-        error: "Unable to download rendered HUG video",
+        error:
+          "Unable to download rendered HUG video",
         order_id: orderId
       });
     }
@@ -319,7 +465,9 @@ export default async (req) => {
 
     if (!videoBuffer.length) {
 
-      order.storage_status = "failed";
+      order.storage_status =
+        "failed";
+
       order.storage_error =
         "Downloaded video was empty";
 
@@ -334,40 +482,30 @@ export default async (req) => {
 
 
       return json(502, {
-        error: "Rendered HUG video was empty",
+        error:
+          "Rendered HUG video was empty",
         order_id: orderId
       });
     }
 
 
     /* =====================================
-       CREATE SAFE R2 OBJECT KEY
-    ===================================== */
-
-    const safeOrderId =
-      orderId.replace(
-        /[^a-zA-Z0-9_-]/g,
-        "-"
-      );
-
-
-    const objectKey =
-      `hugs-cards/${safeOrderId}.mp4`;
-
-
-    /* =====================================
-       UPLOAD TO CLOUDFLARE R2
+       STREAMING COPY
     ===================================== */
 
     await r2.send(
       new PutObjectCommand({
-        Bucket: process.env.R2_BUCKET_NAME,
+        Bucket:
+          process.env.R2_BUCKET_NAME,
 
-        Key: objectKey,
+        Key:
+          streamingKey,
 
-        Body: videoBuffer,
+        Body:
+          videoBuffer,
 
-        ContentType: "video/mp4",
+        ContentType:
+          "video/mp4",
 
         CacheControl:
           "public, max-age=31536000, immutable"
@@ -376,23 +514,22 @@ export default async (req) => {
 
 
     /* =====================================
-       BUILD PERMANENT DELIVERY URL
+       DOWNLOAD COPY
     ===================================== */
 
-    const publicBase =
-      process.env.R2_PUBLIC_BASE_URL
-        .replace(/\/+$/, "");
-
-
-    const deliveryUrl =
-      `${publicBase}/${objectKey}`;
+    await uploadDownloadCopy({
+      videoBuffer,
+      objectKey: downloadKey,
+      filename: downloadFilename
+    });
 
 
     /* =====================================
-       MARK STORAGE COMPLETE
+       SAVE STORAGE RESULTS
     ===================================== */
 
-    order.storage_status = "stored";
+    order.storage_status =
+      "stored";
 
     order.fulfillment_status =
       "ready-for-delivery";
@@ -401,13 +538,23 @@ export default async (req) => {
       deliveryUrl;
 
     order.storage_key =
-      objectKey;
+      streamingKey;
+
+    order.download_url =
+      downloadUrl;
+
+    order.download_key =
+      downloadKey;
+
+    order.download_ready_at =
+      new Date().toISOString();
 
     order.stored_at =
       new Date().toISOString();
 
     order.delivery_email_status =
-      order.delivery_email_status === "sent"
+      order.delivery_email_status ===
+        "sent"
         ? "sent"
         : "pending";
 
@@ -423,24 +570,23 @@ export default async (req) => {
 
 
     /* =====================================
-       SEND CUSTOMER DELIVERY EMAIL
-
-       IMPORTANT:
-       Video is already safely stored.
-       Email failure will NOT erase or fail
-       the successful R2 upload.
+       SEND DELIVERY EMAIL
     ===================================== */
 
     let emailSent = false;
     let emailError = null;
 
 
-    if (order.delivery_email_status !== "sent") {
+    if (
+      order.delivery_email_status !== "sent"
+    ) {
 
       try {
 
         const emailResult =
-          await triggerDeliveryEmail(orderId);
+          await triggerDeliveryEmail(
+            orderId
+          );
 
 
         emailSent =
@@ -454,9 +600,12 @@ export default async (req) => {
 
 
         const latestOrder =
-          await ordersStore.get(orderId, {
-            type: "json"
-          }) || order;
+          await ordersStore.get(
+            orderId,
+            {
+              type: "json"
+            }
+          ) || order;
 
 
         latestOrder.delivery_email_status =
@@ -485,8 +634,10 @@ export default async (req) => {
       success: true,
       stored: true,
       order_id: orderId,
-      storage_key: objectKey,
+      storage_key: streamingKey,
       delivery_url: deliveryUrl,
+      download_key: downloadKey,
+      download_url: downloadUrl,
       bytes: videoBuffer.length,
       email_sent: emailSent,
       email_error: emailError
