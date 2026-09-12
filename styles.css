@@ -71,14 +71,55 @@ display:flex;
 
 .brand{
   position:relative;
+  isolation:isolate;
+  display:inline-flex;
+  align-items:center;
+  padding:7px 13px;
+  border-radius:999px;
   text-shadow:0 0 14px rgba(47,158,231,.2);
   transition:color .25s ease,text-shadow .25s ease;
+}
+
+.brand::before{
+  content:"";
+  position:absolute;
+  z-index:-1;
+  inset:-3px;
+  padding:2px;
+  border-radius:inherit;
+  background:conic-gradient(transparent 0deg,transparent 235deg,var(--hugs-electric-deep) 270deg,var(--hugs-electric) 300deg,#fff 320deg,var(--hugs-energy-gold) 340deg,transparent 360deg);
+  -webkit-mask:linear-gradient(#000 0 0) content-box,linear-gradient(#000 0 0);
+  -webkit-mask-composite:xor;
+  mask-composite:exclude;
+  animation:hugs-circuit-flow 4s linear infinite;
+  filter:drop-shadow(0 0 4px var(--hugs-electric)) drop-shadow(0 0 9px rgba(47,158,231,.58));
+  pointer-events:none;
+}
+
+.brand::after{
+  content:"";
+  position:absolute;
+  z-index:-2;
+  inset:-7px;
+  border-radius:inherit;
+  background:rgba(114,207,255,.07);
+  box-shadow:0 0 18px rgba(47,158,231,.22);
+  opacity:.38;
+  transition:opacity .3s ease;
+  pointer-events:none;
 }
 
 .brand:hover,
 .brand:focus-visible{
   color:#176fae;
   text-shadow:0 0 7px rgba(114,207,255,.75),0 0 22px rgba(47,158,231,.45);
+}
+
+.brand:hover::after,
+.brand:focus-visible::after{opacity:1}
+
+@keyframes hugs-circuit-flow{
+  to{transform:rotate(360deg)}
 }
 
 .eyebrow{
@@ -122,6 +163,17 @@ display:flex;
 .electric-interactive.is-electric-pressed{
   transform:scale(.975);
   box-shadow:0 0 0 2px rgba(114,207,255,.52),0 0 24px rgba(47,158,231,.68)!important;
+}
+
+.electric-interactive.is-hugs-buzzing{
+  animation:hugs-button-buzz 120ms linear;
+}
+
+@keyframes hugs-button-buzz{
+  0%,100%{transform:scale(.985) translate(0,0)}
+  25%{transform:scale(.985) translate(-.65px,.35px)}
+  50%{transform:scale(.985) translate(.65px,-.35px)}
+  75%{transform:scale(.985) translate(-.4px,-.25px)}
 }
 
 .electric-interactive.gold,
@@ -178,80 +230,5 @@ display:flex;
   .electric-interactive,.electric-interactive::after,.hug-envelope-cta img,.brand{transition:none!important}
   .electric-interactive:hover,.electric-interactive:focus-visible,.electric-interactive:active{transform:none}
   .electric-interactive::after{display:none}
-}
-/* Animated neon circuit around HUGSLinks wordmark */
-
-.brand {
-  position: relative;
-  z-index: 1;
-  display: inline-flex;
-  align-items: center;
-  padding: 7px 13px;
-  border-radius: 999px;
-  color: #071f3b;
-  text-shadow:
-    0 0 8px rgba(114, 207, 255, 0.45),
-    0 0 18px rgba(47, 158, 231, 0.25);
-}
-
-/* Moving electrical border */
-.brand::before {
-  content: "";
-  position: absolute;
-  z-index: -1;
-  inset: -3px;
-  padding: 2px;
-  border-radius: inherit;
-
-  background: conic-gradient(
-    transparent 0deg,
-    transparent 235deg,
-    #2f9ee7 270deg,
-    #72cfff 300deg,
-    #ffffff 320deg,
-    #f2d889 340deg,
-    transparent 360deg
-  );
-
-  -webkit-mask:
-    linear-gradient(#000 0 0) content-box,
-    linear-gradient(#000 0 0);
-  -webkit-mask-composite: xor;
-  mask-composite: exclude;
-
-  animation: hugs-circuit-flow 4s linear infinite;
-  filter:
-    drop-shadow(0 0 4px #72cfff)
-    drop-shadow(0 0 9px rgba(47, 158, 231, 0.7));
-}
-
-/* Soft energy behind the wordmark */
-.brand::after {
-  content: "";
-  position: absolute;
-  z-index: -2;
-  inset: -7px;
-  border-radius: inherit;
-  background: rgba(114, 207, 255, 0.08);
-  box-shadow: 0 0 18px rgba(47, 158, 231, 0.22);
-  opacity: 0;
-  transition: opacity 0.3s ease;
-}
-
-.brand:hover::after,
-.brand:focus-visible::after {
-  opacity: 1;
-}
-
-@keyframes hugs-circuit-flow {
-  to {
-    transform: rotate(360deg);
-  }
-}
-
-/* Accessibility */
-@media (prefers-reduced-motion: reduce) {
-  .brand::before {
-    animation: none;
-  }
+  .electric-interactive.is-hugs-buzzing,.brand::before{animation:none}
 }
