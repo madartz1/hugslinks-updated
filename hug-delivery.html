@@ -80,7 +80,7 @@
 
     .primary-btn {
       background: #0f2742;
-      color: #ffffff;
+      color: white;
     }
 
     .action-btn {
@@ -113,7 +113,7 @@
     video {
       width: 100%;
       border-radius: 16px;
-      background: #000000;
+      background: black;
     }
 
     .button-group {
@@ -130,6 +130,7 @@
     }
   </style>
 </head>
+
 
 <body>
 
@@ -346,6 +347,7 @@
 
 
     let currentVideoUrl = "";
+    let currentDownloadUrl = "";
 
 
     function showStatus(
@@ -401,6 +403,7 @@
       video.load();
 
       currentVideoUrl = "";
+      currentDownloadUrl = "";
     }
 
 
@@ -513,6 +516,10 @@
             result.video_url || "";
 
 
+          currentDownloadUrl =
+            result.download_url || "";
+
+
           if (!currentVideoUrl) {
 
             throw new Error(
@@ -526,6 +533,21 @@
 
           videoBox.style.display =
             "block";
+
+
+          if (currentDownloadUrl) {
+
+            downloadButton.href =
+              currentDownloadUrl;
+
+            downloadButton.style.display =
+              "block";
+
+          } else {
+
+            downloadButton.style.display =
+              "none";
+          }
 
 
           let detailText = "";
@@ -632,116 +654,6 @@
             "Fullscreen error:",
             error
           );
-        }
-      }
-    );
-
-
-    downloadButton.addEventListener(
-      "click",
-      async function (event) {
-
-        event.preventDefault();
-
-
-        const orderId =
-          orderInput.value.trim();
-
-        const email =
-          emailInput.value.trim();
-
-
-        if (!orderId || !email) {
-
-          showStatus(
-            "Enter your order number and purchase email first.",
-            true
-          );
-
-          return;
-        }
-
-
-        const originalText =
-          downloadButton.textContent;
-
-
-        downloadButton.textContent =
-          "Preparing Download...";
-
-
-        try {
-
-          const response =
-            await fetch(
-              "/.netlify/functions/download-hug",
-              {
-                method: "POST",
-
-                headers: {
-                  "Content-Type":
-                    "application/json"
-                },
-
-                body: JSON.stringify({
-                  order_id: orderId,
-                  email: email
-                })
-              }
-            );
-
-
-          const text =
-            await response.text();
-
-
-          let result;
-
-
-          try {
-
-            result =
-              JSON.parse(text);
-
-          } catch {
-
-            throw new Error(
-              text ||
-              "The download service returned an invalid response."
-            );
-          }
-
-
-          if (
-            !response.ok ||
-            !result.success ||
-            !result.download_url
-          ) {
-
-            throw new Error(
-              result.details ||
-              result.error ||
-              "Unable to prepare your download."
-            );
-          }
-
-
-          window.location.href =
-            result.download_url;
-
-
-        } catch (error) {
-
-          showStatus(
-            error.message ||
-            "Unable to download your HUG.",
-            true
-          );
-
-        } finally {
-
-          downloadButton.textContent =
-            originalText;
         }
       }
     );
