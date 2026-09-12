@@ -283,6 +283,64 @@
       color: #74889b;
     }
 
+    .hug-delivery-intro {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 30px;
+      align-items: center;
+      margin: 4px 0 46px;
+      padding: 28px;
+      border-radius: 30px;
+      color: white;
+      background: radial-gradient(circle at 80% 20%, #174f8c, #071f3b 62%);
+      box-shadow: 0 20px 55px rgba(11, 47, 89, 0.2);
+    }
+
+    .hug-delivery-intro img {
+      width: 100%;
+      border-radius: 22px;
+      box-shadow: 0 16px 40px rgba(0,0,0,.28);
+    }
+
+    .hug-delivery-intro h1 {
+      margin: 9px 0 14px;
+      font-size: clamp(36px, 6vw, 58px);
+      line-height: 1;
+    }
+
+    .hug-delivery-intro p { color: #dcecff; line-height: 1.7; }
+    .hug-delivery-intro .eyebrow { color: #74cfff; font-weight: 900; letter-spacing: .14em; text-transform: uppercase; font-size: 12px; }
+    .hug-delivery-actions { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 20px; }
+    .hug-delivery-actions .button { display: inline-flex; margin: 0; }
+    .experience-button { background: var(--gold); color: #17212c; border: 0; cursor: pointer; font: inherit; }
+    .themes-button { background: transparent; color: white; border: 1px solid rgba(255,255,255,.45); }
+
+    .memorial-gift {
+      display: grid;
+      grid-template-columns: .8fr 1.2fr;
+      gap: 26px;
+      align-items: center;
+      margin-top: 38px;
+      padding: 28px;
+      border: 1px solid #d7e5f1;
+      border-radius: 28px;
+      background: #fff;
+      box-shadow: 0 16px 42px rgba(11, 47, 89, .09);
+    }
+
+    .memorial-gift img { width: 100%; border-radius: 18px; }
+    .memorial-gift h2 { color: var(--navy); font-size: 32px; line-height: 1.08; margin: 8px 0 12px; }
+    .memorial-gift p { color: var(--muted); line-height: 1.65; }
+    .memorial-gift small { display: block; margin-top: 12px; color: var(--muted); }
+
+    .hug-modal { width: min(92vw, 720px); border: 0; border-radius: 28px; padding: 0; color: white; background: #071f3b; box-shadow: 0 30px 90px rgba(0,0,0,.65); }
+    .hug-modal::backdrop { background: rgba(2,10,23,.82); backdrop-filter: blur(8px); }
+    .hug-modal-head { display: flex; align-items: center; justify-content: space-between; padding: 14px 18px; border-bottom: 1px solid rgba(255,255,255,.16); }
+    .hug-modal-close { width: 40px; height: 40px; border-radius: 50%; border: 0; background: rgba(255,255,255,.12); color: white; font-size: 22px; cursor: pointer; }
+    .hug-modal-body { padding: 22px; text-align: center; }
+    .hug-modal-body img { width: min(100%, 500px); margin: auto; border-radius: 18px; }
+    .hug-modal-body p { color: #dce8f4; }
+
     /* =========================
        MOBILE PAGE LAYOUT
     ========================= */
@@ -296,6 +354,13 @@
       .product-content {
         padding: 22px 18px 26px;
       }
+
+      .hug-delivery-intro,
+      .memorial-gift { grid-template-columns: 1fr; padding: 18px; }
+
+      .hug-delivery-copy { text-align: center; }
+
+      .hug-delivery-actions { justify-content: center; }
     }
   </style>
 </head>
@@ -394,6 +459,19 @@
       ← Back to HUGS Card Themes
     </a>
 
+    <section class="hug-delivery-intro" aria-labelledby="delivery-title">
+      <div class="hug-delivery-copy">
+        <div class="eyebrow">The HUGSLinks delivery experience</div>
+        <h1 id="delivery-title">Someone sent you a HUG.</h1>
+        <p>The signature navy-and-gold envelope keeps every character and message private until the recipient chooses to open it.</p>
+        <div class="hug-delivery-actions">
+          <button class="button experience-button hug-envelope-cta" id="open-hug-demo" type="button"><img src="assets/hugs-open-envelope.png" alt="" />Open Your HUG</button>
+          <a class="button themes-button hug-envelope-cta" href="personalized-hugs-card.html"><img src="assets/get-a-hug-envelope.png" alt="" />Choose a HUG Card</a>
+        </div>
+      </div>
+      <img src="assets/get-a-hug-envelope.png" alt="Sealed navy HUG Card envelope with the HUGS house-and-heart seal" />
+    </section>
+
 
     <!-- =========================
          LOVE HERO
@@ -422,6 +500,17 @@
         friendships and meaningful moments.
       </p>
 
+    </section>
+
+    <section class="memorial-gift" aria-labelledby="memorial-gift-title">
+      <img src="assets/hugs-community-911-memorial.png" alt="HUGS Community 9/11 memorial tribute featuring first responder bears at the memorial" />
+      <div>
+        <span class="badge">A gift from the HUGS Community</span>
+        <h2 id="memorial-gift-title">Always Remembered &amp; Always With Us</h2>
+        <p>This free memorial artwork honors those we lost, their loved ones, survivors, first responders, rescue workers, union tradespeople, and the communities that helped carry New York forward.</p>
+        <a class="button view-button hug-envelope-cta" href="free-911-hugs-card.html"><img src="assets/hugs-open-envelope.png" alt="" />Open the Free Memorial HUG</a>
+        <small>No purchase or email required. Download and share it freely.</small>
+      </div>
     </section>
 
 
@@ -490,9 +579,9 @@
 
           <a
             href="https://buy.stripe.com/cNi4gy1yA0s00e30488ww04"
-            class="button buy-button"
+            class="button buy-button hug-envelope-cta"
           >
-            Send This HUG — $6.99
+            <img src="assets/get-a-hug-envelope.png" alt="" />Send This HUG — $6.99
           </a>
 
         </div>
@@ -548,6 +637,16 @@
 
   </main>
 
+  <dialog class="hug-modal" id="hug-demo">
+    <div class="hug-modal-head"><strong>Your HUG has arrived</strong><button class="hug-modal-close" id="close-hug-demo" type="button" aria-label="Close">×</button></div>
+    <div class="hug-modal-body">
+      <img src="assets/hugs-community-911-memorial.png" alt="Revealed HUGS Community memorial card" />
+      <h2>Always Remembered &amp; Always With Us</h2>
+      <p>The envelope creates anticipation. The card delivers the emotion.</p>
+      <a class="button buy-button hug-envelope-cta" href="assets/hugs-community-911-memorial.png" download="HUGS-Community-911-Memorial.png"><img src="assets/hugs-open-envelope.png" alt="" />Save This Free Card</a>
+    </div>
+  </dialog>
+
 
   <footer>
     © 2026 HUGSLinks · Give a Hug. Get a Hug.
@@ -560,6 +659,13 @@
   ========================= -->
 
   <script src="script.js"></script>
+
+  <script>
+    const hugDemo = document.getElementById('hug-demo');
+    document.getElementById('open-hug-demo').addEventListener('click', () => hugDemo.showModal());
+    document.getElementById('close-hug-demo').addEventListener('click', () => hugDemo.close());
+    hugDemo.addEventListener('click', (event) => { if (event.target === hugDemo) hugDemo.close(); });
+  </script>
 
 </body>
 </html>

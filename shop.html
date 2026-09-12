@@ -102,6 +102,9 @@
       gap: 22px;
     }
 
+    .free-tribute-promo{max-width:760px;margin:0 auto 24px;padding:18px;border-radius:24px;background:linear-gradient(135deg,#071f3b,#174f8c);color:#fff;display:flex;align-items:center;justify-content:space-between;gap:18px;box-shadow:0 16px 40px rgba(11,47,89,.16)}
+    .free-tribute-promo h3{margin:0 0 4px;font-size:22px}.free-tribute-promo p{margin:0;color:#dcecff;line-height:1.5}.free-tribute-promo .product-button{flex:0 0 auto;margin:0;background:var(--gold);color:#17212c}
+
     .product-card {
       background: var(--hugs-white);
       border: 1px solid var(--hugs-border);
@@ -315,6 +318,8 @@
     }
 
     @media (max-width: 850px) {
+      .free-tribute-promo{flex-direction:column;text-align:center}
+
       .product-grid,
       .collection-grid {
         grid-template-columns: 1fr;
@@ -347,7 +352,7 @@
 
       <div class="seal">
         <img
-          src="assets/HUGS_Header_Logo_Transparent.PNG"
+          src="assets/HUGS_Header_Logo_Transparent.png"
           alt="HUGS logo"
         />
       </div>
@@ -430,6 +435,12 @@
       </div>
 
 
+      <div class="free-tribute-promo">
+        <div><h3>Free 9/11 Memorial HUG</h3><p>Open, download, and share the tribute. No purchase or email required.</p></div>
+        <a class="product-button hug-envelope-cta" href="free-911-hugs-card.html"><img src="assets/hugs-open-envelope.png" alt="" />Open Free HUG</a>
+      </div>
+
+
       <div class="product-grid">
 
         <!-- READY TO SEND -->
@@ -471,9 +482,9 @@
 
             <a
               href="nyc-ride-hugs-card.html"
-              class="product-button"
+              class="product-button hug-envelope-cta"
             >
-              View NYC Ride
+              <img src="assets/get-a-hug-envelope.png" alt="" />View NYC Ride
             </a>
 
           </div>
@@ -535,7 +546,7 @@
         <article class="product-card">
 
           <img
-            src="assets/custom-hugs-card-cover.png"
+            src="assets/custom-hugs-card-cover.PNG"
             alt="Custom HUGS Card"
             class="product-image"
           />

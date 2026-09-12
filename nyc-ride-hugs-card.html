@@ -1,331 +1,46 @@
-import { getStore } from "@netlify/blobs";
-
-const SHOTSTACK_TEMPLATE_ID =
-  "dcbf5c47-a34c-4f75-b1f0-2ed4a2074ee4";
-
-const SHOTSTACK_CALLBACK_URL =
-  "https://hugslinks.com/.netlify/functions/shotstack-hugs-callback";
-
-const SHOTSTACK_BASE =
-  "https://api.shotstack.io/edit/v1";
-
-export default async (req) => {
-  if (req.method !== "POST") {
-    return new Response(
-      JSON.stringify({
-        error: "Method not allowed"
-      }),
-      {
-        status: 405,
-        headers: {
-          "Content-Type": "application/json"
-        }
-      }
-    );
-  }
-
-  try {
-    const { order_id } = await req.json();
-
-    if (!order_id) {
-      return new Response(
-        JSON.stringify({
-          error: "Missing order_id"
-        }),
-        {
-          status: 400,
-          headers: {
-            "Content-Type": "application/json"
-          }
-        }
-      );
-    }
-
-    if (!process.env.SHOTSTACK_API_KEY) {
-      throw new Error(
-        "SHOTSTACK_API_KEY environment variable is missing"
-      );
-    }
-
-    const orderStore = getStore({
-      name: "hugs-orders",
-      consistency: "strong"
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>NYC Ride — Send a HUG | HUGSLinks</title>
+  <meta name="description" content="Preview and send NYC Ride — an animated HUGSLinks digital HUG Card." />
+  <link rel="stylesheet" href="styles.css" />
+  <style>
+    :root{--navy:#0b2f59;--blue:#74b9f4;--cream:#f8f5ee;--white:#fff;--text:#23374d;--muted:#61758a;--gold:#f2b84b;--line:#dce8f2}
+    *{box-sizing:border-box}body{margin:0;background:var(--cream);color:var(--text);font-family:Arial,Helvetica,sans-serif}.product-wrap{max-width:1040px;margin:0 auto;padding:28px 18px 70px}.back{display:inline-block;margin-bottom:22px;color:var(--navy);text-decoration:none;font-weight:800}.product{display:grid;grid-template-columns:minmax(0,1fr) minmax(300px,.85fr);gap:34px;align-items:start}.cover-card,.details{background:var(--white);border:1px solid var(--line);border-radius:24px;overflow:hidden;box-shadow:0 16px 40px rgba(11,47,89,.1)}.cover-card img{display:block;width:100%;height:auto;aspect-ratio:9/16;object-fit:cover}.details{padding:26px;overflow:visible}.badge{display:inline-block;padding:7px 11px;border-radius:999px;background:#eaf5fd;color:var(--navy);font-size:12px;font-weight:900;text-transform:uppercase;letter-spacing:.5px;margin-bottom:14px}h1{margin:0;color:var(--navy);font-size:clamp(34px,7vw,54px);line-height:1.02;letter-spacing:-1px}.sub{margin:14px 0 4px;font-size:20px;font-weight:800;color:var(--blue)}.price{margin:6px 0 18px;color:var(--navy);font-size:30px;font-weight:900}.copy{color:var(--muted);line-height:1.65;margin-bottom:20px}.watch{width:100%;border:0;border-radius:999px;padding:15px 20px;background:var(--navy);color:white;font-weight:900;font-size:16px;cursor:pointer;margin-bottom:12px}.watch:hover{background:var(--blue);color:var(--navy)}.preview{display:none;margin-top:18px;background:#08111f;color:white;border-radius:18px;padding:16px}.preview.open{display:block}.preview-title{margin:0 0 12px;text-align:center;color:#dbe8f4;font-size:14px;font-weight:800}.preview video{width:100%;max-height:620px;display:block;margin:0 auto;border-radius:14px;background:black}.buy,.personalize{display:block;text-align:center;text-decoration:none;border-radius:999px;padding:15px 20px;font-weight:900;margin-top:12px}.buy{background:var(--gold);color:#17212c;margin-top:14px}.personalize{border:2px solid var(--navy);color:var(--navy)}.meta{margin-top:22px;padding-top:18px;border-top:1px solid var(--line);display:grid;gap:10px;font-size:14px;color:#51677c}.meta strong{color:var(--navy)}.note{margin-top:18px;color:#72869a;font-size:13px;line-height:1.5}@media(max-width:780px){.product{grid-template-columns:1fr}.details{padding:22px}.product-wrap{padding-top:18px}}
+  </style>
+</head>
+<body>
+  <header class="topbar"><nav class="nav"><a class="brand" href="index.html">Hugslinks</a><div class="seal"><img src="assets/HUGS_Header_Logo_Transparent.png" alt="HUGS logo" /></div><button class="menu" type="button" aria-expanded="false" aria-label="Open navigation menu">Menu</button><div class="navlinks"><a href="index.html">Home</a><a href="shop.html">Shop</a><a href="hugs-cards.html">HUGS Cards</a><a href="art-community.html">Art</a><a href="food-support.html">Food</a><a href="housing-help.html">Housing</a><a href="business-services.html">Business</a><a href="help-app.html">Help App</a><a href="resources.html">Resources</a><a href="about.html">About</a><a href="contact.html">Contact</a></div></nav></header>
+  <main class="product-wrap">
+    <a class="back" href="hugs-cards.html">← Back to HUGS Cards</a>
+    <section class="product">
+      <div class="cover-card"><img src="assets/nyc-ride-hugs-card-cover.jpg" alt="NYC Ride — Send a HUG animated HUGS Card cover" /></div>
+      <div class="details">
+        <span class="badge">Animated HUGS Card</span><h1>NYC Ride — Send a HUG</h1><div class="sub">Ready to Send</div><div class="price">$6.99</div>
+        <p class="copy">Send a cinematic HUG through New York City. HUGS Bear rides toward a glowing sunset surrounded by warm lights, hearts, and a radiant trail of love. Preview the experience before sending your HUG.</p>
+        <button id="watchPreviewButton" class="watch" type="button" aria-expanded="false" aria-controls="previewBox">▶ Watch Preview</button>
+        <div id="previewBox" class="preview"><p class="preview-title">NYC Ride — HUGS Card Preview</p><video id="previewVideo" controls playsinline preload="metadata" poster="assets/nyc-ride-hugs-card-cover.jpg"><source src="assets/nyc-ride-hugs-preview.MP4" type="video/mp4" />Your browser does not support HTML5 video.</video></div>
+        <a class="buy hug-envelope-cta" href="https://buy.stripe.com/cNi4gy1yA0s00e30488ww04"><img src="assets/get-a-hug-envelope.png" alt="" />Send This HUG — $6.99</a>
+        <a class="personalize hug-envelope-cta" href="personalize-nyc-ride.html"><img src="assets/get-a-hug-envelope.png" alt="" />Personalize This HUG — $16.99</a>
+        <div class="meta"><div><strong>Format:</strong> Digital animated card</div><div><strong>Preview:</strong> 15-second video preview</div><div><strong>Full Card:</strong> Approximately 2 minutes</div><div><strong>Style:</strong> Cinematic NYC / HUGS Bear</div><div><strong>Delivery:</strong> Digital HUGSLinks experience</div><div><strong>Brand:</strong> HUGSLinks</div></div>
+        <div class="note">Ready-to-Send cards require no personalization. For names, messages, and sender details, choose the personalized option.</div>
+      </div>
+    </section>
+  </main>
+  <script src="script.js"></script>
+  <script>
+    const watchButton=document.getElementById('watchPreviewButton');
+    const previewBox=document.getElementById('previewBox');
+    const previewVideo=document.getElementById('previewVideo');
+    watchButton.addEventListener('click',function(){
+      const opening=!previewBox.classList.contains('open');
+      previewBox.classList.toggle('open');
+      watchButton.textContent=opening?'▲ Close Preview':'▶ Watch Preview';
+      watchButton.setAttribute('aria-expanded',String(opening));
+      if(opening){previewBox.scrollIntoView({behavior:'smooth',block:'center'});previewVideo.play().catch(()=>{});}else{previewVideo.pause();}
     });
-
-    const order = await orderStore.get(
-      order_id,
-      {
-        type: "json",
-        consistency: "strong"
-      }
-    );
-
-    if (!order) {
-      return new Response(
-        JSON.stringify({
-          error: "HUG order not found"
-        }),
-        {
-          status: 404,
-          headers: {
-            "Content-Type": "application/json"
-          }
-        }
-      );
-    }
-
-    if (order.payment_status !== "paid") {
-      return new Response(
-        JSON.stringify({
-          error: "Order has not been paid"
-        }),
-        {
-          status: 400,
-          headers: {
-            "Content-Type": "application/json"
-          }
-        }
-      );
-    }
-
-    if (
-      order.render_status === "queued" ||
-      order.render_status === "rendering" ||
-      order.render_status === "completed"
-    ) {
-      return new Response(
-        JSON.stringify({
-          success: true,
-          duplicate: true,
-          order_id,
-          render_status:
-            order.render_status,
-          render_id:
-            order.render_id || null
-        }),
-        {
-          status: 200,
-          headers: {
-            "Content-Type": "application/json"
-          }
-        }
-      );
-    }
-
-    const shotstackHeaders = {
-      "Content-Type": "application/json",
-      Accept: "application/json",
-      "x-api-key":
-        process.env.SHOTSTACK_API_KEY
-    };
-
-    const templateResponse = await fetch(
-      `${SHOTSTACK_BASE}/templates/${SHOTSTACK_TEMPLATE_ID}`,
-      {
-        method: "GET",
-        headers: shotstackHeaders
-      }
-    );
-
-    const templateData =
-      await templateResponse.json();
-
-    if (!templateResponse.ok) {
-      console.error(
-        "Could not retrieve Shotstack template:",
-        templateData
-      );
-
-      throw new Error(
-        "Could not retrieve Shotstack template"
-      );
-    }
-
-    const template =
-      templateData?.response?.template;
-
-    const templateName =
-      templateData?.response?.name ||
-      "NYC Ride Personalized HUGS";
-
-    if (!template) {
-      throw new Error(
-        "Shotstack template data missing"
-      );
-    }
-
-    if (
-      template.callback !==
-      SHOTSTACK_CALLBACK_URL
-    ) {
-      template.callback =
-        SHOTSTACK_CALLBACK_URL;
-
-      const updateTemplateResponse =
-        await fetch(
-          `${SHOTSTACK_BASE}/templates/${SHOTSTACK_TEMPLATE_ID}`,
-          {
-            method: "PUT",
-            headers: shotstackHeaders,
-            body: JSON.stringify({
-              name: templateName,
-              template
-            })
-          }
-        );
-
-      const updateTemplateData =
-        await updateTemplateResponse.json();
-
-      if (!updateTemplateResponse.ok) {
-        console.error(
-          "Could not add Shotstack callback:",
-          updateTemplateData
-        );
-
-        throw new Error(
-          "Could not configure Shotstack callback"
-        );
-      }
-    }
-
-    const merge = [
-      {
-        find: "RECIPIENT_NAME",
-        replace:
-          order.recipient_name || ""
-      },
-      {
-        find: "OCCASION",
-        replace:
-          order.occasion ||
-          "Just Because"
-      },
-      {
-        find: "PERSONAL_MESSAGE",
-        replace:
-          order.personal_message || ""
-      },
-      {
-        find: "SENDER_NAME",
-        replace:
-          order.sender_name || ""
-      },
-      {
-        find: "SPECIAL_CLOSING",
-        replace:
-          order.special_closing || ""
-      }
-    ];
-
-    const renderResponse = await fetch(
-      `${SHOTSTACK_BASE}/templates/render`,
-      {
-        method: "POST",
-        headers: shotstackHeaders,
-        body: JSON.stringify({
-          id: SHOTSTACK_TEMPLATE_ID,
-          merge
-        })
-      }
-    );
-
-    const renderData =
-      await renderResponse.json();
-
-    if (!renderResponse.ok) {
-      console.error(
-        "Shotstack render request failed:",
-        renderData
-      );
-
-      throw new Error(
-        "Shotstack rejected render request"
-      );
-    }
-
-    const renderId =
-      renderData?.response?.id;
-
-    if (!renderId) {
-      throw new Error(
-        "Shotstack render ID missing"
-      );
-    }
-
-    const renderMapStore =
-      getStore({
-        name: "hugs-render-map",
-        consistency: "strong"
-      });
-
-    await renderMapStore.setJSON(
-      renderId,
-      {
-        render_id: renderId,
-        order_id,
-        created_at:
-          new Date().toISOString()
-      }
-    );
-
-    order.render_status =
-      "queued";
-
-    order.fulfillment_status =
-      "rendering";
-
-    order.render_id =
-      renderId;
-
-    order.render_queued_at =
-      new Date().toISOString();
-
-    await orderStore.setJSON(
-      order_id,
-      order
-    );
-
-    console.log(
-      "HUG Shotstack render queued:",
-      {
-        order_id,
-        render_id: renderId
-      }
-    );
-
-    return new Response(
-      JSON.stringify({
-        success: true,
-        order_id,
-        render_status: "queued",
-        render_id: renderId
-      }),
-      {
-        status: 200,
-        headers: {
-          "Content-Type": "application/json"
-        }
-      }
-    );
-
-  } catch (error) {
-    console.error(
-      "Render HUG card error:",
-      error
-    );
-
-    return new Response(
-      JSON.stringify({
-        error:
-          "Could not start HUG card render"
-      }),
-      {
-        status: 500,
-        headers: {
-          "Content-Type": "application/json"
-        }
-      }
-    );
-  }
-};
+  </script>
+</body>
+</html>

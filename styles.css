@@ -56,3 +56,126 @@ header .seal,
 .navbar .seal{
 display:flex;
 }
+
+/* Signature HUG envelope call-to-action icons */
+.hug-envelope-cta{display:inline-flex!important;align-items:center;justify-content:center;gap:10px}
+.hug-envelope-cta img{width:38px!important;height:38px!important;min-width:38px;object-fit:cover;object-position:center 54%;border-radius:10px;border:1px solid rgba(255,255,255,.45);box-shadow:0 5px 14px rgba(7,31,59,.22)}
+@media(max-width:560px){.hug-envelope-cta{width:100%;min-height:58px;padding:9px 15px!important}.hug-envelope-cta img{width:40px!important;height:40px!important;min-width:40px}}
+
+/* HUGS electric interaction system */
+:root{
+  --hugs-electric:#72cfff;
+  --hugs-electric-deep:#2f9ee7;
+  --hugs-energy-gold:#f2d889;
+}
+
+.brand{
+  position:relative;
+  text-shadow:0 0 14px rgba(47,158,231,.2);
+  transition:color .25s ease,text-shadow .25s ease;
+}
+
+.brand:hover,
+.brand:focus-visible{
+  color:#176fae;
+  text-shadow:0 0 7px rgba(114,207,255,.75),0 0 22px rgba(47,158,231,.45);
+}
+
+.eyebrow{
+  text-shadow:0 0 18px rgba(114,207,255,.2);
+}
+
+.electric-interactive{
+  position:relative;
+  isolation:isolate;
+  overflow:hidden;
+  transform:translateZ(0);
+  transition:transform .2s ease,box-shadow .25s ease,border-color .25s ease,filter .25s ease!important;
+  -webkit-tap-highlight-color:transparent;
+}
+
+.electric-interactive::after{
+  content:"";
+  position:absolute;
+  z-index:-1;
+  inset:-2px;
+  background:linear-gradient(105deg,transparent 18%,rgba(255,255,255,.58) 47%,rgba(114,207,255,.4) 53%,transparent 82%);
+  transform:translateX(-125%);
+  transition:transform .55s ease;
+  pointer-events:none;
+}
+
+.electric-interactive:hover,
+.electric-interactive:focus-visible{
+  transform:translateY(-2px);
+  border-color:rgba(114,207,255,.8)!important;
+  box-shadow:0 0 0 1px rgba(114,207,255,.38),0 0 16px rgba(114,207,255,.5),0 12px 30px rgba(7,31,59,.22)!important;
+  filter:saturate(1.08);
+}
+
+.electric-interactive:hover::after,
+.electric-interactive:focus-visible::after{
+  transform:translateX(125%);
+}
+
+.electric-interactive:active,
+.electric-interactive.is-electric-pressed{
+  transform:scale(.975);
+  box-shadow:0 0 0 2px rgba(114,207,255,.52),0 0 24px rgba(47,158,231,.68)!important;
+}
+
+.electric-interactive.gold,
+.electric-interactive.primary[href*="stripe"],
+.electric-interactive.buy{
+  --button-energy:var(--hugs-energy-gold);
+}
+
+.hug-envelope-cta img{
+  transition:transform .25s ease,box-shadow .25s ease;
+}
+
+.hug-envelope-cta:hover img,
+.hug-envelope-cta:focus-visible img{
+  transform:rotate(-3deg) scale(1.06);
+  box-shadow:0 0 12px rgba(114,207,255,.68),0 7px 18px rgba(7,31,59,.24);
+}
+
+.hugs-sound-toggle{
+  position:fixed;
+  right:14px;
+  bottom:14px;
+  z-index:1000;
+  display:inline-flex;
+  align-items:center;
+  gap:8px;
+  min-height:44px;
+  padding:9px 13px;
+  border:1px solid rgba(114,207,255,.55);
+  border-radius:999px;
+  background:rgba(7,31,59,.94);
+  color:#fff;
+  font:800 13px/1 Inter,system-ui,-apple-system,"Segoe UI",Arial,sans-serif;
+  box-shadow:0 8px 26px rgba(7,31,59,.28),0 0 14px rgba(114,207,255,.18);
+  backdrop-filter:blur(12px);
+  cursor:pointer;
+}
+
+.hugs-sound-toggle[aria-pressed="true"]{
+  border-color:var(--hugs-energy-gold);
+  box-shadow:0 0 0 1px rgba(242,216,137,.3),0 0 18px rgba(242,216,137,.35),0 8px 26px rgba(7,31,59,.3);
+}
+
+.hugs-sound-toggle .sound-wave{
+  color:var(--hugs-electric);
+  font-size:16px;
+}
+
+@media(max-width:780px){
+  body:has(.mobile-bar) .hugs-sound-toggle{bottom:78px}
+}
+
+@media(prefers-reduced-motion:reduce){
+  .electric-interactive,.electric-interactive::after,.hug-envelope-cta img,.brand{transition:none!important}
+  .electric-interactive:hover,.electric-interactive:focus-visible,.electric-interactive:active{transform:none}
+  .electric-interactive::after{display:none}
+}
