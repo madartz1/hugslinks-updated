@@ -16,7 +16,7 @@
 
   <meta
     name="description"
-    content="Send, personalize or customize a HUGSLinks digital HUG Card."
+    content="Send, personalize or customize a HUGSLinks digital HUG Card. Give a Hug. Get a Hug."
   >
 
   <link
@@ -48,6 +48,7 @@
 
     body{
       margin:0;
+
       background:
         linear-gradient(
           180deg,
@@ -71,23 +72,25 @@
     .page{
       max-width:1180px;
       margin:0 auto;
-      padding:30px 18px 80px;
+      padding:28px 18px 80px;
     }
 
 
     .back-link{
       display:inline-block;
+
       margin-bottom:22px;
 
       color:var(--navy);
 
       text-decoration:none;
+
       font-weight:800;
     }
 
 
     /* =========================================
-       HUG DELIVERY INTRO
+       DELIVERY EXPERIENCE
     ========================================= */
 
     .hug-delivery-intro{
@@ -170,6 +173,7 @@
 
     .hug-delivery-actions{
       display:flex;
+
       flex-wrap:wrap;
 
       gap:10px;
@@ -180,6 +184,8 @@
 
     .hug-delivery-actions .button{
       display:inline-flex;
+
+      width:auto;
 
       margin:0;
     }
@@ -210,14 +216,29 @@
 
 
     /* =========================================
-       PAGE HERO
+       HERO
     ========================================= */
 
     .hero{
       text-align:center;
 
       padding:
-        24px 15px 34px;
+        28px 15px 36px;
+    }
+
+
+    .hero .eyebrow{
+      color:var(--blue);
+
+      font-weight:900;
+
+      letter-spacing:.18em;
+
+      text-transform:uppercase;
+
+      font-size:12px;
+
+      margin-bottom:10px;
     }
 
 
@@ -230,17 +251,17 @@
         clamp(
           42px,
           8vw,
-          70px
+          72px
         );
 
-      line-height:1;
+      line-height:.98;
 
-      letter-spacing:-.03em;
+      letter-spacing:-.04em;
     }
 
 
     .tagline{
-      margin-top:13px;
+      margin-top:14px;
 
       color:var(--blue);
 
@@ -272,7 +293,7 @@
       text-align:center;
 
       margin:
-        16px 0 28px;
+        18px 0 30px;
     }
 
 
@@ -320,7 +341,7 @@
 
 
     /* =========================================
-       THREE HUG OPTIONS
+       THREE OFFER CARDS
     ========================================= */
 
     .hug-offer-grid{
@@ -339,6 +360,7 @@
       position:relative;
 
       display:flex;
+
       flex-direction:column;
 
       overflow:hidden;
@@ -366,7 +388,7 @@
         translateY(-4px);
 
       box-shadow:
-        0 24px 56px
+        0 24px 58px
         rgba(11,47,89,.15);
     }
 
@@ -378,8 +400,7 @@
     .hug-offer-image{
       position:relative;
 
-      aspect-ratio:
-        1 / 1;
+      aspect-ratio:1 / 1;
 
       overflow:hidden;
 
@@ -389,6 +410,7 @@
 
     .hug-offer-image img{
       width:100%;
+
       height:100%;
 
       display:block;
@@ -403,6 +425,7 @@
       position:absolute;
 
       top:15px;
+
       left:15px;
 
       z-index:2;
@@ -413,7 +436,7 @@
       border-radius:999px;
 
       background:
-        rgba(7,31,59,.86);
+        rgba(7,31,59,.87);
 
       color:#ffffff;
 
@@ -442,12 +465,11 @@
     }
 
 
-    /* Most Popular */
-
     .popular-label{
       position:absolute;
 
       top:15px;
+
       right:15px;
 
       z-index:3;
@@ -481,6 +503,7 @@
 
     .hug-offer-body{
       display:flex;
+
       flex-direction:column;
 
       flex:1;
@@ -562,6 +585,7 @@
       position:absolute;
 
       left:0;
+
       top:0;
 
       color:var(--love);
@@ -578,7 +602,10 @@
       display:flex;
 
       align-items:center;
+
       justify-content:center;
+
+      gap:8px;
 
       width:100%;
 
@@ -593,11 +620,14 @@
 
       font-weight:900;
 
-      margin-top:auto;
-
       border:0;
 
       cursor:pointer;
+    }
+
+
+    .button + .button{
+      margin-top:11px;
     }
 
 
@@ -627,6 +657,17 @@
     }
 
 
+    .outline-button{
+      background:#ffffff;
+
+      color:var(--navy);
+
+      border:
+        2px solid
+        var(--navy);
+    }
+
+
     /* =========================================
        PERSONALIZED FEATURED CARD
     ========================================= */
@@ -644,7 +685,7 @@
 
 
     /* =========================================
-       MEMORIAL GIFT
+       FREE MEMORIAL
     ========================================= */
 
     .memorial-gift{
@@ -657,7 +698,7 @@
 
       align-items:center;
 
-      margin-top:48px;
+      margin-top:50px;
 
       padding:28px;
 
@@ -810,6 +851,7 @@
       display:flex;
 
       align-items:center;
+
       justify-content:space-between;
 
       padding:
@@ -823,6 +865,7 @@
 
     .hug-modal-close{
       width:40px;
+
       height:40px;
 
       border-radius:50%;
@@ -865,10 +908,6 @@
     }
 
 
-    /* =========================================
-       FOOTER
-    ========================================= */
-
     footer{
       text-align:center;
 
@@ -892,14 +931,15 @@
 
       .hug-offer-card{
         max-width:640px;
+
         width:100%;
+
         margin:auto;
       }
 
 
       .hug-offer-image{
-        aspect-ratio:
-          16 / 12;
+        aspect-ratio:16 / 12;
       }
 
     }
@@ -913,6 +953,7 @@
 
       .page{
         padding-left:14px;
+
         padding-right:14px;
       }
 
@@ -936,8 +977,7 @@
 
 
       .hug-offer-image{
-        aspect-ratio:
-          1 / 1;
+        aspect-ratio:1 / 1;
       }
 
 
@@ -957,7 +997,7 @@
 
 
   <!-- =========================================
-       HEADER
+       SHARED HUGSLINKS HEADER
   ========================================= -->
 
   <header class="topbar">
@@ -1055,6 +1095,19 @@
 
 
     <!-- =========================================
+         BACK TO THEMES
+    ========================================= -->
+
+    <a
+      href="personalized-hugs-card.html"
+      class="back-link"
+    >
+      ← Back to HUGS Card Themes
+    </a>
+
+
+
+    <!-- =========================================
          DELIVERY EXPERIENCE
     ========================================= -->
 
@@ -1065,6 +1118,7 @@
 
 
       <div class="hug-delivery-copy">
+
 
         <div class="eyebrow">
           The HUGSLinks delivery experience
@@ -1080,9 +1134,10 @@
 
           A HUG arrives as a digital gift.
 
-          The envelope protects the message
-          and creates anticipation until the
-          recipient chooses to open it.
+          The signature HUGSLinks envelope
+          protects the message and creates
+          anticipation until the recipient
+          chooses to open it.
 
         </p>
 
@@ -1123,12 +1178,14 @@
 
         </div>
 
+
       </div>
+
 
 
       <img
         src="assets/hug-send-cover.png"
-        alt="HUGSLinks glowing navy HUG envelope"
+        alt="Closed glowing HUGSLinks digital HUG envelope"
       >
 
 
@@ -1137,10 +1194,16 @@
 
 
     <!-- =========================================
-         HERO
+         MAIN HERO
     ========================================= -->
 
     <section class="hero">
+
+
+      <div class="eyebrow">
+        HUGSLinks Digital Cards
+      </div>
+
 
       <h1>
         Give Love. Send a HUG.
@@ -1148,21 +1211,22 @@
 
 
       <div class="tagline">
-        Small cards. Real connection.
+        Give a Hug. Get a Hug.
       </div>
 
 
       <p>
 
-        Choose the HUG experience that fits
-        the moment.
+        Share love, encouragement,
+        appreciation and connection through
+        a HUGSLinks digital experience.
 
-        Send a finished animated card,
-        personalize a HUG with HUGS Bear,
-        or customize a HUG experience for
+        Choose a finished HUG, make it
+        personal, or work with us to create
         something uniquely yours.
 
       </p>
+
 
     </section>
 
@@ -1177,8 +1241,9 @@
 
       <div class="section-heading">
 
+
         <div class="eyebrow">
-          HUGSLinks Cards
+          Three Ways to Connect
         </div>
 
 
@@ -1189,10 +1254,11 @@
 
         <p>
 
-          Three ways to share love,
-          encouragement and connection.
+          Start simple, make it personal,
+          or create a custom HUG experience.
 
         </p>
+
 
       </div>
 
@@ -1202,8 +1268,7 @@
 
 
         <!-- =====================================
-             LEFT
-             SEND A HUG
+             LEFT — READY TO SEND
         ====================================== -->
 
         <article class="hug-offer-card">
@@ -1214,7 +1279,7 @@
 
             <img
               src="assets/hug-send-cover.png"
-              alt="Closed glowing HUGSLinks envelope"
+              alt="Closed HUGSLinks envelope for a ready-to-send HUG"
             >
 
 
@@ -1273,11 +1338,30 @@
             </ul>
 
 
+            <!-- PREVIEW / PRODUCT PAGE -->
+
             <a
               href="nyc-ride-hugs-card.html"
               class="button navy-button"
             >
-              ▶ View HUG Cards
+              ▶ View NYC Ride &amp; Preview
+            </a>
+
+
+            <!-- LIVE STRIPE CHECKOUT -->
+
+            <a
+              href="https://buy.stripe.com/cNi4gy1yA0s00e30488ww04"
+              class="button gold-button hug-envelope-cta"
+            >
+
+              <img
+                src="assets/get-a-hug-envelope.png"
+                alt=""
+              >
+
+              Send This HUG — $6.99
+
             </a>
 
 
@@ -1289,8 +1373,7 @@
 
 
         <!-- =====================================
-             MIDDLE
-             PERSONALIZED HUG
+             MIDDLE — PERSONALIZED
         ====================================== -->
 
         <article
@@ -1303,7 +1386,7 @@
 
             <img
               src="assets/hug-personalized-cover.png"
-              alt="HUGS Bear delivering a personalized HUG"
+              alt="HUGS Bear presenting a personalized HUG"
             >
 
 
@@ -1336,9 +1419,9 @@
 
             <p>
 
-              Make the HUG personal with
-              names, your message, sender
-              details and HUGS Bear.
+              Make the experience personal
+              with names, your message,
+              sender details and HUGS Bear.
 
             </p>
 
@@ -1354,11 +1437,11 @@
               </li>
 
               <li>
-                Choose sender details
+                Choose the occasion
               </li>
 
               <li>
-                Select the occasion
+                Add sender details
               </li>
 
               <li>
@@ -1372,7 +1455,7 @@
               href="personalized-hugs-card.html"
               class="button gold-button"
             >
-              Personalize a HUG
+              Personalize a HUG — $16.99
             </a>
 
 
@@ -1384,8 +1467,7 @@
 
 
         <!-- =====================================
-             RIGHT
-             CUSTOMIZE CARD
+             RIGHT — CUSTOM
         ====================================== -->
 
         <article class="hug-offer-card">
@@ -1418,14 +1500,17 @@
 
 
             <div class="offer-price custom">
-              Custom Experience
+              From $39
             </div>
 
 
             <p>
 
-              Start with the HUGS experience
-              and make it more uniquely yours.
+              Need something beyond the
+              standard personalization options?
+
+              Work with HUGSLinks to create
+              a more unique card experience.
 
             </p>
 
@@ -1433,11 +1518,11 @@
             <ul class="offer-features">
 
               <li>
-                Choose a HUGS theme
+                Choose a custom concept
               </li>
 
               <li>
-                Customize your message
+                Personalize the message
               </li>
 
               <li>
@@ -1445,21 +1530,23 @@
               </li>
 
               <li>
-                Choose recipient details
+                Request creative details
               </li>
 
               <li>
-                Create a unique experience
+                Designed around your idea
               </li>
 
             </ul>
 
 
+            <!-- Uses existing Contact page so there is no dead link -->
+
             <a
-              href="personalized-hugs-card.html"
+              href="contact.html"
               class="button navy-button"
             >
-              Customize Your HUG
+              Request a Custom HUG
             </a>
 
 
@@ -1470,6 +1557,7 @@
 
 
       </div>
+
 
     </section>
 
@@ -1563,11 +1651,12 @@
 
       <p>
 
-        Future collections can include love,
-        healing, birthdays, family,
+        Future collections can include
+        love, healing, birthdays, family,
         friendship, encouragement,
-        celebrations, culture, memorials
-        and meaningful everyday moments.
+        anniversaries, celebrations,
+        culture, memorials and meaningful
+        everyday moments.
 
       </p>
 
@@ -1580,7 +1669,7 @@
 
 
   <!-- =========================================
-       DEMO MODAL
+       OPEN-A-HUG DEMO MODAL
   ========================================= -->
 
   <dialog
@@ -1663,11 +1752,15 @@
 
 
   <!-- =========================================
-       SHARED SITE SCRIPT
+       SHARED MENU SCRIPT
   ========================================= -->
 
   <script src="script.js"></script>
 
+
+  <!-- =========================================
+       DEMO MODAL SCRIPT
+  ========================================= -->
 
   <script>
 
@@ -1689,40 +1782,48 @@
       );
 
 
-    openDemo.addEventListener(
-      "click",
-      () => {
+    if (
+      hugDemo &&
+      openDemo &&
+      closeDemo
+    ) {
 
-        hugDemo.showModal();
+      openDemo.addEventListener(
+        "click",
+        () => {
 
-      }
-    );
+          hugDemo.showModal();
 
-
-    closeDemo.addEventListener(
-      "click",
-      () => {
-
-        hugDemo.close();
-
-      }
-    );
+        }
+      );
 
 
-    hugDemo.addEventListener(
-      "click",
-      event => {
-
-        if (
-          event.target === hugDemo
-        ) {
+      closeDemo.addEventListener(
+        "click",
+        () => {
 
           hugDemo.close();
 
         }
+      );
 
-      }
-    );
+
+      hugDemo.addEventListener(
+        "click",
+        event => {
+
+          if (
+            event.target === hugDemo
+          ) {
+
+            hugDemo.close();
+
+          }
+
+        }
+      );
+
+    }
 
   </script>
 
