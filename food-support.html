@@ -1,5 +1,865 @@
-<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>HUGSLinks Food Support</title><meta name="description" content="HUGSLinks premium community support and creative empowerment ecosystem."><link rel="stylesheet" href="styles.css"></head><body><header class="topbar"><nav class="nav"><a class="brand" href="index.html">Hugslinks</a><div class="seal" aria-label="HUGS house heart logo"><span class="roof"></span></div><button class="menu">Menu</button><div class="navlinks"><a href="index.html">Home</a><a href="shop.html">Shop</a><a href="art-community.html">Art</a><a href="food-support.html">Food</a><a href="housing-help.html">Housing</a><a href="business-services.html">Business</a><a href="help-app.html">Help App</a><a href="resources.html">Resources</a><a href="about.html">About</a><a href="contact.html">Contact</a></div></nav></header>
+<!doctype html>
+<html lang="en">
 
-<main class="watermark" style="--wm:url('assets/food-support.jpeg')"><section class="page-hero"><div><div class="eyebrow">Food Support</div><h1>Fresh support, organized with dignity.</h1><p>For food support campaigns, partner outreach, food pickup routes, water, produce, and healthy packaged food efforts.</p><div class="actions"><a class="btn primary" href="contact.html">Partner with HUGS</a><a class="btn light" href="resources.html">View resources</a></div></div><div class="page-icon"><img src="assets/food-support.jpeg" alt="Food Support icon"></div></section><section class="section"><h2>Food support focus</h2><div class="grid resources"><div class="resource"><h3>Partner pickup</h3><p>Coordinate stores, markets and community partners.</p></div><div class="resource"><h3>Fresh food</h3><p>Prioritize water, fruit, produce and healthy packaged items.</p></div><div class="resource"><h3>Community dignity</h3><p>Support people without shame, confusion or unsafe systems.</p></div></div></section></main>
-<footer class="footer"><div class="footer-inner"><div><h2>HUGS — Help Under Good Service</h2><p class="notice">A premium community support and creative empowerment ecosystem. Replace Stripe placeholder links with your live purchase links before publishing.</p></div><div><h3>Support</h3><a href="shop.html">Shop HUGS</a><a href="hugs-cards.html">HUGS Cards</a><a href="art-community.html">Support through art</a><a href="resources.html">Community resources</a></div><div><h3>Contact</h3><a href="contact.html">Request help or partnership</a><a href="business-services.html">Business services</a><a href="help-app.html">HUGS Help App</a></div></div></footer><script src="script.js"></script>
-</body></html>
+<head>
+
+  <meta charset="utf-8">
+
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1"
+  >
+
+  <title>Find Food | HUGSLinks</title>
+
+  <meta
+    name="description"
+    content="Find food pantries, community meal programs, emergency food resources, and food support across New York City with HUGSLinks."
+  >
+
+  <link
+    rel="stylesheet"
+    href="styles.css"
+  >
+
+  <style>
+
+    :root{
+      --food-navy:#071f3b;
+      --food-blue:#2f9ee7;
+      --food-sky:#72cfff;
+      --food-cream:#f7f3ec;
+      --food-white:#ffffff;
+      --food-muted:#60758a;
+      --food-line:#dce8f2;
+      --food-gold:#f2b84b;
+    }
+
+
+    body{
+      margin:0;
+      background:
+        linear-gradient(
+          180deg,
+          #ffffff 0%,
+          var(--food-cream) 100%
+        );
+    }
+
+
+    .food-page{
+      max-width:1180px;
+      margin:auto;
+      padding:34px 18px 80px;
+    }
+
+
+    /* =========================================
+       HERO
+    ========================================= */
+
+    .food-hero{
+      display:grid;
+
+      grid-template-columns:
+        1.08fr .92fr;
+
+      gap:32px;
+
+      align-items:center;
+
+      padding:40px 0 48px;
+    }
+
+
+    .food-eyebrow{
+      color:var(--food-blue);
+
+      font-weight:900;
+
+      letter-spacing:.16em;
+
+      text-transform:uppercase;
+
+      font-size:12px;
+
+      margin-bottom:10px;
+    }
+
+
+    .food-hero h1{
+      margin:0;
+
+      color:var(--food-navy);
+
+      font-size:
+        clamp(
+          46px,
+          8vw,
+          76px
+        );
+
+      line-height:.95;
+
+      letter-spacing:-.05em;
+    }
+
+
+    .food-hero p{
+      max-width:680px;
+
+      margin:
+        18px 0 0;
+
+      color:var(--food-muted);
+
+      font-size:18px;
+
+      line-height:1.75;
+    }
+
+
+    .food-actions{
+      display:flex;
+
+      flex-wrap:wrap;
+
+      gap:12px;
+
+      margin-top:26px;
+    }
+
+
+    .food-actions .btn{
+      min-width:180px;
+    }
+
+
+    .food-hero-card{
+      background:
+        linear-gradient(
+          145deg,
+          #ffffff,
+          #eef7ff
+        );
+
+      border:
+        1px solid
+        var(--food-line);
+
+      border-radius:30px;
+
+      padding:20px;
+
+      box-shadow:
+        0 18px 50px
+        rgba(7,31,59,.12);
+    }
+
+
+    .food-hero-card img{
+      width:100%;
+
+      border-radius:24px;
+    }
+
+
+    /* =========================================
+       FIND FOOD CTA
+    ========================================= */
+
+    .finder-banner{
+      margin-top:16px;
+
+      display:grid;
+
+      grid-template-columns:
+        1fr auto;
+
+      gap:20px;
+
+      align-items:center;
+
+      padding:28px;
+
+      border-radius:28px;
+
+      background:
+        radial-gradient(
+          circle at 75% 30%,
+          #174f8c,
+          #071f3b 62%
+        );
+
+      color:white;
+
+      box-shadow:
+        0 18px 48px
+        rgba(7,31,59,.2);
+    }
+
+
+    .finder-banner h2{
+      margin:0 0 8px;
+
+      font-size:
+        clamp(
+          28px,
+          4vw,
+          42px
+        );
+    }
+
+
+    .finder-banner p{
+      margin:0;
+
+      max-width:720px;
+
+      color:#dcecff;
+
+      line-height:1.65;
+    }
+
+
+    .finder-banner .btn{
+      background:
+        linear-gradient(
+          135deg,
+          var(--food-gold),
+          #f7d779
+        );
+
+      color:#17212c;
+    }
+
+
+    /* =========================================
+       SUPPORT GRID
+    ========================================= */
+
+    .food-section{
+      margin-top:52px;
+    }
+
+
+    .food-section-head{
+      text-align:center;
+
+      margin-bottom:24px;
+    }
+
+
+    .food-section-head h2{
+      margin:0;
+
+      color:var(--food-navy);
+
+      font-size:
+        clamp(
+          30px,
+          4vw,
+          44px
+        );
+    }
+
+
+    .food-section-head p{
+      max-width:720px;
+
+      margin:
+        10px auto 0;
+
+      color:var(--food-muted);
+
+      line-height:1.65;
+    }
+
+
+    .food-grid{
+      display:grid;
+
+      grid-template-columns:
+        repeat(3,1fr);
+
+      gap:20px;
+    }
+
+
+    .food-card{
+      background:#ffffff;
+
+      border:
+        1px solid
+        var(--food-line);
+
+      border-radius:24px;
+
+      padding:24px;
+
+      box-shadow:
+        0 12px 34px
+        rgba(7,31,59,.07);
+    }
+
+
+    .food-card h3{
+      margin:
+        0 0 8px;
+
+      color:
+        var(--food-navy);
+
+      font-size:22px;
+    }
+
+
+    .food-card p{
+      margin:0;
+
+      color:
+        var(--food-muted);
+
+      line-height:1.65;
+    }
+
+
+    /* =========================================
+       WHO IT HELPS
+    ========================================= */
+
+    .support-note{
+      margin-top:42px;
+
+      padding:28px;
+
+      border-radius:26px;
+
+      background:#ffffff;
+
+      border:
+        1px solid
+        var(--food-line);
+
+      box-shadow:
+        0 12px 34px
+        rgba(7,31,59,.06);
+    }
+
+
+    .support-note h2{
+      margin:
+        0 0 10px;
+
+      color:
+        var(--food-navy);
+    }
+
+
+    .support-note p{
+      margin:0;
+
+      color:
+        var(--food-muted);
+
+      line-height:1.7;
+    }
+
+
+    /* =========================================
+       MOBILE
+    ========================================= */
+
+    @media(max-width:850px){
+
+      .food-hero,
+      .finder-banner{
+        grid-template-columns:1fr;
+      }
+
+
+      .food-grid{
+        grid-template-columns:1fr;
+      }
+
+
+      .finder-banner{
+        text-align:center;
+      }
+
+
+      .finder-banner .btn{
+        width:100%;
+      }
+
+    }
+
+  </style>
+
+</head>
+
+
+<body>
+
+
+  <!-- =========================================
+       HEADER
+  ========================================= -->
+
+  <header class="topbar">
+
+    <nav class="nav">
+
+
+      <a
+        class="brand"
+        href="index.html"
+      >
+        Hugslinks
+      </a>
+
+
+      <div class="seal">
+
+        <img
+          src="assets/HUGS_Header_Logo_Transparent.png"
+          alt="HUGS logo"
+          class="header-logo"
+        >
+
+      </div>
+
+
+      <button
+        class="menu"
+        type="button"
+        aria-expanded="false"
+        aria-label="Open navigation menu"
+      >
+        Menu
+      </button>
+
+
+      <div class="navlinks">
+
+        <a href="index.html">
+          Home
+        </a>
+
+        <a href="shop.html">
+          Shop
+        </a>
+
+        <a href="hugs-cards.html">
+          HUGS Cards
+        </a>
+
+        <a href="art-community.html">
+          Art
+        </a>
+
+        <a
+          href="food-support.html"
+          class="active"
+        >
+          Food
+        </a>
+
+        <a href="housing-help.html">
+          Housing
+        </a>
+
+        <a href="business-services.html">
+          Business
+        </a>
+
+        <a href="help-app.html">
+          Help App
+        </a>
+
+        <a href="resources.html">
+          Resources
+        </a>
+
+        <a href="about.html">
+          About
+        </a>
+
+        <a href="contact.html">
+          Contact
+        </a>
+
+      </div>
+
+    </nav>
+
+  </header>
+
+
+
+  <main class="food-page">
+
+
+    <!-- =========================================
+         HERO
+    ========================================= -->
+
+    <section class="food-hero">
+
+
+      <div>
+
+
+        <div class="food-eyebrow">
+          HUGSLinks Food Support
+        </div>
+
+
+        <h1>
+          Find Food.
+        </h1>
+
+
+        <p>
+
+          Find food pantries, community meal
+          programs, emergency food resources
+          and other food support available
+          across New York City.
+
+          HUGSLinks is designed to help people
+          find practical support with dignity,
+          clarity and fewer barriers.
+
+        </p>
+
+
+        <div class="food-actions">
+
+
+          <a
+            class="btn primary"
+            href="find-food.html"
+          >
+            Find Food Near You
+          </a>
+
+
+          <a
+            class="btn light"
+            href="resources.html"
+          >
+            View More Resources
+          </a>
+
+
+        </div>
+
+
+      </div>
+
+
+
+      <div class="food-hero-card">
+
+
+        <img
+          src="assets/food-support.jpeg"
+          alt="HUGSLinks Food Support"
+        >
+
+
+      </div>
+
+
+    </section>
+
+
+
+    <!-- =========================================
+         FINDER CTA
+    ========================================= -->
+
+    <section class="finder-banner">
+
+
+      <div>
+
+
+        <h2>
+          Search NYC food resources.
+        </h2>
+
+
+        <p>
+
+          Use the HUGSLinks Find Food page
+          to search for nearby pantries,
+          community meals and food-support
+          programs by location.
+
+        </p>
+
+
+      </div>
+
+
+
+      <a
+        class="btn"
+        href="find-food.html"
+      >
+        Open Find Food
+      </a>
+
+
+    </section>
+
+
+
+    <!-- =========================================
+         SUPPORT TYPES
+    ========================================= -->
+
+    <section class="food-section">
+
+
+      <div class="food-section-head">
+
+
+        <h2>
+          Food Support Options
+        </h2>
+
+
+        <p>
+
+          Different programs serve different
+          needs. The Find Food page will help
+          organize them in one place.
+
+        </p>
+
+
+      </div>
+
+
+
+      <div class="food-grid">
+
+
+        <article class="food-card">
+
+
+          <h3>
+            Food Pantries
+          </h3>
+
+
+          <p>
+
+            Locate community pantries,
+            grocery distribution programs
+            and emergency food assistance.
+
+          </p>
+
+
+        </article>
+
+
+
+        <article class="food-card">
+
+
+          <h3>
+            Community Meals
+          </h3>
+
+
+          <p>
+
+            Find meal programs, soup kitchens
+            and community locations serving
+            prepared food.
+
+          </p>
+
+
+        </article>
+
+
+
+        <article class="food-card">
+
+
+          <h3>
+            Support Programs
+          </h3>
+
+
+          <p>
+
+            Connect with food assistance,
+            outreach programs and additional
+            resources for people experiencing
+            hunger or homelessness.
+
+          </p>
+
+
+        </article>
+
+
+      </div>
+
+
+    </section>
+
+
+
+    <!-- =========================================
+         PARTNERSHIPS
+    ========================================= -->
+
+    <section class="support-note">
+
+
+      <h2>
+        Food partners and community organizations
+      </h2>
+
+
+      <p>
+
+        HUGSLinks also supports partnerships
+        with stores, markets, food programs,
+        community groups and organizations
+        interested in helping people access
+        food with dignity.
+
+      </p>
+
+
+      <div class="food-actions">
+
+
+        <a
+          class="btn primary"
+          href="contact.html"
+        >
+          Partner with HUGSLinks
+        </a>
+
+
+      </div>
+
+
+    </section>
+
+
+  </main>
+
+
+
+  <!-- =========================================
+       FOOTER
+  ========================================= -->
+
+  <footer class="footer">
+
+
+    <div class="footer-inner">
+
+
+      <div>
+
+
+        <h2>
+          HUGS — Help Under Good Service
+        </h2>
+
+
+        <p class="notice">
+
+          A community support and creative
+          empowerment ecosystem built around
+          dignity, connection and practical help.
+
+        </p>
+
+
+      </div>
+
+
+
+      <div>
+
+
+        <h3>
+          Support
+        </h3>
+
+
+        <a href="shop.html">
+          Shop HUGS
+        </a>
+
+
+        <a href="hugs-cards.html">
+          HUGS Cards
+        </a>
+
+
+        <a href="art-community.html">
+          Support Through Art
+        </a>
+
+
+        <a href="resources.html">
+          Community Resources
+        </a>
+
+
+      </div>
+
+
+
+      <div>
+
+
+        <h3>
+          Contact
+        </h3>
+
+
+        <a href="contact.html">
+          Request Help or Partnership
+        </a>
+
+
+        <a href="business-services.html">
+          Business Services
+        </a>
+
+
+        <a href="help-app.html">
+          HUGS Help App
+        </a>
+
+
+      </div>
+
+
+    </div>
+
+
+  </footer>
+
+
+  <script src="script.js"></script>
+
+
+</body>
+
+</html>
