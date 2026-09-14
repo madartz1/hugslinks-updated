@@ -65,10 +65,6 @@
     }
 
 
-    /* =========================================
-       PAGE
-    ========================================= */
-
     .page{
       max-width:1180px;
       margin:0 auto;
@@ -78,47 +74,28 @@
 
     .back-link{
       display:inline-block;
-
       margin-bottom:22px;
-
       color:var(--navy);
-
       text-decoration:none;
-
       font-weight:800;
     }
 
 
-    /* =========================================
-       DELIVERY EXPERIENCE
-    ========================================= */
-
     .hug-delivery-intro{
       display:grid;
-
-      grid-template-columns:
-        1fr 1fr;
-
+      grid-template-columns:1fr 1fr;
       gap:30px;
-
       align-items:center;
-
-      margin:
-        4px 0 48px;
-
+      margin:4px 0 48px;
       padding:30px;
-
       border-radius:30px;
-
       color:white;
-
       background:
         radial-gradient(
           circle at 80% 20%,
           #174f8c,
           #071f3b 62%
         );
-
       box-shadow:
         0 20px 55px
         rgba(11,47,89,.20);
@@ -127,9 +104,7 @@
 
     .hug-delivery-intro > img{
       width:100%;
-
       border-radius:22px;
-
       box-shadow:
         0 16px 40px
         rgba(0,0,0,.28);
@@ -138,245 +113,150 @@
 
     .hug-delivery-copy .eyebrow{
       color:#74cfff;
-
       font-weight:900;
-
       letter-spacing:.14em;
-
       text-transform:uppercase;
-
       font-size:12px;
     }
 
 
     .hug-delivery-intro h1{
-      margin:
-        9px 0 14px;
-
-      font-size:
-        clamp(
-          36px,
-          6vw,
-          58px
-        );
-
+      margin:9px 0 14px;
+      font-size:clamp(36px,6vw,58px);
       line-height:1;
     }
 
 
     .hug-delivery-intro p{
       color:#dcecff;
-
       line-height:1.7;
     }
 
 
     .hug-delivery-actions{
       display:flex;
-
       flex-wrap:wrap;
-
       gap:10px;
-
       margin-top:20px;
     }
 
 
     .hug-delivery-actions .button{
       display:inline-flex;
-
       width:auto;
-
       margin:0;
     }
 
 
     .experience-button{
       background:var(--gold);
-
       color:#17212c;
-
       border:0;
-
       cursor:pointer;
-
       font:inherit;
     }
 
 
     .themes-button{
       background:transparent;
-
       color:white;
-
-      border:
-        1px solid
-        rgba(255,255,255,.45);
+      border:1px solid rgba(255,255,255,.45);
     }
 
 
-    /* =========================================
-       HERO
-    ========================================= */
-
     .hero{
       text-align:center;
-
-      padding:
-        28px 15px 36px;
+      padding:28px 15px 36px;
     }
 
 
     .hero .eyebrow{
       color:var(--blue);
-
       font-weight:900;
-
       letter-spacing:.18em;
-
       text-transform:uppercase;
-
       font-size:12px;
-
       margin-bottom:10px;
     }
 
 
     .hero h1{
       margin:0;
-
       color:var(--navy);
-
-      font-size:
-        clamp(
-          42px,
-          8vw,
-          72px
-        );
-
+      font-size:clamp(42px,8vw,72px);
       line-height:.98;
-
       letter-spacing:-.04em;
     }
 
 
     .tagline{
       margin-top:14px;
-
       color:var(--blue);
-
       font-size:22px;
-
       font-weight:900;
     }
 
 
     .hero p{
       max-width:760px;
-
-      margin:
-        18px auto 0;
-
+      margin:18px auto 0;
       color:var(--muted);
-
       font-size:17px;
-
       line-height:1.7;
     }
 
 
-    /* =========================================
-       SECTION HEADING
-    ========================================= */
-
     .section-heading{
       text-align:center;
-
-      margin:
-        18px 0 30px;
+      margin:18px 0 30px;
     }
 
 
     .section-heading .eyebrow{
       color:var(--blue);
-
       font-weight:900;
-
       letter-spacing:.16em;
-
       text-transform:uppercase;
-
       font-size:12px;
-
       margin-bottom:8px;
     }
 
 
     .section-heading h2{
       margin:0;
-
       color:var(--navy);
-
-      font-size:
-        clamp(
-          34px,
-          5vw,
-          50px
-        );
-
+      font-size:clamp(34px,5vw,50px);
       letter-spacing:-.03em;
     }
 
 
     .section-heading p{
       max-width:720px;
-
-      margin:
-        12px auto 0;
-
+      margin:12px auto 0;
       color:var(--muted);
-
       line-height:1.6;
     }
 
 
-    /* =========================================
-       THREE OFFER CARDS
-    ========================================= */
-
     .hug-offer-grid{
       display:grid;
-
-      grid-template-columns:
-        repeat(3,1fr);
-
+      grid-template-columns:repeat(3,1fr);
       gap:22px;
-
       align-items:stretch;
     }
 
 
     .hug-offer-card{
       position:relative;
-
       display:flex;
-
       flex-direction:column;
-
       overflow:hidden;
-
       background:#ffffff;
-
-      border:
-        1px solid
-        var(--border);
-
+      border:1px solid var(--border);
       border-radius:28px;
-
       box-shadow:
         0 18px 46px
         rgba(11,47,89,.11);
-
       transition:
         transform .25s ease,
         box-shadow .25s ease;
@@ -384,72 +264,44 @@
 
 
     .hug-offer-card:hover{
-      transform:
-        translateY(-4px);
-
+      transform:translateY(-4px);
       box-shadow:
         0 24px 58px
         rgba(11,47,89,.15);
     }
 
 
-    /* =========================================
-       OFFER IMAGE
-    ========================================= */
-
     .hug-offer-image{
       position:relative;
-
       aspect-ratio:1 / 1;
-
       overflow:hidden;
-
       background:#071f3b;
     }
 
 
     .hug-offer-image img{
       width:100%;
-
       height:100%;
-
       display:block;
-
       object-fit:cover;
-
       object-position:center;
     }
 
 
     .offer-label{
       position:absolute;
-
       top:15px;
-
       left:15px;
-
       z-index:2;
-
-      padding:
-        7px 13px;
-
+      padding:7px 13px;
       border-radius:999px;
-
-      background:
-        rgba(7,31,59,.87);
-
+      background:rgba(7,31,59,.87);
       color:#ffffff;
-
       font-size:11px;
-
       font-weight:900;
-
       letter-spacing:.08em;
-
       text-transform:uppercase;
-
-      backdrop-filter:
-        blur(8px);
+      backdrop-filter:blur(8px);
     }
 
 
@@ -460,78 +312,49 @@
           #f2b84b,
           #f7d779
         );
-
       color:#132a45;
     }
 
 
     .popular-label{
       position:absolute;
-
       top:15px;
-
       right:15px;
-
       z-index:3;
-
-      padding:
-        7px 12px;
-
+      padding:7px 12px;
       border-radius:999px;
-
       background:#ffffff;
-
       color:var(--navy);
-
       font-size:10px;
-
       font-weight:900;
-
       letter-spacing:.08em;
-
       text-transform:uppercase;
-
       box-shadow:
         0 6px 18px
         rgba(7,31,59,.16);
     }
 
 
-    /* =========================================
-       OFFER BODY
-    ========================================= */
-
     .hug-offer-body{
       display:flex;
-
       flex-direction:column;
-
       flex:1;
-
-      padding:
-        24px 22px 25px;
+      padding:24px 22px 25px;
     }
 
 
     .hug-offer-body h3{
       margin:0;
-
       color:var(--navy);
-
       font-size:27px;
-
       line-height:1.1;
     }
 
 
     .offer-price{
-      margin:
-        8px 0 13px;
-
+      margin:8px 0 13px;
       color:var(--blue);
-
       font-size:23px;
-
       font-weight:900;
     }
 
@@ -542,86 +365,50 @@
 
 
     .hug-offer-body p{
-      margin:
-        0 0 16px;
-
+      margin:0 0 16px;
       color:var(--muted);
-
       line-height:1.6;
     }
 
 
-    /* =========================================
-       FEATURES
-    ========================================= */
-
     .offer-features{
       list-style:none;
-
       padding:0;
-
-      margin:
-        0 0 22px;
+      margin:0 0 22px;
     }
 
 
     .offer-features li{
       position:relative;
-
       padding-left:24px;
-
-      margin:
-        8px 0;
-
+      margin:8px 0;
       color:#486078;
-
       line-height:1.4;
     }
 
 
     .offer-features li::before{
       content:"✓";
-
       position:absolute;
-
       left:0;
-
       top:0;
-
       color:var(--love);
-
       font-weight:900;
     }
 
 
-    /* =========================================
-       BUTTONS
-    ========================================= */
-
     .button{
       display:flex;
-
       align-items:center;
-
       justify-content:center;
-
       gap:8px;
-
       width:100%;
-
       text-align:center;
-
       text-decoration:none;
-
       border-radius:999px;
-
-      padding:
-        15px 18px;
-
+      padding:15px 18px;
       font-weight:900;
-
       border:0;
-
       cursor:pointer;
     }
 
@@ -633,14 +420,12 @@
 
     .navy-button{
       background:var(--navy);
-
       color:#ffffff;
     }
 
 
     .navy-button:hover{
       background:var(--blue);
-
       color:var(--navy);
     }
 
@@ -652,30 +437,20 @@
           var(--gold),
           #f7d779
         );
-
       color:#17212c;
     }
 
 
     .outline-button{
       background:#ffffff;
-
       color:var(--navy);
-
-      border:
-        2px solid
-        var(--navy);
+      border:2px solid var(--navy);
     }
 
-
-    /* =========================================
-       PERSONALIZED FEATURED CARD
-    ========================================= */
 
     .personalized-offer{
       border-color:
         rgba(242,184,75,.68);
-
       box-shadow:
         0 20px 55px
         rgba(11,47,89,.15),
@@ -684,32 +459,16 @@
     }
 
 
-    /* =========================================
-       FREE MEMORIAL
-    ========================================= */
-
     .memorial-gift{
       display:grid;
-
-      grid-template-columns:
-        .8fr 1.2fr;
-
+      grid-template-columns:.8fr 1.2fr;
       gap:26px;
-
       align-items:center;
-
       margin-top:50px;
-
       padding:28px;
-
-      border:
-        1px solid
-        #d7e5f1;
-
+      border:1px solid #d7e5f1;
       border-radius:28px;
-
       background:#ffffff;
-
       box-shadow:
         0 16px 42px
         rgba(11,47,89,.09);
@@ -718,120 +477,74 @@
 
     .memorial-gift img{
       width:100%;
-
       border-radius:18px;
     }
 
 
     .memorial-gift h2{
       color:var(--navy);
-
       font-size:32px;
-
       line-height:1.08;
-
-      margin:
-        8px 0 12px;
+      margin:8px 0 12px;
     }
 
 
     .memorial-gift p{
       color:var(--muted);
-
       line-height:1.65;
     }
 
 
     .memorial-gift small{
       display:block;
-
       margin-top:12px;
-
       color:var(--muted);
     }
 
 
     .badge{
       display:inline-block;
-
-      padding:
-        7px 11px;
-
+      padding:7px 11px;
       border-radius:999px;
-
       background:var(--soft-love);
-
       color:var(--love);
-
       font-size:11px;
-
       font-weight:900;
-
       text-transform:uppercase;
-
       letter-spacing:.5px;
     }
 
 
-    /* =========================================
-       COMING SOON
-    ========================================= */
-
     .coming-soon{
       margin-top:38px;
-
       padding:26px;
-
       text-align:center;
-
       border-radius:24px;
-
       background:var(--soft-love);
-
-      border:
-        1px solid
-        #f7d7df;
+      border:1px solid #f7d7df;
     }
 
 
     .coming-soon h3{
-      margin:
-        0 0 8px;
-
+      margin:0 0 8px;
       color:var(--navy);
     }
 
 
     .coming-soon p{
       margin:0;
-
       color:var(--muted);
-
       line-height:1.6;
     }
 
 
-    /* =========================================
-       MODAL
-    ========================================= */
-
     .hug-modal{
-      width:
-        min(
-          92vw,
-          720px
-        );
-
+      width:min(92vw,720px);
       border:0;
-
       border-radius:28px;
-
       padding:0;
-
       color:white;
-
       background:#071f3b;
-
       box-shadow:
         0 30px 90px
         rgba(0,0,0,.65);
@@ -841,22 +554,15 @@
     .hug-modal::backdrop{
       background:
         rgba(2,10,23,.82);
-
-      backdrop-filter:
-        blur(8px);
+      backdrop-filter:blur(8px);
     }
 
 
     .hug-modal-head{
       display:flex;
-
       align-items:center;
-
       justify-content:space-between;
-
-      padding:
-        14px 18px;
-
+      padding:14px 18px;
       border-bottom:
         1px solid
         rgba(255,255,255,.16);
@@ -865,40 +571,26 @@
 
     .hug-modal-close{
       width:40px;
-
       height:40px;
-
       border-radius:50%;
-
       border:0;
-
       background:
         rgba(255,255,255,.12);
-
       color:white;
-
       font-size:22px;
-
       cursor:pointer;
     }
 
 
     .hug-modal-body{
       padding:22px;
-
       text-align:center;
     }
 
 
     .hug-modal-body img{
-      width:
-        min(
-          100%,
-          500px
-        );
-
+      width:min(100%,500px);
       margin:auto;
-
       border-radius:18px;
     }
 
@@ -910,17 +602,10 @@
 
     footer{
       text-align:center;
-
-      padding:
-        34px 18px 42px;
-
+      padding:34px 18px 42px;
       color:#74889b;
     }
 
-
-    /* =========================================
-       TABLET
-    ========================================= */
 
     @media(max-width:900px){
 
@@ -931,9 +616,7 @@
 
       .hug-offer-card{
         max-width:640px;
-
         width:100%;
-
         margin:auto;
       }
 
@@ -945,15 +628,10 @@
     }
 
 
-    /* =========================================
-       MOBILE
-    ========================================= */
-
     @media(max-width:700px){
 
       .page{
         padding-left:14px;
-
         padding-right:14px;
       }
 
@@ -961,7 +639,6 @@
       .hug-delivery-intro,
       .memorial-gift{
         grid-template-columns:1fr;
-
         padding:18px;
       }
 
@@ -982,8 +659,7 @@
 
 
       .hug-offer-body{
-        padding:
-          21px 18px 23px;
+        padding:21px 18px 23px;
       }
 
     }
@@ -995,10 +671,6 @@
 
 <body>
 
-
-  <!-- =========================================
-       SHARED HUGSLINKS HEADER
-  ========================================= -->
 
   <header class="topbar">
 
@@ -1090,13 +762,8 @@
   </header>
 
 
-
   <main class="page">
 
-
-    <!-- =========================================
-         BACK TO THEMES
-    ========================================= -->
 
     <a
       href="personalized-hugs-card.html"
@@ -1105,11 +772,6 @@
       ← Back to HUGS Card Themes
     </a>
 
-
-
-    <!-- =========================================
-         DELIVERY EXPERIENCE
-    ========================================= -->
 
     <section
       class="hug-delivery-intro"
@@ -1175,12 +837,9 @@
 
           </a>
 
-
         </div>
 
-
       </div>
-
 
 
       <img
@@ -1188,17 +847,10 @@
         alt="Closed glowing HUGSLinks digital HUG envelope"
       >
 
-
     </section>
 
 
-
-    <!-- =========================================
-         MAIN HERO
-    ========================================= -->
-
     <section class="hero">
-
 
       <div class="eyebrow">
         HUGSLinks Digital Cards
@@ -1227,20 +879,13 @@
 
       </p>
 
-
     </section>
 
-
-
-    <!-- =========================================
-         CHOOSE YOUR HUG
-    ========================================= -->
 
     <section>
 
 
       <div class="section-heading">
-
 
         <div class="eyebrow">
           Three Ways to Connect
@@ -1259,41 +904,29 @@
 
         </p>
 
-
       </div>
-
 
 
       <div class="hug-offer-grid">
 
 
-        <!-- =====================================
-             LEFT — READY TO SEND
-        ====================================== -->
-
         <article class="hug-offer-card">
 
-
           <div class="hug-offer-image">
-
 
             <img
               src="assets/hug-send-cover.png"
               alt="Closed HUGSLinks envelope for a ready-to-send HUG"
             >
 
-
             <span class="offer-label">
               Ready to Send
             </span>
 
-
           </div>
 
 
-
           <div class="hug-offer-body">
-
 
             <h3>
               Send a HUG
@@ -1338,8 +971,6 @@
             </ul>
 
 
-            <!-- PREVIEW / PRODUCT PAGE -->
-
             <a
               href="nyc-ride-hugs-card.html"
               class="button navy-button"
@@ -1347,8 +978,6 @@
               ▶ View NYC Ride &amp; Preview
             </a>
 
-
-            <!-- LIVE STRIPE CHECKOUT -->
 
             <a
               href="https://buy.stripe.com/cNi4gy1yA0s00e30488ww04"
@@ -1364,48 +993,35 @@
 
             </a>
 
-
           </div>
-
 
         </article>
 
 
 
-        <!-- =====================================
-             MIDDLE — PERSONALIZED
-        ====================================== -->
-
         <article
           class="hug-offer-card personalized-offer"
         >
 
-
           <div class="hug-offer-image">
-
 
             <img
               src="assets/hug-personalized-cover.png"
               alt="HUGS Bear presenting a personalized HUG"
             >
 
-
             <span class="offer-label">
               Personalized
             </span>
-
 
             <span class="popular-label">
               Most Popular
             </span>
 
-
           </div>
 
 
-
           <div class="hug-offer-body">
-
 
             <h3>
               Personalize a HUG
@@ -1458,41 +1074,29 @@
               Personalize a HUG — $16.99
             </a>
 
-
           </div>
-
 
         </article>
 
 
 
-        <!-- =====================================
-             RIGHT — CUSTOM
-        ====================================== -->
-
         <article class="hug-offer-card">
 
-
           <div class="hug-offer-image">
-
 
             <img
               src="assets/hug-custom-cover.png"
               alt="HUGSLinks envelope with customizable card"
             >
 
-
             <span class="offer-label">
               Custom
             </span>
 
-
           </div>
 
 
-
           <div class="hug-offer-body">
-
 
             <h3>
               Customize a HUG
@@ -1523,311 +1127,4 @@
 
               <li>
                 Personalize the message
-              </li>
-
-              <li>
-                Select the occasion
-              </li>
-
-              <li>
-                Request creative details
-              </li>
-
-              <li>
-                Designed around your idea
-              </li>
-
-            </ul>
-
-
-            <!-- Uses existing Contact page so there is no dead link -->
-
-            <a
-              href="contact.html"
-              class="button navy-button"
-            >
-              Request a Custom HUG
-            </a>
-
-
-          </div>
-
-
-        </article>
-
-
-      </div>
-
-
-    </section>
-
-
-
-    <!-- =========================================
-         FREE MEMORIAL HUG
-    ========================================= -->
-
-    <section
-      class="memorial-gift"
-      aria-labelledby="memorial-gift-title"
-    >
-
-
-      <img
-        src="assets/get-a-hug-envelope.png"
-        alt="Sealed HUGS memorial envelope"
-      >
-
-
-      <div>
-
-
-        <span class="badge">
-          A gift from the HUGS Community
-        </span>
-
-
-        <h2 id="memorial-gift-title">
-
-          Always Remembered
-          &amp; Always With Us
-
-        </h2>
-
-
-        <p>
-
-          This free memorial artwork honors
-          those we lost, their loved ones,
-          survivors, first responders,
-          rescue workers, union tradespeople
-          and the communities that helped
-          carry New York forward.
-
-        </p>
-
-
-        <a
-          class="button navy-button hug-envelope-cta"
-          href="free-911-hugs-card.html"
-        >
-
-          <img
-            src="assets/hugs-open-envelope.png"
-            alt=""
-          >
-
-          Open the Free Memorial HUG
-
-        </a>
-
-
-        <small>
-
-          No purchase or email required.
-          Download and share it freely.
-
-        </small>
-
-
-      </div>
-
-
-    </section>
-
-
-
-    <!-- =========================================
-         COMING SOON
-    ========================================= -->
-
-    <section class="coming-soon">
-
-
-      <h3>
-        ❤️ More HUGS Are Coming
-      </h3>
-
-
-      <p>
-
-        Future collections can include
-        love, healing, birthdays, family,
-        friendship, encouragement,
-        anniversaries, celebrations,
-        culture, memorials and meaningful
-        everyday moments.
-
-      </p>
-
-
-    </section>
-
-
-  </main>
-
-
-
-  <!-- =========================================
-       OPEN-A-HUG DEMO MODAL
-  ========================================= -->
-
-  <dialog
-    class="hug-modal"
-    id="hug-demo"
-  >
-
-
-    <div class="hug-modal-head">
-
-
-      <strong>
-        Your HUG has arrived
-      </strong>
-
-
-      <button
-        class="hug-modal-close"
-        id="close-hug-demo"
-        type="button"
-        aria-label="Close"
-      >
-        ×
-      </button>
-
-
-    </div>
-
-
-
-    <div class="hug-modal-body">
-
-
-      <img
-        src="assets/hugs-community-911-memorial.png"
-        alt="Revealed HUGS Community memorial card"
-      >
-
-
-      <h2>
-        Always Remembered &amp; Always With Us
-      </h2>
-
-
-      <p>
-
-        The envelope creates anticipation.
-        The card delivers the emotion.
-
-      </p>
-
-
-      <a
-        class="button gold-button hug-envelope-cta"
-        href="assets/hugs-community-911-memorial.png"
-        download="HUGS-Community-911-Memorial.png"
-      >
-
-        <img
-          src="assets/hugs-open-envelope.png"
-          alt=""
-        >
-
-        Save This Free Card
-
-      </a>
-
-
-    </div>
-
-
-  </dialog>
-
-
-
-  <footer>
-    © 2026 HUGSLinks · Give a Hug. Get a Hug.
-  </footer>
-
-
-
-  <!-- =========================================
-       SHARED MENU SCRIPT
-  ========================================= -->
-
-  <script src="script.js"></script>
-
-
-  <!-- =========================================
-       DEMO MODAL SCRIPT
-  ========================================= -->
-
-  <script>
-
-    const hugDemo =
-      document.getElementById(
-        "hug-demo"
-      );
-
-
-    const openDemo =
-      document.getElementById(
-        "open-hug-demo"
-      );
-
-
-    const closeDemo =
-      document.getElementById(
-        "close-hug-demo"
-      );
-
-
-    if (
-      hugDemo &&
-      openDemo &&
-      closeDemo
-    ) {
-
-      openDemo.addEventListener(
-        "click",
-        () => {
-
-          hugDemo.showModal();
-
-        }
-      );
-
-
-      closeDemo.addEventListener(
-        "click",
-        () => {
-
-          hugDemo.close();
-
-        }
-      );
-
-
-      hugDemo.addEventListener(
-        "click",
-        event => {
-
-          if (
-            event.target === hugDemo
-          ) {
-
-            hugDemo.close();
-
-          }
-
-        }
-      );
-
-    }
-
-  </script>
-
-
-</body>
-
-</html>
+              </
