@@ -1,0 +1,1391 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+  <meta charset="UTF-8">
+
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0"
+  >
+
+  <title>
+    HUGS Cards | HUGSLinks
+  </title>
+
+  <meta
+    name="description"
+    content="Send, personalize or customize a HUGSLinks digital HUG Card. Give a Hug. Get a Hug."
+  >
+
+  <link
+    rel="stylesheet"
+    href="styles.css"
+  >
+
+
+  <style>
+
+    :root{
+      --navy:#071f3b;
+      --blue:#2f9ee7;
+      --sky:#72cfff;
+      --cream:#f7f3ec;
+      --white:#ffffff;
+      --muted:#60758a;
+      --gold:#f2b84b;
+      --border:#dce8f2;
+      --love:#ef425c;
+      --soft-love:#fff1f4;
+    }
+
+
+    *{
+      box-sizing:border-box;
+    }
+
+
+    body{
+      margin:0;
+
+      background:
+        linear-gradient(
+          180deg,
+          #ffffff 0%,
+          var(--cream) 100%
+        );
+
+      color:#23374d;
+
+      font-family:
+        Arial,
+        Helvetica,
+        sans-serif;
+    }
+
+
+    .page{
+      max-width:1180px;
+      margin:0 auto;
+      padding:28px 18px 80px;
+    }
+
+
+    .back-link{
+      display:inline-block;
+      margin-bottom:22px;
+      color:var(--navy);
+      text-decoration:none;
+      font-weight:800;
+    }
+
+
+    .hug-delivery-intro{
+      display:grid;
+      grid-template-columns:1fr 1fr;
+      gap:30px;
+      align-items:center;
+      margin:4px 0 48px;
+      padding:30px;
+      border-radius:30px;
+      color:white;
+      background:
+        radial-gradient(
+          circle at 80% 20%,
+          #174f8c,
+          #071f3b 62%
+        );
+      box-shadow:
+        0 20px 55px
+        rgba(11,47,89,.20);
+    }
+
+
+    .hug-delivery-intro > img{
+      width:100%;
+      border-radius:22px;
+      box-shadow:
+        0 16px 40px
+        rgba(0,0,0,.28);
+    }
+
+
+    .hug-delivery-copy .eyebrow{
+      color:#74cfff;
+      font-weight:900;
+      letter-spacing:.14em;
+      text-transform:uppercase;
+      font-size:12px;
+    }
+
+
+    .hug-delivery-intro h1{
+      margin:9px 0 14px;
+      font-size:clamp(36px,6vw,58px);
+      line-height:1;
+    }
+
+
+    .hug-delivery-intro p{
+      color:#dcecff;
+      line-height:1.7;
+    }
+
+
+    .hug-delivery-actions{
+      display:flex;
+      flex-wrap:wrap;
+      gap:10px;
+      margin-top:20px;
+    }
+
+
+    .hug-delivery-actions .button{
+      display:inline-flex;
+      width:auto;
+      margin:0;
+    }
+
+
+    .experience-button{
+      background:var(--gold);
+      color:#17212c;
+      border:0;
+      cursor:pointer;
+      font:inherit;
+    }
+
+
+    .themes-button{
+      background:transparent;
+      color:white;
+      border:1px solid rgba(255,255,255,.45);
+    }
+
+
+    .hero{
+      text-align:center;
+      padding:28px 15px 36px;
+    }
+
+
+    .hero .eyebrow{
+      color:var(--blue);
+      font-weight:900;
+      letter-spacing:.18em;
+      text-transform:uppercase;
+      font-size:12px;
+      margin-bottom:10px;
+    }
+
+
+    .hero h1{
+      margin:0;
+      color:var(--navy);
+      font-size:clamp(42px,8vw,72px);
+      line-height:.98;
+      letter-spacing:-.04em;
+    }
+
+
+    .tagline{
+      margin-top:14px;
+      color:var(--blue);
+      font-size:22px;
+      font-weight:900;
+    }
+
+
+    .hero p{
+      max-width:760px;
+      margin:18px auto 0;
+      color:var(--muted);
+      font-size:17px;
+      line-height:1.7;
+    }
+
+
+    .section-heading{
+      text-align:center;
+      margin:18px 0 30px;
+    }
+
+
+    .section-heading .eyebrow{
+      color:var(--blue);
+      font-weight:900;
+      letter-spacing:.16em;
+      text-transform:uppercase;
+      font-size:12px;
+      margin-bottom:8px;
+    }
+
+
+    .section-heading h2{
+      margin:0;
+      color:var(--navy);
+      font-size:clamp(34px,5vw,50px);
+      letter-spacing:-.03em;
+    }
+
+
+    .section-heading p{
+      max-width:720px;
+      margin:12px auto 0;
+      color:var(--muted);
+      line-height:1.6;
+    }
+
+
+    .hug-offer-grid{
+      display:grid;
+      grid-template-columns:repeat(3,1fr);
+      gap:22px;
+      align-items:stretch;
+    }
+
+
+    .hug-offer-card{
+      position:relative;
+      display:flex;
+      flex-direction:column;
+      overflow:hidden;
+      background:#ffffff;
+      border:1px solid var(--border);
+      border-radius:28px;
+      box-shadow:
+        0 18px 46px
+        rgba(11,47,89,.11);
+      transition:
+        transform .25s ease,
+        box-shadow .25s ease;
+    }
+
+
+    .hug-offer-card:hover{
+      transform:translateY(-4px);
+      box-shadow:
+        0 24px 58px
+        rgba(11,47,89,.15);
+    }
+
+
+    .hug-offer-image{
+      position:relative;
+      aspect-ratio:1 / 1;
+      overflow:hidden;
+      background:#071f3b;
+    }
+
+
+    .hug-offer-image img{
+      width:100%;
+      height:100%;
+      display:block;
+      object-fit:cover;
+      object-position:center;
+    }
+
+
+    .offer-label{
+      position:absolute;
+      top:15px;
+      left:15px;
+      z-index:2;
+      padding:7px 13px;
+      border-radius:999px;
+      background:rgba(7,31,59,.87);
+      color:#ffffff;
+      font-size:11px;
+      font-weight:900;
+      letter-spacing:.08em;
+      text-transform:uppercase;
+      backdrop-filter:blur(8px);
+    }
+
+
+    .personalized-offer .offer-label{
+      background:
+        linear-gradient(
+          135deg,
+          #f2b84b,
+          #f7d779
+        );
+      color:#132a45;
+    }
+
+
+    .popular-label{
+      position:absolute;
+      top:15px;
+      right:15px;
+      z-index:3;
+      padding:7px 12px;
+      border-radius:999px;
+      background:#ffffff;
+      color:var(--navy);
+      font-size:10px;
+      font-weight:900;
+      letter-spacing:.08em;
+      text-transform:uppercase;
+      box-shadow:
+        0 6px 18px
+        rgba(7,31,59,.16);
+    }
+
+
+    .hug-offer-body{
+      display:flex;
+      flex-direction:column;
+      flex:1;
+      padding:24px 22px 25px;
+    }
+
+
+    .hug-offer-body h3{
+      margin:0;
+      color:var(--navy);
+      font-size:27px;
+      line-height:1.1;
+    }
+
+
+    .offer-price{
+      margin:8px 0 13px;
+      color:var(--blue);
+      font-size:23px;
+      font-weight:900;
+    }
+
+
+    .offer-price.custom{
+      font-size:19px;
+    }
+
+
+    .hug-offer-body p{
+      margin:0 0 16px;
+      color:var(--muted);
+      line-height:1.6;
+    }
+
+
+    .offer-features{
+      list-style:none;
+      padding:0;
+      margin:0 0 22px;
+    }
+
+
+    .offer-features li{
+      position:relative;
+      padding-left:24px;
+      margin:8px 0;
+      color:#486078;
+      line-height:1.4;
+    }
+
+
+    .offer-features li::before{
+      content:"✓";
+      position:absolute;
+      left:0;
+      top:0;
+      color:var(--love);
+      font-weight:900;
+    }
+
+
+    .button{
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      gap:8px;
+      width:100%;
+      text-align:center;
+      text-decoration:none;
+      border-radius:999px;
+      padding:15px 18px;
+      font-weight:900;
+      border:0;
+      cursor:pointer;
+    }
+
+
+    .button + .button{
+      margin-top:11px;
+    }
+
+
+    .navy-button{
+      background:var(--navy);
+      color:#ffffff;
+    }
+
+
+    .navy-button:hover{
+      background:var(--blue);
+      color:var(--navy);
+    }
+
+
+    .gold-button{
+      background:
+        linear-gradient(
+          135deg,
+          var(--gold),
+          #f7d779
+        );
+      color:#17212c;
+    }
+
+
+    .outline-button{
+      background:#ffffff;
+      color:var(--navy);
+      border:2px solid var(--navy);
+    }
+
+
+    .personalized-offer{
+      border-color:
+        rgba(242,184,75,.68);
+      box-shadow:
+        0 20px 55px
+        rgba(11,47,89,.15),
+        0 0 0 2px
+        rgba(242,184,75,.14);
+    }
+
+
+    .memorial-gift{
+      display:grid;
+      grid-template-columns:.8fr 1.2fr;
+      gap:26px;
+      align-items:center;
+      margin-top:50px;
+      padding:28px;
+      border:1px solid #d7e5f1;
+      border-radius:28px;
+      background:#ffffff;
+      box-shadow:
+        0 16px 42px
+        rgba(11,47,89,.09);
+    }
+
+
+    .memorial-gift img{
+      width:100%;
+      border-radius:18px;
+    }
+
+
+    .memorial-gift h2{
+      color:var(--navy);
+      font-size:32px;
+      line-height:1.08;
+      margin:8px 0 12px;
+    }
+
+
+    .memorial-gift p{
+      color:var(--muted);
+      line-height:1.65;
+    }
+
+
+    .memorial-gift small{
+      display:block;
+      margin-top:12px;
+      color:var(--muted);
+    }
+
+
+    .badge{
+      display:inline-block;
+      padding:7px 11px;
+      border-radius:999px;
+      background:var(--soft-love);
+      color:var(--love);
+      font-size:11px;
+      font-weight:900;
+      text-transform:uppercase;
+      letter-spacing:.5px;
+    }
+
+
+    .coming-soon{
+      margin-top:38px;
+      padding:26px;
+      text-align:center;
+      border-radius:24px;
+      background:var(--soft-love);
+      border:1px solid #f7d7df;
+    }
+
+
+    .coming-soon h3{
+      margin:0 0 8px;
+      color:var(--navy);
+    }
+
+
+    .coming-soon p{
+      margin:0;
+      color:var(--muted);
+      line-height:1.6;
+    }
+
+
+    .hug-modal{
+      width:min(92vw,720px);
+      border:0;
+      border-radius:28px;
+      padding:0;
+      color:white;
+      background:#071f3b;
+      box-shadow:
+        0 30px 90px
+        rgba(0,0,0,.65);
+    }
+
+
+    .hug-modal::backdrop{
+      background:
+        rgba(2,10,23,.82);
+      backdrop-filter:blur(8px);
+    }
+
+
+    .hug-modal-head{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      padding:14px 18px;
+      border-bottom:
+        1px solid
+        rgba(255,255,255,.16);
+    }
+
+
+    .hug-modal-close{
+      width:40px;
+      height:40px;
+      border-radius:50%;
+      border:0;
+      background:
+        rgba(255,255,255,.12);
+      color:white;
+      font-size:22px;
+      cursor:pointer;
+    }
+
+
+    .hug-modal-body{
+      padding:22px;
+      text-align:center;
+    }
+
+
+    .hug-modal-body img{
+      width:min(100%,500px);
+      margin:auto;
+      border-radius:18px;
+    }
+
+
+    .hug-modal-body p{
+      color:#dce8f4;
+    }
+
+
+    footer{
+      text-align:center;
+      padding:34px 18px 42px;
+      color:#74889b;
+    }
+
+
+    @media(max-width:900px){
+
+      .hug-offer-grid{
+        grid-template-columns:1fr;
+      }
+
+
+      .hug-offer-card{
+        max-width:640px;
+        width:100%;
+        margin:auto;
+      }
+
+
+      .hug-offer-image{
+        aspect-ratio:16 / 12;
+      }
+
+    }
+
+
+    @media(max-width:700px){
+
+      .page{
+        padding-left:14px;
+        padding-right:14px;
+      }
+
+
+      .hug-delivery-intro,
+      .memorial-gift{
+        grid-template-columns:1fr;
+        padding:18px;
+      }
+
+
+      .hug-delivery-copy{
+        text-align:center;
+      }
+
+
+      .hug-delivery-actions{
+        justify-content:center;
+      }
+
+
+      .hug-offer-image{
+        aspect-ratio:1 / 1;
+      }
+
+
+      .hug-offer-body{
+        padding:21px 18px 23px;
+      }
+
+    }
+
+  </style>
+
+</head>
+
+
+<body>
+
+
+  <header class="topbar">
+
+    <nav class="nav">
+
+
+      <a
+        class="brand"
+        href="index.html"
+      >
+        Hugslinks
+      </a>
+
+
+      <div class="seal">
+
+        <img
+          class="header-logo"
+          src="assets/HUGS_Header_Logo_Transparent.png"
+          alt="HUGS logo"
+        >
+
+      </div>
+
+
+      <button
+        class="menu"
+        type="button"
+        aria-expanded="false"
+        aria-label="Open navigation menu"
+      >
+        Menu
+      </button>
+
+
+      <div class="navlinks">
+
+        <a href="index.html">
+          Home
+        </a>
+
+        <a href="shop.html">
+          Shop
+        </a>
+
+        <a
+          href="hugs-cards.html"
+          class="active"
+        >
+          HUGS Cards
+        </a>
+
+        <a href="art-community.html">
+          Art
+        </a>
+
+        <a href="food-support.html">
+          Food
+        </a>
+
+        <a href="housing-help.html">
+          Housing
+        </a>
+
+        <a href="business-services.html">
+          Business
+        </a>
+
+        <a href="help-app.html">
+          Help App
+        </a>
+
+        <a href="resources.html">
+          Resources
+        </a>
+
+        <a href="about.html">
+          About
+        </a>
+
+        <a href="contact.html">
+          Contact
+        </a>
+
+      </div>
+
+    </nav>
+
+  </header>
+
+
+  <main class="page">
+
+
+    <a
+      href="personalized-hugs-card.html"
+      class="back-link"
+    >
+      ← Back to HUGS Card Themes
+    </a>
+
+
+    <section
+      class="hug-delivery-intro"
+      aria-labelledby="delivery-title"
+    >
+
+
+      <div class="hug-delivery-copy">
+
+
+        <div class="eyebrow">
+          The HUGSLinks delivery experience
+        </div>
+
+
+        <h1 id="delivery-title">
+          Someone sent you a HUG.
+        </h1>
+
+
+        <p>
+
+          A HUG arrives as a digital gift.
+
+          The signature HUGSLinks envelope
+          protects the message and creates
+          anticipation until the recipient
+          chooses to open it.
+
+        </p>
+
+
+        <div class="hug-delivery-actions">
+
+
+          <button
+            class="button experience-button hug-envelope-cta"
+            id="open-hug-demo"
+            type="button"
+          >
+
+            <img
+              src="assets/hugs-open-envelope.png"
+              alt=""
+            >
+
+            Open Your HUG
+
+          </button>
+
+
+          <a
+            class="button themes-button hug-envelope-cta"
+            href="personalized-hugs-card.html"
+          >
+
+            <img
+              src="assets/get-a-hug-envelope.png"
+              alt=""
+            >
+
+            Choose a HUG Card
+
+          </a>
+
+        </div>
+
+      </div>
+
+
+      <img
+        src="assets/hug-send-cover.png"
+        alt="Closed glowing HUGSLinks digital HUG envelope"
+      >
+
+    </section>
+
+
+    <section class="hero">
+
+      <div class="eyebrow">
+        HUGSLinks Digital Cards
+      </div>
+
+
+      <h1>
+        Give Love. Send a HUG.
+      </h1>
+
+
+      <div class="tagline">
+        Give a Hug. Get a Hug.
+      </div>
+
+
+      <p>
+
+        Share love, encouragement,
+        appreciation and connection through
+        a HUGSLinks digital experience.
+
+        Choose a finished HUG, make it
+        personal, or work with us to create
+        something uniquely yours.
+
+      </p>
+
+    </section>
+
+
+    <section>
+
+
+      <div class="section-heading">
+
+        <div class="eyebrow">
+          Three Ways to Connect
+        </div>
+
+
+        <h2>
+          Choose Your HUG
+        </h2>
+
+
+        <p>
+
+          Start simple, make it personal,
+          or create a custom HUG experience.
+
+        </p>
+
+      </div>
+
+
+      <div class="hug-offer-grid">
+
+
+        <article class="hug-offer-card">
+
+          <div class="hug-offer-image">
+
+            <img
+              src="assets/hug-send-cover.png"
+              alt="Closed HUGSLinks envelope for a ready-to-send HUG"
+            >
+
+            <span class="offer-label">
+              Ready to Send
+            </span>
+
+          </div>
+
+
+          <div class="hug-offer-body">
+
+            <h3>
+              Send a HUG
+            </h3>
+
+
+            <div class="offer-price">
+              $6.99
+            </div>
+
+
+            <p>
+
+              Choose a finished animated HUG
+              experience and send it today.
+
+            </p>
+
+
+            <ul class="offer-features">
+
+              <li>
+                Animated HUGS Card
+              </li>
+
+              <li>
+                Full music and sound experience
+              </li>
+
+              <li>
+                Ready to send
+              </li>
+
+              <li>
+                No personalization required
+              </li>
+
+              <li>
+                Preview before purchasing
+              </li>
+
+            </ul>
+
+
+            <a
+              href="nyc-ride-hugs-card.html"
+              class="button navy-button"
+            >
+              ▶ View NYC Ride &amp; Preview
+            </a>
+
+
+            <a
+              href="https://buy.stripe.com/cNi4gy1yA0s00e30488ww04"
+              class="button gold-button hug-envelope-cta"
+            >
+
+              <img
+                src="assets/get-a-hug-envelope.png"
+                alt=""
+              >
+
+              Send This HUG — $6.99
+
+            </a>
+
+          </div>
+
+        </article>
+
+
+
+        <article
+          class="hug-offer-card personalized-offer"
+        >
+
+          <div class="hug-offer-image">
+
+            <img
+              src="assets/hug-personalized-cover.png"
+              alt="HUGS Bear presenting a personalized HUG"
+            >
+
+            <span class="offer-label">
+              Personalized
+            </span>
+
+            <span class="popular-label">
+              Most Popular
+            </span>
+
+          </div>
+
+
+          <div class="hug-offer-body">
+
+            <h3>
+              Personalize a HUG
+            </h3>
+
+
+            <div class="offer-price">
+              $16.99
+            </div>
+
+
+            <p>
+
+              Make the experience personal
+              with names, your message,
+              sender details and HUGS Bear.
+
+            </p>
+
+
+            <ul class="offer-features">
+
+              <li>
+                Add the recipient's name
+              </li>
+
+              <li>
+                Include your personal message
+              </li>
+
+              <li>
+                Choose the occasion
+              </li>
+
+              <li>
+                Add sender details
+              </li>
+
+              <li>
+                Features HUGS Bear
+              </li>
+
+            </ul>
+
+
+            <a
+              href="personalized-hugs-card.html"
+              class="button gold-button"
+            >
+              Personalize a HUG — $16.99
+            </a>
+
+          </div>
+
+        </article>
+
+
+
+        <article class="hug-offer-card">
+
+          <div class="hug-offer-image">
+
+            <img
+              src="assets/hug-custom-cover.png"
+              alt="HUGSLinks envelope with customizable card"
+            >
+
+            <span class="offer-label">
+              Custom
+            </span>
+
+          </div>
+
+
+          <div class="hug-offer-body">
+
+            <h3>
+              Customize a HUG
+            </h3>
+
+
+            <div class="offer-price custom">
+              From $39
+            </div>
+
+
+            <p>
+
+              Need something beyond the
+              standard personalization options?
+
+              Work with HUGSLinks to create
+              a more unique card experience.
+
+            </p>
+
+
+            <ul class="offer-features">
+
+              <li>
+                Choose a custom concept
+              </li>
+
+              <li>
+                Personalize the message
+              </li>
+
+              <li>
+                Select the occasion
+              </li>
+
+              <li>
+                Request creative details
+              </li>
+
+              <li>
+                Designed around your idea
+              </li>
+
+            </ul>
+
+
+            <a
+              href="contact.html"
+              class="button navy-button"
+            >
+              Request a Custom HUG
+            </a>
+
+          </div>
+
+        </article>
+
+      </div>
+
+    </section>
+
+
+    <section
+      class="memorial-gift"
+      aria-labelledby="memorial-gift-title"
+    >
+
+      <img
+        src="assets/get-a-hug-envelope.png"
+        alt="Sealed HUGS memorial envelope"
+      >
+
+
+      <div>
+
+        <span class="badge">
+          A gift from the HUGS Community
+        </span>
+
+
+        <h2 id="memorial-gift-title">
+
+          Always Remembered
+          &amp; Always With Us
+
+        </h2>
+
+
+        <p>
+
+          This free memorial artwork honors
+          those we lost, their loved ones,
+          survivors, first responders,
+          rescue workers, union tradespeople
+          and the communities that helped
+          carry New York forward.
+
+        </p>
+
+
+        <a
+          class="button navy-button hug-envelope-cta"
+          href="free-911-hugs-card.html"
+        >
+
+          <img
+            src="assets/hugs-open-envelope.png"
+            alt=""
+          >
+
+          Open the Free Memorial HUG
+
+        </a>
+
+
+        <small>
+
+          No purchase or email required.
+          Download and share it freely.
+
+        </small>
+
+      </div>
+
+    </section>
+
+
+    <section class="coming-soon">
+
+      <h3>
+        ❤️ More HUGS Are Coming
+      </h3>
+
+
+      <p>
+
+        Future collections can include
+        love, healing, birthdays, family,
+        friendship, encouragement,
+        anniversaries, celebrations,
+        culture, memorials and meaningful
+        everyday moments.
+
+      </p>
+
+    </section>
+
+  </main>
+
+
+  <dialog
+    class="hug-modal"
+    id="hug-demo"
+  >
+
+    <div class="hug-modal-head">
+
+      <strong>
+        Your HUG has arrived
+      </strong>
+
+
+      <button
+        class="hug-modal-close"
+        id="close-hug-demo"
+        type="button"
+        aria-label="Close"
+      >
+        ×
+      </button>
+
+    </div>
+
+
+    <div class="hug-modal-body">
+
+      <img
+        src="assets/hugs-community-911-memorial.png"
+        alt="Revealed HUGS Community memorial card"
+      >
+
+
+      <h2>
+        Always Remembered &amp; Always With Us
+      </h2>
+
+
+      <p>
+
+        The envelope creates anticipation.
+        The card delivers the emotion.
+
+      </p>
+
+
+      <a
+        class="button gold-button hug-envelope-cta"
+        href="assets/hugs-community-911-memorial.png"
+        download="HUGS-Community-911-Memorial.png"
+      >
+
+        <img
+          src="assets/hugs-open-envelope.png"
+          alt=""
+        >
+
+        Save This Free Card
+
+      </a>
+
+    </div>
+
+  </dialog>
+
+
+  <footer>
+    © 2026 HUGSLinks · Give a Hug. Get a Hug.
+  </footer>
+
+
+  <script src="script.js"></script>
+
+
+  <script>
+
+    const hugDemo =
+      document.getElementById(
+        "hug-demo"
+      );
+
+
+    const openDemo =
+      document.getElementById(
+        "open-hug-demo"
+      );
+
+
+    const closeDemo =
+      document.getElementById(
+        "close-hug-demo"
+      );
+
+
+    if (
+      hugDemo &&
+      openDemo &&
+      closeDemo
+    ) {
+
+      openDemo.addEventListener(
+        "click",
+        () => {
+
+          hugDemo.showModal();
+
+        }
+      );
+
+
+      closeDemo.addEventListener(
+        "click",
+        () => {
+
+          hugDemo.close();
+
+        }
+      );
+
+
+      hugDemo.addEventListener(
+        "click",
+        event => {
+
+          if (
+            event.target === hugDemo
+          ) {
+
+            hugDemo.close();
+
+          }
+
+        }
+      );
+
+    }
+
+  </script>
+
+</body>
+
+</html>
