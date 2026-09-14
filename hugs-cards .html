@@ -1127,4 +1127,265 @@
 
               <li>
                 Personalize the message
-              </
+              </li>
+
+              <li>
+                Select the occasion
+              </li>
+
+              <li>
+                Request creative details
+              </li>
+
+              <li>
+                Designed around your idea
+              </li>
+
+            </ul>
+
+
+            <a
+              href="contact.html"
+              class="button navy-button"
+            >
+              Request a Custom HUG
+            </a>
+
+          </div>
+
+        </article>
+
+      </div>
+
+    </section>
+
+
+    <section
+      class="memorial-gift"
+      aria-labelledby="memorial-gift-title"
+    >
+
+      <img
+        src="assets/get-a-hug-envelope.png"
+        alt="Sealed HUGS memorial envelope"
+      >
+
+
+      <div>
+
+        <span class="badge">
+          A gift from the HUGS Community
+        </span>
+
+
+        <h2 id="memorial-gift-title">
+
+          Always Remembered
+          &amp; Always With Us
+
+        </h2>
+
+
+        <p>
+
+          This free memorial artwork honors
+          those we lost, their loved ones,
+          survivors, first responders,
+          rescue workers, union tradespeople
+          and the communities that helped
+          carry New York forward.
+
+        </p>
+
+
+        <a
+          class="button navy-button hug-envelope-cta"
+          href="free-911-hugs-card.html"
+        >
+
+          <img
+            src="assets/hugs-open-envelope.png"
+            alt=""
+          >
+
+          Open the Free Memorial HUG
+
+        </a>
+
+
+        <small>
+
+          No purchase or email required.
+          Download and share it freely.
+
+        </small>
+
+      </div>
+
+    </section>
+
+
+    <section class="coming-soon">
+
+      <h3>
+        ❤️ More HUGS Are Coming
+      </h3>
+
+
+      <p>
+
+        Future collections can include
+        love, healing, birthdays, family,
+        friendship, encouragement,
+        anniversaries, celebrations,
+        culture, memorials and meaningful
+        everyday moments.
+
+      </p>
+
+    </section>
+
+  </main>
+
+
+  <dialog
+    class="hug-modal"
+    id="hug-demo"
+  >
+
+    <div class="hug-modal-head">
+
+      <strong>
+        Your HUG has arrived
+      </strong>
+
+
+      <button
+        class="hug-modal-close"
+        id="close-hug-demo"
+        type="button"
+        aria-label="Close"
+      >
+        ×
+      </button>
+
+    </div>
+
+
+    <div class="hug-modal-body">
+
+      <img
+        src="assets/hugs-community-911-memorial.png"
+        alt="Revealed HUGS Community memorial card"
+      >
+
+
+      <h2>
+        Always Remembered &amp; Always With Us
+      </h2>
+
+
+      <p>
+
+        The envelope creates anticipation.
+        The card delivers the emotion.
+
+      </p>
+
+
+      <a
+        class="button gold-button hug-envelope-cta"
+        href="assets/hugs-community-911-memorial.png"
+        download="HUGS-Community-911-Memorial.png"
+      >
+
+        <img
+          src="assets/hugs-open-envelope.png"
+          alt=""
+        >
+
+        Save This Free Card
+
+      </a>
+
+    </div>
+
+  </dialog>
+
+
+  <footer>
+    © 2026 HUGSLinks · Give a Hug. Get a Hug.
+  </footer>
+
+
+  <script src="script.js"></script>
+
+
+  <script>
+
+    const hugDemo =
+      document.getElementById(
+        "hug-demo"
+      );
+
+
+    const openDemo =
+      document.getElementById(
+        "open-hug-demo"
+      );
+
+
+    const closeDemo =
+      document.getElementById(
+        "close-hug-demo"
+      );
+
+
+    if (
+      hugDemo &&
+      openDemo &&
+      closeDemo
+    ) {
+
+      openDemo.addEventListener(
+        "click",
+        () => {
+
+          hugDemo.showModal();
+
+        }
+      );
+
+
+      closeDemo.addEventListener(
+        "click",
+        () => {
+
+          hugDemo.close();
+
+        }
+      );
+
+
+      hugDemo.addEventListener(
+        "click",
+        event => {
+
+          if (
+            event.target === hugDemo
+          ) {
+
+            hugDemo.close();
+
+          }
+
+        }
+      );
+
+    }
+
+  </script>
+
+</body>
+
+</html>
