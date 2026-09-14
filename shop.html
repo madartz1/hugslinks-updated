@@ -62,20 +62,12 @@
     }
 
 
-    /* =========================================
-       PAGE
-    ========================================= */
-
     .shop-page{
       max-width:1180px;
       margin:0 auto;
       padding:30px 18px 80px;
     }
 
-
-    /* =========================================
-       HERO
-    ========================================= */
 
     .shop-hero{
       text-align:center;
@@ -85,65 +77,39 @@
 
     .shop-eyebrow{
       color:var(--hugs-blue);
-
       font-weight:900;
-
       letter-spacing:.17em;
-
       text-transform:uppercase;
-
       font-size:12px;
-
       margin-bottom:10px;
     }
 
 
     .shop-hero h1{
       margin:0;
-
       color:var(--hugs-navy);
-
-      font-size:
-        clamp(
-          44px,
-          8vw,
-          72px
-        );
-
+      font-size:clamp(44px,8vw,72px);
       line-height:.98;
-
       letter-spacing:-.04em;
     }
 
 
     .shop-tagline{
       margin-top:14px;
-
       color:var(--hugs-blue);
-
       font-size:22px;
-
       font-weight:900;
     }
 
 
     .shop-hero p{
       max-width:780px;
-
-      margin:
-        18px auto 0;
-
+      margin:18px auto 0;
       color:var(--hugs-muted);
-
       font-size:17px;
-
       line-height:1.7;
     }
 
-
-    /* =========================================
-       SECTION
-    ========================================= */
 
     .section{
       margin-top:56px;
@@ -158,14 +124,864 @@
 
     .section-heading h2{
       margin:0;
-
       color:var(--hugs-navy);
+      font-size:clamp(32px,5vw,44px);
+      letter-spacing:-.025em;
+    }
 
-      font-size:
-        clamp(
-          32px,
-          5vw,
-          44px
-        );
 
-      letter-spacing:-.025
+    .section-heading p{
+      max-width:720px;
+      margin:10px auto 0;
+      color:var(--hugs-muted);
+      line-height:1.6;
+    }
+
+
+    .free-tribute-promo{
+      max-width:820px;
+      margin:0 auto 28px;
+      padding:20px;
+      border-radius:24px;
+      background:linear-gradient(135deg,#071f3b,#174f8c);
+      color:#ffffff;
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:20px;
+      box-shadow:0 16px 40px rgba(11,47,89,.16);
+    }
+
+
+    .free-tribute-promo h3{
+      margin:0 0 5px;
+      font-size:22px;
+    }
+
+
+    .free-tribute-promo p{
+      margin:0;
+      color:#dcecff;
+      line-height:1.5;
+    }
+
+
+    .free-tribute-promo .product-button{
+      flex:0 0 auto;
+      margin:0;
+      background:var(--hugs-gold);
+      color:#17212c;
+    }
+
+
+    .product-grid{
+      display:grid;
+      grid-template-columns:repeat(3,1fr);
+      gap:22px;
+    }
+
+
+    .product-card{
+      position:relative;
+      background:var(--hugs-white);
+      border:1px solid var(--hugs-border);
+      border-radius:26px;
+      overflow:hidden;
+      box-shadow:0 14px 36px rgba(11,47,89,.10);
+      display:flex;
+      flex-direction:column;
+      transition:transform .25s ease,box-shadow .25s ease;
+    }
+
+
+    .product-card:hover{
+      transform:translateY(-4px);
+      box-shadow:0 22px 50px rgba(11,47,89,.15);
+    }
+
+
+    .product-card.featured{
+      border:2px solid var(--hugs-gold);
+      box-shadow:
+        0 18px 46px rgba(11,47,89,.13),
+        0 0 0 2px rgba(242,184,75,.12);
+    }
+
+
+    .product-image-wrap{
+      position:relative;
+      aspect-ratio:1 / 1;
+      overflow:hidden;
+      background:#071f3b;
+    }
+
+
+    .product-image{
+      width:100%;
+      height:100%;
+      display:block;
+      object-fit:cover;
+      object-position:center;
+    }
+
+
+    .product-image-label{
+      position:absolute;
+      top:15px;
+      left:15px;
+      padding:7px 12px;
+      border-radius:999px;
+      background:rgba(7,31,59,.88);
+      color:#ffffff;
+      font-size:10px;
+      font-weight:900;
+      letter-spacing:.08em;
+      text-transform:uppercase;
+      backdrop-filter:blur(8px);
+    }
+
+
+    .product-card.featured .product-image-label{
+      background:linear-gradient(135deg,var(--hugs-gold),#f7d779);
+      color:#17212c;
+    }
+
+
+    .popular-pill{
+      position:absolute;
+      top:15px;
+      right:15px;
+      padding:7px 11px;
+      border-radius:999px;
+      background:#ffffff;
+      color:var(--hugs-navy);
+      font-size:10px;
+      font-weight:900;
+      letter-spacing:.07em;
+      text-transform:uppercase;
+      box-shadow:0 6px 16px rgba(7,31,59,.16);
+    }
+
+
+    .product-content{
+      padding:24px 22px 25px;
+      display:flex;
+      flex-direction:column;
+      flex-grow:1;
+    }
+
+
+    .badge{
+      display:inline-block;
+      align-self:flex-start;
+      margin-bottom:12px;
+      border-radius:999px;
+      padding:7px 11px;
+      background:var(--hugs-light);
+      color:var(--hugs-navy);
+      font-size:11px;
+      font-weight:900;
+      text-transform:uppercase;
+      letter-spacing:.5px;
+    }
+
+
+    .badge.popular{
+      background:var(--hugs-blue);
+      color:var(--hugs-navy);
+    }
+
+
+    .product-card h3{
+      margin:0;
+      color:var(--hugs-navy);
+      font-size:26px;
+      line-height:1.12;
+    }
+
+
+    .product-price{
+      margin:9px 0 12px;
+      color:var(--hugs-blue);
+      font-size:28px;
+      font-weight:900;
+    }
+
+
+    .product-card p{
+      margin:0;
+      color:var(--hugs-muted);
+      line-height:1.6;
+    }
+
+
+    .features{
+      list-style:none;
+      padding:0;
+      margin:18px 0 22px;
+    }
+
+
+    .features li{
+      position:relative;
+      padding-left:22px;
+      margin:9px 0;
+      color:#425b72;
+      font-size:14px;
+      line-height:1.45;
+    }
+
+
+    .features li::before{
+      content:"✓";
+      position:absolute;
+      left:0;
+      color:var(--hugs-blue);
+      font-weight:900;
+    }
+
+
+    .product-button{
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      gap:8px;
+      margin-top:auto;
+      padding:14px 18px;
+      border-radius:999px;
+      text-align:center;
+      text-decoration:none;
+      background:var(--hugs-navy);
+      color:#ffffff;
+      font-weight:900;
+      transition:transform .2s ease,background .2s ease;
+    }
+
+
+    .product-button + .product-button{
+      margin-top:10px;
+    }
+
+
+    .product-button:hover{
+      background:var(--hugs-blue);
+      color:var(--hugs-navy);
+      transform:translateY(-1px);
+    }
+
+
+    .product-button.gold{
+      background:linear-gradient(135deg,var(--hugs-gold),#f7d779);
+      color:#152231;
+    }
+
+
+    .product-button.premium{
+      background:linear-gradient(90deg,#0b2f59,#347fc0);
+      color:#ffffff;
+    }
+
+
+    .collection-grid{
+      display:grid;
+      grid-template-columns:repeat(2,1fr);
+      gap:22px;
+    }
+
+
+    .collection-card{
+      background:#ffffff;
+      border:1px solid var(--hugs-border);
+      border-radius:24px;
+      padding:30px 25px;
+      box-shadow:0 12px 30px rgba(11,47,89,.07);
+    }
+
+
+    .collection-icon{
+      font-size:44px;
+      margin-bottom:15px;
+    }
+
+
+    .collection-card h3{
+      margin:0 0 10px;
+      color:var(--hugs-navy);
+      font-size:26px;
+    }
+
+
+    .collection-card p{
+      color:var(--hugs-muted);
+      line-height:1.65;
+    }
+
+
+    .collection-link{
+      display:inline-block;
+      margin-top:13px;
+      color:var(--hugs-navy);
+      font-weight:900;
+      text-decoration:none;
+    }
+
+
+    .impact{
+      margin-top:56px;
+      padding:34px 24px;
+      border-radius:28px;
+      background:var(--hugs-navy);
+      text-align:center;
+      color:#ffffff;
+    }
+
+
+    .impact h2{
+      margin:0 0 12px;
+      font-size:32px;
+    }
+
+
+    .impact p{
+      max-width:780px;
+      margin:0 auto;
+      color:#dbe8f4;
+      line-height:1.7;
+    }
+
+
+    .impact strong{
+      color:var(--hugs-gold);
+    }
+
+
+    footer{
+      text-align:center;
+      padding:30px 18px 42px;
+      color:#6d8194;
+    }
+
+
+    @media(max-width:850px){
+
+      .free-tribute-promo{
+        flex-direction:column;
+        text-align:center;
+      }
+
+
+      .product-grid,
+      .collection-grid{
+        grid-template-columns:1fr;
+      }
+
+
+      .product-card{
+        max-width:640px;
+        width:100%;
+        margin:auto;
+      }
+
+
+      .product-image-wrap{
+        aspect-ratio:16 / 12;
+      }
+
+
+      .shop-page{
+        padding-left:14px;
+        padding-right:14px;
+      }
+
+    }
+
+
+    @media(max-width:560px){
+
+      .product-image-wrap{
+        aspect-ratio:1 / 1;
+      }
+
+    }
+
+  </style>
+
+</head>
+
+
+<body>
+
+  <header class="topbar">
+
+    <nav class="nav">
+
+      <a
+        class="brand"
+        href="index.html"
+      >
+        Hugslinks
+      </a>
+
+
+      <div class="seal">
+
+        <img
+          src="assets/HUGS_Header_Logo_Transparent.png"
+          alt="HUGS logo"
+        >
+
+      </div>
+
+
+      <button
+        class="menu"
+        type="button"
+        aria-expanded="false"
+        aria-label="Open navigation menu"
+      >
+        Menu
+      </button>
+
+
+      <div class="navlinks">
+
+        <a href="index.html">Home</a>
+        <a href="shop.html">Shop</a>
+        <a href="hugs-cards.html">HUGS Cards</a>
+        <a href="art-community.html">Art</a>
+        <a href="food-support.html">Food</a>
+        <a href="housing-help.html">Housing</a>
+        <a href="business-services.html">Business</a>
+        <a href="help-app.html">Help App</a>
+        <a href="resources.html">Resources</a>
+        <a href="about.html">About</a>
+        <a href="contact.html">Contact</a>
+
+      </div>
+
+    </nav>
+
+  </header>
+
+
+  <main class="shop-page">
+
+    <section class="shop-hero">
+
+      <div class="shop-eyebrow">
+        HUGSLinks Shop
+      </div>
+
+      <h1>
+        Shop HUGS
+      </h1>
+
+      <div class="shop-tagline">
+        Products With Purpose
+      </div>
+
+      <p>
+
+        Shop original HUGSLinks digital experiences,
+        creative products and community-driven releases.
+
+        Every purchase helps us continue building
+        HUGSLinks and supporting projects designed to
+        create connection, opportunity and community impact.
+
+      </p>
+
+    </section>
+
+
+    <section
+      class="section"
+      id="products"
+    >
+
+      <div class="section-heading">
+
+        <h2>
+          HUGS Cards
+        </h2>
+
+        <p>
+
+          Send love, encouragement,
+          celebration and support through
+          original HUGSLinks digital experiences.
+
+        </p>
+
+      </div>
+
+
+      <div class="free-tribute-promo">
+
+        <div>
+
+          <h3>
+            Free 9/11 Memorial HUG
+          </h3>
+
+          <p>
+
+            Open, download and share the tribute.
+            No purchase or email required.
+
+          </p>
+
+        </div>
+
+
+        <a
+          class="product-button hug-envelope-cta"
+          href="free-911-hugs-card.html"
+        >
+
+          <img
+            src="assets/hugs-open-envelope.png"
+            alt=""
+          >
+
+          Open Free HUG
+
+        </a>
+
+      </div>
+
+
+      <div class="product-grid">
+
+
+        <!-- SEND A HUG -->
+
+        <article class="product-card">
+
+          <div class="product-image-wrap">
+
+            <img
+              src="assets/hug-send-cover.png"
+              alt="Ready-to-send HUGSLinks digital HUG"
+              class="product-image"
+            >
+
+            <span class="product-image-label">
+              Ready to Send
+            </span>
+
+          </div>
+
+
+          <div class="product-content">
+
+            <span class="badge">
+              Animated HUGS Card
+            </span>
+
+            <h3>
+              Send a HUG
+            </h3>
+
+            <div class="product-price">
+              $6.99
+            </div>
+
+            <p>
+
+              Choose a finished animated HUGSLinks
+              experience and send someone a meaningful
+              digital HUG.
+
+            </p>
+
+            <ul class="features">
+
+              <li>Animated HUGS Card</li>
+              <li>Music and sound included</li>
+              <li>Ready to send</li>
+              <li>No personalization required</li>
+              <li>Preview before purchasing</li>
+
+            </ul>
+
+            <a
+              href="nyc-ride-hugs-card.html"
+              class="product-button"
+            >
+              ▶ View NYC Ride &amp; Preview
+            </a>
+
+            <a
+              href="https://buy.stripe.com/cNi4gy1yA0s00e30488ww04"
+              class="product-button gold hug-envelope-cta"
+            >
+
+              <img
+                src="assets/get-a-hug-envelope.png"
+                alt=""
+              >
+
+              Send This HUG — $6.99
+
+            </a>
+
+          </div>
+
+        </article>
+
+
+        <!-- PERSONALIZED -->
+
+        <article class="product-card featured">
+
+          <div class="product-image-wrap">
+
+            <img
+              src="assets/hug-personalized-cover.png"
+              alt="Personalized HUGS Card featuring HUGS Bear"
+              class="product-image"
+            >
+
+            <span class="product-image-label">
+              Personalized
+            </span>
+
+            <span class="popular-pill">
+              Most Popular
+            </span>
+
+          </div>
+
+
+          <div class="product-content">
+
+            <span class="badge popular">
+              Personalized HUG
+            </span>
+
+            <h3>
+              Personalize a HUG
+            </h3>
+
+            <div class="product-price">
+              $16.99
+            </div>
+
+            <p>
+
+              Make the experience personal with the
+              recipient's name, your message,
+              sender details and HUGS Bear.
+
+            </p>
+
+            <ul class="features">
+
+              <li>Recipient name</li>
+              <li>Personal message</li>
+              <li>Sender name</li>
+              <li>Occasion details</li>
+              <li>Features HUGS Bear</li>
+
+            </ul>
+
+            <a
+              href="personalized-hugs-card.html"
+              class="product-button gold"
+            >
+              Personalize a HUG — $16.99
+            </a>
+
+          </div>
+
+        </article>
+
+
+        <!-- CUSTOM -->
+
+        <article class="product-card">
+
+          <div class="product-image-wrap">
+
+            <img
+              src="assets/hug-custom-cover.png"
+              alt="Custom HUGSLinks digital card experience"
+              class="product-image"
+            >
+
+            <span class="product-image-label">
+              Custom
+            </span>
+
+          </div>
+
+
+          <div class="product-content">
+
+            <span class="badge">
+              Premium
+            </span>
+
+            <h3>
+              Custom HUG Card
+            </h3>
+
+            <div class="product-price">
+              From $39
+            </div>
+
+            <p>
+
+              Create a unique HUGSLinks visual experience
+              built around a special person, occasion,
+              message or story.
+
+            </p>
+
+            <ul class="features">
+
+              <li>Custom creative direction</li>
+              <li>Premium visual design</li>
+              <li>Custom message or story</li>
+              <li>Built around your idea</li>
+              <li>Ideal for special occasions</li>
+
+            </ul>
+
+            <a
+              href="contact.html"
+              class="product-button premium"
+            >
+              Request a Custom HUG
+            </a>
+
+          </div>
+
+        </article>
+
+      </div>
+
+    </section>
+
+
+    <section class="section">
+
+      <div class="section-heading">
+
+        <h2>
+          More Ways to Support HUGSLinks
+        </h2>
+
+        <p>
+
+          HUGSLinks is growing beyond digital cards
+          into art, collaborations, community projects
+          and supporter releases.
+
+        </p>
+
+      </div>
+
+
+      <div class="collection-grid">
+
+        <article class="collection-card">
+
+          <div class="collection-icon">
+            🎨
+          </div>
+
+          <h3>
+            Support Through Art
+          </h3>
+
+          <p>
+
+            Discover HUGSLinks artwork,
+            community art projects and future
+            collaborations designed to help artists
+            connect with new audiences and purchasing power.
+
+          </p>
+
+          <a
+            href="art-community.html"
+            class="collection-link"
+          >
+            Explore Art →
+          </a>
+
+        </article>
+
+
+        <article class="collection-card">
+
+          <div class="collection-icon">
+            ❤️
+          </div>
+
+          <h3>
+            Join the HUGSLinks Community
+          </h3>
+
+          <p>
+
+            Learn about the mission behind HUGSLinks,
+            our community goals and the ways purchases,
+            sharing and participation help us grow.
+
+          </p>
+
+          <a
+            href="about.html"
+            class="collection-link"
+          >
+            Learn About the Mission →
+          </a>
+
+        </article>
+
+      </div>
+
+    </section>
+
+
+    <section class="impact">
+
+      <h2>
+        Every HUG Can Create Impact
+      </h2>
+
+      <p>
+
+        Your support helps HUGSLinks continue developing
+        creative projects, community tools and initiatives
+        designed to support people in need, local artists,
+        entrepreneurs and stronger community connection.
+
+        <strong>
+          Give a Hug. Get a Hug.
+        </strong>
+
+      </p>
+
+    </section>
+
+  </main>
+
+
+  <footer>
+
+    <p>
+      © 2026 HUGSLinks · Give a Hug. Get a Hug.
+    </p>
+
+  </footer>
+
+
+  <script src="script.js"></script>
+
+</body>
+
+</html>
