@@ -1,0 +1,171 @@
+{
+  "version": 1,
+  "last_manual_review": "2026-09-15",
+  "title": "HUGS Housing Watch",
+  "description": "Housing, rental assistance, affordable housing, homelessness and government-program updates that may affect New Yorkers.",
+  "sources": [
+    {
+      "id": "cityfheps",
+      "name": "NYC HRA — CityFHEPS",
+      "agency": "NYC Human Resources Administration",
+      "url": "https://www.nyc.gov/site/hra/help/cityfheps.page",
+      "category": "rental-assistance",
+      "priority": "high",
+      "keywords": [
+        "CityFHEPS",
+        "rental assistance",
+        "shopping letter",
+        "voucher",
+        "rent",
+        "eligibility",
+        "renewal"
+      ]
+    },
+    {
+      "id": "hra-rental-assistance",
+      "name": "NYC HRA — Rental Assistance",
+      "agency": "NYC Human Resources Administration",
+      "url": "https://www.nyc.gov/site/hra/help/rental-assistance.page",
+      "category": "rental-assistance",
+      "priority": "high",
+      "keywords": [
+        "CityFHEPS",
+        "FHEPS",
+        "Pathway Home",
+        "SOTA",
+        "HUD-VASH",
+        "rental assistance"
+      ]
+    },
+    {
+      "id": "homebase",
+      "name": "NYC DHS — Homebase",
+      "agency": "NYC Department of Homeless Services",
+      "url": "https://www.nyc.gov/site/dhs/prevention/homebase.page",
+      "category": "homelessness-prevention",
+      "priority": "high",
+      "keywords": [
+        "Homebase",
+        "eviction",
+        "homelessness",
+        "rent arrears",
+        "prevention",
+        "relocation"
+      ]
+    },
+    {
+      "id": "nycha-section8",
+      "name": "NYCHA — Section 8 Applicants",
+      "agency": "New York City Housing Authority",
+      "url": "https://www.nyc.gov/site/nycha/section-8/applicants.page",
+      "category": "voucher",
+      "priority": "high",
+      "keywords": [
+        "Section 8",
+        "waitlist",
+        "waiting list",
+        "voucher",
+        "Emergency Housing Voucher",
+        "EHV"
+      ]
+    },
+    {
+      "id": "nycha-news",
+      "name": "NYCHA News",
+      "agency": "New York City Housing Authority",
+      "url": "https://www.nyc.gov/site/nycha/about/news.page",
+      "category": "public-housing",
+      "priority": "medium",
+      "keywords": [
+        "public housing",
+        "Section 8",
+        "voucher",
+        "resident",
+        "rent",
+        "transfer",
+        "housing"
+      ]
+    },
+    {
+      "id": "hpd-news",
+      "name": "NYC HPD Housing News",
+      "agency": "NYC Housing Preservation and Development",
+      "url": "https://www.nyc.gov/site/hpd/news/news.page",
+      "category": "affordable-housing",
+      "priority": "high",
+      "keywords": [
+        "affordable housing",
+        "Housing Connect",
+        "rental",
+        "apartment",
+        "tenant",
+        "homeless",
+        "housing"
+      ]
+    },
+    {
+      "id": "mitchell-lama",
+      "name": "NYC HPD — Mitchell-Lama",
+      "agency": "NYC Housing Preservation and Development",
+      "url": "https://www.nyc.gov/site/hpd/services-and-information/mitchell-lama-program.page",
+      "category": "affordable-housing",
+      "priority": "medium",
+      "keywords": [
+        "Mitchell-Lama",
+        "lottery",
+        "waiting list",
+        "Housing Connect",
+        "affordable housing"
+      ]
+    },
+    {
+      "id": "housing-connect",
+      "name": "NYC Housing Connect",
+      "agency": "NYC Housing Preservation and Development",
+      "url": "https://housingconnect.nyc.gov/",
+      "category": "apartment-search",
+      "priority": "high",
+      "keywords": [
+        "affordable housing",
+        "lottery",
+        "rental",
+        "homeownership",
+        "re-rental"
+      ]
+    },
+    {
+      "id": "nyc-council-housing",
+      "name": "New York City Council",
+      "agency": "New York City Council",
+      "url": "https://council.nyc.gov/press/",
+      "category": "policy",
+      "priority": "medium",
+      "keywords": [
+        "CityFHEPS",
+        "housing",
+        "homeless",
+        "rent",
+        "tenant",
+        "eviction",
+        "voucher"
+      ]
+    },
+    {
+      "id": "hud-news",
+      "name": "U.S. HUD Housing News",
+      "agency": "U.S. Department of Housing and Urban Development",
+      "url": "https://www.hud.gov/news",
+      "category": "federal",
+      "priority": "medium",
+      "keywords": [
+        "homelessness",
+        "Section 8",
+        "housing voucher",
+        "public housing",
+        "fair housing",
+        "affordable housing",
+        "rental assistance"
+      ]
+    }
+  ]
+}
