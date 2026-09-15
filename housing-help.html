@@ -1,4 +1,5 @@
 <!doctype html>
+
 <html lang="en">
 
 <head>
@@ -14,7 +15,7 @@
 
   <meta
     name="description"
-    content="Find NYC housing assistance, affordable housing programs, CityFHEPS information, eviction prevention, Housing Connect guidance and housing resources through HUGSLinks."
+    content="HUGSLinks Housing Help helps New Yorkers navigate CityFHEPS, Housing Connect, Homebase, NYCHA, Section 8, supportive housing, apartment searches, housing rights and current housing resources."
   >
 
   <link
@@ -29,19 +30,19 @@
       --housing-navy:#071f3b;
       --housing-blue:#2f9ee7;
       --housing-sky:#72cfff;
+      --housing-soft:#eef7ff;
       --housing-cream:#f7f3ec;
       --housing-white:#ffffff;
       --housing-muted:#60758a;
       --housing-line:#dce8f2;
       --housing-gold:#f2b84b;
-      --housing-soft:#eef7ff;
+      --housing-green:#17735c;
       --housing-alert:#fff8e8;
     }
 
 
     body{
       margin:0;
-
       background:
         linear-gradient(
           180deg,
@@ -64,72 +65,45 @@
 
     .housing-hero{
       display:grid;
-
-      grid-template-columns:
-        1.08fr .92fr;
-
+      grid-template-columns:1.08fr .92fr;
       gap:32px;
-
       align-items:center;
-
       padding:40px 0 48px;
     }
 
 
     .housing-eyebrow{
       color:var(--housing-blue);
-
       font-weight:900;
-
-      letter-spacing:.16em;
-
+      letter-spacing:.15em;
       text-transform:uppercase;
-
       font-size:12px;
-
       margin-bottom:10px;
     }
 
 
     .housing-hero h1{
       margin:0;
-
       color:var(--housing-navy);
-
-      font-size:
-        clamp(
-          44px,
-          8vw,
-          72px
-        );
-
+      font-size:clamp(44px,8vw,72px);
       line-height:.96;
-
       letter-spacing:-.045em;
     }
 
 
     .housing-hero p{
       max-width:700px;
-
-      margin:
-        18px 0 0;
-
+      margin:18px 0 0;
       color:var(--housing-muted);
-
       font-size:18px;
-
       line-height:1.75;
     }
 
 
     .housing-actions{
       display:flex;
-
       flex-wrap:wrap;
-
       gap:12px;
-
       margin-top:26px;
     }
 
@@ -141,15 +115,9 @@
           #ffffff,
           #eef7ff
         );
-
-      border:
-        1px solid
-        var(--housing-line);
-
+      border:1px solid var(--housing-line);
       border-radius:30px;
-
       padding:20px;
-
       box-shadow:
         0 18px 50px
         rgba(7,31,59,.12);
@@ -159,158 +127,113 @@
     .housing-hero-card img{
       width:100%;
       display:block;
-
       border-radius:24px;
     }
 
 
     /* =========================================
-       QUICK START
+       WELCOME NAVIGATION
     ========================================= */
 
-    .quick-start{
-      margin-top:12px;
-
-      padding:28px;
-
-      border-radius:28px;
-
-      color:#ffffff;
-
+    .welcome-navigation{
+      padding:30px;
+      border-radius:30px;
       background:
         radial-gradient(
           circle at 80% 20%,
           #174f8c,
-          #071f3b 62%
+          #071f3b 65%
         );
-
+      color:#ffffff;
       box-shadow:
         0 18px 50px
-        rgba(7,31,59,.18);
+        rgba(7,31,59,.20);
     }
 
 
-    .quick-start h2{
-      margin:0 0 8px;
-
-      font-size:
-        clamp(
-          28px,
-          5vw,
-          42px
-        );
+    .welcome-navigation h2{
+      margin:0;
+      font-size:clamp(30px,5vw,46px);
+      line-height:1.05;
     }
 
 
-    .quick-start > p{
-      margin:
-        0 0 22px;
-
+    .welcome-navigation > p{
+      max-width:820px;
+      margin:12px 0 0;
       color:#dcecff;
-
-      line-height:1.65;
+      line-height:1.7;
     }
 
 
-    .quick-grid{
+    .nav-choice-grid{
       display:grid;
-
-      grid-template-columns:
-        repeat(3,1fr);
-
+      grid-template-columns:repeat(4,1fr);
       gap:14px;
+      margin-top:24px;
     }
 
 
-    .quick-card{
+    .nav-choice{
       display:block;
-
       padding:20px;
-
       border-radius:20px;
-
-      background:
-        rgba(255,255,255,.10);
-
-      border:
-        1px solid
-        rgba(255,255,255,.18);
-
+      background:rgba(255,255,255,.10);
+      border:1px solid rgba(255,255,255,.18);
       color:#ffffff;
-
       text-decoration:none;
-
       transition:
         transform .2s ease,
         background .2s ease;
     }
 
 
-    .quick-card:hover{
-      transform:
-        translateY(-2px);
-
-      background:
-        rgba(255,255,255,.16);
+    .nav-choice:hover{
+      transform:translateY(-2px);
+      background:rgba(255,255,255,.16);
     }
 
 
-    .quick-card strong{
+    .nav-choice strong{
       display:block;
-
-      margin-bottom:6px;
-
+      margin-bottom:7px;
       font-size:18px;
     }
 
 
-    .quick-card span{
+    .nav-choice span{
       color:#dcecff;
-
-      line-height:1.5;
-
       font-size:14px;
+      line-height:1.5;
     }
 
 
     /* =========================================
-       SECTIONS
+       SECTION HEADINGS
     ========================================= */
 
     .housing-section{
-      margin-top:54px;
+      margin-top:58px;
     }
 
 
-    .section-head{
+    .section-heading{
       text-align:center;
-
       margin-bottom:26px;
     }
 
 
-    .section-head h2{
+    .section-heading h2{
       margin:0;
-
       color:var(--housing-navy);
-
-      font-size:
-        clamp(
-          30px,
-          5vw,
-          44px
-        );
+      font-size:clamp(30px,5vw,44px);
     }
 
 
-    .section-head p{
-      max-width:760px;
-
-      margin:
-        10px auto 0;
-
+    .section-heading p{
+      max-width:780px;
+      margin:10px auto 0;
       color:var(--housing-muted);
-
       line-height:1.65;
     }
 
@@ -319,215 +242,284 @@
        PROGRAM CARDS
     ========================================= */
 
-    .housing-grid{
+    .program-grid{
       display:grid;
-
-      grid-template-columns:
-        repeat(3,1fr);
-
+      grid-template-columns:repeat(3,1fr);
       gap:20px;
     }
 
 
-    .housing-card{
+    .program-card{
       display:flex;
-
       flex-direction:column;
-
-      padding:24px;
-
       background:#ffffff;
-
-      border:
-        1px solid
-        var(--housing-line);
-
+      border:1px solid var(--housing-line);
       border-radius:24px;
-
+      padding:24px;
       box-shadow:
         0 12px 34px
         rgba(7,31,59,.07);
     }
 
 
-    .housing-card .label{
+    .program-tag{
       display:inline-block;
-
       align-self:flex-start;
-
-      margin-bottom:12px;
-
-      padding:
-        6px 10px;
-
+      background:var(--housing-soft);
+      color:var(--housing-navy);
+      padding:6px 10px;
       border-radius:999px;
-
-      background:
-        var(--housing-soft);
-
-      color:
-        var(--housing-navy);
-
       font-size:10px;
-
       font-weight:900;
-
-      letter-spacing:.08em;
-
       text-transform:uppercase;
+      letter-spacing:.08em;
+      margin-bottom:12px;
     }
 
 
-    .housing-card h3{
-      margin:
-        0 0 9px;
-
-      color:
-        var(--housing-navy);
-
+    .program-card h3{
+      margin:0 0 9px;
+      color:var(--housing-navy);
       font-size:23px;
     }
 
 
-    .housing-card p{
+    .program-card p{
       margin:0;
-
-      color:
-        var(--housing-muted);
-
+      color:var(--housing-muted);
       line-height:1.65;
     }
 
 
-    .housing-card ul{
-      margin:
-        16px 0 0;
-
+    .program-card ul{
       padding-left:20px;
-
       color:#486078;
-
       line-height:1.6;
     }
 
 
-    .housing-card .card-link{
+    .program-link{
       display:inline-block;
-
       margin-top:auto;
-
-      padding-top:18px;
-
-      color:
-        var(--housing-navy);
-
-      text-decoration:none;
-
+      padding-top:16px;
+      color:var(--housing-navy);
       font-weight:900;
+      text-decoration:none;
     }
 
 
     /* =========================================
-       FEATURE SECTION
+       NAVIGATION PATH
     ========================================= */
 
-    .featured-housing{
+    .path-grid{
       display:grid;
-
-      grid-template-columns:
-        1fr 1fr;
-
-      gap:24px;
-
-      margin-top:54px;
+      grid-template-columns:repeat(4,1fr);
+      gap:14px;
     }
 
 
-    .feature-panel{
-      padding:28px;
-
-      border-radius:26px;
-
+    .path-card{
+      padding:20px;
+      border-radius:20px;
       background:#ffffff;
-
-      border:
-        1px solid
-        var(--housing-line);
-
-      box-shadow:
-        0 12px 34px
-        rgba(7,31,59,.07);
+      border:1px solid var(--housing-line);
     }
 
 
-    .feature-panel.blue{
+    .path-number{
+      width:38px;
+      height:38px;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      border-radius:50%;
+      background:var(--housing-navy);
+      color:#ffffff;
+      font-weight:900;
+      margin-bottom:12px;
+    }
+
+
+    .path-card strong{
+      display:block;
+      color:var(--housing-navy);
+      margin-bottom:6px;
+    }
+
+
+    .path-card p{
+      margin:0;
+      color:var(--housing-muted);
+      line-height:1.55;
+      font-size:14px;
+    }
+
+
+    /* =========================================
+       PERSONAL HOUSING PLAN
+    ========================================= */
+
+    .housing-plan{
+      margin-top:58px;
+      padding:30px;
+      border-radius:28px;
+      background:#ffffff;
+      border:1px solid var(--housing-line);
+      box-shadow:
+        0 14px 38px
+        rgba(7,31,59,.08);
+    }
+
+
+    .housing-plan h2{
+      margin:0 0 8px;
+      color:var(--housing-navy);
+    }
+
+
+    .housing-plan > p{
+      margin:0 0 22px;
+      color:var(--housing-muted);
+      line-height:1.65;
+    }
+
+
+    .plan-progress{
+      height:12px;
+      overflow:hidden;
+      border-radius:999px;
+      background:var(--housing-light);
+      margin-bottom:10px;
+    }
+
+
+    .plan-progress-bar{
+      width:0%;
+      height:100%;
+      background:
+        linear-gradient(
+          90deg,
+          var(--housing-blue),
+          var(--housing-green)
+        );
+      transition:width .25s ease;
+    }
+
+
+    .plan-status{
+      color:var(--housing-muted);
+      font-size:14px;
+      margin-bottom:20px;
+    }
+
+
+    .plan-grid{
+      display:grid;
+      grid-template-columns:repeat(2,1fr);
+      gap:12px;
+    }
+
+
+    .plan-item{
+      display:flex;
+      align-items:flex-start;
+      gap:12px;
+      padding:16px;
+      border-radius:16px;
+      background:var(--housing-soft);
+    }
+
+
+    .plan-item input{
+      width:20px;
+      height:20px;
+      margin-top:2px;
+    }
+
+
+    .plan-item strong{
+      display:block;
+      color:var(--housing-navy);
+    }
+
+
+    .plan-item span span{
+      display:block;
+      margin-top:4px;
+      color:var(--housing-muted);
+      font-size:13px;
+      line-height:1.4;
+    }
+
+
+    /* =========================================
+       DOCUMENT PREPARATION
+    ========================================= */
+
+    .document-box{
+      display:grid;
+      grid-template-columns:1fr 1fr;
+      gap:24px;
+      margin-top:58px;
+    }
+
+
+    .document-panel{
+      padding:28px;
+      border-radius:26px;
+      background:#ffffff;
+      border:1px solid var(--housing-line);
+    }
+
+
+    .document-panel.dark{
+      color:#ffffff;
+      border:0;
       background:
         linear-gradient(
           145deg,
           #071f3b,
           #174f8c
         );
-
-      color:#ffffff;
-
-      border:0;
     }
 
 
-    .feature-panel h2{
-      margin:
-        0 0 10px;
-
-      color:
-        var(--housing-navy);
+    .document-panel h2{
+      margin:0 0 10px;
+      color:var(--housing-navy);
     }
 
 
-    .feature-panel.blue h2{
+    .document-panel.dark h2{
       color:#ffffff;
     }
 
 
-    .feature-panel p{
-      color:
-        var(--housing-muted);
-
-      line-height:1.7;
+    .document-panel p{
+      color:var(--housing-muted);
+      line-height:1.65;
     }
 
 
-    .feature-panel.blue p{
+    .document-panel.dark p{
       color:#dcecff;
     }
 
 
-    /* =========================================
-       DOCUMENT CHECKLIST
-    ========================================= */
-
-    .checklist{
+    .document-list{
       display:grid;
-
-      grid-template-columns:
-        repeat(2,1fr);
-
-      gap:12px;
-
-      margin-top:20px;
+      grid-template-columns:repeat(2,1fr);
+      gap:10px;
+      margin-top:18px;
     }
 
 
-    .check-item{
-      padding:15px 17px;
-
-      border-radius:16px;
-
-      background:
-        var(--housing-soft);
-
-      color:
-        var(--housing-navy);
-
+    .document-item{
+      padding:13px;
+      border-radius:14px;
+      background:var(--housing-soft);
+      color:var(--housing-navy);
       font-weight:700;
     }
 
@@ -537,18 +529,11 @@
     ========================================= */
 
     .search-guide{
-      margin-top:54px;
-
+      margin-top:58px;
       padding:30px;
-
       border-radius:28px;
-
       background:#ffffff;
-
-      border:
-        1px solid
-        var(--housing-line);
-
+      border:1px solid var(--housing-line);
       box-shadow:
         0 14px 38px
         rgba(7,31,59,.07);
@@ -556,151 +541,347 @@
 
 
     .search-guide h2{
-      margin:
-        0 0 10px;
-
-      color:
-        var(--housing-navy);
+      margin:0 0 10px;
+      color:var(--housing-navy);
     }
 
 
     .search-guide > p{
-      color:
-        var(--housing-muted);
-
+      color:var(--housing-muted);
       line-height:1.7;
     }
 
 
     .search-steps{
       display:grid;
-
-      grid-template-columns:
-        repeat(4,1fr);
-
+      grid-template-columns:repeat(4,1fr);
       gap:14px;
-
       margin-top:22px;
     }
 
 
     .search-step{
       padding:18px;
-
       border-radius:18px;
-
-      background:
-        var(--housing-soft);
+      background:var(--housing-soft);
     }
 
 
     .search-step strong{
       display:block;
-
-      color:
-        var(--housing-navy);
-
+      color:var(--housing-navy);
       margin-bottom:6px;
     }
 
 
     .search-step span{
-      color:
-        var(--housing-muted);
-
+      color:var(--housing-muted);
       font-size:14px;
-
       line-height:1.5;
     }
 
 
     /* =========================================
-       ALERT / NEWS
+       UPDATE CENTER
     ========================================= */
 
-    .housing-update{
-      margin-top:54px;
-
-      padding:28px;
-
-      border-radius:26px;
-
-      background:
-        var(--housing-alert);
-
-      border:
-        1px solid
-        #f1ddb0;
+    .update-center{
+      margin-top:58px;
+      padding:30px;
+      border-radius:28px;
+      background:var(--housing-alert);
+      border:1px solid #ebd8a7;
     }
 
 
-    .housing-update .update-label{
-      color:#9b6a00;
+    .update-header{
+      display:flex;
+      justify-content:space-between;
+      gap:20px;
+      align-items:flex-start;
+    }
 
-      font-size:11px;
 
+    .update-header h2{
+      margin:0;
+      color:var(--housing-navy);
+    }
+
+
+    .update-header p{
+      max-width:720px;
+      margin:8px 0 0;
+      color:#646873;
+      line-height:1.6;
+    }
+
+
+    .update-badge{
+      white-space:nowrap;
+      padding:8px 12px;
+      border-radius:999px;
+      background:#ffffff;
+      color:var(--housing-green);
       font-weight:900;
+      font-size:12px;
+    }
 
-      letter-spacing:.1em;
 
+    .update-grid{
+      display:grid;
+      grid-template-columns:repeat(2,1fr);
+      gap:14px;
+      margin-top:22px;
+    }
+
+
+    .update-card{
+      padding:18px;
+      border-radius:18px;
+      background:#ffffff;
+    }
+
+
+    .update-card small{
+      color:var(--housing-blue);
+      font-weight:900;
       text-transform:uppercase;
     }
 
 
-    .housing-update h2{
-      margin:
-        8px 0 10px;
-
-      color:
-        var(--housing-navy);
+    .update-card h3{
+      margin:7px 0;
+      color:var(--housing-navy);
     }
 
 
-    .housing-update p{
-      color:#5f6470;
+    .update-card p{
+      margin:0;
+      color:var(--housing-muted);
+      line-height:1.55;
+    }
 
-      line-height:1.7;
+
+    .update-card a{
+      display:inline-block;
+      margin-top:12px;
+      font-weight:900;
+      color:var(--housing-navy);
+      text-decoration:none;
     }
 
 
     /* =========================================
-       SAFETY / RIGHTS
+       WHAT DOES THIS MEAN FOR ME
     ========================================= */
 
-    .rights-box{
-      margin-top:54px;
+    .meaning-section{
+      margin-top:58px;
+    }
 
-      padding:28px;
 
+    .meaning-heading{
+      text-align:center;
+      max-width:820px;
+      margin:0 auto 26px;
+    }
+
+
+    .meaning-heading h2{
+      margin:0;
+      color:var(--housing-navy);
+      font-size:clamp(32px,5vw,46px);
+    }
+
+
+    .meaning-heading p{
+      color:var(--housing-muted);
+      line-height:1.7;
+      margin:12px auto 0;
+    }
+
+
+    .meaning-filter{
+      display:flex;
+      gap:10px;
+      flex-wrap:wrap;
+      justify-content:center;
+      margin-bottom:28px;
+    }
+
+
+    .meaning-filter-btn{
+      border:1px solid var(--housing-line);
+      background:#ffffff;
+      color:var(--housing-navy);
+      padding:11px 16px;
+      border-radius:999px;
+      font-weight:800;
+      cursor:pointer;
+    }
+
+
+    .meaning-filter-btn.active{
+      background:var(--housing-navy);
+      color:#ffffff;
+      border-color:var(--housing-navy);
+    }
+
+
+    .meaning-grid{
+      display:grid;
+      grid-template-columns:repeat(2,1fr);
+      gap:20px;
+    }
+
+
+    .meaning-card{
+      background:#ffffff;
+      border:1px solid var(--housing-line);
       border-radius:26px;
+      padding:24px;
+      box-shadow:
+        0 12px 34px
+        rgba(7,31,59,.07);
+    }
 
+
+    .meaning-tag{
+      display:inline-block;
+      padding:6px 10px;
+      border-radius:999px;
+      background:var(--housing-soft);
+      color:var(--housing-navy);
+      font-size:10px;
+      font-weight:900;
+      letter-spacing:.08em;
+      text-transform:uppercase;
+      margin-bottom:12px;
+    }
+
+
+    .meaning-card h3{
+      color:var(--housing-navy);
+      margin:0 0 18px;
+      line-height:1.25;
+      font-size:23px;
+    }
+
+
+    .meaning-block{
+      padding:16px 0;
+      border-top:1px solid var(--housing-line);
+    }
+
+
+    .meaning-block strong,
+    .meaning-next strong{
+      display:block;
+      color:var(--housing-navy);
+      margin-bottom:6px;
+    }
+
+
+    .meaning-block p,
+    .meaning-next p{
+      margin:0;
+      color:var(--housing-muted);
+      line-height:1.65;
+    }
+
+
+    .meaning-block.highlight{
+      background:var(--housing-soft);
+      border:0;
+      border-radius:18px;
+      padding:17px;
+      margin:8px 0;
+    }
+
+
+    .meaning-next{
+      margin-top:14px;
+      padding:17px;
+      border-radius:18px;
+      background:#fff8e8;
+      border:1px solid #f1ddb0;
+    }
+
+
+    .meaning-action{
+      display:inline-block;
+      margin-top:18px;
+      color:var(--housing-navy);
+      font-weight:900;
+      text-decoration:none;
+    }
+
+
+    .meaning-disclaimer{
+      margin-top:24px;
+      background:#ffffff;
+      border:1px solid var(--housing-line);
+      border-radius:18px;
+      padding:18px;
+      color:var(--housing-muted);
+      line-height:1.65;
+      font-size:14px;
+    }
+
+
+    .meaning-disclaimer strong{
+      color:var(--housing-navy);
+    }
+
+
+    /* =========================================
+       WHY HUGSLINKS
+    ========================================= */
+
+    .hugs-difference{
+      margin-top:58px;
+      padding:30px;
+      border-radius:28px;
       background:
         linear-gradient(
           145deg,
           #eef7ff,
           #ffffff
         );
-
-      border:
-        1px solid
-        var(--housing-line);
+      border:1px solid var(--housing-line);
     }
 
 
-    .rights-box h2{
-      color:
-        var(--housing-navy);
-
-      margin:
-        0 0 10px;
+    .hugs-difference h2{
+      color:var(--housing-navy);
+      margin:0 0 10px;
     }
 
 
-    .rights-box p{
-      color:
-        var(--housing-muted);
+    .difference-grid{
+      display:grid;
+      grid-template-columns:repeat(3,1fr);
+      gap:14px;
+      margin-top:20px;
+    }
 
-      line-height:1.7;
+
+    .difference-card{
+      padding:18px;
+      border-radius:18px;
+      background:#ffffff;
+    }
+
+
+    .difference-card strong{
+      color:var(--housing-navy);
+    }
+
+
+    .difference-card p{
+      color:var(--housing-muted);
+      margin:7px 0 0;
+      line-height:1.5;
     }
 
 
@@ -708,59 +889,71 @@
        DISCLAIMER
     ========================================= */
 
-    .housing-disclaimer{
+    .housing-note{
       margin-top:42px;
-
       padding:20px;
-
       border-radius:18px;
-
       background:#ffffff;
-
-      border:
-        1px solid
-        var(--housing-line);
-
-      color:
-        var(--housing-muted);
-
-      line-height:1.6;
-
+      border:1px solid var(--housing-line);
+      color:var(--housing-muted);
       font-size:14px;
+      line-height:1.65;
     }
 
 
     /* =========================================
-       MOBILE
+       RESPONSIVE
     ========================================= */
 
     @media(max-width:900px){
 
       .housing-hero,
-      .featured-housing{
+      .document-box{
         grid-template-columns:1fr;
       }
 
 
-      .housing-grid,
-      .quick-grid{
-        grid-template-columns:1fr;
+      .program-grid{
+        grid-template-columns:repeat(2,1fr);
       }
 
 
+      .nav-choice-grid,
+      .path-grid,
       .search-steps{
-        grid-template-columns:
-          repeat(2,1fr);
+        grid-template-columns:repeat(2,1fr);
+      }
+
+
+      .difference-grid{
+        grid-template-columns:1fr;
       }
 
     }
 
 
-    @media(max-width:600px){
+    @media(max-width:700px){
 
+      .meaning-grid,
+      .update-grid,
+      .plan-grid,
+      .program-grid,
+      .nav-choice-grid,
+      .path-grid,
       .search-steps,
-      .checklist{
+      .document-list{
         grid-template-columns:1fr;
+      }
+
+
+      .update-header{
+        display:block;
+      }
+
+
+      .update-badge{
+        display:inline-block;
+        margin-top:14px;
       }
 
 
@@ -819,25 +1012,15 @@
 
       <div class="navlinks">
 
-        <a href="index.html">
-          Home
-        </a>
+        <a href="index.html">Home</a>
 
-        <a href="shop.html">
-          Shop
-        </a>
+        <a href="shop.html">Shop</a>
 
-        <a href="hugs-cards.html">
-          HUGS Cards
-        </a>
+        <a href="hugs-cards.html">HUGS Cards</a>
 
-        <a href="art-community.html">
-          Art
-        </a>
+        <a href="art-community.html">Art</a>
 
-        <a href="food-support.html">
-          Food
-        </a>
+        <a href="food-support.html">Food</a>
 
         <a
           href="housing-help.html"
@@ -900,37 +1083,29 @@
 
         <p>
 
-          Explore New York City housing
-          assistance, affordable apartments,
-          rental subsidies, eviction-prevention
-          programs, public housing and
-          supportive housing resources.
-
-          HUGSLinks helps organize the options
-          so you can better understand what
-          steps may be available to you.
+          Understand New York City housing programs,
+          find affordable housing opportunities,
+          prepare for apartment searches and connect
+          with official housing-assistance resources.
 
         </p>
 
 
         <div class="housing-actions">
 
-
           <a
             class="btn primary"
-            href="#housing-options"
+            href="#start"
           >
-            Explore Housing Options
+            Start Housing Navigation
           </a>
-
 
           <a
             class="btn light"
-            href="resources.html"
+            href="#updates"
           >
-            More Resources
+            Housing Updates
           </a>
-
 
         </div>
 
@@ -941,13 +1116,11 @@
 
       <div class="housing-hero-card">
 
-
         <img
           src="assets/housing-help.jpeg"
           alt="HUGSLinks Housing Help"
         >
 
-
       </div>
 
 
@@ -956,74 +1129,100 @@
 
 
     <!-- =========================================
-         QUICK HELP
+         WELCOME
     ========================================= -->
 
-    <section class="quick-start">
+    <section
+      class="welcome-navigation"
+      id="start"
+    >
 
 
       <h2>
-        What kind of housing help do you need?
+        Welcome to our HUGS Help Housing Navigation Page.
       </h2>
 
 
       <p>
-        Start with the situation that most closely
-        matches what you are dealing with now.
+
+        Housing systems can be difficult to navigate.
+
+        This page organizes major housing programs,
+        apartment-search options, documents, government
+        updates and practical next steps in one place.
+
       </p>
 
 
-
-      <div class="quick-grid">
+      <div class="nav-choice-grid">
 
 
         <a
-          class="quick-card"
-          href="#rental-help"
+          class="nav-choice"
+          href="#programs"
         >
 
           <strong>
-            I need help paying rent
+            Find housing programs
           </strong>
 
           <span>
-            Rental assistance, CityFHEPS,
-            FHEPS, emergency rent help and
-            eviction prevention.
+            CityFHEPS, Homebase, Housing Connect,
+            NYCHA and other assistance.
           </span>
 
         </a>
 
 
+
         <a
-          class="quick-card"
-          href="#find-apartment"
+          class="nav-choice"
+          href="#documents"
         >
 
           <strong>
-            I need an apartment
+            Prepare your documents
           </strong>
 
           <span>
-            Affordable housing, Housing Connect,
-            re-rentals and apartment-search guidance.
+            Know what records may be useful
+            before appointments and applications.
           </span>
 
         </a>
 
 
+
         <a
-          class="quick-card"
-          href="#shelter-help"
+          class="nav-choice"
+          href="#plan"
         >
 
           <strong>
-            I am in shelter or facing homelessness
+            Build your housing plan
           </strong>
 
           <span>
-            Rental subsidies, supportive housing
-            and housing-placement options.
+            Track your own housing-navigation
+            steps on this device.
+          </span>
+
+        </a>
+
+
+
+        <a
+          class="nav-choice"
+          href="#updates"
+        >
+
+          <strong>
+            See what changed
+          </strong>
+
+          <span>
+            Review important housing and
+            government program updates.
           </span>
 
         </a>
@@ -1037,65 +1236,52 @@
 
 
     <!-- =========================================
-         HOUSING OPTIONS
+         PROGRAMS
     ========================================= -->
 
     <section
       class="housing-section"
-      id="housing-options"
+      id="programs"
     >
 
 
-      <div class="section-head">
+      <div class="section-heading">
 
         <h2>
-          NYC Housing Programs
+          Housing Assistance & Affordable Housing
         </h2>
 
         <p>
-          These are some of the major housing
-          and rental-assistance programs available
-          to New Yorkers.
+          Start with the program that most closely
+          matches your situation.
         </p>
 
       </div>
 
 
 
-      <div class="housing-grid">
+      <div class="program-grid">
 
 
-        <!-- CITYFHEPS -->
+        <article class="program-card">
 
-        <article
-          class="housing-card"
-          id="rental-help"
-        >
-
-          <span class="label">
+          <span class="program-tag">
             Rental Assistance
           </span>
-
 
           <h3>
             CityFHEPS
           </h3>
 
-
           <p>
-
-            CityFHEPS is a New York City
-            rental-assistance program that may
-            help eligible households leave shelter
-            or avoid entering shelter.
-
+            Rental assistance for eligible individuals
+            and families seeking to find or keep housing.
           </p>
-
 
           <ul>
 
             <li>
-              May help with ongoing rent
+              May assist with ongoing rent
             </li>
 
             <li>
@@ -1104,52 +1290,39 @@
             </li>
 
             <li>
-              Eligibility and documentation rules apply
-            </li>
-
-            <li>
-              Some households may work through
-              shelter staff or Homebase
+              Program rules and documentation apply
             </li>
 
           </ul>
 
-
           <a
-            class="card-link"
-            href="resources.html"
+            class="program-link"
+            href="https://www.nyc.gov/site/hra/help/cityfheps.page"
+            target="_blank"
+            rel="noopener"
           >
-            CityFHEPS Resources →
+            Official CityFHEPS Information →
           </a>
-
 
         </article>
 
 
 
-        <!-- HOMEBASE -->
+        <article class="program-card">
 
-        <article class="housing-card">
-
-          <span class="label">
-            Eviction Prevention
+          <span class="program-tag">
+            Prevention
           </span>
-
 
           <h3>
             Homebase
           </h3>
 
-
           <p>
-
-            Homebase assists eligible New Yorkers
-            who are at risk of entering shelter
-            and want to remain stably housed
-            in their community.
-
+            Housing-stability assistance for
+            eligible New Yorkers who may be at
+            risk of entering shelter.
           </p>
-
 
           <ul>
 
@@ -1158,170 +1331,46 @@
             </li>
 
             <li>
-              Emergency rental assistance
+              Emergency housing assistance
             </li>
 
             <li>
-              Benefits assistance
+              Benefits help
             </li>
 
             <li>
-              Financial counseling
-            </li>
-
-            <li>
-              Relocation assistance
+              Relocation support
             </li>
 
           </ul>
 
-
           <a
-            class="card-link"
-            href="resources.html"
+            class="program-link"
+            href="https://www.nyc.gov/site/dhs/prevention/homebase.page"
+            target="_blank"
+            rel="noopener"
           >
-            Find Prevention Resources →
+            Find Homebase →
           </a>
-
 
         </article>
 
 
 
-        <!-- FHEPS -->
+        <article class="program-card">
 
-        <article class="housing-card">
-
-          <span class="label">
-            Families
+          <span class="program-tag">
+            Affordable Housing
           </span>
-
-
-          <h3>
-            FHEPS
-          </h3>
-
-
-          <p>
-
-            FHEPS is another rental-assistance
-            option for certain families who meet
-            program eligibility requirements.
-
-          </p>
-
-
-          <ul>
-
-            <li>
-              Rental assistance
-            </li>
-
-            <li>
-              Housing stability support
-            </li>
-
-            <li>
-              Eligibility depends on household circumstances
-            </li>
-
-          </ul>
-
-
-          <a
-            class="card-link"
-            href="resources.html"
-          >
-            Rental Assistance Resources →
-          </a>
-
-
-        </article>
-
-
-
-        <!-- ONE SHOT DEAL -->
-
-        <article class="housing-card">
-
-          <span class="label">
-            Emergency Assistance
-          </span>
-
-
-          <h3>
-            Emergency Rent Help
-          </h3>
-
-
-          <p>
-
-            New Yorkers facing a serious financial
-            emergency may be able to seek emergency
-            assistance for rent arrears or other
-            housing-related needs.
-
-          </p>
-
-
-          <ul>
-
-            <li>
-              Rent arrears
-            </li>
-
-            <li>
-              Housing emergency
-            </li>
-
-            <li>
-              Financial hardship
-            </li>
-
-            <li>
-              Application and eligibility review required
-            </li>
-
-          </ul>
-
-
-          <a
-            class="card-link"
-            href="resources.html"
-          >
-            Emergency Assistance →
-          </a>
-
-
-        </article>
-
-
-
-        <!-- HOUSING CONNECT -->
-
-        <article
-          class="housing-card"
-          id="find-apartment"
-        >
-
-          <span class="label">
-            Affordable Apartments
-          </span>
-
 
           <h3>
             NYC Housing Connect
           </h3>
 
-
           <p>
-
-            Housing Connect is New York City's
-            primary portal for affordable rental
-            and homeownership opportunities.
-
+            Search and apply for affordable
+            rental and homeownership opportunities.
           </p>
-
 
           <ul>
 
@@ -1330,7 +1379,7 @@
             </li>
 
             <li>
-              Rental opportunities
+              Re-rentals
             </li>
 
             <li>
@@ -1338,102 +1387,67 @@
             </li>
 
             <li>
-              Re-rentals
-            </li>
-
-            <li>
-              Search by income and household size
+              Income and household requirements
             </li>
 
           </ul>
 
-
           <a
-            class="card-link"
-            href="resources.html"
+            class="program-link"
+            href="https://housingconnect.nyc.gov/"
+            target="_blank"
+            rel="noopener"
           >
-            Housing Connect Guidance →
+            Open Housing Connect →
           </a>
-
 
         </article>
 
 
 
-        <!-- NYCHA -->
+        <article class="program-card">
 
-        <article class="housing-card">
-
-          <span class="label">
+          <span class="program-tag">
             Public Housing
           </span>
-
 
           <h3>
             NYCHA
           </h3>
 
-
           <p>
-
-            NYCHA provides public housing
-            opportunities for eligible
-            New Yorkers.
-
+            Public-housing applications,
+            applicant information and
+            NYCHA housing resources.
           </p>
 
-
-          <ul>
-
-            <li>
-              Public housing applications
-            </li>
-
-            <li>
-              Applicant status tools
-            </li>
-
-            <li>
-              Eligibility rules apply
-            </li>
-
-          </ul>
-
-
           <a
-            class="card-link"
-            href="resources.html"
+            class="program-link"
+            href="https://apply.nycha.info/"
+            target="_blank"
+            rel="noopener"
           >
-            Public Housing Resources →
+            ApplyNYCHA →
           </a>
-
 
         </article>
 
 
 
-        <!-- SECTION 8 -->
+        <article class="program-card">
 
-        <article class="housing-card">
-
-          <span class="label">
+          <span class="program-tag">
             Voucher Program
           </span>
-
 
           <h3>
             Section 8
           </h3>
 
-
           <p>
-
-            The Housing Choice Voucher program
-            helps qualifying households pay
-            rent in privately owned apartments.
-
+            Housing Choice Voucher assistance
+            for qualifying households.
           </p>
-
 
           <ul>
 
@@ -1446,131 +1460,136 @@
             </li>
 
             <li>
-              General NYCHA waitlist is currently closed
+              Waitlist availability can change
             </li>
 
           </ul>
 
-
           <a
-            class="card-link"
-            href="resources.html"
+            class="program-link"
+            href="https://www.nyc.gov/site/nycha/section-8/applicants.page"
+            target="_blank"
+            rel="noopener"
           >
             Section 8 Information →
           </a>
-
 
         </article>
 
 
 
-        <!-- SUPPORTIVE HOUSING -->
+        <article class="program-card">
 
-        <article class="housing-card">
-
-          <span class="label">
+          <span class="program-tag">
             Supportive Housing
           </span>
-
 
           <h3>
             HRA 2010e
           </h3>
 
-
           <p>
-
-            Supportive housing combines affordable
-            housing with social services for eligible
+            Supportive housing combines housing
+            with services for qualifying
             individuals and families.
-
           </p>
 
-
-          <ul>
-
-            <li>
-              Provider-assisted application
-            </li>
-
-            <li>
-              Housing and service assessment
-            </li>
-
-            <li>
-              Eligibility determination required
-            </li>
-
-            <li>
-              Limited unit availability
-            </li>
-
-          </ul>
-
-
           <a
-            class="card-link"
-            href="resources.html"
+            class="program-link"
+            href="https://www.nyc.gov/site/hra/help/hra-2010-e.page"
+            target="_blank"
+            rel="noopener"
           >
-            Supportive Housing Resources →
+            Supportive Housing Information →
           </a>
-
 
         </article>
 
 
 
-        <!-- MITCHELL LAMA -->
+        <article class="program-card">
 
-        <article class="housing-card">
-
-          <span class="label">
+          <span class="program-tag">
             Affordable Housing
           </span>
-
 
           <h3>
             Mitchell-Lama
           </h3>
 
-
           <p>
-
-            Mitchell-Lama provides affordable
-            rental and cooperative housing for
+            Affordable rental and cooperative
+            housing opportunities for eligible
             moderate- and middle-income households.
-
           </p>
 
-
-          <ul>
-
-            <li>
-              Affordable rentals
-            </li>
-
-            <li>
-              Cooperative housing
-            </li>
-
-            <li>
-              Development-specific waiting lists
-            </li>
-
-            <li>
-              Current lotteries use Housing Connect
-            </li>
-
-          </ul>
-
-
           <a
-            class="card-link"
-            href="resources.html"
+            class="program-link"
+            href="https://www.nyc.gov/site/hpd/services-and-information/mitchell-lama-program.page"
+            target="_blank"
+            rel="noopener"
           >
-            Affordable Housing Resources →
+            Mitchell-Lama Information →
           </a>
 
+        </article>
+
+
+
+        <article class="program-card">
+
+          <span class="program-tag">
+            Emergency Assistance
+          </span>
+
+          <h3>
+            Emergency Rent Help
+          </h3>
+
+          <p>
+            Some households facing a serious
+            financial emergency may qualify
+            for assistance with rent arrears
+            or other urgent needs.
+          </p>
+
+          <a
+            class="program-link"
+            href="https://access.nyc.gov/programs/one-shot-deal/"
+            target="_blank"
+            rel="noopener"
+          >
+            Emergency Assistance →
+          </a>
+
+        </article>
+
+
+
+        <article class="program-card">
+
+          <span class="program-tag">
+            Housing Rights
+          </span>
+
+          <h3>
+            Housing Legal Help
+          </h3>
+
+          <p>
+            Legal assistance may be available
+            to qualifying New Yorkers facing
+            eviction or other housing problems.
+          </p>
+
+          <a
+            class="program-link"
+            href="https://www.nyc.gov/site/hra/help/legal-services-for-tenants.page"
+            target="_blank"
+            rel="noopener"
+          >
+            Legal Services Information →
+          </a>
 
         </article>
 
@@ -1583,124 +1602,413 @@
 
 
     <!-- =========================================
-         SHELTER / HOMELESSNESS
+         NAVIGATION PATH
+    ========================================= -->
+
+    <section class="housing-section">
+
+
+      <div class="section-heading">
+
+        <h2>
+          A Simple Housing Navigation Path
+        </h2>
+
+        <p>
+          Instead of opening many disconnected
+          websites at once, work through your
+          housing situation one step at a time.
+        </p>
+
+      </div>
+
+
+      <div class="path-grid">
+
+
+        <div class="path-card">
+
+          <div class="path-number">
+            1
+          </div>
+
+          <strong>
+            Identify your situation
+          </strong>
+
+          <p>
+            Are you in shelter, facing eviction,
+            looking for affordable housing or
+            already using a voucher?
+          </p>
+
+        </div>
+
+
+
+        <div class="path-card">
+
+          <div class="path-number">
+            2
+          </div>
+
+          <strong>
+            Check assistance programs
+          </strong>
+
+          <p>
+            Determine which housing programs
+            may fit your household and circumstances.
+          </p>
+
+        </div>
+
+
+
+        <div class="path-card">
+
+          <div class="path-number">
+            3
+          </div>
+
+          <strong>
+            Prepare documents
+          </strong>
+
+          <p>
+            Keep identification, income,
+            benefits and housing records together.
+          </p>
+
+        </div>
+
+
+
+        <div class="path-card">
+
+          <div class="path-number">
+            4
+          </div>
+
+          <strong>
+            Apply and track everything
+          </strong>
+
+          <p>
+            Save confirmation numbers,
+            screenshots, emails and copies
+            of documents you submit.
+          </p>
+
+        </div>
+
+
+      </div>
+
+
+    </section>
+
+
+
+    <!-- =========================================
+         PERSONAL PLAN
     ========================================= -->
 
     <section
-      class="featured-housing"
-      id="shelter-help"
+      class="housing-plan"
+      id="plan"
     >
 
 
-      <article class="feature-panel blue">
+      <div class="housing-eyebrow">
+        Your Personal Housing Plan
+      </div>
+
+
+      <h2>
+        Keep track of your next steps.
+      </h2>
+
+
+      <p>
+        Check items as you complete them.
+        Your progress is stored only in this
+        browser on this device.
+      </p>
+
+
+      <div class="plan-progress">
+
+        <div
+          class="plan-progress-bar"
+          id="housingProgressBar"
+        ></div>
+
+      </div>
+
+
+      <div
+        class="plan-status"
+        id="housingProgressText"
+      >
+        0 of 6 steps completed
+      </div>
+
+
+      <div class="plan-grid">
+
+
+        <label class="plan-item">
+
+          <input
+            type="checkbox"
+            class="housing-task"
+            data-task="documents"
+          >
+
+          <span>
+
+            <strong>
+              Gather my documents
+            </strong>
+
+            <span>
+              ID, income, benefits and housing records.
+            </span>
+
+          </span>
+
+        </label>
+
+
+
+        <label class="plan-item">
+
+          <input
+            type="checkbox"
+            class="housing-task"
+            data-task="housingconnect"
+          >
+
+          <span>
+
+            <strong>
+              Review Housing Connect
+            </strong>
+
+            <span>
+              Check opportunities that fit my household.
+            </span>
+
+          </span>
+
+        </label>
+
+
+
+        <label class="plan-item">
+
+          <input
+            type="checkbox"
+            class="housing-task"
+            data-task="rentalassistance"
+          >
+
+          <span>
+
+            <strong>
+              Review rental assistance
+            </strong>
+
+            <span>
+              Check CityFHEPS, Homebase or other programs.
+            </span>
+
+          </span>
+
+        </label>
+
+
+
+        <label class="plan-item">
+
+          <input
+            type="checkbox"
+            class="housing-task"
+            data-task="apartments"
+          >
+
+          <span>
+
+            <strong>
+              Search apartment opportunities
+            </strong>
+
+            <span>
+              Include affordable housing and legitimate listings.
+            </span>
+
+          </span>
+
+        </label>
+
+
+
+        <label class="plan-item">
+
+          <input
+            type="checkbox"
+            class="housing-task"
+            data-task="followups"
+          >
+
+          <span>
+
+            <strong>
+              Save follow-up information
+            </strong>
+
+            <span>
+              Keep emails, dates and confirmation numbers.
+            </span>
+
+          </span>
+
+        </label>
+
+
+
+        <label class="plan-item">
+
+          <input
+            type="checkbox"
+            class="housing-task"
+            data-task="updates"
+          >
+
+          <span>
+
+            <strong>
+              Review housing updates
+            </strong>
+
+            <span>
+              Check whether important program rules changed.
+            </span>
+
+          </span>
+
+        </label>
+
+
+      </div>
+
+
+    </section>
+
+
+
+    <!-- =========================================
+         DOCUMENT PREPARATION
+    ========================================= -->
+
+    <section
+      class="document-box"
+      id="documents"
+    >
+
+
+      <div class="document-panel">
 
 
         <div class="housing-eyebrow">
-          If You Are In Shelter
+          Document Preparation
         </div>
 
 
         <h2>
-          Ask about every housing pathway you may qualify for.
+          Keep important housing records ready.
         </h2>
 
 
         <p>
-
-          Depending on your household and
-          circumstances, rental-assistance
-          programs may include CityFHEPS,
-          FHEPS, Pathway Home, SOTA,
-          HUD-VASH for qualifying veterans,
-          or supportive housing.
-
+          Different programs request different
+          documents, but maintaining an organized
+          housing folder can save time.
         </p>
 
 
-        <p>
+        <div class="document-list">
 
-          Keep copies of documents you submit
-          and ask for written confirmation when
-          important paperwork is completed or
-          transmitted.
+          <div class="document-item">
+            Photo ID
+          </div>
 
-        </p>
+          <div class="document-item">
+            Income records
+          </div>
+
+          <div class="document-item">
+            Benefits notices
+          </div>
+
+          <div class="document-item">
+            Household records
+          </div>
+
+          <div class="document-item">
+            Shelter records
+          </div>
+
+          <div class="document-item">
+            Voucher documents
+          </div>
+
+          <div class="document-item">
+            Lease information
+          </div>
+
+          <div class="document-item">
+            Accommodation records
+          </div>
+
+        </div>
 
 
-      </article>
+      </div>
 
 
 
-      <article class="feature-panel">
+      <div class="document-panel dark">
 
 
         <div class="housing-eyebrow">
-          Housing Preparation
+          HUGS Navigation Tip
         </div>
 
 
         <h2>
-          Keep your documents together.
+          Create a housing evidence folder.
         </h2>
 
 
         <p>
-
-          Housing programs often require
-          documentation. Having copies ready
-          can make applications and apartment
-          searches easier.
-
+          Save copies of applications,
+          screenshots, upload confirmations,
+          emails, appointment notices,
+          eligibility letters and names of
+          people you spoke with.
         </p>
 
 
-        <div class="checklist">
+        <p>
+          Housing processes can take time.
+          Having your own record can make
+          follow-up much easier.
+        </p>
 
 
-          <div class="check-item">
-            Photo identification
-          </div>
-
-
-          <div class="check-item">
-            Social Security documentation
-          </div>
-
-
-          <div class="check-item">
-            Income or pay information
-          </div>
-
-
-          <div class="check-item">
-            Public benefits documents
-          </div>
-
-
-          <div class="check-item">
-            Household information
-          </div>
-
-
-          <div class="check-item">
-            Housing or shelter records
-          </div>
-
-
-          <div class="check-item">
-            Voucher or subsidy documents
-          </div>
-
-
-          <div class="check-item">
-            Reasonable accommodation records
-          </div>
-
-
-        </div>
-
-
-      </article>
+      </div>
 
 
     </section>
@@ -1720,21 +2028,17 @@
 
 
       <h2>
-        Searching for an apartment with assistance
+        Searching for housing with assistance
       </h2>
 
 
       <p>
-
-        A housing search can involve more than
-        finding a listing. Before committing money
-        or submitting sensitive information, make
-        sure you understand the apartment,
-        landlord or broker, program requirements
-        and any required inspection or approval.
-
+        Finding a listing is only part of the
+        process. Before paying money or submitting
+        sensitive information, verify the apartment,
+        landlord or broker and understand any
+        subsidy approval or inspection requirements.
       </p>
-
 
 
       <div class="search-steps">
@@ -1743,15 +2047,16 @@
         <div class="search-step">
 
           <strong>
-            1. Know your budget
+            1. Know your housing budget
           </strong>
 
           <span>
             Understand the rent level your
-            household or subsidy can support.
+            household or subsidy may support.
           </span>
 
         </div>
+
 
 
         <div class="search-step">
@@ -1768,30 +2073,31 @@
         </div>
 
 
+
         <div class="search-step">
 
           <strong>
-            3. Keep your documents ready
+            3. Prepare documents
           </strong>
 
           <span>
-            Save digital and paper copies of
-            important housing paperwork.
+            Keep digital and paper copies
+            of important paperwork.
           </span>
 
         </div>
 
 
+
         <div class="search-step">
 
           <strong>
-            4. Get required approval
+            4. Confirm approval requirements
           </strong>
 
           <span>
-            Voucher or subsidy apartments may
-            require program review and inspection
-            before move-in.
+            Some assisted apartments require
+            program review or inspection before move-in.
           </span>
 
         </div>
@@ -1805,124 +2111,165 @@
 
 
     <!-- =========================================
-         HOUSING CONNECT
+         UPDATE CENTER
     ========================================= -->
 
-    <section class="featured-housing">
+    <section
+      class="update-center"
+      id="updates"
+    >
 
 
-      <article class="feature-panel">
+      <div class="update-header">
 
 
-        <div class="housing-eyebrow">
-          Affordable Housing
+        <div>
+
+          <div class="housing-eyebrow">
+            HUGS Housing Update Center
+          </div>
+
+          <h2>
+            Important housing changes to know about.
+          </h2>
+
+          <p>
+            Housing programs, waiting lists and
+            government rules can change.
+
+            HUGSLinks separates changing information
+            from permanent resource information so
+            visitors know what should be rechecked.
+          </p>
+
         </div>
 
 
-        <h2>
-          Apply even while pursuing other options.
-        </h2>
-
-
-        <p>
-
-          Housing Connect applications can take time,
-          so affordable-housing lotteries should usually
-          be viewed as one part of a larger housing
-          search rather than the only option.
-
-        </p>
-
-
-        <p>
-
-          Opportunities can have different income,
-          household-size and eligibility requirements.
-
-        </p>
-
-
-      </article>
-
-
-
-      <article class="feature-panel blue">
-
-
-        <div class="housing-eyebrow">
-          Housing Search Tip
+        <div class="update-badge">
+          Housing Watch
         </div>
 
 
-        <h2>
-          Look beyond lotteries.
-        </h2>
-
-
-        <p>
-
-          Affordable-housing resources can also
-          include re-rentals, public housing,
-          Mitchell-Lama developments,
-          supportive housing and rental-assistance
-          programs.
-
-        </p>
-
-
-      </article>
-
-
-    </section>
-
-
-
-    <!-- =========================================
-         CURRENT UPDATE
-    ========================================= -->
-
-    <section class="housing-update">
-
-
-      <div class="update-label">
-        Housing Update · 2026
       </div>
 
 
-      <h2>
-        Important program information changes over time.
-      </h2>
+      <div class="update-grid">
 
 
-      <p>
+        <article class="update-card">
 
-        NYCHA's general Section 8 waiting list
-        is currently closed to new applicants.
+          <small>
+            CityFHEPS
+          </small>
 
-        Existing applicants should continue
-        checking their application status and
-        keeping contact information current.
+          <h3>
+            Check current program rules
+          </h3>
 
-      </p>
+          <p>
+            CityFHEPS eligibility, rent standards,
+            documentation and geographic options
+            can change. Confirm current rules before
+            making housing decisions.
+          </p>
+
+          <a
+            href="https://www.nyc.gov/site/hra/help/cityfheps.page"
+            target="_blank"
+            rel="noopener"
+          >
+            Check CityFHEPS →
+          </a>
+
+        </article>
 
 
-      <p>
 
-        Mitchell-Lama housing opportunities are
-        also changing: current lotteries are now
-        being handled through NYC Housing Connect
-        rather than the former Mitchell-Lama
-        Connect portal.
+        <article class="update-card">
 
-      </p>
+          <small>
+            Section 8
+          </small>
+
+          <h3>
+            Monitor waiting-list status
+          </h3>
+
+          <p>
+            Section 8 waiting-list availability
+            and voucher issuance can change.
+            Existing applicants should continue
+            checking official status information.
+          </p>
+
+          <a
+            href="https://www.nyc.gov/site/nycha/section-8/applicants.page"
+            target="_blank"
+            rel="noopener"
+          >
+            Check NYCHA →
+          </a>
+
+        </article>
 
 
-      <a
-        class="btn primary"
-        href="resources.html"
-      >
-        Check Current Housing Resources
-      </a>
+
+        <article class="update-card">
+
+          <small>
+            Affordable Housing
+          </small>
+
+          <h3>
+            New opportunities open regularly
+          </h3>
+
+          <p>
+            Affordable housing opportunities
+            can have different income,
+            household-size and application deadlines.
+          </p>
+
+          <a
+            href="https://housingconnect.nyc.gov/"
+            target="_blank"
+            rel="noopener"
+          >
+            View Housing Connect →
+          </a>
+
+        </article>
+
+
+
+        <article class="update-card">
+
+          <small>
+            Mitchell-Lama
+          </small>
+
+          <h3>
+            Review current application routes
+          </h3>
+
+          <p>
+            Mitchell-Lama developments have
+            development-specific waiting lists
+            and application procedures.
+          </p>
+
+          <a
+            href="https://www.nyc.gov/site/hpd/services-and-information/mitchell-lama-program.page"
+            target="_blank"
+            rel="noopener"
+          >
+            Check Mitchell-Lama →
+          </a>
+
+        </article>
+
+
+      </div>
 
 
     </section>
@@ -1930,61 +2277,580 @@
 
 
     <!-- =========================================
-         RIGHTS
+         WHAT DOES THIS MEAN FOR ME?
     ========================================= -->
 
-    <section class="rights-box">
+    <section
+      class="meaning-section"
+      id="what-it-means"
+    >
+
+
+      <div class="meaning-heading">
+
+        <div class="housing-eyebrow">
+          HUGS Housing Explainer
+        </div>
+
+        <h2>
+          What does this mean for me?
+        </h2>
+
+        <p>
+          Government housing language can be
+          difficult to understand.
+
+          HUGSLinks organizes common situations
+          into plain-language explanations and
+          practical next steps.
+        </p>
+
+      </div>
+
+
+      <div class="meaning-filter">
+
+        <button
+          class="meaning-filter-btn active"
+          type="button"
+          data-filter="all"
+        >
+          All
+        </button>
+
+        <button
+          class="meaning-filter-btn"
+          type="button"
+          data-filter="shelter"
+        >
+          In Shelter
+        </button>
+
+        <button
+          class="meaning-filter-btn"
+          type="button"
+          data-filter="voucher"
+        >
+          Voucher Holder
+        </button>
+
+        <button
+          class="meaning-filter-btn"
+          type="button"
+          data-filter="apartment"
+        >
+          Looking for Housing
+        </button>
+
+        <button
+          class="meaning-filter-btn"
+          type="button"
+          data-filter="eviction"
+        >
+          At Risk of Eviction
+        </button>
+
+      </div>
+
+
+      <div class="meaning-grid">
+
+
+        <article
+          class="meaning-card"
+          data-category="shelter voucher apartment"
+        >
+
+          <div class="meaning-tag">
+            CityFHEPS
+          </div>
+
+          <h3>
+            Rental assistance may expand your apartment options.
+          </h3>
+
+          <div class="meaning-block">
+
+            <strong>
+              What matters
+            </strong>
+
+            <p>
+              CityFHEPS rules, rent levels,
+              eligibility and housing-search
+              procedures can change.
+            </p>
+
+          </div>
+
+
+          <div class="meaning-block highlight">
+
+            <strong>
+              What this may mean for you
+            </strong>
+
+            <p>
+              If you already have CityFHEPS
+              or are being evaluated for it,
+              keep your household and program
+              documents current before apartment hunting.
+            </p>
+
+          </div>
+
+
+          <div class="meaning-next">
+
+            <strong>
+              Next step
+            </strong>
+
+            <p>
+              Confirm your current household size,
+              program status and approved rental
+              information before committing to a unit.
+            </p>
+
+          </div>
+
+        </article>
+
+
+
+        <article
+          class="meaning-card"
+          data-category="apartment"
+        >
+
+          <div class="meaning-tag">
+            Housing Connect
+          </div>
+
+          <h3>
+            One rejection does not mean every development is out of reach.
+          </h3>
+
+          <div class="meaning-block">
+
+            <strong>
+              What matters
+            </strong>
+
+            <p>
+              Each affordable development can have
+              different income and household rules.
+            </p>
+
+          </div>
+
+
+          <div class="meaning-block highlight">
+
+            <strong>
+              What this may mean for you
+            </strong>
+
+            <p>
+              You may qualify for one development
+              even if another does not fit your
+              income or household size.
+            </p>
+
+          </div>
+
+
+          <div class="meaning-next">
+
+            <strong>
+              Next step
+            </strong>
+
+            <p>
+              Keep your Housing Connect profile
+              current and continue applying to
+              opportunities that fit your household.
+            </p>
+
+          </div>
+
+        </article>
+
+
+
+        <article
+          class="meaning-card"
+          data-category="voucher apartment"
+        >
+
+          <div class="meaning-tag">
+            Section 8
+          </div>
+
+          <h3>
+            A closed waiting list does not always mean an existing application disappeared.
+          </h3>
+
+          <div class="meaning-block">
+
+            <strong>
+              What matters
+            </strong>
+
+            <p>
+              Waiting lists, existing applications
+              and special admissions can operate differently.
+            </p>
+
+          </div>
+
+
+          <div class="meaning-block highlight">
+
+            <strong>
+              What this may mean for you
+            </strong>
+
+            <p>
+              If you already applied, continue
+              checking your official application status
+              rather than assuming your case ended.
+            </p>
+
+          </div>
+
+
+          <div class="meaning-next">
+
+            <strong>
+              Next step
+            </strong>
+
+            <p>
+              Keep your address, phone number,
+              email and household information current.
+            </p>
+
+          </div>
+
+        </article>
+
+
+
+        <article
+          class="meaning-card"
+          data-category="eviction"
+        >
+
+          <div class="meaning-tag">
+            Housing Stability
+          </div>
+
+          <h3>
+            You may be able to seek help before entering shelter.
+          </h3>
+
+          <div class="meaning-block">
+
+            <strong>
+              What matters
+            </strong>
+
+            <p>
+              Prevention programs exist for some
+              households experiencing housing instability.
+            </p>
+
+          </div>
+
+
+          <div class="meaning-block highlight">
+
+            <strong>
+              What this may mean for you
+            </strong>
+
+            <p>
+              If you are behind on rent,
+              received eviction papers or lost income,
+              you may have options before homelessness occurs.
+            </p>
+
+          </div>
+
+
+          <div class="meaning-next">
+
+            <strong>
+              Next step
+            </strong>
+
+            <p>
+              Gather your lease, rent records,
+              court papers, income information
+              and benefits documents before seeking help.
+            </p>
+
+          </div>
+
+        </article>
+
+
+
+        <article
+          class="meaning-card"
+          data-category="shelter apartment"
+        >
+
+          <div class="meaning-tag">
+            Supportive Housing
+          </div>
+
+          <h3>
+            Some households may qualify for housing with support services.
+          </h3>
+
+          <div class="meaning-block">
+
+            <strong>
+              What matters
+            </strong>
+
+            <p>
+              Supportive housing generally requires
+              eligibility assessment and provider involvement.
+            </p>
+
+          </div>
+
+
+          <div class="meaning-block highlight">
+
+            <strong>
+              What this may mean for you
+            </strong>
+
+            <p>
+              Certain health, disability,
+              homelessness or support needs may
+              make supportive housing worth exploring.
+            </p>
+
+          </div>
+
+
+          <div class="meaning-next">
+
+            <strong>
+              Next step
+            </strong>
+
+            <p>
+              Ask an appropriate case manager,
+              health provider or social-service provider
+              whether an assessment may be appropriate.
+            </p>
+
+          </div>
+
+        </article>
+
+
+
+        <article
+          class="meaning-card"
+          data-category="voucher apartment"
+        >
+
+          <div class="meaning-tag">
+            Housing Rights
+          </div>
+
+          <h3>
+            A voucher should not automatically end your apartment search.
+          </h3>
+
+          <div class="meaning-block">
+
+            <strong>
+              What matters
+            </strong>
+
+            <p>
+              Housing protections can apply to
+              lawful sources of income,
+              including certain rental subsidies.
+            </p>
+
+          </div>
+
+
+          <div class="meaning-block highlight">
+
+            <strong>
+              What this may mean for you
+            </strong>
+
+            <p>
+              If a landlord or broker refuses
+              to consider you because of a lawful
+              subsidy, there may be housing-rights
+              resources available.
+            </p>
+
+          </div>
+
+
+          <div class="meaning-next">
+
+            <strong>
+              Next step
+            </strong>
+
+            <p>
+              Save advertisements, screenshots,
+              messages, broker information and
+              other records if you believe
+              discrimination occurred.
+            </p>
+
+          </div>
+
+        </article>
+
+
+      </div>
+
+
+      <div class="meaning-disclaimer">
+
+        <strong>
+          HUGSLinks Housing Explainer
+        </strong>
+
+        provides general resource navigation
+        and plain-language information.
+
+        It does not determine eligibility,
+        provide legal advice or guarantee
+        housing assistance.
+
+      </div>
+
+
+    </section>
+
+
+
+    <!-- =========================================
+         WHY HUGSLINKS
+    ========================================= -->
+
+    <section class="hugs-difference">
 
 
       <div class="housing-eyebrow">
-        Housing Rights
+        Why HUGSLinks Housing Navigation?
       </div>
 
 
       <h2>
-        Your housing assistance should not automatically disqualify you from an apartment.
+        More than another list of links.
       </h2>
 
 
-      <p>
-
-        New York City housing protections may
-        apply when landlords, brokers or others
-        refuse to consider lawful sources of
-        income such as qualifying rental subsidies
-        or vouchers.
-
-      </p>
+      <div class="difference-grid">
 
 
-      <p>
+        <div class="difference-card">
 
-        If you believe you are experiencing
-        housing discrimination, improper fees,
-        dangerous conditions or another housing
-        problem, use official housing and legal
-        resources to understand your options.
+          <strong>
+            Plain-language navigation
+          </strong>
 
-      </p>
+          <p>
+            Programs are organized around
+            what visitors actually need,
+            not only by government agency.
+          </p>
 
-
-      <div class="housing-actions">
-
-
-        <a
-          class="btn primary"
-          href="resources.html"
-        >
-          Housing & Legal Resources
-        </a>
+        </div>
 
 
-        <a
-          class="btn light"
-          href="contact.html"
-        >
-          Request Resource Direction
-        </a>
+
+        <div class="difference-card">
+
+          <strong>
+            Personal progress tracking
+          </strong>
+
+          <p>
+            Visitors can track housing steps
+            without creating another account.
+          </p>
+
+        </div>
+
+
+
+        <div class="difference-card">
+
+          <strong>
+            Housing-change awareness
+          </strong>
+
+          <p>
+            Changing program information is
+            separated from permanent resources.
+          </p>
+
+        </div>
+
+
+
+        <div class="difference-card">
+
+          <strong>
+            Apartment-search strategy
+          </strong>
+
+          <p>
+            Affordable housing, subsidies,
+            public housing and apartment
+            searches are viewed together.
+          </p>
+
+        </div>
+
+
+
+        <div class="difference-card">
+
+          <strong>
+            Document preparation
+          </strong>
+
+          <p>
+            Visitors are encouraged to keep
+            organized records throughout the process.
+          </p>
+
+        </div>
+
+
+
+        <div class="difference-card">
+
+          <strong>
+            Dignity-centered navigation
+          </strong>
+
+          <p>
+            HUGSLinks focuses on clarity,
+            dignity and practical next steps.
+          </p>
+
+        </div>
 
 
       </div>
@@ -1994,21 +2860,19 @@
 
 
 
-    <!-- =========================================
-         DISCLAIMER
-    ========================================= -->
+    <div class="housing-note">
 
-    <div class="housing-disclaimer">
+      HUGSLinks is an independent community
+      resource-navigation platform and is not
+      a government agency, law firm or housing provider.
 
-      HUGSLinks provides organized resource
-      information and community direction.
-      Program rules, eligibility, availability
-      and policies can change.
+      Housing programs, eligibility rules,
+      funding and apartment availability can change.
 
-      Always confirm current requirements with
-      the responsible government agency,
-      housing provider or qualified legal
-      professional.
+      Always confirm important decisions and
+      current requirements with the responsible
+      government agency, housing provider or
+      qualified professional.
 
     </div>
 
@@ -2094,7 +2958,227 @@
   </footer>
 
 
+
   <script src="script.js"></script>
+
+
+  <script>
+
+    /* =========================================
+       PERSONAL HOUSING PLAN
+    ========================================= */
+
+    (function(){
+
+      const tasks =
+        document.querySelectorAll(
+          ".housing-task"
+        );
+
+
+      function loadTasks(){
+
+        tasks.forEach(function(task){
+
+          const key =
+            "hugsHousingTask_" +
+            task.dataset.task;
+
+
+          try{
+
+            task.checked =
+              localStorage.getItem(key) === "true";
+
+          }catch(error){
+
+            task.checked = false;
+
+          }
+
+        });
+
+
+        updateProgress();
+
+      }
+
+
+      function updateProgress(){
+
+        const total =
+          tasks.length;
+
+
+        let complete =
+          0;
+
+
+        tasks.forEach(function(task){
+
+          if(task.checked){
+
+            complete++;
+
+          }
+
+        });
+
+
+        const percent =
+          total
+            ? Math.round(
+                (complete / total) * 100
+              )
+            : 0;
+
+
+        const bar =
+          document.getElementById(
+            "housingProgressBar"
+          );
+
+
+        const text =
+          document.getElementById(
+            "housingProgressText"
+          );
+
+
+        if(bar){
+
+          bar.style.width =
+            percent + "%";
+
+        }
+
+
+        if(text){
+
+          text.textContent =
+            complete +
+            " of " +
+            total +
+            " steps completed";
+
+        }
+
+      }
+
+
+      tasks.forEach(function(task){
+
+        task.addEventListener(
+          "change",
+          function(){
+
+            const key =
+              "hugsHousingTask_" +
+              task.dataset.task;
+
+
+            try{
+
+              localStorage.setItem(
+                key,
+                task.checked
+              );
+
+            }catch(error){
+
+              /* Continue without storage */
+
+            }
+
+
+            updateProgress();
+
+          }
+        );
+
+      });
+
+
+      loadTasks();
+
+    })();
+
+
+
+    /* =========================================
+       HOUSING EXPLAINER FILTER
+    ========================================= */
+
+    (function(){
+
+      const buttons =
+        document.querySelectorAll(
+          ".meaning-filter-btn"
+        );
+
+
+      const cards =
+        document.querySelectorAll(
+          ".meaning-card"
+        );
+
+
+      buttons.forEach(function(button){
+
+        button.addEventListener(
+          "click",
+          function(){
+
+            buttons.forEach(
+              function(item){
+
+                item.classList.remove(
+                  "active"
+                );
+
+              }
+            );
+
+
+            button.classList.add(
+              "active"
+            );
+
+
+            const filter =
+              button.dataset.filter;
+
+
+            cards.forEach(
+              function(card){
+
+                const categories =
+                  card.dataset.category || "";
+
+
+                const matches =
+                  filter === "all" ||
+                  categories
+                    .split(" ")
+                    .includes(filter);
+
+
+                card.style.display =
+                  matches
+                    ? "block"
+                    : "none";
+
+              }
+            );
+
+          }
+        );
+
+      });
+
+    })();
+
+  </script>
 
 
 </body>
