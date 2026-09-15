@@ -1,53 +1,44 @@
 /**
- * HUGSLinks Housing Watch
+ * HUGSLinks Housing Watch v2
  * netlify/functions/housing-watch.js
  *
- * PURPOSE
- * ------------------------------------------------------------
- * Reads the official housing sources defined in:
- *
+ * Reads:
  *   /data/housing-sources.json
  *
- * Checks each source, follows redirects, extracts readable text,
- * looks for HUGS Housing Watch keywords, and creates a fingerprint
- * that can later be compared with stored history.
+ * Stores persistent state in Netlify Blobs.
  *
- * IMPORTANT
- * ------------------------------------------------------------
- * This function DOES NOT automatically claim that a policy changed.
- *
- * A changed fingerprint means:
- *   "The monitored source changed."
- *
- * It does NOT necessarily mean:
- *   "CityFHEPS rules changed."
- *
- * Persistent history will be added separately.
+ * IMPORTANT:
+ * A changed government webpage is NOT automatically
+ * a verified housing-policy change.
  */
-
 
 const fs = require("fs");
 const path = require("path");
 const crypto = require("crypto");
+const { getStore } = require("@netlify/blobs");
 
 
-/* ============================================================
-   SETTINGS
-============================================================ */
+/* =========================================================
+   CONFIG
+========================================================= */
 
-const USER_AGENT =
-  "HUGSLinks-Housing-Watch/1.0 (+https://hugslinks.com)";
+const STORE_NAME = "hugs-housing-watch";
+
+const STATE_KEY = "housing-state";
+const HISTORY_KEY = "housing-history";
 
 const REQUEST_TIMEOUT = 15000;
-
 const MAX_TEXT_LENGTH = 250000;
+const MAX_PREVIEW_LENGTH = 500;
+const MAX_HISTORY = 200;
 
-const MAX_PREVIEW_LENGTH = 420;
+const USER_AGENT =
+  "HUGSLinks-Housing-Watch/2.0 (+https://hugslinks.com)";
 
 
-/* ============================================================
-   JSON RESPONSE
-============================================================ */
+/* =========================================================
+   RESPONSE
+========================================================= */
 
 function json(statusCode, payload) {
   return {
@@ -64,13 +55,19 @@ function json(statusCode, payload) {
 }
 
 
-/* ============================================================
-   LOAD HOUSING SOURCE REGISTRY
-============================================================ */
+/* =========================================================
+   LOAD SOURCE REGISTRY
+========================================================= */
 
 function loadHousingSources() {
+
   const possiblePaths = [
-    path.resolve(process.cwd(), "data", "housing-sources.json"),
+
+    path.resolve(
+      process.cwd(),
+      "data",
+      "housing-sources.json"
+    ),
 
     path.resolve(
       __dirname,
@@ -88,31 +85,53 @@ function loadHousingSources() {
       "data",
       "housing-sources.json"
     )
+
   ];
 
 
   for (const filePath of possiblePaths) {
+
     try {
-      if (fs.existsSync(filePath)) {
-        const raw = fs.readFileSync(filePath, "utf8");
 
-        const parsed = JSON.parse(raw);
-
-        if (!Array.isArray(parsed.sources)) {
-          throw new Error(
-            "housing-sources.json does not contain a sources array."
-          );
-        }
-
-        return parsed;
+      if (!fs.existsSync(filePath)) {
+        continue;
       }
-    } catch (error) {
+
+
+      const raw =
+        fs.readFileSync(
+          filePath,
+          "utf8"
+        );
+
+
+      const registry =
+        JSON.parse(raw);
+
+
+      if (!Array.isArray(registry.sources)) {
+
+        throw new Error(
+          "housing-sources.json must contain a sources array."
+        );
+
+      }
+
+
+      return registry;
+
+    }
+
+    catch (error) {
+
       console.error(
-        "Housing source registry error:",
+        "Registry read error:",
         filePath,
         error
       );
+
     }
+
   }
 
 
@@ -122,44 +141,44 @@ function loadHousingSources() {
 }
 
 
-/* ============================================================
-   CLEAN HTML
-============================================================ */
+/* =========================================================
+   HTML CLEANING
+========================================================= */
 
 function cleanHtml(html = "") {
+
   return html
 
-    /* Remove scripts */
     .replace(
       /<script\b[^>]*>[\s\S]*?<\/script>/gi,
       " "
     )
 
-    /* Remove CSS */
     .replace(
       /<style\b[^>]*>[\s\S]*?<\/style>/gi,
       " "
     )
 
-    /* Remove SVG */
     .replace(
       /<svg\b[^>]*>[\s\S]*?<\/svg>/gi,
       " "
     )
 
-    /* Remove HTML comments */
+    .replace(
+      /<noscript\b[^>]*>[\s\S]*?<\/noscript>/gi,
+      " "
+    )
+
     .replace(
       /<!--[\s\S]*?-->/g,
       " "
     )
 
-    /* Remove tags */
     .replace(
       /<[^>]+>/g,
       " "
     )
 
-    /* Common HTML entities */
     .replace(/&nbsp;/gi, " ")
     .replace(/&amp;/gi, "&")
     .replace(/&quot;/gi, '"')
@@ -168,50 +187,47 @@ function cleanHtml(html = "") {
     .replace(/&lt;/gi, "<")
     .replace(/&gt;/gi, ">")
 
-    /* Numeric entities */
     .replace(
       /&#(\d+);/g,
       (_, number) => {
+
         try {
+
           return String.fromCharCode(
             Number(number)
           );
-        } catch {
-          return " ";
+
         }
+
+        catch {
+
+          return " ";
+
+        }
+
       }
     )
 
-    /* Normalize whitespace */
     .replace(/\s+/g, " ")
 
     .trim();
 }
 
 
-/* ============================================================
-   REMOVE COMMON WEBSITE NOISE
+/* =========================================================
+   NORMALIZE TEXT
 
-   This helps prevent navigation/footer/template edits from
-   dominating the fingerprint.
-============================================================ */
+   Removes some common site-wide noise before hashing.
+========================================================= */
 
 function normalizeForFingerprint(text = "") {
+
   return text
+
     .toLowerCase()
 
     .replace(
-      /\b(last updated|updated|modified)\b[^.]{0,80}/gi,
-      " "
-    )
-
-    .replace(
       /\bprivacy policy\b/gi,
-      " "
-    )
-
-    .replace(
-      /\baccessibility\b/gi,
       " "
     )
 
@@ -221,7 +237,17 @@ function normalizeForFingerprint(text = "") {
     )
 
     .replace(
+      /\baccessibility\b/gi,
+      " "
+    )
+
+    .replace(
       /\bcopyright\b/gi,
+      " "
+    )
+
+    .replace(
+      /\blast updated\b[^.]{0,100}/gi,
       " "
     )
 
@@ -231,84 +257,121 @@ function normalizeForFingerprint(text = "") {
 }
 
 
-/* ============================================================
-   HASH / FINGERPRINT
-============================================================ */
+/* =========================================================
+   FINGERPRINT
+========================================================= */
 
 function createFingerprint(text = "") {
+
   return crypto
     .createHash("sha256")
     .update(text)
     .digest("hex");
+
 }
 
 
-/* ============================================================
-   FIND KEYWORDS
-============================================================ */
+/* =========================================================
+   KEYWORD DETECTION
+========================================================= */
 
 function findKeywords(text, keywords = []) {
+
   const lowerText =
-    String(text || "").toLowerCase();
+    String(text || "")
+      .toLowerCase();
+
 
   return keywords.filter(keyword =>
+
     lowerText.includes(
-      String(keyword).toLowerCase()
+      String(keyword)
+        .toLowerCase()
     )
+
   );
 }
 
 
-/* ============================================================
-   CREATE RELEVANT PREVIEW
-
-   Attempts to show text surrounding the first matching keyword.
-============================================================ */
+/* =========================================================
+   PREVIEW
+========================================================= */
 
 function createPreview(
   text,
   matchedKeywords = []
 ) {
+
   if (!text) {
     return "";
   }
 
 
   if (!matchedKeywords.length) {
+
     return text
-      .slice(0, MAX_PREVIEW_LENGTH)
+      .slice(
+        0,
+        MAX_PREVIEW_LENGTH
+      )
       .trim();
+
   }
 
 
-  const lower =
+  const lowerText =
     text.toLowerCase();
 
-  const firstKeyword =
-    matchedKeywords[0].toLowerCase();
 
-  const position =
-    lower.indexOf(firstKeyword);
+  let earliest = -1;
 
 
-  if (position === -1) {
+  for (const keyword of matchedKeywords) {
+
+    const position =
+      lowerText.indexOf(
+        keyword.toLowerCase()
+      );
+
+
+    if (
+      position >= 0 &&
+      (
+        earliest === -1 ||
+        position < earliest
+      )
+    ) {
+
+      earliest = position;
+
+    }
+
+  }
+
+
+  if (earliest === -1) {
+
     return text
-      .slice(0, MAX_PREVIEW_LENGTH)
+      .slice(
+        0,
+        MAX_PREVIEW_LENGTH
+      )
       .trim();
+
   }
 
 
   const start =
     Math.max(
       0,
-      position - 130
+      earliest - 140
     );
 
 
   const end =
     Math.min(
       text.length,
-      position + MAX_PREVIEW_LENGTH
+      earliest + MAX_PREVIEW_LENGTH
     );
 
 
@@ -332,13 +395,15 @@ function createPreview(
 }
 
 
-/* ============================================================
+/* =========================================================
    FETCH WITH TIMEOUT
-============================================================ */
+========================================================= */
 
 async function fetchWithTimeout(url) {
+
   const controller =
     new AbortController();
+
 
   const timer =
     setTimeout(
@@ -348,87 +413,104 @@ async function fetchWithTimeout(url) {
 
 
   try {
-    const response =
-      await fetch(url, {
+
+    return await fetch(
+      url,
+      {
         method: "GET",
 
         redirect: "follow",
 
         headers: {
-          "User-Agent": USER_AGENT,
 
-          Accept:
+          "User-Agent":
+            USER_AGENT,
+
+          "Accept":
             "text/html,application/xhtml+xml,application/json;q=0.9,*/*;q=0.8"
+
         },
 
-        signal: controller.signal
-      });
+        signal:
+          controller.signal
+      }
+    );
 
-
-    return response;
   }
 
   finally {
+
     clearTimeout(timer);
+
   }
+
 }
 
 
-/* ============================================================
-   CHECK ONE HOUSING SOURCE
-============================================================ */
+/* =========================================================
+   CHECK ONE SOURCE
+========================================================= */
 
 async function checkSource(source) {
+
   const checkedAt =
     new Date().toISOString();
 
 
   try {
+
     const response =
       await fetchWithTimeout(
         source.url
       );
 
 
-    /*
-     * A redirect is allowed because fetch()
-     * follows redirects.
-     *
-     * The final URL is returned so HUGS can identify
-     * pages that government agencies move.
-     */
-
-
     if (!response.ok) {
+
       return {
-        id: source.id,
 
-        name: source.name,
+        id:
+          source.id,
 
-        agency: source.agency,
+        name:
+          source.name,
 
-        category: source.category,
+        agency:
+          source.agency,
 
-        priority: source.priority,
+        category:
+          source.category,
 
-        source_url: source.url,
+        priority:
+          source.priority,
 
-        final_url: response.url || source.url,
+        source_url:
+          source.url,
 
-        checked_at: checkedAt,
+        final_url:
+          response.url || source.url,
 
-        status: "source-error",
+        checked_at:
+          checkedAt,
 
-        http_status: response.status,
+        status:
+          "source-error",
 
-        relevant: false,
+        http_status:
+          response.status,
 
-        matched_keywords: [],
+        relevant:
+          false,
+
+        matched_keywords:
+          [],
 
         message:
-          `Source returned HTTP ${response.status}. ` +
-          "This does not mean the housing program changed."
+          `Official source returned HTTP ${response.status}. ` +
+          "This is not being treated as a housing-policy change."
+
       };
+
     }
 
 
@@ -450,13 +532,20 @@ async function checkSource(source) {
         "application/json"
       )
     ) {
+
       readableText =
-        raw.replace(/\s+/g, " ");
+        raw.replace(
+          /\s+/g,
+          " "
+        );
+
     }
 
     else {
+
       readableText =
         cleanHtml(raw);
+
     }
 
 
@@ -474,11 +563,7 @@ async function checkSource(source) {
       );
 
 
-    const relevant =
-      matchedKeywords.length > 0;
-
-
-    const normalized =
+    const normalizedText =
       normalizeForFingerprint(
         readableText
       );
@@ -486,129 +571,253 @@ async function checkSource(source) {
 
     const fingerprint =
       createFingerprint(
-        normalized
-      );
-
-
-    const preview =
-      createPreview(
-        readableText,
-        matchedKeywords
+        normalizedText
       );
 
 
     return {
-      id: source.id,
 
-      name: source.name,
+      id:
+        source.id,
 
-      agency: source.agency,
+      name:
+        source.name,
 
-      category: source.category,
+      agency:
+        source.agency,
 
-      priority: source.priority,
+      category:
+        source.category,
 
-      source_url: source.url,
+      priority:
+        source.priority,
+
+      source_url:
+        source.url,
 
       final_url:
         response.url || source.url,
 
-      checked_at: checkedAt,
+      checked_at:
+        checkedAt,
 
-      status: "checked",
+      status:
+        "checked",
 
       http_status:
         response.status,
 
-      relevant,
+      relevant:
+        matchedKeywords.length > 0,
 
       matched_keywords:
         matchedKeywords,
 
       fingerprint,
 
-      preview,
+      preview:
+        createPreview(
+          readableText,
+          matchedKeywords
+        ),
 
       text_length:
-        readableText.length,
+        readableText.length
 
-      message:
-        relevant
-          ? "Housing-related terms were found on this official source."
-          : "Source checked successfully, but no configured housing keywords were found."
     };
+
   }
 
   catch (error) {
-    const timeout =
-      error &&
-      error.name === "AbortError";
+
+    const timedOut =
+      error?.name ===
+      "AbortError";
 
 
     return {
-      id: source.id,
 
-      name: source.name,
+      id:
+        source.id,
 
-      agency: source.agency,
+      name:
+        source.name,
 
-      category: source.category,
+      agency:
+        source.agency,
 
-      priority: source.priority,
+      category:
+        source.category,
 
-      source_url: source.url,
+      priority:
+        source.priority,
 
-      checked_at: checkedAt,
+      source_url:
+        source.url,
+
+      checked_at:
+        checkedAt,
 
       status:
-        timeout
+        timedOut
           ? "timeout"
           : "source-error",
 
-      relevant: false,
+      relevant:
+        false,
 
-      matched_keywords: [],
+      matched_keywords:
+        [],
 
       message:
-        timeout
-          ? "Source timed out. This does not indicate a housing-program change."
-          : "Source could not be checked. This does not indicate a housing-program change.",
+        timedOut
+
+          ? "Official source timed out. No program change is being inferred."
+
+          : "Official source could not be checked. No program change is being inferred.",
 
       error:
         error instanceof Error
           ? error.message
           : String(error)
+
     };
+
   }
+
 }
 
 
-/* ============================================================
-   RUN WATCHER
+/* =========================================================
+   EMPTY STATE
+========================================================= */
 
-   Checks sources sequentially.
+function createEmptyState() {
 
-   This is intentionally conservative so HUGSLinks does not
-   hammer government websites with simultaneous requests.
-============================================================ */
+  return {
+
+    version: 2,
+
+    initialized_at: null,
+
+    last_checked: null,
+
+    sources: {}
+
+  };
+
+}
+
+
+/* =========================================================
+   EMPTY HISTORY
+========================================================= */
+
+function createEmptyHistory() {
+
+  return {
+
+    version: 2,
+
+    last_checked: null,
+
+    last_change: null,
+
+    updates: []
+
+  };
+
+}
+
+
+/* =========================================================
+   RUN HOUSING WATCH
+========================================================= */
 
 async function runHousingWatch() {
+
   const registry =
     loadHousingSources();
+
+
+  /*
+   * Strong consistency is useful here because the watcher
+   * reads state and then writes updated state during the
+   * same monitoring operation.
+   */
+
+  const store =
+    getStore({
+      name: STORE_NAME,
+      consistency: "strong"
+    });
 
 
   const startedAt =
     new Date().toISOString();
 
 
+  let state =
+    await store.get(
+      STATE_KEY,
+      {
+        type: "json",
+        consistency: "strong"
+      }
+    );
+
+
+  let history =
+    await store.get(
+      HISTORY_KEY,
+      {
+        type: "json",
+        consistency: "strong"
+      }
+    );
+
+
+  const firstRun =
+    !state;
+
+
+  if (!state) {
+    state =
+      createEmptyState();
+  }
+
+
+  if (!history) {
+    history =
+      createEmptyHistory();
+  }
+
+
+  if (!state.sources) {
+    state.sources = {};
+  }
+
+
+  if (!Array.isArray(history.updates)) {
+    history.updates = [];
+  }
+
+
   const results = [];
 
+  const detectedChanges = [];
 
-  for (
-    const source of registry.sources
-  ) {
+  const errors = [];
+
+
+  /* =======================================================
+     CHECK SOURCES
+  ======================================================= */
+
+  for (const source of registry.sources) {
+
     console.log(
-      `HUGS Housing Watch checking: ${source.name}`
+      `HUGS Housing Watch: ${source.name}`
     );
 
 
@@ -617,43 +826,379 @@ async function runHousingWatch() {
 
 
     results.push(result);
+
+
+    /*
+     * Never replace a good fingerprint with an error.
+     */
+
+    if (result.status !== "checked") {
+
+      errors.push(result);
+
+      continue;
+
+    }
+
+
+    const previous =
+      state.sources[source.id] || null;
+
+
+    /*
+     * FIRST TIME WE HAVE SEEN THIS SOURCE
+     *
+     * Establish baseline only.
+     *
+     * This is NOT an update.
+     */
+
+    if (
+      !previous ||
+      !previous.fingerprint
+    ) {
+
+      state.sources[source.id] = {
+
+        id:
+          source.id,
+
+        name:
+          source.name,
+
+        agency:
+          source.agency,
+
+        category:
+          source.category,
+
+        priority:
+          source.priority,
+
+        source_url:
+          source.url,
+
+        final_url:
+          result.final_url,
+
+        fingerprint:
+          result.fingerprint,
+
+        first_seen:
+          result.checked_at,
+
+        last_checked:
+          result.checked_at,
+
+        last_changed:
+          null,
+
+        relevant:
+          result.relevant,
+
+        matched_keywords:
+          result.matched_keywords
+
+      };
+
+
+      result.change_status =
+        "baseline-created";
+
+
+      continue;
+
+    }
+
+
+    /* =====================================================
+       UNCHANGED
+    ===================================================== */
+
+    if (
+      previous.fingerprint ===
+      result.fingerprint
+    ) {
+
+      state.sources[source.id] = {
+
+        ...previous,
+
+        name:
+          source.name,
+
+        agency:
+          source.agency,
+
+        category:
+          source.category,
+
+        priority:
+          source.priority,
+
+        source_url:
+          source.url,
+
+        final_url:
+          result.final_url,
+
+        last_checked:
+          result.checked_at,
+
+        relevant:
+          result.relevant,
+
+        matched_keywords:
+          result.matched_keywords
+
+      };
+
+
+      result.change_status =
+        "unchanged";
+
+
+      continue;
+
+    }
+
+
+    /* =====================================================
+       SOURCE CHANGED
+    ===================================================== */
+
+    const update = {
+
+      id:
+        `${source.id}-${Date.now()}`,
+
+      source_id:
+        source.id,
+
+      source:
+        source.name,
+
+      agency:
+        source.agency,
+
+      category:
+        source.category,
+
+      priority:
+        source.priority,
+
+      detected_at:
+        result.checked_at,
+
+      source_url:
+        source.url,
+
+      final_url:
+        result.final_url,
+
+      status:
+        "source-changed",
+
+      verification_status:
+        "needs-review",
+
+      relevant:
+        result.relevant,
+
+      matched_keywords:
+        result.matched_keywords,
+
+      preview:
+        result.preview,
+
+      previous_fingerprint:
+        previous.fingerprint,
+
+      current_fingerprint:
+        result.fingerprint,
+
+      explanation:
+        result.relevant
+
+          ? "HUGS Housing Watch detected a change on this official source containing monitored housing terms. Review the official source before describing this as a program or policy change."
+
+          : "HUGS Housing Watch detected a webpage change, but the current page did not match the configured housing keywords. This may be a website or administrative change."
+
+    };
+
+
+    detectedChanges.push(update);
+
+
+    /*
+     * Newest update first.
+     */
+
+    history.updates.unshift(
+      update
+    );
+
+
+    state.sources[source.id] = {
+
+      ...previous,
+
+      name:
+        source.name,
+
+      agency:
+        source.agency,
+
+      category:
+        source.category,
+
+      priority:
+        source.priority,
+
+      source_url:
+        source.url,
+
+      final_url:
+        result.final_url,
+
+      fingerprint:
+        result.fingerprint,
+
+      last_checked:
+        result.checked_at,
+
+      last_changed:
+        result.checked_at,
+
+      relevant:
+        result.relevant,
+
+      matched_keywords:
+        result.matched_keywords
+
+    };
+
+
+    result.change_status =
+      "source-changed";
+
   }
+
+
+  /* =======================================================
+     LIMIT HISTORY
+  ======================================================= */
+
+  history.updates =
+    history.updates.slice(
+      0,
+      MAX_HISTORY
+    );
 
 
   const completedAt =
     new Date().toISOString();
 
 
-  const successful =
+  /* =======================================================
+     UPDATE STATE METADATA
+  ======================================================= */
+
+  if (!state.initialized_at) {
+
+    state.initialized_at =
+      startedAt;
+
+  }
+
+
+  state.version = 2;
+
+  state.last_checked =
+    completedAt;
+
+
+  history.version = 2;
+
+  history.last_checked =
+    completedAt;
+
+
+  if (detectedChanges.length > 0) {
+
+    history.last_change =
+      detectedChanges[0]
+        .detected_at;
+
+  }
+
+
+  /* =======================================================
+     SAVE PERSISTENT DATA
+  ======================================================= */
+
+  await store.setJSON(
+    STATE_KEY,
+    state
+  );
+
+
+  await store.setJSON(
+    HISTORY_KEY,
+    history
+  );
+
+
+  /* =======================================================
+     SUMMARY
+  ======================================================= */
+
+  const checked =
     results.filter(
       item =>
         item.status === "checked"
-    );
+    ).length;
 
 
   const relevant =
-    successful.filter(
-      item =>
-        item.relevant
-    );
-
-
-  const errors =
     results.filter(
       item =>
-        item.status !== "checked"
-    );
+        item.status === "checked" &&
+        item.relevant
+    ).length;
+
+
+  const baselineCreated =
+    results.filter(
+      item =>
+        item.change_status ===
+        "baseline-created"
+    ).length;
+
+
+  const unchanged =
+    results.filter(
+      item =>
+        item.change_status ===
+        "unchanged"
+    ).length;
 
 
   return {
+
     service:
       "HUGS Housing Watch",
 
     version:
-      registry.version || 1,
+      2,
 
-    registry_title:
-      registry.title,
+    mode:
+      firstRun
+        ? "baseline"
+        : "monitoring",
+
+    registry_version:
+      registry.version,
 
     registry_last_manual_review:
       registry.last_manual_review,
@@ -665,61 +1210,118 @@ async function runHousingWatch() {
       completedAt,
 
     summary: {
-      sources:
+
+      configured_sources:
         registry.sources.length,
 
-      checked:
-        successful.length,
+      checked,
 
-      relevant:
-        relevant.length,
+      relevant,
+
+      baseline_created:
+        baselineCreated,
+
+      unchanged,
+
+      source_changes:
+        detectedChanges.length,
 
       errors:
         errors.length
+
     },
 
-    notice:
-      "A detected webpage change is not automatically a verified housing-policy change. HUGSLinks should verify meaningful changes against the official source before presenting them as policy updates.",
+    detected_changes:
+      detectedChanges,
 
-    results
+    errors:
+      errors.map(item => ({
+
+        id:
+          item.id,
+
+        name:
+          item.name,
+
+        status:
+          item.status,
+
+        message:
+          item.message
+
+      })),
+
+    notice:
+
+      firstRun
+
+        ? "Housing Watch baseline established. Initial fingerprints were stored without reporting them as new housing updates."
+
+        : detectedChanges.length
+
+          ? "One or more official sources changed. These changes require verification before HUGSLinks describes them as policy or program changes."
+
+          : "Housing Watch completed. No monitored source changes were detected."
+
   };
+
 }
 
 
-/* ============================================================
-   NETLIFY FUNCTION
-============================================================ */
+/* =========================================================
+   NETLIFY HANDLER
+========================================================= */
 
 exports.handler =
   async function handler(event) {
 
-    /*
-     * Optional browser preflight support.
-     */
-
     if (
-      event &&
-      event.httpMethod === "OPTIONS"
+      event?.httpMethod ===
+      "OPTIONS"
     ) {
+
       return {
+
         statusCode: 204,
 
         headers: {
-          "Access-Control-Allow-Origin": "*",
+
+          "Access-Control-Allow-Origin":
+            "*",
 
           "Access-Control-Allow-Headers":
             "Content-Type",
 
           "Access-Control-Allow-Methods":
             "GET, OPTIONS"
+
         },
 
         body: ""
+
       };
+
+    }
+
+
+    if (
+      event?.httpMethod &&
+      event.httpMethod !== "GET"
+    ) {
+
+      return json(
+        405,
+        {
+          error:
+            "Method not allowed."
+        }
+      );
+
     }
 
 
     try {
+
       const report =
         await runHousingWatch();
 
@@ -728,11 +1330,13 @@ exports.handler =
         200,
         report
       );
+
     }
 
     catch (error) {
+
       console.error(
-        "HUGS Housing Watch fatal error:",
+        "Housing Watch fatal error:",
         error
       );
 
@@ -740,6 +1344,7 @@ exports.handler =
       return json(
         500,
         {
+
           service:
             "HUGS Housing Watch",
 
@@ -747,21 +1352,24 @@ exports.handler =
             "error",
 
           message:
-            "Housing Watch could not run.",
+            "Housing Watch could not complete.",
 
           error:
             error instanceof Error
               ? error.message
               : String(error)
+
         }
       );
+
     }
+
   };
 
 
-/* ============================================================
-   EXPORTS FOR FUTURE HISTORY FUNCTION
-============================================================ */
+/* =========================================================
+   EXPORT FOR FUTURE USE
+========================================================= */
 
 exports.runHousingWatch =
   runHousingWatch;
