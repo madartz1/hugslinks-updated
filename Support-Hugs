@@ -1,0 +1,2044 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8">
+
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1"
+  >
+
+  <title>Support HUGS | HUGSLinks</title>
+
+  <meta
+    name="description"
+    content="Support HUGSLinks through a direct contribution or by purchasing a HUG. Your support helps independent entrepreneurs continue community projects, creative work, education, outreach and HUGS Help."
+  >
+
+  <link rel="stylesheet" href="styles.css">
+
+  <style>
+
+    :root{
+      --hugs-navy:#071f3b;
+      --hugs-navy-light:#103b69;
+      --hugs-blue:#2f9ee7;
+      --hugs-sky:#79d4ff;
+      --hugs-gold:#f2b84b;
+      --hugs-gold-light:#f8d979;
+      --hugs-white:#ffffff;
+      --hugs-cream:#faf7f1;
+      --hugs-soft:#eef7ff;
+      --hugs-text:#51677b;
+      --hugs-line:#dce8f2;
+    }
+
+
+    *{
+      box-sizing:border-box;
+    }
+
+
+    html{
+      scroll-behavior:smooth;
+    }
+
+
+    body{
+      margin:0;
+      background:
+        linear-gradient(
+          180deg,
+          #ffffff 0%,
+          #f7fbff 45%,
+          #faf7f1 100%
+        );
+    }
+
+
+    /* =========================================
+       PAGE
+    ========================================= */
+
+    .support-page{
+      width:min(1120px, calc(100% - 32px));
+      margin:auto;
+      padding:34px 0 80px;
+    }
+
+
+    /* =========================================
+       HERO
+    ========================================= */
+
+    .support-hero{
+      position:relative;
+      overflow:hidden;
+
+      margin-top:16px;
+      padding:60px 34px;
+
+      border-radius:34px;
+
+      background:
+        radial-gradient(
+          circle at 90% 0%,
+          rgba(47,158,231,.48),
+          transparent 34%
+        ),
+        radial-gradient(
+          circle at 5% 100%,
+          rgba(242,184,75,.18),
+          transparent 32%
+        ),
+        linear-gradient(
+          145deg,
+          #071f3b,
+          #0b315c 68%,
+          #123f70
+        );
+
+      color:white;
+
+      box-shadow:
+        0 28px 70px
+        rgba(7,31,59,.19);
+    }
+
+
+    .support-hero-inner{
+      max-width:820px;
+      position:relative;
+      z-index:2;
+    }
+
+
+    .support-eyebrow{
+      margin-bottom:14px;
+
+      color:var(--hugs-gold-light);
+
+      font-size:12px;
+      font-weight:900;
+
+      letter-spacing:.17em;
+      text-transform:uppercase;
+    }
+
+
+    .support-hero h1{
+      margin:0;
+
+      max-width:820px;
+
+      font-size:
+        clamp(
+          48px,
+          8vw,
+          88px
+        );
+
+      line-height:.91;
+      letter-spacing:-.055em;
+
+      color:white;
+    }
+
+
+    .support-hero .hero-lead{
+      max-width:760px;
+
+      margin:24px 0 0;
+
+      font-size:
+        clamp(
+          18px,
+          2.5vw,
+          22px
+        );
+
+      line-height:1.65;
+
+      color:#e6f3ff;
+    }
+
+
+    .support-hero .hero-lead strong{
+      color:white;
+    }
+
+
+    .hero-actions{
+      display:flex;
+      flex-wrap:wrap;
+      gap:11px;
+
+      margin-top:29px;
+    }
+
+
+    .support-button{
+      display:inline-flex;
+
+      align-items:center;
+      justify-content:center;
+
+      min-height:50px;
+
+      padding:0 21px;
+
+      border:0;
+      border-radius:999px;
+
+      text-decoration:none;
+
+      font-size:14px;
+      font-weight:900;
+
+      cursor:pointer;
+    }
+
+
+    .support-button.gold{
+      background:
+        linear-gradient(
+          135deg,
+          var(--hugs-gold),
+          var(--hugs-gold-light)
+        );
+
+      color:#182331;
+
+      box-shadow:
+        0 9px 25px
+        rgba(242,184,75,.21);
+    }
+
+
+    .support-button.white{
+      background:white;
+      color:var(--hugs-navy);
+    }
+
+
+    .support-button.blue{
+      background:var(--hugs-navy);
+      color:white;
+    }
+
+
+    /* =========================================
+       INTRO
+    ========================================= */
+
+    .support-intro{
+      max-width:790px;
+
+      margin:55px auto 0;
+
+      text-align:center;
+    }
+
+
+    .support-intro h2{
+      margin:0;
+
+      color:var(--hugs-navy);
+
+      font-size:
+        clamp(
+          31px,
+          5vw,
+          48px
+        );
+
+      line-height:1.03;
+    }
+
+
+    .support-intro p{
+      margin:18px auto 0;
+
+      color:var(--hugs-text);
+
+      font-size:17px;
+      line-height:1.75;
+    }
+
+
+    .support-intro strong{
+      color:var(--hugs-navy);
+    }
+
+
+    /* =========================================
+       TWO PRIMARY CHOICES
+    ========================================= */
+
+    .support-choice-grid{
+      display:grid;
+
+      grid-template-columns:
+        repeat(2,1fr);
+
+      gap:20px;
+
+      margin-top:35px;
+    }
+
+
+    .support-choice{
+      padding:31px;
+
+      border:
+        1px solid
+        var(--hugs-line);
+
+      border-radius:28px;
+
+      background:white;
+
+      box-shadow:
+        0 14px 38px
+        rgba(7,31,59,.07);
+    }
+
+
+    .support-choice.featured{
+      color:white;
+
+      background:
+        linear-gradient(
+          145deg,
+          #0a294b,
+          #0d3d70
+        );
+
+      border-color:
+        rgba(255,255,255,.12);
+    }
+
+
+    .choice-icon{
+      display:flex;
+
+      align-items:center;
+      justify-content:center;
+
+      width:58px;
+      height:58px;
+
+      margin-bottom:18px;
+
+      border-radius:18px;
+
+      background:var(--hugs-soft);
+
+      font-size:30px;
+    }
+
+
+    .featured .choice-icon{
+      background:
+        rgba(255,255,255,.1);
+    }
+
+
+    .support-choice h3{
+      margin:0;
+
+      color:var(--hugs-navy);
+
+      font-size:28px;
+    }
+
+
+    .support-choice.featured h3{
+      color:white;
+    }
+
+
+    .support-choice p{
+      color:var(--hugs-text);
+
+      line-height:1.7;
+    }
+
+
+    .support-choice.featured p{
+      color:#d9eafb;
+    }
+
+
+    .choice-label{
+      display:block;
+
+      margin-top:16px;
+
+      color:var(--hugs-blue);
+
+      font-size:12px;
+      font-weight:900;
+
+      letter-spacing:.08em;
+      text-transform:uppercase;
+    }
+
+
+    .featured .choice-label{
+      color:var(--hugs-gold-light);
+    }
+
+
+    /* =========================================
+       DIRECT SUPPORT
+    ========================================= */
+
+    .direct-support{
+      margin-top:58px;
+
+      padding:37px;
+
+      border-radius:30px;
+
+      background:white;
+
+      border:
+        1px solid
+        var(--hugs-line);
+
+      box-shadow:
+        0 15px 45px
+        rgba(7,31,59,.07);
+    }
+
+
+    .direct-support-header{
+      display:grid;
+
+      grid-template-columns:
+        1.2fr .8fr;
+
+      gap:30px;
+
+      align-items:center;
+    }
+
+
+    .direct-support h2{
+      margin:0;
+
+      color:var(--hugs-navy);
+
+      font-size:
+        clamp(
+          32px,
+          5vw,
+          49px
+        );
+
+      line-height:1;
+    }
+
+
+    .direct-support p{
+      color:var(--hugs-text);
+      line-height:1.7;
+    }
+
+
+    .payment-box{
+      padding:25px;
+
+      border-radius:24px;
+
+      text-align:center;
+
+      background:
+        linear-gradient(
+          145deg,
+          #eef7ff,
+          #ffffff
+        );
+
+      border:
+        1px solid
+        var(--hugs-line);
+    }
+
+
+    .payment-box strong{
+      display:block;
+
+      color:var(--hugs-navy);
+
+      font-size:20px;
+
+      margin-bottom:5px;
+    }
+
+
+    .payment-box span{
+      display:block;
+
+      color:var(--hugs-text);
+
+      font-size:14px;
+
+      margin-bottom:17px;
+    }
+
+
+    .amount-suggestions{
+      display:flex;
+
+      flex-wrap:wrap;
+      justify-content:center;
+
+      gap:8px;
+
+      margin:
+        20px 0;
+    }
+
+
+    .amount-chip{
+      padding:8px 13px;
+
+      border-radius:999px;
+
+      color:var(--hugs-navy);
+
+      background:var(--hugs-soft);
+
+      border:
+        1px solid
+        #cee7f8;
+
+      font-size:13px;
+      font-weight:900;
+    }
+
+
+    /* =========================================
+       PURCHASE HUG
+    ========================================= */
+
+    .purchase-section{
+      margin-top:65px;
+    }
+
+
+    .section-heading{
+      max-width:760px;
+
+      margin:auto;
+
+      text-align:center;
+    }
+
+
+    .section-heading h2{
+      margin:0;
+
+      color:var(--hugs-navy);
+
+      font-size:
+        clamp(
+          31px,
+          5vw,
+          47px
+        );
+
+      line-height:1.04;
+    }
+
+
+    .section-heading p{
+      color:var(--hugs-text);
+
+      line-height:1.7;
+    }
+
+
+    .purchase-grid{
+      display:grid;
+
+      grid-template-columns:
+        repeat(3,1fr);
+
+      gap:18px;
+
+      margin-top:29px;
+    }
+
+
+    .purchase-card{
+      padding:25px;
+
+      border:
+        1px solid
+        var(--hugs-line);
+
+      border-radius:25px;
+
+      background:white;
+
+      box-shadow:
+        0 12px 34px
+        rgba(7,31,59,.055);
+    }
+
+
+    .purchase-card .card-icon{
+      font-size:35px;
+    }
+
+
+    .purchase-card h3{
+      margin:
+        12px 0 5px;
+
+      color:var(--hugs-navy);
+
+      font-size:24px;
+    }
+
+
+    .purchase-card .price{
+      display:block;
+
+      color:var(--hugs-blue);
+
+      font-size:22px;
+      font-weight:900;
+    }
+
+
+    .purchase-card p{
+      color:var(--hugs-text);
+
+      line-height:1.62;
+    }
+
+
+    .purchase-link{
+      display:inline-flex;
+
+      margin-top:7px;
+
+      padding:10px 15px;
+
+      border-radius:999px;
+
+      color:white;
+      background:var(--hugs-navy);
+
+      text-decoration:none;
+
+      font-size:13px;
+      font-weight:900;
+    }
+
+
+    /* =========================================
+       IMPACT
+    ========================================= */
+
+    .impact-section{
+      margin-top:65px;
+
+      padding:38px;
+
+      border-radius:30px;
+
+      background:var(--hugs-soft);
+
+      border:
+        1px solid
+        #d4eaf8;
+    }
+
+
+    .impact-section h2{
+      margin:
+        0 0 8px;
+
+      color:var(--hugs-navy);
+
+      font-size:
+        clamp(
+          30px,
+          5vw,
+          44px
+        );
+    }
+
+
+    .impact-section > p{
+      max-width:780px;
+
+      color:var(--hugs-text);
+
+      line-height:1.7;
+    }
+
+
+    .impact-grid{
+      display:grid;
+
+      grid-template-columns:
+        repeat(4,1fr);
+
+      gap:13px;
+
+      margin-top:24px;
+    }
+
+
+    .impact-card{
+      padding:20px;
+
+      border-radius:20px;
+
+      background:white;
+
+      border:
+        1px solid
+        var(--hugs-line);
+    }
+
+
+    .impact-card strong{
+      display:block;
+
+      color:var(--hugs-navy);
+
+      margin-bottom:7px;
+    }
+
+
+    .impact-card span{
+      color:var(--hugs-text);
+
+      font-size:14px;
+      line-height:1.5;
+    }
+
+
+    /* =========================================
+       STORY
+    ========================================= */
+
+    .story-section{
+      margin-top:65px;
+
+      padding:39px;
+
+      border-radius:30px;
+
+      background:white;
+
+      border:
+        1px solid
+        var(--hugs-line);
+    }
+
+
+    .story-section h2{
+      margin:
+        0 0 15px;
+
+      color:var(--hugs-navy);
+
+      font-size:
+        clamp(
+          30px,
+          5vw,
+          45px
+        );
+    }
+
+
+    .story-section p{
+      max-width:830px;
+
+      color:var(--hugs-text);
+
+      line-height:1.78;
+    }
+
+
+    .story-section strong{
+      color:var(--hugs-navy);
+    }
+
+
+    /* =========================================
+       FUTURE MISSIONS
+    ========================================= */
+
+    .missions-preview{
+      margin-top:65px;
+
+      padding:38px;
+
+      border-radius:30px;
+
+      color:white;
+
+      background:
+        linear-gradient(
+          145deg,
+          #071f3b,
+          #103d6c
+        );
+    }
+
+
+    .missions-preview h2{
+      margin:
+        0 0 12px;
+
+      color:white;
+
+      font-size:
+        clamp(
+          31px,
+          5vw,
+          46px
+        );
+    }
+
+
+    .missions-preview p{
+      max-width:780px;
+
+      color:#dcecff;
+
+      line-height:1.7;
+    }
+
+
+    .mission-tags{
+      display:flex;
+
+      flex-wrap:wrap;
+
+      gap:9px;
+
+      margin-top:20px;
+    }
+
+
+    .mission-tag{
+      padding:
+        9px 13px;
+
+      border-radius:999px;
+
+      border:
+        1px solid
+        rgba(255,255,255,.2);
+
+      background:
+        rgba(255,255,255,.08);
+
+      color:white;
+
+      font-size:13px;
+      font-weight:800;
+    }
+
+
+    /* =========================================
+       QR SECTION
+    ========================================= */
+
+    .qr-section{
+      margin-top:65px;
+
+      padding:32px;
+
+      border-radius:28px;
+
+      background:white;
+
+      border:
+        1px solid
+        var(--hugs-line);
+
+      text-align:center;
+    }
+
+
+    .qr-section h2{
+      margin:0;
+
+      color:var(--hugs-navy);
+    }
+
+
+    .qr-section p{
+      max-width:650px;
+
+      margin:
+        10px auto 0;
+
+      color:var(--hugs-text);
+
+      line-height:1.65;
+    }
+
+
+    .qr-placeholder{
+      display:flex;
+
+      align-items:center;
+      justify-content:center;
+
+      width:220px;
+      height:220px;
+
+      margin:
+        24px auto 16px;
+
+      border-radius:22px;
+
+      border:
+        2px dashed
+        #afc9dd;
+
+      color:#7190a8;
+
+      background:#f8fcff;
+
+      font-size:13px;
+      font-weight:900;
+
+      text-align:center;
+    }
+
+
+    .qr-address{
+      color:var(--hugs-navy);
+
+      font-weight:900;
+    }
+
+
+    /* =========================================
+       TRANSPARENCY
+    ========================================= */
+
+    .support-disclosure{
+      margin-top:35px;
+
+      padding:19px 21px;
+
+      border-radius:18px;
+
+      border:
+        1px solid
+        var(--hugs-line);
+
+      background:#fff;
+
+      color:var(--hugs-text);
+
+      font-size:13px;
+      line-height:1.65;
+    }
+
+
+    .support-disclosure strong{
+      color:var(--hugs-navy);
+    }
+
+
+    /* =========================================
+       MOBILE
+    ========================================= */
+
+    @media(max-width:820px){
+
+      .support-choice-grid,
+      .direct-support-header,
+      .purchase-grid,
+      .impact-grid{
+        grid-template-columns:1fr;
+      }
+
+
+      .support-hero{
+        padding:
+          45px 22px;
+      }
+
+
+      .support-page{
+        width:
+          min(
+            100% - 22px,
+            1120px
+          );
+      }
+
+
+      .direct-support,
+      .impact-section,
+      .story-section,
+      .missions-preview{
+        padding:
+          28px 20px;
+      }
+
+    }
+
+  </style>
+
+</head>
+
+
+<body>
+
+
+<!-- =========================================
+     HEADER
+========================================= -->
+
+<header class="topbar">
+
+  <nav class="nav">
+
+    <a
+      class="brand"
+      href="index.html"
+    >
+      Hugslinks
+    </a>
+
+
+    <div
+      class="seal"
+      aria-label="HUGS house heart logo"
+    >
+
+      <img
+        src="assets/HUGS_Header_Logo_Transparent.png"
+        alt="HUGS logo"
+        class="header-logo"
+      >
+
+    </div>
+
+
+    <button
+      class="menu"
+      type="button"
+      aria-expanded="false"
+      aria-label="Open navigation menu"
+    >
+      Menu
+    </button>
+
+
+    <div class="navlinks">
+
+      <a href="index.html">
+        Home
+      </a>
+
+      <a href="shop.html">
+        Shop
+      </a>
+
+      <a href="hugs-cards.html">
+        HUGS Cards
+      </a>
+
+      <a href="art-community.html">
+        Art
+      </a>
+
+      <a href="food-support.html">
+        Food
+      </a>
+
+      <a href="housing-help.html">
+        Housing
+      </a>
+
+      <a href="business-services.html">
+        Business
+      </a>
+
+      <a href="help-app.html">
+        Help App
+      </a>
+
+      <a href="resources.html">
+        Resources
+      </a>
+
+      <a href="about.html">
+        About
+      </a>
+
+      <a href="contact.html">
+        Contact
+      </a>
+
+    </div>
+
+  </nav>
+
+</header>
+
+
+
+<main class="support-page">
+
+
+<!-- =========================================
+     HERO
+========================================= -->
+
+<section class="support-hero">
+
+  <div class="support-hero-inner">
+
+    <div class="support-eyebrow">
+      Give a HUG · Get a HUG
+    </div>
+
+
+    <h1>
+      Support HUGS.
+    </h1>
+
+
+    <p class="hero-lead">
+
+      Your purchase or contribution directly supports
+      independent entrepreneurs building HUGSLinks from
+      lived experience with hardship, barriers and injustice.
+
+      <strong>
+        Your support helps us keep creating, educating,
+        organizing and building practical community projects
+        from the ground level.
+      </strong>
+
+    </p>
+
+
+    <div class="hero-actions">
+
+      <a
+        class="support-button gold"
+        href="#direct-support"
+      >
+        Sponsor a HUG
+      </a>
+
+
+      <a
+        class="support-button white"
+        href="#purchase-a-hug"
+      >
+        Purchase a HUG
+      </a>
+
+    </div>
+
+  </div>
+
+</section>
+
+
+
+<!-- =========================================
+     MESSAGE
+========================================= -->
+
+<section class="support-intro">
+
+  <div
+    class="support-eyebrow"
+    style="color:#2f9ee7;"
+  >
+    Support With Purpose
+  </div>
+
+
+  <h2>
+    Your support immediately helps keep this work moving.
+  </h2>
+
+
+  <p>
+
+    HUGSLinks is an independent entrepreneurial and
+    community-centered project.
+
+    When you support this page, you help the people
+    building HUGSLinks continue their work while developing
+    projects intended to
+
+    <strong>
+      inform, educate, connect and provide practical
+      ground-level support within the community.
+    </strong>
+
+  </p>
+
+</section>
+
+
+
+<!-- =========================================
+     SUPPORT OPTIONS
+========================================= -->
+
+<section class="support-choice-grid">
+
+
+  <article class="support-choice featured">
+
+    <div class="choice-icon">
+      ❤️
+    </div>
+
+
+    <span class="choice-label">
+      Direct Support
+    </span>
+
+
+    <h3>
+      Sponsor a HUG
+    </h3>
+
+
+    <p>
+
+      Make a direct contribution to support the continued
+      development of HUGSLinks, its creators and community
+      projects.
+
+    </p>
+
+
+    <a
+      class="support-button gold"
+      href="#direct-support"
+    >
+      Support HUGS
+    </a>
+
+  </article>
+
+
+
+  <article class="support-choice">
+
+    <div class="choice-icon">
+      💌
+    </div>
+
+
+    <span class="choice-label">
+      Purchase With Purpose
+    </span>
+
+
+    <h3>
+      Purchase a HUG
+    </h3>
+
+
+    <p>
+
+      Buy a HUGS digital card or creative product while
+      directly supporting the independent work behind
+      HUGSLinks.
+
+    </p>
+
+
+    <a
+      class="support-button blue"
+      href="#purchase-a-hug"
+    >
+      Purchase a HUG
+    </a>
+
+  </article>
+
+
+</section>
+
+
+
+<!-- =========================================
+     DIRECT PAYMENT SUPPORT
+========================================= -->
+
+<section
+  class="direct-support"
+  id="direct-support"
+>
+
+
+  <div class="direct-support-header">
+
+
+    <div>
+
+      <div
+        class="support-eyebrow"
+        style="color:#2f9ee7;"
+      >
+        Sponsor a HUG
+      </div>
+
+
+      <h2>
+        Give direct support.
+      </h2>
+
+
+      <p>
+
+        Choose the amount that feels right for you.
+
+        Your contribution helps support the independent
+        entrepreneurs building HUGSLinks and helps us
+        continue community-centered projects, educational
+        content, creative work, outreach and development
+        of HUGS Help.
+
+      </p>
+
+
+      <div class="amount-suggestions">
+
+        <span class="amount-chip">
+          $5
+        </span>
+
+        <span class="amount-chip">
+          $10
+        </span>
+
+        <span class="amount-chip">
+          $25
+        </span>
+
+        <span class="amount-chip">
+          $50
+        </span>
+
+        <span class="amount-chip">
+          Your Amount
+        </span>
+
+      </div>
+
+    </div>
+
+
+
+    <div class="payment-box">
+
+      <strong>
+        Sponsor a HUG
+      </strong>
+
+
+      <span>
+        Secure payment through Stripe
+      </span>
+
+
+      <!--
+      =====================================================
+      IMPORTANT:
+
+      When your new Stripe contribution/payment link
+      is ready, replace:
+
+      PASTE_YOUR_STRIPE_SUPPORT_LINK_HERE
+
+      with the actual Stripe Payment Link.
+
+      Example:
+      https://buy.stripe.com/xxxxxxxx
+      =====================================================
+      -->
+
+
+      <a
+        class="support-button gold"
+        id="support-payment-button"
+        href="PASTE_YOUR_STRIPE_SUPPORT_LINK_HERE"
+        target="_blank"
+        rel="noopener noreferrer"
+      >
+        Choose Your Support Amount
+      </a>
+
+
+      <p
+        style="
+          font-size:12px;
+          margin-top:14px;
+          margin-bottom:0;
+        "
+      >
+        Card and supported express-payment methods
+        are handled securely through Stripe Checkout.
+      </p>
+
+    </div>
+
+
+  </div>
+
+</section>
+
+
+
+<!-- =========================================
+     PURCHASE A HUG
+========================================= -->
+
+<section
+  class="purchase-section"
+  id="purchase-a-hug"
+>
+
+
+  <div class="section-heading">
+
+    <div
+      class="support-eyebrow"
+      style="color:#2f9ee7;"
+    >
+      Purchase With Purpose
+    </div>
+
+
+    <h2>
+      Purchase a HUG.
+      Support the mission.
+    </h2>
+
+
+    <p>
+
+      HUGS Cards combine creativity, connection
+      and independent entrepreneurship.
+
+      Send something meaningful while helping
+      HUGSLinks continue building.
+
+    </p>
+
+  </div>
+
+
+
+  <div class="purchase-grid">
+
+
+    <article class="purchase-card">
+
+      <div class="card-icon">
+        💙
+      </div>
+
+
+      <h3>
+        Ready-to-Send HUG
+      </h3>
+
+
+      <span class="price">
+        $6.99
+      </span>
+
+
+      <p>
+
+        Choose a completed HUGS Card and
+        send someone encouragement,
+        connection or support.
+
+      </p>
+
+
+      <a
+        class="purchase-link"
+        href="hugs-cards.html"
+      >
+        Choose a HUG →
+      </a>
+
+    </article>
+
+
+
+    <article class="purchase-card">
+
+      <div class="card-icon">
+        ✨
+      </div>
+
+
+      <h3>
+        Personalized HUG
+      </h3>
+
+
+      <span class="price">
+        $16.99
+      </span>
+
+
+      <p>
+
+        Personalize a HUG with names,
+        a message and details that make
+        the experience more meaningful.
+
+      </p>
+
+
+      <a
+        class="purchase-link"
+        href="hugs-cards.html"
+      >
+        Personalize a HUG →
+      </a>
+
+    </article>
+
+
+
+    <article class="purchase-card">
+
+      <div class="card-icon">
+        🎨
+      </div>
+
+
+      <h3>
+        Commission a HUG
+      </h3>
+
+
+      <span class="price">
+        Custom
+      </span>
+
+
+      <p>
+
+        Request custom artwork, a special
+        HUG or a creative commission for
+        a person, project, organization
+        or occasion.
+
+      </p>
+
+
+      <a
+        class="purchase-link"
+        href="contact.html?type=custom-hug"
+      >
+        Request a Commission →
+      </a>
+
+    </article>
+
+
+  </div>
+
+</section>
+
+
+
+<!-- =========================================
+     IMPACT
+========================================= -->
+
+<section class="impact-section">
+
+
+  <div
+    class="support-eyebrow"
+    style="color:#2f9ee7;"
+  >
+    Ground-Level Impact
+  </div>
+
+
+  <h2>
+    What your support helps us continue.
+  </h2>
+
+
+  <p>
+
+    Support received through HUGSLinks helps
+    sustain the independent work behind the
+    platform while allowing us to continue
+    developing community-centered ideas and projects.
+
+  </p>
+
+
+
+  <div class="impact-grid">
+
+
+    <div class="impact-card">
+
+      <strong>
+        HUGS Help
+      </strong>
+
+      <span>
+
+        Building tools that help people navigate
+        food, housing, resources and assistance.
+
+      </span>
+
+    </div>
+
+
+
+    <div class="impact-card">
+
+      <strong>
+        Community Projects
+      </strong>
+
+      <span>
+
+        Developing practical projects inspired
+        by needs identified at ground level.
+
+      </span>
+
+    </div>
+
+
+
+    <div class="impact-card">
+
+      <strong>
+        Education & Awareness
+      </strong>
+
+      <span>
+
+        Creating information and content that
+        encourages awareness, understanding
+        and constructive conversation.
+
+      </span>
+
+    </div>
+
+
+
+    <div class="impact-card">
+
+      <strong>
+        Art & Creativity
+      </strong>
+
+      <span>
+
+        Supporting independent creative work,
+        commissions, storytelling and
+        community expression.
+
+      </span>
+
+    </div>
+
+
+  </div>
+
+</section>
+
+
+
+<!-- =========================================
+     STORY
+========================================= -->
+
+<section class="story-section">
+
+
+  <div
+    class="support-eyebrow"
+    style="color:#2f9ee7;"
+  >
+    Built From Experience
+  </div>
+
+
+  <h2>
+    Turning hardship into something constructive.
+  </h2>
+
+
+  <p>
+
+    The people building HUGSLinks are entrepreneurs
+    who are familiar with experiencing hardship,
+    instability, barriers and injustice firsthand.
+
+  </p>
+
+
+  <p>
+
+    Instead of allowing those experiences to end
+    with hardship, HUGSLinks is being developed
+    as a way to transform experience into
+
+    <strong>
+      creativity, education, community connection,
+      practical resources and opportunities for
+      people to help one another.
+    </strong>
+
+  </p>
+
+
+  <p>
+
+    A purchase on this page immediately supports
+    the independent entrepreneurs doing this work
+    and helps us continue developing the larger
+    HUGSLinks mission.
+
+  </p>
+
+</section>
+
+
+
+<!-- =========================================
+     FUTURE HUGS MISSIONS
+========================================= -->
+
+<section class="missions-preview">
+
+
+  <div class="support-eyebrow">
+    Sponsor a HUG Missions
+  </div>
+
+
+  <h2>
+    Support today.
+    Help build tomorrow's missions.
+  </h2>
+
+
+  <p>
+
+    As HUGS Help expands, Sponsor a HUG will also
+    support clearly identified community missions.
+
+    Individual missions will show their purpose,
+    funding goal and intended use before accepting
+    project-specific support.
+
+  </p>
+
+
+
+  <div class="mission-tags">
+
+    <span class="mission-tag">
+      🍎 Food Missions
+    </span>
+
+    <span class="mission-tag">
+      🚲 HUGS Delivery
+    </span>
+
+    <span class="mission-tag">
+      🎨 Art Projects
+    </span>
+
+    <span class="mission-tag">
+      🏠 Community Navigation
+    </span>
+
+    <span class="mission-tag">
+      🤝 Community Projects
+    </span>
+
+    <span class="mission-tag">
+      ✨ Creative Commissions
+    </span>
+
+  </div>
+
+</section>
+
+
+
+<!-- =========================================
+     QR DESTINATION
+========================================= -->
+
+<section class="qr-section">
+
+
+  <div
+    class="support-eyebrow"
+    style="color:#2f9ee7;"
+  >
+    Stay Connected
+  </div>
+
+
+  <h2>
+    Scan. Support. Share.
+  </h2>
+
+
+  <p>
+
+    This page is the permanent HUGS support destination.
+    Our QR code can be placed on HUGS artwork,
+    cards, products, flyers, community materials
+    and future Sponsor a HUG projects.
+
+  </p>
+
+
+  <!--
+  Replace this placeholder later with the QR image
+  you create in Canva.
+
+  Example:
+
+  <img
+    src="assets/hugs-support-qr.png"
+    alt="Scan to support HUGS"
+    class="support-qr-image"
+  >
+  -->
+
+
+  <div class="qr-placeholder">
+
+    HUGS SUPPORT<br>
+    QR CODE<br>
+    GOES HERE
+
+  </div>
+
+
+  <div class="qr-address">
+    hugslinks.com/support-hugs.html
+  </div>
+
+
+  <p>
+    Give a HUG. Get a HUG.
+  </p>
+
+</section>
+
+
+
+<!-- =========================================
+     TRANSPARENCY
+========================================= -->
+
+<div class="support-disclosure">
+
+  <strong>
+    Transparency:
+  </strong>
+
+  Purchases and contributions made through this
+  page support the independent business, creative
+  work and development of HUGSLinks.
+
+  Unless specifically identified otherwise,
+  payments should not be assumed to be
+  tax-deductible charitable donations.
+
+  Future mission-specific campaigns will identify
+  the purpose of the project and how project-specific
+  funds are intended to be used.
+
+</div>
+
+
+</main>
+
+
+
+<!-- =========================================
+     FOOTER
+========================================= -->
+
+<footer class="footer">
+
+  <div class="footer-inner">
+
+
+    <div>
+
+      <h2>
+        HUGS — Help Under Good Service
+      </h2>
+
+
+      <p class="notice">
+
+        Creativity, connection,
+        independent entrepreneurship
+        and community support working together.
+
+      </p>
+
+    </div>
+
+
+
+    <div>
+
+      <h3>
+        Support
+      </h3>
+
+
+      <a href="support-hugs.html">
+        Support HUGS
+      </a>
+
+
+      <a href="shop.html">
+        Shop HUGS
+      </a>
+
+
+      <a href="hugs-cards.html">
+        HUGS Cards
+      </a>
+
+
+      <a href="art-community.html">
+        Art & Community
+      </a>
+
+    </div>
+
+
+
+    <div>
+
+      <h3>
+        HUGS Help
+      </h3>
+
+
+      <a href="help-app.html">
+        Call on HUGS
+      </a>
+
+
+      <a href="food-support.html">
+        Food Support
+      </a>
+
+
+      <a href="housing-help.html">
+        Housing Help
+      </a>
+
+
+      <a href="resources.html">
+        Resources
+      </a>
+
+    </div>
+
+
+  </div>
+
+</footer>
+
+
+
+<script src="script.js"></script>
+
+
+<script>
+
+  /*
+   * Prevent accidental navigation before
+   * the real Stripe support link is installed.
+   */
+
+  const supportPaymentButton =
+    document.getElementById(
+      "support-payment-button"
+    );
+
+
+  if (supportPaymentButton) {
+
+    const href =
+      supportPaymentButton
+        .getAttribute("href");
+
+
+    if (
+      !href ||
+      href.includes(
+        "PASTE_YOUR_STRIPE_SUPPORT_LINK_HERE"
+      )
+    ) {
+
+      supportPaymentButton
+        .addEventListener(
+          "click",
+          function(event){
+
+            event.preventDefault();
+
+            alert(
+              "Direct HUGS support checkout is being connected. Please return shortly or purchase a HUGS Card to support the mission today."
+            );
+
+          }
+        );
+
+    }
+
+  }
+
+</script>
+
+
+</body>
+
+</html>
