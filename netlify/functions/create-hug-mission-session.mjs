@@ -8,12 +8,18 @@ import crypto from "node:crypto";
  * File:
  * netlify/functions/create-hug-mission-session.mjs
  *
- * Creates:
- * 1. Private Helper session token
- * 2. Separate read-only tracking token
+ * PURPOSE
+ * -------
+ * Creates a private Helper mission session.
  *
- * Never expose either token through
- * hugs-missions.mjs.
+ * SECURITY
+ * --------
+ * - Helper receives ONLY helper_token.
+ * - Tracking token is generated and stored
+ *   only as a hash.
+ * - Recipient tracking credentials are NOT
+ *   exposed to the Helper browser.
+ * - Tokens are never stored in plaintext.
  */
 
 
@@ -144,15 +150,6 @@ function createToken(){
 
 }
 
-
-/*
- * We store hashes instead of the actual
- * token values.
- *
- * If storage were ever exposed, the usable
- * session token is not sitting there in
- * plain text.
- */
 
 function hashToken(token){
 
@@ -321,7 +318,7 @@ export default async (
         await request.json();
 
     }
-    catch(error){
+    catch{
 
       return jsonResponse(
         {
@@ -389,7 +386,9 @@ export default async (
       return jsonResponse(
         {
           ok:false,
-          error:"Mission or Helper verification information is invalid."
+
+          error:
+            "Mission or Helper verification information is invalid."
         },
         400
       );
@@ -548,6 +547,23 @@ export default async (
     const helperToken =
       createToken();
 
+
+    /*
+     * Recipient tracking token.
+     *
+     * IMPORTANT:
+     *
+     * This plaintext value is deliberately
+     * NOT returned to the Helper browser.
+     *
+     * Only its hash is stored with the
+     * session.
+     *
+     * Recipient access will be issued
+     * through a separate protected
+     * HUGS/Admin flow.
+     */
+
     const trackingToken =
       createToken();
 
@@ -556,6 +572,7 @@ export default async (
       hashToken(
         helperToken
       );
+
 
     const trackingTokenHash =
       hashToken(
@@ -595,13 +612,13 @@ export default async (
       );
 
 
-    /*
-     * Remove expired sessions while we're here.
-     */
-
     const nowMs =
       now.getTime();
 
+
+    /*
+     * Remove expired sessions.
+     */
 
     sessions =
       sessions.filter(
@@ -624,8 +641,8 @@ export default async (
 
 
     /*
-     * Invalidate any older active session
-     * for this exact mission/helper pair.
+     * Invalidate older active sessions
+     * for this mission/helper pair.
      */
 
     sessions =
@@ -646,6 +663,7 @@ export default async (
           ){
 
             return {
+
               ...session,
 
               active:false,
@@ -655,6 +673,7 @@ export default async (
 
               ended_reason:
                 "Replaced by new session"
+
             };
 
           }
@@ -730,16 +749,18 @@ export default async (
 
     return jsonResponse(
       {
+
         ok:true,
 
         session_id:
           sessionId,
 
+        /*
+         * ONLY Helper credential returned.
+         */
+
         helper_token:
           helperToken,
-
-        tracking_token:
-          trackingToken,
 
         expires_at:
           expiresAt.toISOString(),
@@ -748,6 +769,7 @@ export default async (
           safeMission(
             mission
           )
+
       }
     );
 
