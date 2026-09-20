@@ -1,0 +1,1893 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8">
+
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1"
+  >
+
+  <title>Become a HUGS Helper | HUGS Help</title>
+
+  <meta
+    name="description"
+    content="Become a HUGS Helper and contribute time, transportation, skills, pickup, delivery or community support through HUGSLinks."
+  >
+
+  <link rel="stylesheet" href="styles.css">
+
+  <style>
+
+    :root{
+      --navy:#071f3b;
+      --navy2:#0d3d70;
+      --blue:#2f9ee7;
+      --sky:#79d4ff;
+      --gold:#f2b84b;
+      --gold-light:#f8d979;
+      --white:#ffffff;
+      --soft:#eef7ff;
+      --cream:#faf7f1;
+      --text:#51677b;
+      --line:#dce8f2;
+      --green:#27855f;
+      --red:#a63838;
+    }
+
+    *{
+      box-sizing:border-box;
+    }
+
+    html{
+      scroll-behavior:smooth;
+    }
+
+    body{
+      margin:0;
+
+      background:
+        linear-gradient(
+          180deg,
+          #ffffff 0%,
+          #f5faff 55%,
+          #faf7f1 100%
+        );
+    }
+
+    .helper-page{
+      width:min(1000px, calc(100% - 28px));
+      margin:auto;
+      padding:32px 0 80px;
+    }
+
+    /* =====================================
+       HERO
+    ===================================== */
+
+    .helper-hero{
+      position:relative;
+      overflow:hidden;
+
+      padding:55px 34px;
+
+      border-radius:32px;
+
+      color:white;
+
+      background:
+        radial-gradient(
+          circle at 88% 5%,
+          rgba(47,158,231,.5),
+          transparent 35%
+        ),
+        radial-gradient(
+          circle at 8% 100%,
+          rgba(242,184,75,.18),
+          transparent 31%
+        ),
+        linear-gradient(
+          145deg,
+          #071f3b,
+          #0d3d70
+        );
+
+      box-shadow:
+        0 25px 65px
+        rgba(7,31,59,.17);
+    }
+
+    .eyebrow{
+      margin-bottom:13px;
+
+      color:var(--gold-light);
+
+      font-size:12px;
+      font-weight:900;
+
+      letter-spacing:.16em;
+      text-transform:uppercase;
+    }
+
+    .helper-hero h1{
+      margin:0;
+
+      color:white;
+
+      font-size:
+        clamp(
+          43px,
+          7vw,
+          72px
+        );
+
+      line-height:.95;
+      letter-spacing:-.045em;
+    }
+
+    .helper-hero p{
+      max-width:740px;
+
+      margin:22px 0 0;
+
+      color:#e5f2ff;
+
+      font-size:18px;
+      line-height:1.7;
+    }
+
+    /* =====================================
+       MISSION
+    ===================================== */
+
+    .mission-strip{
+      display:grid;
+
+      grid-template-columns:
+        repeat(3,1fr);
+
+      gap:12px;
+
+      margin-top:24px;
+    }
+
+    .mission-card{
+      padding:20px;
+
+      border:
+        1px solid
+        var(--line);
+
+      border-radius:20px;
+
+      background:white;
+    }
+
+    .mission-card span{
+      display:block;
+
+      margin-bottom:8px;
+
+      font-size:28px;
+    }
+
+    .mission-card strong{
+      display:block;
+
+      margin-bottom:5px;
+
+      color:var(--navy);
+    }
+
+    .mission-card p{
+      margin:0;
+
+      color:var(--text);
+
+      font-size:13px;
+      line-height:1.5;
+    }
+
+    /* =====================================
+       FORM
+    ===================================== */
+
+    .helper-form{
+      margin-top:28px;
+
+      padding:36px;
+
+      border-radius:30px;
+
+      background:white;
+
+      border:
+        1px solid
+        var(--line);
+
+      box-shadow:
+        0 15px 45px
+        rgba(7,31,59,.07);
+    }
+
+    .form-heading{
+      margin-bottom:28px;
+    }
+
+    .form-heading .eyebrow{
+      color:var(--blue);
+    }
+
+    .form-heading h2{
+      margin:0;
+
+      color:var(--navy);
+
+      font-size:
+        clamp(
+          30px,
+          5vw,
+          45px
+        );
+    }
+
+    .form-heading p{
+      color:var(--text);
+      line-height:1.65;
+    }
+
+    .form-section{
+      margin-top:34px;
+      padding-top:30px;
+
+      border-top:
+        1px solid
+        var(--line);
+    }
+
+    .form-section:first-of-type{
+      padding-top:0;
+      border-top:0;
+    }
+
+    .form-section h3{
+      margin:
+        0 0 7px;
+
+      color:var(--navy);
+
+      font-size:22px;
+    }
+
+    .section-help{
+      margin:
+        0 0 20px;
+
+      color:var(--text);
+
+      font-size:14px;
+      line-height:1.55;
+    }
+
+    .form-grid{
+      display:grid;
+
+      grid-template-columns:
+        repeat(2,1fr);
+
+      gap:18px;
+    }
+
+    .field{
+      display:flex;
+      flex-direction:column;
+      gap:7px;
+    }
+
+    .field.full{
+      grid-column:
+        1 / -1;
+    }
+
+    label{
+      color:var(--navy);
+
+      font-size:14px;
+      font-weight:900;
+    }
+
+    .required{
+      color:var(--red);
+    }
+
+    input,
+    select,
+    textarea{
+      width:100%;
+
+      padding:14px 15px;
+
+      border:
+        1px solid
+        #cbdce9;
+
+      border-radius:14px;
+
+      color:#18334d;
+      background:white;
+
+      font:inherit;
+
+      outline:none;
+    }
+
+    input:focus,
+    select:focus,
+    textarea:focus{
+      border-color:var(--blue);
+
+      box-shadow:
+        0 0 0 3px
+        rgba(47,158,231,.12);
+    }
+
+    textarea{
+      min-height:120px;
+      resize:vertical;
+    }
+
+    /* =====================================
+       HELPER OPTIONS
+    ===================================== */
+
+    .option-grid{
+      display:grid;
+
+      grid-template-columns:
+        repeat(2,1fr);
+
+      gap:11px;
+    }
+
+    .helper-option{
+      position:relative;
+    }
+
+    .helper-option input{
+      position:absolute;
+      opacity:0;
+      pointer-events:none;
+    }
+
+    .helper-option label{
+      display:flex;
+
+      align-items:center;
+      gap:12px;
+
+      min-height:76px;
+
+      padding:14px;
+
+      border:
+        1px solid
+        var(--line);
+
+      border-radius:17px;
+
+      background:#fbfdff;
+
+      cursor:pointer;
+
+      transition:.18s ease;
+    }
+
+    .helper-option input:checked + label{
+      border-color:var(--blue);
+      background:var(--soft);
+
+      box-shadow:
+        0 0 0 2px
+        rgba(47,158,231,.08);
+    }
+
+    .option-icon{
+      font-size:28px;
+    }
+
+    .option-text strong{
+      display:block;
+
+      margin-bottom:3px;
+
+      color:var(--navy);
+    }
+
+    .option-text span{
+      display:block;
+
+      color:var(--text);
+
+      font-size:12px;
+      line-height:1.35;
+    }
+
+    /* =====================================
+       AVAILABILITY
+    ===================================== */
+
+    .availability-grid{
+      display:grid;
+
+      grid-template-columns:
+        repeat(3,1fr);
+
+      gap:10px;
+    }
+
+    .availability{
+      position:relative;
+    }
+
+    .availability input{
+      position:absolute;
+      opacity:0;
+    }
+
+    .availability label{
+      display:block;
+
+      height:100%;
+
+      padding:14px;
+
+      text-align:center;
+
+      border:
+        1px solid
+        var(--line);
+
+      border-radius:15px;
+
+      background:#fbfdff;
+
+      cursor:pointer;
+    }
+
+    .availability input:checked + label{
+      border-color:var(--blue);
+      background:var(--soft);
+    }
+
+    /* =====================================
+       SAFETY
+    ===================================== */
+
+    .safety-box{
+      margin-top:30px;
+
+      padding:22px;
+
+      border-radius:20px;
+
+      background:var(--soft);
+
+      border:
+        1px solid
+        #d4eaf8;
+    }
+
+    .safety-box strong{
+      display:block;
+
+      margin-bottom:7px;
+
+      color:var(--navy);
+    }
+
+    .safety-box p{
+      margin:0;
+
+      color:var(--text);
+
+      font-size:13px;
+      line-height:1.65;
+    }
+
+    /* =====================================
+       CONSENT
+    ===================================== */
+
+    .consent{
+      display:flex;
+
+      align-items:flex-start;
+      gap:11px;
+
+      margin-top:22px;
+    }
+
+    .consent input{
+      width:20px;
+      height:20px;
+
+      margin-top:2px;
+
+      flex:0 0 auto;
+    }
+
+    .consent label{
+      color:var(--text);
+
+      font-size:13px;
+      font-weight:600;
+
+      line-height:1.6;
+    }
+
+    /* =====================================
+       SUBMIT
+    ===================================== */
+
+    .submit-area{
+      margin-top:28px;
+    }
+
+    .submit-button{
+      display:inline-flex;
+
+      align-items:center;
+      justify-content:center;
+
+      width:100%;
+      min-height:55px;
+
+      padding:0 25px;
+
+      border:0;
+      border-radius:999px;
+
+      color:#172331;
+
+      background:
+        linear-gradient(
+          135deg,
+          var(--gold),
+          var(--gold-light)
+        );
+
+      font-size:16px;
+      font-weight:900;
+
+      cursor:pointer;
+
+      box-shadow:
+        0 10px 25px
+        rgba(242,184,75,.2);
+    }
+
+    .submit-note{
+      margin:
+        12px 0 0;
+
+      text-align:center;
+
+      color:#71879a;
+
+      font-size:12px;
+      line-height:1.5;
+    }
+
+    /* =====================================
+       SUCCESS
+    ===================================== */
+
+    .success-panel{
+      display:none;
+
+      margin-top:28px;
+
+      padding:35px;
+
+      text-align:center;
+
+      border-radius:28px;
+
+      color:white;
+
+      background:
+        linear-gradient(
+          145deg,
+          #126a53,
+          #27855f
+        );
+    }
+
+    .success-panel h2{
+      margin:
+        10px 0;
+
+      color:white;
+
+      font-size:36px;
+    }
+
+    .success-panel p{
+      max-width:620px;
+
+      margin:auto;
+
+      color:#e9fff6;
+
+      line-height:1.7;
+    }
+
+    .success-icon{
+      font-size:45px;
+    }
+
+    .helper-number{
+      display:inline-block;
+
+      margin-top:18px;
+
+      padding:
+        10px 15px;
+
+      border-radius:999px;
+
+      background:
+        rgba(255,255,255,.14);
+
+      font-weight:900;
+    }
+
+    @media(max-width:700px){
+
+      .helper-hero{
+        padding:
+          43px 22px;
+      }
+
+      .helper-form{
+        padding:
+          27px 20px;
+      }
+
+      .mission-strip,
+      .form-grid,
+      .option-grid,
+      .availability-grid{
+        grid-template-columns:1fr;
+      }
+
+    }
+
+  </style>
+
+</head>
+
+
+<body>
+
+
+<!-- =====================================
+     HEADER
+===================================== -->
+
+<header class="topbar">
+
+  <nav class="nav">
+
+    <a
+      class="brand"
+      href="index.html"
+    >
+      Hugslinks
+    </a>
+
+
+    <div
+      class="seal"
+      aria-label="HUGS house heart logo"
+    >
+
+      <img
+        src="assets/HUGS_Header_Logo_Transparent.png"
+        alt="HUGS logo"
+        class="header-logo"
+      >
+
+    </div>
+
+
+    <button
+      class="menu"
+      type="button"
+      aria-expanded="false"
+      aria-label="Open navigation menu"
+    >
+      Menu
+    </button>
+
+
+    <div class="navlinks">
+
+      <a href="index.html">Home</a>
+
+      <a href="shop.html">Shop</a>
+
+      <a href="hugs-cards.html">
+        HUGS Cards
+      </a>
+
+      <a href="art-community.html">
+        Art
+      </a>
+
+      <a href="food-support.html">
+        Food
+      </a>
+
+      <a href="housing-help.html">
+        Housing
+      </a>
+
+      <a href="business-services.html">
+        Business
+      </a>
+
+      <a href="help-app.html">
+        Help App
+      </a>
+
+      <a href="resources.html">
+        Resources
+      </a>
+
+      <a href="about.html">
+        About
+      </a>
+
+      <a href="contact.html">
+        Contact
+      </a>
+
+    </div>
+
+  </nav>
+
+</header>
+
+
+<main class="helper-page">
+
+
+<!-- =====================================
+     HERO
+===================================== -->
+
+<section class="helper-hero">
+
+  <div class="eyebrow">
+    Give a HUG
+  </div>
+
+  <h1>
+    Become a<br>
+    HUGS Helper.
+  </h1>
+
+  <p>
+
+    A HUGS Helper turns connection into action.
+    Tell us how you may be able to contribute your
+    time, transportation, skills or community support
+    to approved HUG Missions.
+
+  </p>
+
+</section>
+
+
+<!-- =====================================
+     MISSION
+===================================== -->
+
+<section class="mission-strip">
+
+
+  <article class="mission-card">
+
+    <span>🤝</span>
+
+    <strong>
+      Help Locally
+    </strong>
+
+    <p>
+      Participate in approved requests where
+      practical assistance can make a difference.
+    </p>
+
+  </article>
+
+
+  <article class="mission-card">
+
+    <span>🚲</span>
+
+    <strong>
+      Pickup & Delivery
+    </strong>
+
+    <p>
+      Help move food, supplies or approved
+      contributions from point A to point B.
+    </p>
+
+  </article>
+
+
+  <article class="mission-card">
+
+    <span>❤️</span>
+
+    <strong>
+      Use Your Skills
+    </strong>
+
+    <p>
+      Community support can include useful skills,
+      knowledge, creativity and problem solving.
+    </p>
+
+  </article>
+
+
+</section>
+
+
+<!-- =====================================
+     FORM
+===================================== -->
+
+<form
+  class="helper-form"
+  id="helperForm"
+  name="hugs-helper"
+  method="POST"
+  data-netlify="true"
+  netlify-honeypot="bot-field"
+>
+
+  <input
+    type="hidden"
+    name="form-name"
+    value="hugs-helper"
+  >
+
+  <p style="display:none;">
+
+    <label>
+      Do not fill this out:
+      <input name="bot-field">
+    </label>
+
+  </p>
+
+
+  <div class="form-heading">
+
+    <div class="eyebrow">
+      Helper Registration
+    </div>
+
+    <h2>
+      How would you like to help?
+    </h2>
+
+    <p>
+
+      This first form tells HUGSLinks about your
+      interest and availability. Registration does
+      not automatically assign you to a HUG Mission.
+
+    </p>
+
+  </div>
+
+
+  <!-- CONTACT -->
+
+  <section class="form-section">
+
+    <h3>
+      About you
+    </h3>
+
+    <p class="section-help">
+      Give us a way to contact you about possible
+      HUG Missions.
+    </p>
+
+
+    <div class="form-grid">
+
+
+      <div class="field">
+
+        <label for="firstName">
+          First name
+          <span class="required">*</span>
+        </label>
+
+        <input
+          id="firstName"
+          name="first_name"
+          type="text"
+          autocomplete="given-name"
+          required
+        >
+
+      </div>
+
+
+      <div class="field">
+
+        <label for="lastName">
+          Last name
+          <span class="required">*</span>
+        </label>
+
+        <input
+          id="lastName"
+          name="last_name"
+          type="text"
+          autocomplete="family-name"
+          required
+        >
+
+      </div>
+
+
+      <div class="field">
+
+        <label for="email">
+          Email
+          <span class="required">*</span>
+        </label>
+
+        <input
+          id="email"
+          name="email"
+          type="email"
+          autocomplete="email"
+          required
+        >
+
+      </div>
+
+
+      <div class="field">
+
+        <label for="phone">
+          Phone
+        </label>
+
+        <input
+          id="phone"
+          name="phone"
+          type="tel"
+          autocomplete="tel"
+        >
+
+      </div>
+
+
+    </div>
+
+  </section>
+
+
+  <!-- AREA -->
+
+  <section class="form-section">
+
+    <h3>
+      Where could you help?
+    </h3>
+
+    <p class="section-help">
+
+      We only need your general service area at
+      this stage. Do not enter your full home address.
+
+    </p>
+
+
+    <div class="form-grid">
+
+
+      <div class="field">
+
+        <label for="city">
+          City
+          <span class="required">*</span>
+        </label>
+
+        <input
+          id="city"
+          name="city"
+          type="text"
+          required
+        >
+
+      </div>
+
+
+      <div class="field">
+
+        <label for="area">
+          Borough / Area
+        </label>
+
+        <input
+          id="area"
+          name="borough_area"
+          type="text"
+          placeholder="Example: Queens"
+        >
+
+      </div>
+
+
+      <div class="field">
+
+        <label for="zip">
+          ZIP code
+        </label>
+
+        <input
+          id="zip"
+          name="zip_code"
+          type="text"
+          inputmode="numeric"
+          maxlength="10"
+        >
+
+      </div>
+
+
+      <div class="field">
+
+        <label for="travelDistance">
+          Comfortable travel range
+        </label>
+
+        <select
+          id="travelDistance"
+          name="travel_range"
+        >
+
+          <option value="">
+            Select
+          </option>
+
+          <option value="Neighborhood">
+            My neighborhood
+          </option>
+
+          <option value="3 miles">
+            About 3 miles
+          </option>
+
+          <option value="5 miles">
+            About 5 miles
+          </option>
+
+          <option value="10 miles">
+            About 10 miles
+          </option>
+
+          <option value="Flexible">
+            Flexible
+          </option>
+
+        </select>
+
+      </div>
+
+
+    </div>
+
+  </section>
+
+
+  <!-- HELP TYPES -->
+
+  <section class="form-section">
+
+    <h3>
+      What can you help with?
+      <span class="required">*</span>
+    </h3>
+
+    <p class="section-help">
+      Select all that apply.
+    </p>
+
+
+    <div class="option-grid">
+
+
+      <div class="helper-option">
+
+        <input
+          type="checkbox"
+          id="food"
+          name="help_types"
+          value="Food Pickup"
+        >
+
+        <label for="food">
+
+          <span class="option-icon">
+            🥗
+          </span>
+
+          <span class="option-text">
+
+            <strong>
+              Food Pickup
+            </strong>
+
+            <span>
+              Food or community-partner pickup
+            </span>
+
+          </span>
+
+        </label>
+
+      </div>
+
+
+      <div class="helper-option">
+
+        <input
+          type="checkbox"
+          id="delivery"
+          name="help_types"
+          value="Local Delivery"
+        >
+
+        <label for="delivery">
+
+          <span class="option-icon">
+            🚲
+          </span>
+
+          <span class="option-text">
+
+            <strong>
+              Local Delivery
+            </strong>
+
+            <span>
+              Deliver approved food or supplies
+            </span>
+
+          </span>
+
+        </label>
+
+      </div>
+
+
+      <div class="helper-option">
+
+        <input
+          type="checkbox"
+          id="shopping"
+          name="help_types"
+          value="Essential Shopping"
+        >
+
+        <label for="shopping">
+
+          <span class="option-icon">
+            🛍️
+          </span>
+
+          <span class="option-text">
+
+            <strong>
+              Essential Shopping
+            </strong>
+
+            <span>
+              Grocery or essential-item support
+            </span>
+
+          </span>
+
+        </label>
+
+      </div>
+
+
+      <div class="helper-option">
+
+        <input
+          type="checkbox"
+          id="resources"
+          name="help_types"
+          value="Resource Support"
+        >
+
+        <label for="resources">
+
+          <span class="option-icon">
+            📋
+          </span>
+
+          <span class="option-text">
+
+            <strong>
+              Resource Support
+            </strong>
+
+            <span>
+              Help people locate useful information
+            </span>
+
+          </span>
+
+        </label>
+
+      </div>
+
+
+      <div class="helper-option">
+
+        <input
+          type="checkbox"
+          id="creative"
+          name="help_types"
+          value="Creative Skills"
+        >
+
+        <label for="creative">
+
+          <span class="option-icon">
+            🎨
+          </span>
+
+          <span class="option-text">
+
+            <strong>
+              Creative Skills
+            </strong>
+
+            <span>
+              Art, design, media or creative support
+            </span>
+
+          </span>
+
+        </label>
+
+      </div>
+
+
+      <div class="helper-option">
+
+        <input
+          type="checkbox"
+          id="business"
+          name="help_types"
+          value="Business Skills"
+        >
+
+        <label for="business">
+
+          <span class="option-icon">
+            💼
+          </span>
+
+          <span class="option-text">
+
+            <strong>
+              Business Skills
+            </strong>
+
+            <span>
+              Entrepreneurship or practical skills
+            </span>
+
+          </span>
+
+        </label>
+
+      </div>
+
+
+      <div class="helper-option">
+
+        <input
+          type="checkbox"
+          id="community"
+          name="help_types"
+          value="Community Support"
+        >
+
+        <label for="community">
+
+          <span class="option-icon">
+            🤝
+          </span>
+
+          <span class="option-text">
+
+            <strong>
+              Community Support
+            </strong>
+
+            <span>
+              Other approved community assistance
+            </span>
+
+          </span>
+
+        </label>
+
+      </div>
+
+
+      <div class="helper-option">
+
+        <input
+          type="checkbox"
+          id="partner"
+          name="help_types"
+          value="Business Partner Pickup"
+        >
+
+        <label for="partner">
+
+          <span class="option-icon">
+            🏪
+          </span>
+
+          <span class="option-text">
+
+            <strong>
+              Partner Pickup
+            </strong>
+
+            <span>
+              Pick up from participating businesses
+            </span>
+
+          </span>
+
+        </label>
+
+      </div>
+
+
+    </div>
+
+  </section>
+
+
+  <!-- TRANSPORTATION -->
+
+  <section class="form-section">
+
+    <h3>
+      Transportation
+    </h3>
+
+    <p class="section-help">
+
+      Transportation is not required to become a
+      Helper. This helps us understand what types of
+      missions may fit you.
+
+    </p>
+
+
+    <div class="form-grid">
+
+
+      <div class="field">
+
+        <label for="transportation">
+          Transportation available
+        </label>
+
+        <select
+          id="transportation"
+          name="transportation"
+        >
+
+          <option value="">
+            Select
+          </option>
+
+          <option value="Walking">
+            Walking
+          </option>
+
+          <option value="Bicycle">
+            Bicycle
+          </option>
+
+          <option value="E-bike">
+            E-bike
+          </option>
+
+          <option value="Public Transit">
+            Public transit
+          </option>
+
+          <option value="Car">
+            Car
+          </option>
+
+          <option value="Van">
+            Van
+          </option>
+
+          <option value="Other">
+            Other
+          </option>
+
+          <option value="None">
+            No transportation
+          </option>
+
+        </select>
+
+      </div>
+
+
+      <div class="field">
+
+        <label for="carry">
+          Comfortable carrying
+        </label>
+
+        <select
+          id="carry"
+          name="carrying_capacity"
+        >
+
+          <option value="">
+            Select
+          </option>
+
+          <option value="Small bag">
+            Small bag
+          </option>
+
+          <option value="Several grocery bags">
+            Several grocery bags
+          </option>
+
+          <option value="Medium supplies">
+            Medium supplies
+          </option>
+
+          <option value="Larger items">
+            Larger items
+          </option>
+
+          <option value="Not applicable">
+            Not applicable
+          </option>
+
+        </select>
+
+      </div>
+
+
+    </div>
+
+  </section>
+
+
+  <!-- AVAILABILITY -->
+
+  <section class="form-section">
+
+    <h3>
+      General availability
+    </h3>
+
+    <p class="section-help">
+      Select all that generally apply.
+    </p>
+
+
+    <div class="availability-grid">
+
+
+      <div class="availability">
+
+        <input
+          type="checkbox"
+          id="weekday"
+          name="availability"
+          value="Weekdays"
+        >
+
+        <label for="weekday">
+          Weekdays
+        </label>
+
+      </div>
+
+
+      <div class="availability">
+
+        <input
+          type="checkbox"
+          id="weekend"
+          name="availability"
+          value="Weekends"
+        >
+
+        <label for="weekend">
+          Weekends
+        </label>
+
+      </div>
+
+
+      <div class="availability">
+
+        <input
+          type="checkbox"
+          id="flexible"
+          name="availability"
+          value="Flexible"
+        >
+
+        <label for="flexible">
+          Flexible
+        </label>
+
+      </div>
+
+
+    </div>
+
+  </section>
+
+
+  <!-- ABOUT -->
+
+  <section class="form-section">
+
+    <h3>
+      Tell us a little about yourself
+    </h3>
+
+
+    <div class="field full">
+
+      <label for="about">
+        Skills, experience or anything useful
+        for HUGS to know
+      </label>
+
+      <textarea
+        id="about"
+        name="helper_notes"
+        maxlength="1500"
+        placeholder="Tell us about useful skills, community experience or the kinds of HUG Missions you would be interested in."
+      ></textarea>
+
+    </div>
+
+  </section>
+
+
+  <!-- SAFETY -->
+
+  <div class="safety-box">
+
+    <strong>
+      HUGS Helper Safety & Privacy
+    </strong>
+
+    <p>
+
+      This registration is only an expression of
+      interest. Do not provide Social Security numbers,
+      banking information, passwords, identification
+      documents or other highly sensitive information
+      on this form. HUGSLinks may establish additional
+      verification and safety requirements before
+      certain types of missions become available.
+
+    </p>
+
+  </div>
+
+
+  <!-- CONSENT -->
+
+  <div class="consent">
+
+    <input
+      id="consent"
+      name="helper_consent"
+      type="checkbox"
+      value="Yes"
+      required
+    >
+
+    <label for="consent">
+
+      I understand that registering as a HUGS Helper
+      does not guarantee assignment to a mission.
+      I agree that HUGSLinks may contact me about
+      potential community-support opportunities.
+
+    </label>
+
+  </div>
+
+
+  <div class="submit-area">
+
+    <button
+      class="submit-button"
+      type="submit"
+    >
+      Join the HUGS Helper Community ❤️
+    </button>
+
+    <p class="submit-note">
+
+      HUGSLinks can review registrations before
+      Helpers participate in approved missions.
+
+    </p>
+
+  </div>
+
+
+</form>
+
+
+<!-- =====================================
+     SUCCESS
+===================================== -->
+
+<section
+  class="success-panel"
+  id="successPanel"
+  aria-live="polite"
+>
+
+  <div class="success-icon">
+    ❤️
+  </div>
+
+  <h2>
+    Welcome to HUGS.
+  </h2>
+
+  <p>
+
+    Your HUGS Helper registration has been received.
+    Keep your Helper reference number. Registration
+    will be reviewed before participation in an
+    approved HUG Mission.
+
+  </p>
+
+  <div
+    class="helper-number"
+    id="helperNumber"
+  >
+  </div>
+
+</section>
+
+
+</main>
+
+
+<footer class="footer">
+
+  <div>
+    © 2026 HUGSLinks · Help Under Good Service
+  </div>
+
+  <div>
+    Give a HUG. Get a HUG.
+  </div>
+
+</footer>
+
+
+<script src="script.js"></script>
+
+
+<script>
+
+  const helperForm =
+    document.getElementById(
+      "helperForm"
+    );
+
+  const successPanel =
+    document.getElementById(
+      "successPanel"
+    );
+
+  const helperNumber =
+    document.getElementById(
+      "helperNumber"
+    );
+
+
+  function createHelperNumber(){
+
+    const year =
+      new Date().getFullYear();
+
+    const random =
+      Math.floor(
+        100000 +
+        Math.random() * 900000
+      );
+
+    return "HELPER-" +
+      year +
+      "-" +
+      random;
+  }
+
+
+  helperForm.addEventListener(
+    "submit",
+    async function(event){
+
+      event.preventDefault();
+
+
+      if(
+        !helperForm.checkValidity()
+      ){
+
+        helperForm.reportValidity();
+
+        return;
+      }
+
+
+      const selectedHelp =
+        helperForm.querySelectorAll(
+          'input[name="help_types"]:checked'
+        );
+
+
+      if(
+        selectedHelp.length === 0
+      ){
+
+        alert(
+          "Please select at least one way you can help."
+        );
+
+        return;
+      }
+
+
+      const submitButton =
+        helperForm.querySelector(
+          ".submit-button"
+        );
+
+
+      submitButton.disabled =
+        true;
+
+      submitButton.textContent =
+        "Submitting Registration...";
+
+
+      const helperId =
+        createHelperNumber();
+
+
+      const formData =
+        new FormData(
+          helperForm
+        );
+
+
+      formData.append(
+        "helper_id",
+        helperId
+      );
+
+
+      try{
+
+        const response =
+          await fetch(
+            window.location.pathname,
+            {
+              method:"POST",
+
+              headers:{
+                "Content-Type":
+                  "application/x-www-form-urlencoded"
+              },
+
+              body:
+                new URLSearchParams(
+                  formData
+                ).toString()
+            }
+          );
+
+
+        if(!response.ok){
+
+          throw new Error(
+            "Submission failed."
+          );
+
+        }
+
+
+        helperNumber.textContent =
+          helperId;
+
+
+        helperForm.style.display =
+          "none";
+
+
+        successPanel.style.display =
+          "block";
+
+
+        successPanel.scrollIntoView({
+          behavior:"smooth",
+          block:"center"
+        });
+
+
+      }catch(error){
+
+        alert(
+          "We could not submit your HUGS Helper registration. Please try again."
+        );
+
+
+        submitButton.disabled =
+          false;
+
+        submitButton.textContent =
+          "Join the HUGS Helper Community ❤️";
+      }
+
+    }
+  );
+
+</script>
+
+
+</body>
+</html>
