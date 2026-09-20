@@ -1,0 +1,1713 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8">
+
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1"
+  >
+
+  <title>Request a HUG | HUGS Help</title>
+
+  <meta
+    name="description"
+    content="Request practical community assistance through HUGS Help. Submit a HUG Request for food pickup, essential shopping, supplies, housing navigation, resource navigation and other support."
+  >
+
+  <link rel="stylesheet" href="styles.css">
+
+  <style>
+
+    :root{
+      --navy:#071f3b;
+      --navy2:#0d3d70;
+      --blue:#2f9ee7;
+      --sky:#79d4ff;
+      --gold:#f2b84b;
+      --gold-light:#f8d979;
+      --white:#ffffff;
+      --soft:#eef7ff;
+      --cream:#faf7f1;
+      --text:#51677b;
+      --line:#dce8f2;
+      --green:#27855f;
+      --red:#a63838;
+    }
+
+    *{
+      box-sizing:border-box;
+    }
+
+    html{
+      scroll-behavior:smooth;
+    }
+
+    body{
+      margin:0;
+
+      background:
+        linear-gradient(
+          180deg,
+          #ffffff 0%,
+          #f5faff 55%,
+          #faf7f1 100%
+        );
+    }
+
+    .request-page{
+      width:min(1000px, calc(100% - 28px));
+      margin:auto;
+      padding:32px 0 80px;
+    }
+
+    /* =====================================
+       HERO
+    ===================================== */
+
+    .request-hero{
+      padding:52px 34px;
+
+      border-radius:32px;
+
+      color:white;
+
+      background:
+        radial-gradient(
+          circle at 90% 5%,
+          rgba(47,158,231,.48),
+          transparent 35%
+        ),
+        linear-gradient(
+          145deg,
+          #071f3b,
+          #0d3d70
+        );
+
+      box-shadow:
+        0 25px 65px
+        rgba(7,31,59,.17);
+    }
+
+    .eyebrow{
+      margin-bottom:13px;
+
+      color:var(--gold-light);
+
+      font-size:12px;
+      font-weight:900;
+
+      letter-spacing:.16em;
+      text-transform:uppercase;
+    }
+
+    .request-hero h1{
+      margin:0;
+
+      color:white;
+
+      font-size:
+        clamp(
+          43px,
+          7vw,
+          72px
+        );
+
+      line-height:.95;
+      letter-spacing:-.045em;
+    }
+
+    .request-hero p{
+      max-width:720px;
+
+      margin:22px 0 0;
+
+      color:#e5f2ff;
+
+      font-size:18px;
+      line-height:1.7;
+    }
+
+    /* =====================================
+       IMPORTANT NOTE
+    ===================================== */
+
+    .notice{
+      margin-top:24px;
+
+      padding:19px 21px;
+
+      border-radius:19px;
+
+      background:#fff8e8;
+
+      border:
+        1px solid
+        #f0d28d;
+
+      color:#62532f;
+
+      font-size:14px;
+      line-height:1.65;
+    }
+
+    .notice strong{
+      color:var(--navy);
+    }
+
+    /* =====================================
+       FORM
+    ===================================== */
+
+    .request-form{
+      margin-top:28px;
+
+      padding:36px;
+
+      border-radius:30px;
+
+      background:white;
+
+      border:
+        1px solid
+        var(--line);
+
+      box-shadow:
+        0 15px 45px
+        rgba(7,31,59,.07);
+    }
+
+    .form-heading{
+      margin-bottom:28px;
+    }
+
+    .form-heading .eyebrow{
+      color:var(--blue);
+    }
+
+    .form-heading h2{
+      margin:0;
+
+      color:var(--navy);
+
+      font-size:
+        clamp(
+          30px,
+          5vw,
+          45px
+        );
+    }
+
+    .form-heading p{
+      color:var(--text);
+      line-height:1.65;
+    }
+
+    .form-section{
+      margin-top:34px;
+      padding-top:30px;
+
+      border-top:
+        1px solid
+        var(--line);
+    }
+
+    .form-section:first-of-type{
+      border-top:0;
+      padding-top:0;
+    }
+
+    .form-section h3{
+      margin:
+        0 0 7px;
+
+      color:var(--navy);
+
+      font-size:22px;
+    }
+
+    .section-help{
+      margin:
+        0 0 20px;
+
+      color:var(--text);
+
+      font-size:14px;
+      line-height:1.55;
+    }
+
+    .form-grid{
+      display:grid;
+
+      grid-template-columns:
+        repeat(2,1fr);
+
+      gap:18px;
+    }
+
+    .field{
+      display:flex;
+      flex-direction:column;
+      gap:7px;
+    }
+
+    .field.full{
+      grid-column:
+        1 / -1;
+    }
+
+    label,
+    legend{
+      color:var(--navy);
+
+      font-size:14px;
+      font-weight:900;
+    }
+
+    .required{
+      color:var(--red);
+    }
+
+    input,
+    select,
+    textarea{
+      width:100%;
+
+      padding:14px 15px;
+
+      border:
+        1px solid
+        #cbdce9;
+
+      border-radius:14px;
+
+      color:#18334d;
+      background:white;
+
+      font:inherit;
+
+      outline:none;
+    }
+
+    input:focus,
+    select:focus,
+    textarea:focus{
+      border-color:var(--blue);
+
+      box-shadow:
+        0 0 0 3px
+        rgba(47,158,231,.12);
+    }
+
+    textarea{
+      min-height:130px;
+      resize:vertical;
+    }
+
+    .small-note{
+      color:#71879a;
+
+      font-size:12px;
+      line-height:1.5;
+    }
+
+    /* =====================================
+       REQUEST TYPE
+    ===================================== */
+
+    .type-grid{
+      display:grid;
+
+      grid-template-columns:
+        repeat(2,1fr);
+
+      gap:11px;
+    }
+
+    .type-option{
+      position:relative;
+    }
+
+    .type-option input{
+      position:absolute;
+
+      opacity:0;
+      pointer-events:none;
+    }
+
+    .type-option label{
+      display:flex;
+
+      align-items:center;
+      gap:12px;
+
+      min-height:72px;
+
+      padding:14px;
+
+      border:
+        1px solid
+        var(--line);
+
+      border-radius:17px;
+
+      background:#fbfdff;
+
+      cursor:pointer;
+
+      transition:
+        .18s ease;
+    }
+
+    .type-option label:hover{
+      border-color:
+        #9ecfed;
+    }
+
+    .type-option input:checked + label{
+      color:var(--navy);
+
+      border-color:var(--blue);
+
+      background:var(--soft);
+
+      box-shadow:
+        0 0 0 2px
+        rgba(47,158,231,.08);
+    }
+
+    .type-icon{
+      font-size:27px;
+    }
+
+    .type-text strong{
+      display:block;
+
+      color:var(--navy);
+
+      margin-bottom:3px;
+    }
+
+    .type-text span{
+      display:block;
+
+      color:var(--text);
+
+      font-size:12px;
+      line-height:1.35;
+    }
+
+    /* =====================================
+       URGENCY
+    ===================================== */
+
+    .urgency-grid{
+      display:grid;
+
+      grid-template-columns:
+        repeat(3,1fr);
+
+      gap:10px;
+    }
+
+    .urgency-option{
+      position:relative;
+    }
+
+    .urgency-option input{
+      position:absolute;
+      opacity:0;
+    }
+
+    .urgency-option label{
+      display:block;
+
+      height:100%;
+
+      padding:14px;
+
+      border:
+        1px solid
+        var(--line);
+
+      border-radius:15px;
+
+      text-align:center;
+
+      background:#fbfdff;
+
+      cursor:pointer;
+    }
+
+    .urgency-option input:checked + label{
+      border-color:var(--blue);
+      background:var(--soft);
+    }
+
+    /* =====================================
+       PRIVACY
+    ===================================== */
+
+    .privacy-box{
+      margin-top:30px;
+
+      padding:21px;
+
+      border-radius:19px;
+
+      background:var(--soft);
+
+      border:
+        1px solid
+        #d4eaf8;
+    }
+
+    .privacy-box strong{
+      display:block;
+
+      margin-bottom:7px;
+
+      color:var(--navy);
+    }
+
+    .privacy-box p{
+      margin:0;
+
+      color:var(--text);
+
+      font-size:13px;
+      line-height:1.65;
+    }
+
+    /* =====================================
+       CONSENT
+    ===================================== */
+
+    .consent{
+      display:flex;
+
+      gap:11px;
+
+      margin-top:23px;
+
+      align-items:flex-start;
+    }
+
+    .consent input{
+      width:20px;
+      height:20px;
+
+      margin-top:2px;
+
+      flex:0 0 auto;
+    }
+
+    .consent label{
+      color:var(--text);
+
+      font-size:13px;
+      font-weight:600;
+
+      line-height:1.6;
+    }
+
+    /* =====================================
+       SUBMIT
+    ===================================== */
+
+    .submit-area{
+      margin-top:28px;
+    }
+
+    .submit-button{
+      display:inline-flex;
+
+      align-items:center;
+      justify-content:center;
+
+      width:100%;
+      min-height:55px;
+
+      padding:0 25px;
+
+      border:0;
+      border-radius:999px;
+
+      color:#172331;
+
+      background:
+        linear-gradient(
+          135deg,
+          var(--gold),
+          var(--gold-light)
+        );
+
+      font-size:16px;
+      font-weight:900;
+
+      cursor:pointer;
+
+      box-shadow:
+        0 10px 25px
+        rgba(242,184,75,.2);
+    }
+
+    .submit-button:hover{
+      transform:
+        translateY(-1px);
+    }
+
+    .submit-note{
+      margin:
+        12px 0 0;
+
+      text-align:center;
+
+      color:#71879a;
+
+      font-size:12px;
+      line-height:1.5;
+    }
+
+    /* =====================================
+       AFTER SUBMISSION
+    ===================================== */
+
+    .success-panel{
+      display:none;
+
+      margin-top:28px;
+
+      padding:35px;
+
+      text-align:center;
+
+      border-radius:28px;
+
+      background:
+        linear-gradient(
+          145deg,
+          #126a53,
+          #27855f
+        );
+
+      color:white;
+    }
+
+    .success-panel h2{
+      margin:
+        10px 0;
+
+      color:white;
+
+      font-size:36px;
+    }
+
+    .success-panel p{
+      max-width:620px;
+
+      margin:
+        0 auto;
+
+      color:#e9fff6;
+
+      line-height:1.7;
+    }
+
+    .success-icon{
+      font-size:45px;
+    }
+
+    .request-number{
+      display:inline-block;
+
+      margin-top:18px;
+
+      padding:
+        10px 15px;
+
+      border-radius:999px;
+
+      background:
+        rgba(255,255,255,.14);
+
+      font-weight:900;
+    }
+
+    /* =====================================
+       MOBILE
+    ===================================== */
+
+    @media(max-width:700px){
+
+      .request-hero{
+        padding:
+          43px 22px;
+      }
+
+      .request-form{
+        padding:
+          27px 20px;
+      }
+
+      .form-grid,
+      .type-grid,
+      .urgency-grid{
+        grid-template-columns:1fr;
+      }
+
+    }
+
+  </style>
+
+</head>
+
+
+<body>
+
+
+<!-- =====================================
+     HEADER
+===================================== -->
+
+<header class="topbar">
+
+  <nav class="nav">
+
+    <a
+      class="brand"
+      href="index.html"
+    >
+      Hugslinks
+    </a>
+
+
+    <div
+      class="seal"
+      aria-label="HUGS house heart logo"
+    >
+
+      <img
+        src="assets/HUGS_Header_Logo_Transparent.png"
+        alt="HUGS logo"
+        class="header-logo"
+      >
+
+    </div>
+
+
+    <button
+      class="menu"
+      type="button"
+      aria-expanded="false"
+      aria-label="Open navigation menu"
+    >
+      Menu
+    </button>
+
+
+    <div class="navlinks">
+
+      <a href="index.html">Home</a>
+
+      <a href="shop.html">Shop</a>
+
+      <a href="hugs-cards.html">
+        HUGS Cards
+      </a>
+
+      <a href="art-community.html">
+        Art
+      </a>
+
+      <a href="food-support.html">
+        Food
+      </a>
+
+      <a href="housing-help.html">
+        Housing
+      </a>
+
+      <a href="business-services.html">
+        Business
+      </a>
+
+      <a href="help-app.html">
+        Help App
+      </a>
+
+      <a href="resources.html">
+        Resources
+      </a>
+
+      <a href="about.html">
+        About
+      </a>
+
+      <a href="contact.html">
+        Contact
+      </a>
+
+    </div>
+
+  </nav>
+
+</header>
+
+
+<main class="request-page">
+
+
+<!-- =====================================
+     HERO
+===================================== -->
+
+<section class="request-hero">
+
+  <div class="eyebrow">
+    Call on HUGS
+  </div>
+
+  <h1>
+    Request a HUG.
+  </h1>
+
+  <p>
+
+    Tell us what kind of practical assistance you are
+    looking for. HUGSLinks can review your request and
+    determine whether we can connect you with information,
+    resources, a participating community partner or a
+    HUGS Helper.
+
+  </p>
+
+</section>
+
+
+<div class="notice">
+
+  <strong>
+    HUGS Help is not an emergency service.
+  </strong>
+
+  If you are experiencing an immediate emergency or
+  life-threatening situation, contact the appropriate
+  local emergency service. Please do not enter Social
+  Security numbers, passwords, banking information or
+  other highly sensitive information on this form.
+
+</div>
+
+
+<!-- =====================================
+     FORM
+===================================== -->
+
+<form
+  class="request-form"
+  id="hugRequestForm"
+  name="hug-request"
+  method="POST"
+  data-netlify="true"
+  netlify-honeypot="bot-field"
+>
+
+  <input
+    type="hidden"
+    name="form-name"
+    value="hug-request"
+  >
+
+  <p style="display:none;">
+
+    <label>
+      Do not fill this out:
+      <input name="bot-field">
+    </label>
+
+  </p>
+
+
+  <div class="form-heading">
+
+    <div class="eyebrow">
+      HUG Request
+    </div>
+
+    <h2>
+      How can HUGS help?
+    </h2>
+
+    <p>
+      Complete the information below. Submitting a
+      request does not automatically make it public
+      or assign it to a Helper.
+    </p>
+
+  </div>
+
+
+  <!-- REQUEST TYPE -->
+
+  <section class="form-section">
+
+    <h3>
+      What kind of help are you requesting?
+      <span class="required">*</span>
+    </h3>
+
+    <p class="section-help">
+      Choose the option that most closely matches
+      what you need.
+    </p>
+
+
+    <div class="type-grid">
+
+
+      <div class="type-option">
+
+        <input
+          type="radio"
+          id="foodPickup"
+          name="request_type"
+          value="Food Pickup"
+          required
+        >
+
+        <label for="foodPickup">
+
+          <span class="type-icon">
+            🥗
+          </span>
+
+          <span class="type-text">
+
+            <strong>
+              Food Pickup
+            </strong>
+
+            <span>
+              Food or prepared-meal pickup assistance
+            </span>
+
+          </span>
+
+        </label>
+
+      </div>
+
+
+      <div class="type-option">
+
+        <input
+          type="radio"
+          id="shopping"
+          name="request_type"
+          value="Essential Shopping"
+        >
+
+        <label for="shopping">
+
+          <span class="type-icon">
+            🛍️
+          </span>
+
+          <span class="type-text">
+
+            <strong>
+              Essential Shopping
+            </strong>
+
+            <span>
+              Groceries or basic essential items
+            </span>
+
+          </span>
+
+        </label>
+
+      </div>
+
+
+      <div class="type-option">
+
+        <input
+          type="radio"
+          id="supplies"
+          name="request_type"
+          value="Supply Delivery"
+        >
+
+        <label for="supplies">
+
+          <span class="type-icon">
+            📦
+          </span>
+
+          <span class="type-text">
+
+            <strong>
+              Supply Delivery
+            </strong>
+
+            <span>
+              Available supplies or basic necessities
+            </span>
+
+          </span>
+
+        </label>
+
+      </div>
+
+
+      <div class="type-option">
+
+        <input
+          type="radio"
+          id="partnerPickup"
+          name="request_type"
+          value="Community Partner Pickup"
+        >
+
+        <label for="partnerPickup">
+
+          <span class="type-icon">
+            🏪
+          </span>
+
+          <span class="type-text">
+
+            <strong>
+              Partner Pickup
+            </strong>
+
+            <span>
+              Pickup from a participating business
+              or community partner
+            </span>
+
+          </span>
+
+        </label>
+
+      </div>
+
+
+      <div class="type-option">
+
+        <input
+          type="radio"
+          id="housing"
+          name="request_type"
+          value="Housing Navigation"
+        >
+
+        <label for="housing">
+
+          <span class="type-icon">
+            🏠
+          </span>
+
+          <span class="type-text">
+
+            <strong>
+              Housing Navigation
+            </strong>
+
+            <span>
+              Help finding housing information
+              and official resources
+            </span>
+
+          </span>
+
+        </label>
+
+      </div>
+
+
+      <div class="type-option">
+
+        <input
+          type="radio"
+          id="resources"
+          name="request_type"
+          value="Resource Navigation"
+        >
+
+        <label for="resources">
+
+          <span class="type-icon">
+            📋
+          </span>
+
+          <span class="type-text">
+
+            <strong>
+              Resource Navigation
+            </strong>
+
+            <span>
+              Help locating an appropriate service
+              or community resource
+            </span>
+
+          </span>
+
+        </label>
+
+      </div>
+
+
+      <div class="type-option">
+
+        <input
+          type="radio"
+          id="creative"
+          name="request_type"
+          value="Creative Support"
+        >
+
+        <label for="creative">
+
+          <span class="type-icon">
+            🎨
+          </span>
+
+          <span class="type-text">
+
+            <strong>
+              Creative Support
+            </strong>
+
+            <span>
+              Art, creative or community-project support
+            </span>
+
+          </span>
+
+        </label>
+
+      </div>
+
+
+      <div class="type-option">
+
+        <input
+          type="radio"
+          id="other"
+          name="request_type"
+          value="Other"
+        >
+
+        <label for="other">
+
+          <span class="type-icon">
+            ❤️
+          </span>
+
+          <span class="type-text">
+
+            <strong>
+              Other HUG
+            </strong>
+
+            <span>
+              Tell us what kind of assistance
+              you are seeking
+            </span>
+
+          </span>
+
+        </label>
+
+      </div>
+
+
+    </div>
+
+  </section>
+
+
+  <!-- CONTACT -->
+
+  <section class="form-section">
+
+    <h3>
+      Contact information
+    </h3>
+
+    <p class="section-help">
+      We need a way to contact you about your request.
+    </p>
+
+
+    <div class="form-grid">
+
+
+      <div class="field">
+
+        <label for="firstName">
+          First name
+          <span class="required">*</span>
+        </label>
+
+        <input
+          id="firstName"
+          name="first_name"
+          type="text"
+          autocomplete="given-name"
+          required
+        >
+
+      </div>
+
+
+      <div class="field">
+
+        <label for="lastName">
+          Last name
+        </label>
+
+        <input
+          id="lastName"
+          name="last_name"
+          type="text"
+          autocomplete="family-name"
+        >
+
+      </div>
+
+
+      <div class="field">
+
+        <label for="email">
+          Email
+          <span class="required">*</span>
+        </label>
+
+        <input
+          id="email"
+          name="email"
+          type="email"
+          autocomplete="email"
+          required
+        >
+
+      </div>
+
+
+      <div class="field">
+
+        <label for="phone">
+          Phone
+        </label>
+
+        <input
+          id="phone"
+          name="phone"
+          type="tel"
+          autocomplete="tel"
+        >
+
+      </div>
+
+
+    </div>
+
+  </section>
+
+
+  <!-- LOCATION -->
+
+  <section class="form-section">
+
+    <h3>
+      General location
+    </h3>
+
+    <p class="section-help">
+      For this first request, provide only the general
+      area. Do not enter a shelter room number or other
+      private location details here.
+    </p>
+
+
+    <div class="form-grid">
+
+
+      <div class="field">
+
+        <label for="city">
+          City
+          <span class="required">*</span>
+        </label>
+
+        <input
+          id="city"
+          name="city"
+          type="text"
+          autocomplete="address-level2"
+          required
+        >
+
+      </div>
+
+
+      <div class="field">
+
+        <label for="borough">
+          Borough / Area
+        </label>
+
+        <input
+          id="borough"
+          name="borough_area"
+          type="text"
+          placeholder="Example: Queens"
+        >
+
+      </div>
+
+
+      <div class="field">
+
+        <label for="zip">
+          ZIP code
+        </label>
+
+        <input
+          id="zip"
+          name="zip_code"
+          type="text"
+          inputmode="numeric"
+          autocomplete="postal-code"
+          maxlength="10"
+        >
+
+      </div>
+
+
+    </div>
+
+  </section>
+
+
+  <!-- REQUEST DETAILS -->
+
+  <section class="form-section">
+
+    <h3>
+      Tell us what you need
+      <span class="required">*</span>
+    </h3>
+
+    <p class="section-help">
+      Give us enough information to understand the
+      request without including highly sensitive
+      personal information.
+    </p>
+
+
+    <div class="field full">
+
+      <label for="requestDetails">
+        Request details
+      </label>
+
+      <textarea
+        id="requestDetails"
+        name="request_details"
+        required
+        maxlength="2000"
+        placeholder="Describe what kind of help you are requesting, what needs to be picked up or delivered if applicable, and any important general details."
+      ></textarea>
+
+      <div class="small-note">
+        Maximum 2,000 characters.
+      </div>
+
+    </div>
+
+  </section>
+
+
+  <!-- URGENCY -->
+
+  <section class="form-section">
+
+    <h3>
+      When is the help needed?
+      <span class="required">*</span>
+    </h3>
+
+
+    <div class="urgency-grid">
+
+
+      <div class="urgency-option">
+
+        <input
+          type="radio"
+          id="today"
+          name="time_needed"
+          value="Today"
+          required
+        >
+
+        <label for="today">
+          Today
+        </label>
+
+      </div>
+
+
+      <div class="urgency-option">
+
+        <input
+          type="radio"
+          id="fewDays"
+          name="time_needed"
+          value="Within a few days"
+        >
+
+        <label for="fewDays">
+          Within a few days
+        </label>
+
+      </div>
+
+
+      <div class="urgency-option">
+
+        <input
+          type="radio"
+          id="flexible"
+          name="time_needed"
+          value="Flexible"
+        >
+
+        <label for="flexible">
+          Flexible
+        </label>
+
+      </div>
+
+
+    </div>
+
+  </section>
+
+
+  <!-- ACCESSIBILITY -->
+
+  <section class="form-section">
+
+    <h3>
+      Accessibility or mobility information
+    </h3>
+
+    <p class="section-help">
+      Optional. Tell us only what is useful for
+      coordinating assistance.
+    </p>
+
+
+    <div class="field full">
+
+      <label for="accessibility">
+        Accessibility considerations
+      </label>
+
+      <textarea
+        id="accessibility"
+        name="accessibility_considerations"
+        maxlength="1000"
+        placeholder="Example: I have difficulty walking and would need the pickup brought to the building entrance."
+      ></textarea>
+
+    </div>
+
+  </section>
+
+
+  <!-- PRIVACY -->
+
+  <div class="privacy-box">
+
+    <strong>
+      Your request is not automatically public.
+    </strong>
+
+    <p>
+
+      HUGSLinks can review the information before a
+      request is turned into a HUG Mission. Public
+      mission information should use only the details
+      necessary to explain the need. Exact contact
+      information and other private information should
+      not be displayed publicly.
+
+    </p>
+
+  </div>
+
+
+  <!-- CONSENT -->
+
+  <div class="consent">
+
+    <input
+      id="consent"
+      name="request_consent"
+      type="checkbox"
+      value="Yes"
+      required
+    >
+
+    <label for="consent">
+
+      I understand that submitting this form is a request
+      for review and does not guarantee that HUGSLinks,
+      a HUGS Helper or a community partner will be able
+      to provide the requested assistance.
+
+    </label>
+
+  </div>
+
+
+  <div class="submit-area">
+
+    <button
+      class="submit-button"
+      type="submit"
+    >
+      Submit My HUG Request ❤️
+    </button>
+
+    <p class="submit-note">
+
+      Your request will be submitted for review before
+      it can become an approved HUG Mission.
+
+    </p>
+
+  </div>
+
+
+</form>
+
+
+<!-- SUCCESS -->
+
+<section
+  class="success-panel"
+  id="successPanel"
+  aria-live="polite"
+>
+
+  <div class="success-icon">
+    ❤️
+  </div>
+
+  <h2>
+    HUG Request Received
+  </h2>
+
+  <p>
+
+    Thank you. Your request has been submitted for
+    review. Keep your HUG Request number for reference.
+
+  </p>
+
+  <div
+    class="request-number"
+    id="requestNumber"
+  >
+  </div>
+
+</section>
+
+
+</main>
+
+
+<footer class="footer">
+
+  <div>
+    © 2026 HUGSLinks · Help Under Good Service
+  </div>
+
+  <div>
+    Give a HUG. Get a HUG.
+  </div>
+
+</footer>
+
+
+<script src="script.js"></script>
+
+
+<script>
+
+  const hugRequestForm =
+    document.getElementById(
+      "hugRequestForm"
+    );
+
+  const successPanel =
+    document.getElementById(
+      "successPanel"
+    );
+
+  const requestNumber =
+    document.getElementById(
+      "requestNumber"
+    );
+
+
+  function createRequestNumber(){
+
+    const now =
+      new Date();
+
+    const year =
+      now.getFullYear();
+
+    const random =
+      Math.floor(
+        100000 +
+        Math.random() * 900000
+      );
+
+    return "HUG-" +
+      year +
+      "-" +
+      random;
+  }
+
+
+  hugRequestForm.addEventListener(
+    "submit",
+    async function(event){
+
+      event.preventDefault();
+
+
+      if(
+        !hugRequestForm
+          .checkValidity()
+      ){
+
+        hugRequestForm
+          .reportValidity();
+
+        return;
+      }
+
+
+      const submitButton =
+        hugRequestForm.querySelector(
+          ".submit-button"
+        );
+
+
+      submitButton.disabled =
+        true;
+
+      submitButton.textContent =
+        "Submitting HUG Request...";
+
+
+      const hugId =
+        createRequestNumber();
+
+
+      const formData =
+        new FormData(
+          hugRequestForm
+        );
+
+
+      formData.append(
+        "hug_request_id",
+        hugId
+      );
+
+
+      try{
+
+        const response =
+          await fetch(
+            window.location.pathname,
+            {
+              method:"POST",
+
+              headers:{
+                "Content-Type":
+                  "application/x-www-form-urlencoded"
+              },
+
+              body:
+                new URLSearchParams(
+                  formData
+                ).toString()
+            }
+          );
+
+
+        if(!response.ok){
+
+          throw new Error(
+            "Submission failed."
+          );
+
+        }
+
+
+        requestNumber.textContent =
+          hugId;
+
+
+        hugRequestForm.style.display =
+          "none";
+
+
+        successPanel.style.display =
+          "block";
+
+
+        successPanel.scrollIntoView({
+          behavior:"smooth",
+          block:"center"
+        });
+
+
+      }catch(error){
+
+        alert(
+          "We could not submit your HUG Request. Please try again."
+        );
+
+
+        submitButton.disabled =
+          false;
+
+        submitButton.textContent =
+          "Submit My HUG Request ❤️";
+      }
+
+    }
+  );
+
+</script>
+
+
+</body>
+</html>
