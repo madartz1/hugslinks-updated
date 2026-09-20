@@ -1,0 +1,2225 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8">
+
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1"
+  >
+
+  <title>HUG Missions | HUGS Help</title>
+
+  <meta
+    name="description"
+    content="View approved HUG Missions and find ways to help through the HUGSLinks community."
+  >
+
+  <link rel="stylesheet" href="styles.css">
+
+  <style>
+
+    :root{
+      --navy:#071f3b;
+      --navy2:#0d3d70;
+      --blue:#2f9ee7;
+      --sky:#79d4ff;
+      --gold:#f2b84b;
+      --gold-light:#f8d979;
+      --white:#ffffff;
+      --soft:#eef7ff;
+      --cream:#faf7f1;
+      --text:#51677b;
+      --line:#dce8f2;
+      --green:#27855f;
+      --orange:#d78224;
+      --red:#a63838;
+    }
+
+    *{
+      box-sizing:border-box;
+    }
+
+    html{
+      scroll-behavior:smooth;
+    }
+
+    body{
+      margin:0;
+
+      background:
+        linear-gradient(
+          180deg,
+          #ffffff 0%,
+          #f5faff 55%,
+          #faf7f1 100%
+        );
+    }
+
+    button,
+    input,
+    select{
+      font:inherit;
+    }
+
+    .mission-page{
+      width:min(1120px, calc(100% - 28px));
+      margin:auto;
+      padding:32px 0 80px;
+    }
+
+    /* ======================================
+       HERO
+    ====================================== */
+
+    .mission-hero{
+      position:relative;
+      overflow:hidden;
+
+      padding:58px 36px;
+
+      border-radius:34px;
+
+      color:white;
+
+      background:
+        radial-gradient(
+          circle at 90% 5%,
+          rgba(47,158,231,.5),
+          transparent 34%
+        ),
+        radial-gradient(
+          circle at 8% 100%,
+          rgba(242,184,75,.18),
+          transparent 31%
+        ),
+        linear-gradient(
+          145deg,
+          #071f3b,
+          #0d3d70
+        );
+
+      box-shadow:
+        0 25px 65px
+        rgba(7,31,59,.17);
+    }
+
+    .eyebrow{
+      margin-bottom:13px;
+
+      color:var(--gold-light);
+
+      font-size:12px;
+      font-weight:900;
+
+      letter-spacing:.16em;
+      text-transform:uppercase;
+    }
+
+    .mission-hero h1{
+      margin:0;
+
+      color:white;
+
+      font-size:
+        clamp(
+          43px,
+          7vw,
+          72px
+        );
+
+      line-height:.95;
+      letter-spacing:-.045em;
+    }
+
+    .mission-hero p{
+      max-width:760px;
+
+      margin:22px 0 0;
+
+      color:#e5f2ff;
+
+      font-size:18px;
+      line-height:1.7;
+    }
+
+    .hero-actions{
+      display:flex;
+      flex-wrap:wrap;
+      gap:11px;
+
+      margin-top:27px;
+    }
+
+    .button{
+      display:inline-flex;
+
+      align-items:center;
+      justify-content:center;
+
+      min-height:49px;
+
+      padding:0 20px;
+
+      border:0;
+      border-radius:999px;
+
+      text-decoration:none;
+
+      font-size:14px;
+      font-weight:900;
+
+      cursor:pointer;
+    }
+
+    .button.gold{
+      color:#172331;
+
+      background:
+        linear-gradient(
+          135deg,
+          var(--gold),
+          var(--gold-light)
+        );
+    }
+
+    .button.white{
+      color:var(--navy);
+      background:white;
+    }
+
+    .button.blue{
+      color:white;
+      background:var(--navy);
+    }
+
+    .button.outline{
+      color:var(--navy);
+
+      background:white;
+
+      border:
+        1px solid
+        var(--line);
+    }
+
+    .button:disabled{
+      opacity:.55;
+      cursor:not-allowed;
+    }
+
+    /* ======================================
+       INFO STRIP
+    ====================================== */
+
+    .info-strip{
+      display:grid;
+
+      grid-template-columns:
+        repeat(3,1fr);
+
+      gap:13px;
+
+      margin-top:24px;
+    }
+
+    .info-card{
+      padding:20px;
+
+      border:
+        1px solid
+        var(--line);
+
+      border-radius:20px;
+
+      background:white;
+    }
+
+    .info-card span{
+      display:block;
+
+      margin-bottom:9px;
+
+      font-size:28px;
+    }
+
+    .info-card strong{
+      display:block;
+
+      margin-bottom:5px;
+
+      color:var(--navy);
+    }
+
+    .info-card p{
+      margin:0;
+
+      color:var(--text);
+
+      font-size:13px;
+      line-height:1.5;
+    }
+
+    /* ======================================
+       BOARD HEADER
+    ====================================== */
+
+    .board{
+      margin-top:55px;
+    }
+
+    .board-heading{
+      display:flex;
+
+      align-items:flex-end;
+      justify-content:space-between;
+
+      gap:20px;
+
+      margin-bottom:22px;
+    }
+
+    .board-heading .eyebrow{
+      color:var(--blue);
+    }
+
+    .board-heading h2{
+      margin:0;
+
+      color:var(--navy);
+
+      font-size:
+        clamp(
+          31px,
+          5vw,
+          47px
+        );
+
+      line-height:1.04;
+    }
+
+    .board-heading p{
+      max-width:670px;
+
+      margin:
+        12px 0 0;
+
+      color:var(--text);
+
+      line-height:1.65;
+    }
+
+    .mission-count{
+      flex:0 0 auto;
+
+      padding:
+        10px 14px;
+
+      border-radius:999px;
+
+      color:var(--navy);
+      background:var(--soft);
+
+      font-size:13px;
+      font-weight:900;
+    }
+
+    /* ======================================
+       FILTERS
+    ====================================== */
+
+    .filters{
+      display:grid;
+
+      grid-template-columns:
+        1.4fr 1fr 1fr;
+
+      gap:11px;
+
+      margin-bottom:22px;
+
+      padding:15px;
+
+      border:
+        1px solid
+        var(--line);
+
+      border-radius:20px;
+
+      background:white;
+    }
+
+    .filter-field{
+      display:flex;
+      flex-direction:column;
+      gap:6px;
+    }
+
+    .filter-field label{
+      color:var(--navy);
+
+      font-size:12px;
+      font-weight:900;
+    }
+
+    .filter-field input,
+    .filter-field select{
+      width:100%;
+
+      min-height:45px;
+
+      padding:
+        0 13px;
+
+      border:
+        1px solid
+        #cbdce9;
+
+      border-radius:12px;
+
+      color:#18334d;
+
+      background:white;
+
+      outline:none;
+    }
+
+    .filter-field input:focus,
+    .filter-field select:focus{
+      border-color:var(--blue);
+
+      box-shadow:
+        0 0 0 3px
+        rgba(47,158,231,.1);
+    }
+
+    /* ======================================
+       MISSION GRID
+    ====================================== */
+
+    .mission-grid{
+      display:grid;
+
+      grid-template-columns:
+        repeat(2,1fr);
+
+      gap:17px;
+    }
+
+    .mission-card{
+      position:relative;
+
+      overflow:hidden;
+
+      padding:25px;
+
+      border:
+        1px solid
+        var(--line);
+
+      border-radius:25px;
+
+      background:white;
+
+      box-shadow:
+        0 12px 35px
+        rgba(7,31,59,.055);
+    }
+
+    .mission-card::before{
+      content:"";
+
+      position:absolute;
+
+      top:0;
+      left:0;
+
+      width:100%;
+      height:5px;
+
+      background:
+        linear-gradient(
+          90deg,
+          var(--blue),
+          var(--sky)
+        );
+    }
+
+    .mission-card[data-status="Accepted"]::before{
+      background:var(--gold);
+    }
+
+    .mission-card[data-status="Delivered"]::before{
+      background:var(--green);
+    }
+
+    .mission-top{
+      display:flex;
+
+      justify-content:space-between;
+      align-items:flex-start;
+
+      gap:12px;
+    }
+
+    .mission-icon{
+      display:flex;
+
+      align-items:center;
+      justify-content:center;
+
+      width:52px;
+      height:52px;
+
+      border-radius:16px;
+
+      background:var(--soft);
+
+      font-size:26px;
+    }
+
+    .status{
+      padding:
+        7px 10px;
+
+      border-radius:999px;
+
+      color:#145a82;
+      background:#e8f6ff;
+
+      font-size:11px;
+      font-weight:900;
+
+      text-transform:uppercase;
+      letter-spacing:.05em;
+    }
+
+    .status.accepted{
+      color:#7b5311;
+      background:#fff4d9;
+    }
+
+    .status.delivered{
+      color:#176248;
+      background:#e8f8f1;
+    }
+
+    .mission-card h3{
+      margin:
+        18px 0 7px;
+
+      color:var(--navy);
+
+      font-size:24px;
+    }
+
+    .mission-id{
+      color:#7890a3;
+
+      font-size:11px;
+      font-weight:800;
+
+      letter-spacing:.05em;
+    }
+
+    .mission-summary{
+      margin:
+        14px 0 17px;
+
+      color:var(--text);
+
+      line-height:1.65;
+    }
+
+    .mission-details{
+      display:grid;
+
+      grid-template-columns:
+        repeat(2,1fr);
+
+      gap:9px;
+
+      margin-bottom:20px;
+    }
+
+    .detail{
+      padding:11px 12px;
+
+      border-radius:13px;
+
+      background:#f7fbfe;
+    }
+
+    .detail small{
+      display:block;
+
+      margin-bottom:3px;
+
+      color:#7d91a3;
+
+      font-size:10px;
+      font-weight:900;
+
+      text-transform:uppercase;
+      letter-spacing:.06em;
+    }
+
+    .detail strong{
+      color:var(--navy);
+
+      font-size:13px;
+    }
+
+    .mission-actions{
+      display:flex;
+      gap:9px;
+      flex-wrap:wrap;
+    }
+
+    /* ======================================
+       EMPTY / LOADING / ERROR
+    ====================================== */
+
+    .state-panel{
+      padding:
+        48px 25px;
+
+      text-align:center;
+
+      border:
+        1px dashed
+        #bcd3e3;
+
+      border-radius:25px;
+
+      background:white;
+    }
+
+    .state-icon{
+      font-size:45px;
+    }
+
+    .state-panel h3{
+      margin:
+        12px 0 7px;
+
+      color:var(--navy);
+
+      font-size:27px;
+    }
+
+    .state-panel p{
+      max-width:600px;
+
+      margin:
+        0 auto;
+
+      color:var(--text);
+
+      line-height:1.65;
+    }
+
+    .state-actions{
+      display:flex;
+
+      justify-content:center;
+      flex-wrap:wrap;
+      gap:9px;
+
+      margin-top:20px;
+    }
+
+    /* ======================================
+       PRIVACY
+    ====================================== */
+
+    .privacy{
+      margin-top:45px;
+
+      padding:25px;
+
+      border-radius:22px;
+
+      color:var(--text);
+
+      background:var(--soft);
+
+      border:
+        1px solid
+        #d4eaf8;
+
+      line-height:1.65;
+    }
+
+    .privacy strong{
+      color:var(--navy);
+    }
+
+    /* ======================================
+       STATUS FLOW
+    ====================================== */
+
+    .status-flow{
+      margin-top:25px;
+
+      padding:26px;
+
+      border:
+        1px solid
+        var(--line);
+
+      border-radius:24px;
+
+      background:white;
+    }
+
+    .status-flow h3{
+      margin:
+        0 0 17px;
+
+      color:var(--navy);
+    }
+
+    .status-steps{
+      display:flex;
+      flex-wrap:wrap;
+      gap:8px;
+    }
+
+    .status-step{
+      padding:
+        9px 12px;
+
+      border-radius:999px;
+
+      color:var(--navy);
+
+      background:var(--soft);
+
+      font-size:12px;
+      font-weight:900;
+    }
+
+    .arrow{
+      display:flex;
+      align-items:center;
+
+      color:#91a8b9;
+
+      font-weight:900;
+    }
+
+    /* ======================================
+       MODAL
+    ====================================== */
+
+    .modal-backdrop{
+      display:none;
+
+      position:fixed;
+
+      inset:0;
+
+      z-index:9999;
+
+      align-items:center;
+      justify-content:center;
+
+      padding:20px;
+
+      background:
+        rgba(4,18,33,.72);
+    }
+
+    .modal-backdrop.open{
+      display:flex;
+    }
+
+    .modal{
+      width:min(560px,100%);
+
+      max-height:90vh;
+      overflow:auto;
+
+      padding:29px;
+
+      border-radius:26px;
+
+      background:white;
+
+      box-shadow:
+        0 30px 90px
+        rgba(0,0,0,.28);
+    }
+
+    .modal h2{
+      margin:
+        0 0 8px;
+
+      color:var(--navy);
+    }
+
+    .modal p{
+      color:var(--text);
+      line-height:1.65;
+    }
+
+    .modal-note{
+      padding:15px;
+
+      border-radius:15px;
+
+      background:var(--soft);
+
+      color:var(--text);
+
+      font-size:13px;
+      line-height:1.55;
+    }
+
+    .modal-field{
+      margin-top:16px;
+    }
+
+    .modal-field label{
+      display:block;
+
+      margin-bottom:6px;
+
+      color:var(--navy);
+
+      font-size:13px;
+      font-weight:900;
+    }
+
+    .modal-field input{
+      width:100%;
+
+      min-height:46px;
+
+      padding:
+        0 13px;
+
+      border:
+        1px solid
+        #cbdce9;
+
+      border-radius:12px;
+    }
+
+    .modal-actions{
+      display:flex;
+      gap:9px;
+      flex-wrap:wrap;
+
+      margin-top:21px;
+    }
+
+    /* ======================================
+       MOBILE
+    ====================================== */
+
+    @media(max-width:800px){
+
+      .info-strip,
+      .filters,
+      .mission-grid{
+        grid-template-columns:1fr;
+      }
+
+      .board-heading{
+        display:block;
+      }
+
+      .mission-count{
+        display:inline-block;
+        margin-top:14px;
+      }
+
+    }
+
+    @media(max-width:600px){
+
+      .mission-hero{
+        padding:
+          43px 22px;
+      }
+
+      .mission-details{
+        grid-template-columns:1fr;
+      }
+
+      .status-steps{
+        display:grid;
+      }
+
+      .arrow{
+        display:none;
+      }
+
+    }
+
+  </style>
+
+</head>
+
+
+<body>
+
+
+<!-- ======================================
+     HEADER
+====================================== -->
+
+<header class="topbar">
+
+  <nav class="nav">
+
+    <a
+      class="brand"
+      href="index.html"
+    >
+      Hugslinks
+    </a>
+
+
+    <div
+      class="seal"
+      aria-label="HUGS house heart logo"
+    >
+
+      <img
+        src="assets/HUGS_Header_Logo_Transparent.png"
+        alt="HUGS logo"
+        class="header-logo"
+      >
+
+    </div>
+
+
+    <button
+      class="menu"
+      type="button"
+      aria-expanded="false"
+      aria-label="Open navigation menu"
+    >
+      Menu
+    </button>
+
+
+    <div class="navlinks">
+
+      <a href="index.html">Home</a>
+
+      <a href="shop.html">Shop</a>
+
+      <a href="hugs-cards.html">
+        HUGS Cards
+      </a>
+
+      <a href="art-community.html">
+        Art
+      </a>
+
+      <a href="food-support.html">
+        Food
+      </a>
+
+      <a href="housing-help.html">
+        Housing
+      </a>
+
+      <a href="business-services.html">
+        Business
+      </a>
+
+      <a href="help-app.html">
+        Help App
+      </a>
+
+      <a href="resources.html">
+        Resources
+      </a>
+
+      <a href="about.html">
+        About
+      </a>
+
+      <a href="contact.html">
+        Contact
+      </a>
+
+    </div>
+
+  </nav>
+
+</header>
+
+
+<main class="mission-page">
+
+
+<!-- ======================================
+     HERO
+====================================== -->
+
+<section class="mission-hero">
+
+  <div class="eyebrow">
+    HUGS Help · Give a HUG
+  </div>
+
+  <h1>
+    HUG Missions.
+  </h1>
+
+  <p>
+
+    Approved community requests can become HUG Missions.
+    Registered HUGS Helpers can see the general need,
+    location area and type of assistance before deciding
+    whether a mission fits their availability.
+
+  </p>
+
+
+  <div class="hero-actions">
+
+    <a
+      class="button gold"
+      href="hugs-helper.html"
+    >
+      Become a HUGS Helper
+    </a>
+
+    <a
+      class="button white"
+      href="hug-request.html"
+    >
+      Request a HUG
+    </a>
+
+  </div>
+
+</section>
+
+
+<!-- ======================================
+     HOW IT WORKS
+====================================== -->
+
+<section class="info-strip">
+
+
+  <article class="info-card">
+
+    <span>🔎</span>
+
+    <strong>
+      Browse
+    </strong>
+
+    <p>
+      See only approved missions and the general
+      information needed to understand the request.
+    </p>
+
+  </article>
+
+
+  <article class="info-card">
+
+    <span>🤝</span>
+
+    <strong>
+      Accept
+    </strong>
+
+    <p>
+      A registered Helper can express interest
+      in taking an available mission.
+    </p>
+
+  </article>
+
+
+  <article class="info-card">
+
+    <span>❤️</span>
+
+    <strong>
+      Deliver the HUG
+    </strong>
+
+    <p>
+      Complete the approved assistance and confirm
+      when the HUG has been delivered.
+    </p>
+
+  </article>
+
+
+</section>
+
+
+<!-- ======================================
+     MISSION BOARD
+====================================== -->
+
+<section class="board">
+
+  <div class="board-heading">
+
+    <div>
+
+      <div class="eyebrow">
+        Helper Board
+      </div>
+
+      <h2>
+        Available HUG Missions
+      </h2>
+
+      <p>
+
+        The board displays approved community missions.
+        Private requester information is not shown here.
+
+      </p>
+
+    </div>
+
+
+    <div
+      class="mission-count"
+      id="missionCount"
+    >
+      Loading…
+    </div>
+
+  </div>
+
+
+  <!-- FILTERS -->
+
+  <div class="filters">
+
+    <div class="filter-field">
+
+      <label for="searchMission">
+        Search area or mission
+      </label>
+
+      <input
+        id="searchMission"
+        type="search"
+        placeholder="Example: Queens or food"
+      >
+
+    </div>
+
+
+    <div class="filter-field">
+
+      <label for="typeFilter">
+        Mission type
+      </label>
+
+      <select id="typeFilter">
+
+        <option value="">
+          All types
+        </option>
+
+        <option value="Food Pickup">
+          Food Pickup
+        </option>
+
+        <option value="Essential Shopping">
+          Essential Shopping
+        </option>
+
+        <option value="Supply Delivery">
+          Supply Delivery
+        </option>
+
+        <option value="Community Partner Pickup">
+          Partner Pickup
+        </option>
+
+        <option value="Resource Support">
+          Resource Support
+        </option>
+
+        <option value="Creative Support">
+          Creative Support
+        </option>
+
+        <option value="Community Support">
+          Community Support
+        </option>
+
+      </select>
+
+    </div>
+
+
+    <div class="filter-field">
+
+      <label for="timingFilter">
+        Timing
+      </label>
+
+      <select id="timingFilter">
+
+        <option value="">
+          Any timing
+        </option>
+
+        <option value="Today">
+          Today
+        </option>
+
+        <option value="Within a few days">
+          Within a few days
+        </option>
+
+        <option value="Flexible">
+          Flexible
+        </option>
+
+      </select>
+
+    </div>
+
+  </div>
+
+
+  <div id="missionArea">
+
+    <div class="state-panel">
+
+      <div class="state-icon">
+        💙
+      </div>
+
+      <h3>
+        Loading HUG Missions…
+      </h3>
+
+      <p>
+        Checking for approved missions.
+      </p>
+
+    </div>
+
+  </div>
+
+
+</section>
+
+
+<!-- ======================================
+     STATUS FLOW
+====================================== -->
+
+<section class="status-flow">
+
+  <h3>
+    HUG Mission Journey
+  </h3>
+
+  <div class="status-steps">
+
+    <div class="status-step">
+      Available
+    </div>
+
+    <div class="arrow">
+      →
+    </div>
+
+    <div class="status-step">
+      Accepted
+    </div>
+
+    <div class="arrow">
+      →
+    </div>
+
+    <div class="status-step">
+      At Pickup
+    </div>
+
+    <div class="arrow">
+      →
+    </div>
+
+    <div class="status-step">
+      Items Received
+    </div>
+
+    <div class="arrow">
+      →
+    </div>
+
+    <div class="status-step">
+      On the Way
+    </div>
+
+    <div class="arrow">
+      →
+    </div>
+
+    <div class="status-step">
+      HUG Delivered ❤️
+    </div>
+
+  </div>
+
+</section>
+
+
+<!-- ======================================
+     PRIVACY
+====================================== -->
+
+<section class="privacy">
+
+  <strong>
+    Privacy by design:
+  </strong>
+
+  HUG Missions should show only the information a
+  potential Helper needs to decide whether they can
+  assist. Requester names, personal email addresses,
+  phone numbers, exact addresses and other private
+  information are not intended for the public mission
+  board. Additional coordination details can be handled
+  only after an appropriate connection is approved.
+
+</section>
+
+
+</main>
+
+
+<!-- ======================================
+     ACCEPT MISSION MODAL
+====================================== -->
+
+<div
+  class="modal-backdrop"
+  id="missionModal"
+  role="dialog"
+  aria-modal="true"
+  aria-labelledby="modalTitle"
+>
+
+  <div class="modal">
+
+    <div class="eyebrow">
+      Give a HUG
+    </div>
+
+    <h2 id="modalTitle">
+      Accept HUG Mission
+    </h2>
+
+    <p id="modalDescription">
+      Confirm your Helper information to express
+      interest in this mission.
+    </p>
+
+
+    <div class="modal-note">
+
+      Accepting a mission on this board does not
+      reveal private requester information or
+      guarantee assignment. HUGSLinks can review
+      the Helper and mission connection first.
+
+    </div>
+
+
+    <form id="acceptMissionForm">
+
+      <input
+        type="hidden"
+        id="selectedMissionId"
+        name="mission_id"
+      >
+
+
+      <div class="modal-field">
+
+        <label for="helperId">
+          HUGS Helper reference number
+        </label>
+
+        <input
+          id="helperId"
+          name="helper_id"
+          type="text"
+          placeholder="Example: HELPER-2026-123456"
+          required
+        >
+
+      </div>
+
+
+      <div class="modal-field">
+
+        <label for="helperEmail">
+          Helper email
+        </label>
+
+        <input
+          id="helperEmail"
+          name="helper_email"
+          type="email"
+          autocomplete="email"
+          required
+        >
+
+      </div>
+
+
+      <div class="modal-actions">
+
+        <button
+          class="button gold"
+          type="submit"
+        >
+          Request This Mission
+        </button>
+
+        <button
+          class="button outline"
+          type="button"
+          id="closeModal"
+        >
+          Cancel
+        </button>
+
+      </div>
+
+    </form>
+
+  </div>
+
+</div>
+
+
+<footer class="footer">
+
+  <div>
+    © 2026 HUGSLinks · Help Under Good Service
+  </div>
+
+  <div>
+    Give a HUG. Get a HUG.
+  </div>
+
+</footer>
+
+
+<script src="script.js"></script>
+
+
+<script>
+
+  /*
+   * HUGS MISSIONS BOARD
+   *
+   * This page never contains private requester data.
+   *
+   * The backend built next will return only approved,
+   * sanitized mission information.
+   */
+
+
+  const missionArea =
+    document.getElementById(
+      "missionArea"
+    );
+
+  const missionCount =
+    document.getElementById(
+      "missionCount"
+    );
+
+  const searchMission =
+    document.getElementById(
+      "searchMission"
+    );
+
+  const typeFilter =
+    document.getElementById(
+      "typeFilter"
+    );
+
+  const timingFilter =
+    document.getElementById(
+      "timingFilter"
+    );
+
+  const missionModal =
+    document.getElementById(
+      "missionModal"
+    );
+
+  const selectedMissionId =
+    document.getElementById(
+      "selectedMissionId"
+    );
+
+  const modalTitle =
+    document.getElementById(
+      "modalTitle"
+    );
+
+  const acceptMissionForm =
+    document.getElementById(
+      "acceptMissionForm"
+    );
+
+  const closeModal =
+    document.getElementById(
+      "closeModal"
+    );
+
+
+  let missions = [];
+
+
+  function escapeHtml(value){
+
+    return String(
+      value ?? ""
+    )
+      .replaceAll(
+        "&",
+        "&amp;"
+      )
+      .replaceAll(
+        "<",
+        "&lt;"
+      )
+      .replaceAll(
+        ">",
+        "&gt;"
+      )
+      .replaceAll(
+        '"',
+        "&quot;"
+      )
+      .replaceAll(
+        "'",
+        "&#039;"
+      );
+  }
+
+
+  function missionIcon(type){
+
+    const icons = {
+
+      "Food Pickup":"🥗",
+
+      "Essential Shopping":"🛍️",
+
+      "Supply Delivery":"📦",
+
+      "Community Partner Pickup":"🏪",
+
+      "Resource Support":"📋",
+
+      "Creative Support":"🎨",
+
+      "Community Support":"🤝"
+
+    };
+
+
+    return icons[type] || "❤️";
+  }
+
+
+  function statusClass(status){
+
+    if(
+      status === "Accepted"
+    ){
+      return "accepted";
+    }
+
+
+    if(
+      status === "Delivered"
+    ){
+      return "delivered";
+    }
+
+
+    return "";
+  }
+
+
+  function renderEmpty(){
+
+    missionCount.textContent =
+      "0 available";
+
+
+    missionArea.innerHTML = `
+
+      <div class="state-panel">
+
+        <div class="state-icon">
+          ❤️
+        </div>
+
+        <h3>
+          No HUG Missions are available right now.
+        </h3>
+
+        <p>
+
+          Approved missions will appear here when
+          community assistance is needed. You can
+          still register as a HUGS Helper so you
+          are ready to participate.
+
+        </p>
+
+        <div class="state-actions">
+
+          <a
+            class="button blue"
+            href="hugs-helper.html"
+          >
+            Become a HUGS Helper
+          </a>
+
+          <a
+            class="button outline"
+            href="support-hugs.html"
+          >
+            Sponsor a HUG
+          </a>
+
+        </div>
+
+      </div>
+
+    `;
+  }
+
+
+  function renderError(){
+
+    missionCount.textContent =
+      "Unavailable";
+
+
+    missionArea.innerHTML = `
+
+      <div class="state-panel">
+
+        <div class="state-icon">
+          💙
+        </div>
+
+        <h3>
+          Mission board temporarily unavailable.
+        </h3>
+
+        <p>
+
+          We could not load approved HUG Missions
+          right now. Please check again later.
+
+        </p>
+
+      </div>
+
+    `;
+  }
+
+
+  function renderMissions(){
+
+    const search =
+      searchMission
+        .value
+        .trim()
+        .toLowerCase();
+
+
+    const selectedType =
+      typeFilter.value;
+
+
+    const selectedTiming =
+      timingFilter.value;
+
+
+    const filtered =
+      missions.filter(
+        mission => {
+
+          /*
+           * Only approved public missions are
+           * rendered even if unexpected data
+           * reaches the browser.
+           */
+
+          if(
+            mission.approved !== true
+          ){
+            return false;
+          }
+
+
+          if(
+            mission.status !==
+            "Available"
+          ){
+            return false;
+          }
+
+
+          if(
+            selectedType &&
+            mission.type !==
+            selectedType
+          ){
+            return false;
+          }
+
+
+          if(
+            selectedTiming &&
+            mission.timing !==
+            selectedTiming
+          ){
+            return false;
+          }
+
+
+          if(search){
+
+            const searchable =
+              [
+                mission.type,
+                mission.area,
+                mission.city,
+                mission.summary
+              ]
+                .join(" ")
+                .toLowerCase();
+
+
+            if(
+              !searchable.includes(
+                search
+              )
+            ){
+              return false;
+            }
+
+          }
+
+
+          return true;
+        }
+      );
+
+
+    missionCount.textContent =
+      filtered.length +
+      (
+        filtered.length === 1
+          ? " available"
+          : " available"
+      );
+
+
+    if(
+      filtered.length === 0
+    ){
+
+      renderEmpty();
+
+      return;
+    }
+
+
+    missionArea.innerHTML = `
+
+      <div class="mission-grid">
+
+        ${
+          filtered
+            .map(
+              mission => {
+
+                const id =
+                  escapeHtml(
+                    mission.id
+                  );
+
+                const type =
+                  escapeHtml(
+                    mission.type
+                  );
+
+                const area =
+                  escapeHtml(
+                    mission.area ||
+                    mission.city ||
+                    "General area"
+                  );
+
+                const timing =
+                  escapeHtml(
+                    mission.timing ||
+                    "Flexible"
+                  );
+
+                const summary =
+                  escapeHtml(
+                    mission.summary ||
+                    "Approved community assistance request."
+                  );
+
+                const status =
+                  escapeHtml(
+                    mission.status
+                  );
+
+
+                return `
+
+                  <article
+                    class="mission-card"
+                    data-status="${status}"
+                  >
+
+                    <div class="mission-top">
+
+                      <div class="mission-icon">
+                        ${
+                          missionIcon(
+                            mission.type
+                          )
+                        }
+                      </div>
+
+                      <div
+                        class="status ${
+                          statusClass(
+                            mission.status
+                          )
+                        }"
+                      >
+                        ${status}
+                      </div>
+
+                    </div>
+
+
+                    <h3>
+                      ${type}
+                    </h3>
+
+
+                    <div class="mission-id">
+                      ${id}
+                    </div>
+
+
+                    <p class="mission-summary">
+                      ${summary}
+                    </p>
+
+
+                    <div class="mission-details">
+
+                      <div class="detail">
+
+                        <small>
+                          General Area
+                        </small>
+
+                        <strong>
+                          ${area}
+                        </strong>
+
+                      </div>
+
+
+                      <div class="detail">
+
+                        <small>
+                          Needed
+                        </small>
+
+                        <strong>
+                          ${timing}
+                        </strong>
+
+                      </div>
+
+                    </div>
+
+
+                    <div class="mission-actions">
+
+                      <button
+                        class="button gold accept-mission"
+                        type="button"
+                        data-id="${id}"
+                        data-type="${type}"
+                      >
+                        I Can Help
+                      </button>
+
+                    </div>
+
+                  </article>
+
+                `;
+
+              }
+            )
+            .join("")
+        }
+
+      </div>
+
+    `;
+
+
+    document
+      .querySelectorAll(
+        ".accept-mission"
+      )
+      .forEach(
+        button => {
+
+          button.addEventListener(
+            "click",
+            function(){
+
+              openMissionModal(
+                this.dataset.id,
+                this.dataset.type
+              );
+
+            }
+          );
+
+        }
+      );
+  }
+
+
+  async function loadMissions(){
+
+    try{
+
+      const response =
+        await fetch(
+          "/.netlify/functions/hugs-missions",
+          {
+            headers:{
+              "Accept":
+                "application/json"
+            }
+          }
+        );
+
+
+      if(
+        response.status === 404
+      ){
+
+        /*
+         * Backend has not been deployed yet.
+         * Show a truthful empty board instead
+         * of sample/fake missions.
+         */
+
+        missions = [];
+
+        renderEmpty();
+
+        return;
+      }
+
+
+      if(
+        !response.ok
+      ){
+
+        throw new Error(
+          "Mission request failed."
+        );
+      }
+
+
+      const data =
+        await response.json();
+
+
+      missions =
+        Array.isArray(
+          data.missions
+        )
+          ? data.missions
+          : [];
+
+
+      renderMissions();
+
+
+    }catch(error){
+
+      console.error(
+        "HUG Missions:",
+        error
+      );
+
+
+      renderError();
+    }
+
+  }
+
+
+  function openMissionModal(
+    missionId,
+    missionType
+  ){
+
+    selectedMissionId.value =
+      missionId;
+
+
+    modalTitle.textContent =
+      "Help with " +
+      missionType;
+
+
+    missionModal
+      .classList
+      .add(
+        "open"
+      );
+
+  }
+
+
+  function closeMissionModal(){
+
+    missionModal
+      .classList
+      .remove(
+        "open"
+      );
+
+
+    acceptMissionForm.reset();
+
+  }
+
+
+  closeModal.addEventListener(
+    "click",
+    closeMissionModal
+  );
+
+
+  missionModal.addEventListener(
+    "click",
+    function(event){
+
+      if(
+        event.target ===
+        missionModal
+      ){
+
+        closeMissionModal();
+
+      }
+
+    }
+  );
+
+
+  document.addEventListener(
+    "keydown",
+    function(event){
+
+      if(
+        event.key === "Escape"
+      ){
+
+        closeMissionModal();
+
+      }
+
+    }
+  );
+
+
+  acceptMissionForm.addEventListener(
+    "submit",
+    async function(event){
+
+      event.preventDefault();
+
+
+      if(
+        !acceptMissionForm
+          .checkValidity()
+      ){
+
+        acceptMissionForm
+          .reportValidity();
+
+        return;
+      }
+
+
+      const button =
+        acceptMissionForm
+          .querySelector(
+            'button[type="submit"]'
+          );
+
+
+      button.disabled =
+        true;
+
+      button.textContent =
+        "Sending Request...";
+
+
+      const payload = {
+
+        mission_id:
+          selectedMissionId.value,
+
+        helper_id:
+          document
+            .getElementById(
+              "helperId"
+            )
+            .value
+            .trim(),
+
+        helper_email:
+          document
+            .getElementById(
+              "helperEmail"
+            )
+            .value
+            .trim()
+
+      };
+
+
+      try{
+
+        const response =
+          await fetch(
+            "/.netlify/functions/accept-hug-mission",
+            {
+
+              method:"POST",
+
+              headers:{
+                "Content-Type":
+                  "application/json"
+              },
+
+              body:
+                JSON.stringify(
+                  payload
+                )
+
+            }
+          );
+
+
+        if(
+          !response.ok
+        ){
+
+          throw new Error(
+            "Mission request failed."
+          );
+
+        }
+
+
+        alert(
+          "Your request to help with this HUG Mission has been received. HUGSLinks can review the connection before assignment."
+        );
+
+
+        closeMissionModal();
+
+
+        await loadMissions();
+
+
+      }catch(error){
+
+        alert(
+          "We could not send your mission request right now. Please try again later."
+        );
+
+      }finally{
+
+        button.disabled =
+          false;
+
+        button.textContent =
+          "Request This Mission";
+
+      }
+
+    }
+  );
+
+
+  searchMission.addEventListener(
+    "input",
+    renderMissions
+  );
+
+
+  typeFilter.addEventListener(
+    "change",
+    renderMissions
+  );
+
+
+  timingFilter.addEventListener(
+    "change",
+    renderMissions
+  );
+
+
+  loadMissions();
+
+</script>
+
+
+</body>
+</html>
