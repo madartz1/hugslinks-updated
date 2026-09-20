@@ -14,12 +14,18 @@
 
 <link rel="stylesheet" href="styles.css">
 
+<link
+  rel="stylesheet"
+  href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+>
+
 <style>
+
 :root{
   --navy:#06162f;
   --blue:#1267ff;
   --gold:#d9ad45;
-  --white:#fff;
+  --white:#ffffff;
   --light:#f3f7fc;
   --text:#14213d;
   --muted:#68758b;
@@ -29,36 +35,62 @@
   --shadow:0 14px 40px rgba(6,22,47,.10);
 }
 
-*{box-sizing:border-box}
+*{
+  box-sizing:border-box;
+}
 
 body{
   margin:0;
   background:var(--light);
   color:var(--text);
-  font-family:system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+  font-family:
+    system-ui,
+    -apple-system,
+    BlinkMacSystemFont,
+    "Segoe UI",
+    sans-serif;
 }
 
-button,input{font:inherit}
+button,
+input{
+  font:inherit;
+}
 
 .shell{
-  width:min(760px,92%);
+  width:min(820px,92%);
   margin:auto;
 }
 
+
+/* =========================================
+   HERO
+========================================= */
+
 .hero{
-  padding:46px 18px 38px;
+  padding:44px 18px 38px;
   text-align:center;
   color:white;
+
   background:
-    radial-gradient(circle at top,#1267ff 0%,#0a3478 36%,#06162f 78%);
+    radial-gradient(
+      circle at top,
+      #1267ff 0%,
+      #0a3478 38%,
+      #06162f 80%
+    );
 }
 
 .hero-badge{
   display:inline-block;
-  padding:7px 13px;
   margin-bottom:14px;
-  border:1px solid rgba(255,255,255,.35);
+  padding:7px 13px;
+
+  border:
+    1px solid
+    rgba(255,255,255,.35);
+
   border-radius:999px;
+
   font-size:.76rem;
   font-weight:900;
   letter-spacing:.08em;
@@ -66,25 +98,46 @@ button,input{font:inherit}
 
 .hero h1{
   margin:0 0 10px;
-  font-size:clamp(2rem,8vw,3.5rem);
+
+  font-size:
+    clamp(
+      2rem,
+      8vw,
+      3.4rem
+    );
 }
 
 .hero p{
-  max-width:620px;
+  max-width:640px;
   margin:auto;
   line-height:1.65;
-  color:rgba(255,255,255,.88);
+  color:
+    rgba(255,255,255,.88);
 }
 
-main{padding:28px 0 80px}
+
+/* =========================================
+   LAYOUT
+========================================= */
+
+main{
+  padding:28px 0 80px;
+}
 
 .card{
   margin-bottom:20px;
   padding:22px;
+
   background:white;
-  border:1px solid var(--border);
+
+  border:
+    1px solid
+    var(--border);
+
   border-radius:22px;
-  box-shadow:var(--shadow);
+
+  box-shadow:
+    var(--shadow);
 }
 
 .card h2{
@@ -92,11 +145,19 @@ main{padding:28px 0 80px}
   color:var(--navy);
 }
 
-.field{margin-bottom:16px}
+
+/* =========================================
+   LOGIN
+========================================= */
+
+.field{
+  margin-bottom:16px;
+}
 
 .field label{
   display:block;
   margin-bottom:7px;
+
   font-weight:850;
   color:var(--navy);
 }
@@ -104,9 +165,18 @@ main{padding:28px 0 80px}
 .field input{
   width:100%;
   padding:14px;
-  border:1px solid var(--border);
+
+  border:
+    1px solid
+    var(--border);
+
   border-radius:13px;
 }
+
+
+/* =========================================
+   BUTTONS
+========================================= */
 
 .primary,
 .secondary,
@@ -114,7 +184,9 @@ main{padding:28px 0 80px}
   width:100%;
   min-height:50px;
   padding:13px 18px;
+
   border-radius:14px;
+
   font-weight:900;
   cursor:pointer;
 }
@@ -126,13 +198,19 @@ main{padding:28px 0 80px}
 }
 
 .secondary{
-  border:1px solid var(--border);
+  border:
+    1px solid
+    var(--border);
+
   background:white;
   color:var(--navy);
 }
 
 .stop{
-  border:1px solid #f1b9b5;
+  border:
+    1px solid
+    #f1b9b5;
+
   background:#fff0ee;
   color:var(--red);
 }
@@ -142,14 +220,25 @@ button:disabled{
   cursor:not-allowed;
 }
 
-#missionCenter{display:none}
+
+/* =========================================
+   MISSION
+========================================= */
+
+#missionCenter{
+  display:none;
+}
 
 .status-pill{
   display:inline-block;
+
   padding:8px 13px;
+
   border-radius:999px;
+
   background:#eaf2ff;
   color:#1259bd;
+
   font-size:.82rem;
   font-weight:900;
 }
@@ -161,7 +250,13 @@ button:disabled{
 
 .details{
   display:grid;
-  grid-template-columns:repeat(auto-fit,minmax(160px,1fr));
+
+  grid-template-columns:
+    repeat(
+      auto-fit,
+      minmax(160px,1fr)
+    );
+
   gap:11px;
   margin-top:18px;
 }
@@ -175,6 +270,7 @@ button:disabled{
 .detail strong{
   display:block;
   margin-bottom:5px;
+
   font-size:.75rem;
   color:var(--navy);
   text-transform:uppercase;
@@ -183,26 +279,44 @@ button:disabled{
 .summary{
   margin-top:18px;
   padding:17px;
-  border-left:4px solid var(--gold);
+
+  border-left:
+    4px solid
+    var(--gold);
+
   background:#fff9eb;
-  border-radius:0 13px 13px 0;
+
+  border-radius:
+    0 13px 13px 0;
+
   line-height:1.65;
 }
+
+
+/* =========================================
+   PROGRESS
+========================================= */
 
 .progress-step{
   display:flex;
   gap:13px;
+
   position:relative;
+
   min-height:68px;
 }
 
 .progress-step:not(:last-child)::before{
   content:"";
+
   position:absolute;
+
   left:17px;
   top:34px;
+
   width:3px;
   height:39px;
+
   background:#dce4ef;
 }
 
@@ -213,13 +327,18 @@ button:disabled{
 .progress-dot{
   position:relative;
   z-index:2;
+
   display:flex;
   align-items:center;
   justify-content:center;
+
   flex:0 0 36px;
   height:36px;
+
   border-radius:50%;
+
   background:#e7edf5;
+
   font-weight:900;
 }
 
@@ -243,10 +362,141 @@ button:disabled{
   font-size:.87rem;
 }
 
-.live-box{
-  padding:20px;
-  margin-top:15px;
+
+/* =========================================
+   ROUTE STATUS
+========================================= */
+
+.route-status{
+  margin-bottom:15px;
+  padding:14px;
+
+  border-radius:14px;
+
+  background:#f2f7ff;
+  color:#26456f;
+
+  line-height:1.55;
+}
+
+.route-status.unlocked{
+  background:#edf9f3;
+  color:#176443;
+}
+
+.route-status.locked{
+  background:#fff8e6;
+  color:#6e5821;
+}
+
+
+/* =========================================
+   MAP
+========================================= */
+
+#hugMap{
+  width:100%;
+  height:430px;
+
+  overflow:hidden;
+
   border-radius:18px;
+
+  background:#e9eef5;
+}
+
+.helper-pin,
+.pickup-pin,
+.destination-pin{
+  display:flex;
+  align-items:center;
+  justify-content:center;
+
+  border:
+    4px solid
+    white;
+
+  border-radius:50%;
+
+  box-shadow:
+    0 5px 18px
+    rgba(0,0,0,.28);
+}
+
+.helper-pin{
+  width:54px;
+  height:54px;
+
+  background:var(--blue);
+
+  font-size:27px;
+}
+
+.pickup-pin{
+  width:46px;
+  height:46px;
+
+  background:var(--gold);
+
+  font-size:23px;
+}
+
+.destination-pin{
+  width:48px;
+  height:48px;
+
+  background:white;
+
+  font-size:25px;
+}
+
+
+/* =========================================
+   ROUTE INFO
+========================================= */
+
+.route-grid{
+  display:grid;
+
+  grid-template-columns:
+    repeat(
+      auto-fit,
+      minmax(180px,1fr)
+    );
+
+  gap:11px;
+
+  margin-top:15px;
+}
+
+.route-info{
+  padding:14px;
+
+  background:#f7f9fc;
+
+  border-radius:13px;
+}
+
+.route-info strong{
+  display:block;
+  margin-bottom:5px;
+
+  color:var(--navy);
+  font-size:.76rem;
+  text-transform:uppercase;
+}
+
+
+/* =========================================
+   LIVE GPS
+========================================= */
+
+.live-box{
+  margin-top:18px;
+  padding:18px;
+
+  border-radius:18px;
+
   background:#f7f9fc;
 }
 
@@ -254,24 +504,32 @@ button:disabled{
   display:flex;
   align-items:center;
   gap:10px;
+
   margin-bottom:15px;
+
   font-weight:850;
 }
 
 .live-dot{
   width:11px;
   height:11px;
+
   border-radius:50%;
+
   background:#a7b0bf;
 }
 
 .live-dot.active{
   background:var(--green);
-  box-shadow:0 0 0 6px rgba(18,132,82,.12);
+
+  box-shadow:
+    0 0 0 6px
+    rgba(18,132,82,.12);
 }
 
 .location-info{
-  margin:14px 0;
+  margin:14px 0 0;
+
   color:var(--muted);
   font-size:.9rem;
 }
@@ -279,44 +537,44 @@ button:disabled{
 .privacy{
   margin-top:18px;
   padding:15px;
-  border:1px solid #d6e6ff;
+
+  border:
+    1px solid
+    #d6e6ff;
+
   border-radius:14px;
+
   background:#f2f7ff;
+
   line-height:1.6;
   color:#26456f;
   font-size:.9rem;
 }
 
-.tracking-box{
-  margin-top:18px;
-  padding:16px;
-  border:1px solid #e6d49d;
-  border-radius:14px;
-  background:#fff9eb;
-}
 
-.tracking-box strong{
-  display:block;
-  color:var(--navy);
-  margin-bottom:7px;
-}
-
-.tracking-box p{
-  margin:0;
-  line-height:1.55;
-  color:#685b36;
-}
+/* =========================================
+   MESSAGE
+========================================= */
 
 .message{
   display:none;
+
   position:fixed;
+
   z-index:9999;
+
   left:50%;
   bottom:22px;
-  transform:translateX(-50%);
+
+  transform:
+    translateX(-50%);
+
   width:min(520px,90%);
+
   padding:15px 17px;
+
   border-radius:14px;
+
   color:white;
   font-weight:850;
 }
@@ -330,66 +588,108 @@ button:disabled{
   display:block;
   background:var(--red);
 }
+
+
+/* =========================================
+   MOBILE
+========================================= */
+
+@media(max-width:600px){
+
+  #hugMap{
+    height:390px;
+  }
+
+}
+
 </style>
 </head>
 
+
 <body>
 
+
 <section class="hero">
-  <div class="shell">
 
-    <div class="hero-badge">
-      HUGS HELPER
-    </div>
+<div class="shell">
 
-    <h1>My HUG Mission</h1>
+<div class="hero-badge">
+HUGS HELPER
+</div>
 
-    <p>
-      Manage your assigned HUG, update the mission
-      journey and choose when to share your live
-      location.
-    </p>
+<h1>
+My HUG Mission
+</h1>
 
-  </div>
+<p>
+Manage your assigned HUG, navigate to the pickup,
+share your live location when you choose, and
+complete the delivery safely.
+</p>
+
+</div>
+
 </section>
 
 
 <main>
+
 <div class="shell">
 
 
-<section class="card" id="loginCard">
+<!-- ======================================
+     SECURE LOGIN
+====================================== -->
 
-<h2>Open Your Mission</h2>
+<section
+  class="card"
+  id="loginCard"
+>
+
+<h2>
+Open Your Mission
+</h2>
 
 <p>
-  Verify your assigned HUG Mission to begin.
+Verify your assigned HUG Mission to begin.
 </p>
 
+
 <div class="field">
-<label>Mission Number</label>
+
+<label>
+Mission Number
+</label>
 
 <input
   id="missionId"
   placeholder="HUG-2026-XXXXXXXX"
   autocomplete="off"
 >
+
 </div>
 
 
 <div class="field">
-<label>HUGS Helper Number</label>
+
+<label>
+HUGS Helper Number
+</label>
 
 <input
   id="helperId"
   placeholder="HELPER-2026-000000"
   autocomplete="off"
 >
+
 </div>
 
 
 <div class="field">
-<label>Registered Email</label>
+
+<label>
+Registered Email
+</label>
 
 <input
   id="helperEmail"
@@ -397,6 +697,7 @@ button:disabled{
   placeholder="you@example.com"
   autocomplete="email"
 >
+
 </div>
 
 
@@ -405,20 +706,31 @@ button:disabled{
   id="openButton"
   type="button"
 >
-  Open My HUG Mission
+Open My HUG Mission
 </button>
 
 </section>
 
 
+<!-- ======================================
+     MISSION CENTER
+====================================== -->
+
 <section id="missionCenter">
 
 
+<!-- MISSION -->
+
 <div class="card">
 
-<div id="missionNumber"
-     style="font-weight:900;color:#1267ff;font-size:.8rem">
-</div>
+<div
+  id="missionNumber"
+  style="
+    font-weight:900;
+    color:#1267ff;
+    font-size:.8rem;
+  "
+></div>
 
 <h2 id="missionType">
 HUG Mission
@@ -435,13 +747,28 @@ Accepted
 <div class="details">
 
 <div class="detail">
-<strong>Area</strong>
-<span id="missionArea"></span>
+
+<strong>
+Area
+</strong>
+
+<span id="missionArea">
+—
+</span>
+
 </div>
 
+
 <div class="detail">
-<strong>Timing</strong>
-<span id="missionTiming"></span>
+
+<strong>
+Timing
+</strong>
+
+<span id="missionTiming">
+—
+</span>
+
 </div>
 
 </div>
@@ -450,38 +777,64 @@ Accepted
 <div
   class="summary"
   id="missionSummary"
-></div>
-
-</div>
-
-
-<div class="card">
-
-<h2>HUG Journey</h2>
-
-<div id="progress"></div>
-
-<button
-  class="primary"
-  id="nextStatusButton"
-  type="button"
-  style="margin-top:15px"
 >
-Continue HUG
-</button>
+—
+</div>
 
 </div>
 
 
+<!-- ======================================
+     PRIVATE HUG MAP
+====================================== -->
+
 <div class="card">
 
-<h2>Live HUG Location</h2>
+<h2>
+HUG Route
+</h2>
 
-<p>
-  When you start sharing, HUGS can display your
-  active position on the protected mission tracking
-  page.
-</p>
+
+<div
+  id="routeStatus"
+  class="route-status locked"
+>
+Loading private HUG route…
+</div>
+
+
+<div id="hugMap"></div>
+
+
+<div class="route-grid">
+
+
+<div class="route-info">
+
+<strong>
+Pickup
+</strong>
+
+<span id="pickupLabel">
+Waiting for route
+</span>
+
+</div>
+
+
+<div class="route-info">
+
+<strong>
+Destination
+</strong>
+
+<span id="destinationLabel">
+🔒 Protected until items are received
+</span>
+
+</div>
+
+</div>
 
 
 <div class="live-box">
@@ -513,7 +866,10 @@ Start Live HUG
   class="stop"
   id="stopLocationButton"
   type="button"
-  style="display:none;margin-top:10px"
+  style="
+    display:none;
+    margin-top:10px;
+  "
 >
 Stop Location Sharing
 </button>
@@ -531,27 +887,43 @@ HUGS is not receiving your location.
 
 <div class="privacy">
 
-<strong>Location privacy</strong><br>
+<strong>
+Your Location Privacy
+</strong>
+
+<br>
 
 Your phone must give permission before location
-sharing starts. Only your latest active mission
-position is stored. HUGS does not need to create a
-permanent GPS trail of your trip.
+sharing begins. HUGS stores the latest active
+mission position rather than creating a permanent
+GPS trail.
+
+</div>
 
 </div>
 
 
-<div class="tracking-box">
+<!-- ======================================
+     JOURNEY
+====================================== -->
 
-<strong>Protected Tracking</strong>
+<div class="card">
 
-<p>
-  A separate read-only tracking credential is
-  created for this mission. It cannot update your
-  mission or control your location sharing.
-</p>
+<h2>
+HUG Journey
+</h2>
 
-</div>
+<div id="progress"></div>
+
+
+<button
+  class="primary"
+  id="nextStatusButton"
+  type="button"
+  style="margin-top:15px"
+>
+Continue HUG
+</button>
 
 </div>
 
@@ -568,6 +940,7 @@ Close Mission Center
 </section>
 
 </div>
+
 </main>
 
 
@@ -577,7 +950,16 @@ Close Mission Center
 ></div>
 
 
+<script
+  src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
+></script>
+
+
 <script>
+
+/* =========================================
+   APIs
+========================================= */
 
 const SESSION_API =
   "/.netlify/functions/create-hug-mission-session";
@@ -588,61 +970,136 @@ const STATUS_API =
 const LOCATION_API =
   "/.netlify/functions/update-hug-helper-location";
 
+const ROUTE_API =
+  "/.netlify/functions/get-hug-route";
+
+
+/* =========================================
+   STATUS FLOW
+========================================= */
 
 const STATUS_FLOW = [
+
   "Accepted",
+
   "At Pickup",
+
   "Items Received",
+
   "On the Way",
+
   "Delivered"
+
 ];
 
 
-let mission = null;
+/* =========================================
+   STATE
+========================================= */
 
-let helperToken = null;
+let mission =
+  null;
 
-let trackingToken = null;
+let helperToken =
+  null;
 
-let sessionExpiresAt = null;
+let sessionExpiresAt =
+  null;
 
-let watchId = null;
+let routeData =
+  null;
 
-let sharing = false;
+let watchId =
+  null;
 
-let lastSent = 0;
+let sharing =
+  false;
 
+let lastSent =
+  0;
+
+
+/* MAP */
+
+let map =
+  null;
+
+let pickupMarker =
+  null;
+
+let destinationMarker =
+  null;
+
+let helperMarker =
+  null;
+
+let routeLine =
+  null;
+
+
+/* =========================================
+   ELEMENTS
+========================================= */
 
 const loginCard =
-  document.getElementById("loginCard");
+  document.getElementById(
+    "loginCard"
+  );
 
 const missionCenter =
-  document.getElementById("missionCenter");
+  document.getElementById(
+    "missionCenter"
+  );
 
 const openButton =
-  document.getElementById("openButton");
+  document.getElementById(
+    "openButton"
+  );
 
 const nextStatusButton =
-  document.getElementById("nextStatusButton");
+  document.getElementById(
+    "nextStatusButton"
+  );
 
 const startLocationButton =
-  document.getElementById("startLocationButton");
+  document.getElementById(
+    "startLocationButton"
+  );
 
 const stopLocationButton =
-  document.getElementById("stopLocationButton");
+  document.getElementById(
+    "stopLocationButton"
+  );
 
 const liveDot =
-  document.getElementById("liveDot");
+  document.getElementById(
+    "liveDot"
+  );
 
 const liveText =
-  document.getElementById("liveText");
+  document.getElementById(
+    "liveText"
+  );
 
 const locationInfo =
-  document.getElementById("locationInfo");
+  document.getElementById(
+    "locationInfo"
+  );
+
+const routeStatus =
+  document.getElementById(
+    "routeStatus"
+  );
 
 const messageBox =
-  document.getElementById("message");
+  document.getElementById(
+    "message"
+  );
 
+
+/* =========================================
+   MESSAGE
+========================================= */
 
 function showMessage(
   text,
@@ -655,20 +1112,29 @@ function showMessage(
   messageBox.className =
     "message " + type;
 
+
   clearTimeout(
     showMessage.timer
   );
 
+
   showMessage.timer =
     setTimeout(
       () => {
+
         messageBox.className =
           "message";
+
       },
       4500
     );
+
 }
 
+
+/* =========================================
+   POST JSON
+========================================= */
 
 async function postJSON(
   url,
@@ -679,7 +1145,9 @@ async function postJSON(
     await fetch(
       url,
       {
-        method:"POST",
+
+        method:
+          "POST",
 
         headers:{
           "Content-Type":
@@ -687,12 +1155,16 @@ async function postJSON(
         },
 
         body:
-          JSON.stringify(body)
+          JSON.stringify(
+            body
+          )
+
       }
     );
 
 
   let result;
+
 
   try{
 
@@ -726,9 +1198,9 @@ async function postJSON(
 }
 
 
-/* ==========================================
-   OPEN SECURE SESSION
-========================================== */
+/* =========================================
+   OPEN MISSION
+========================================= */
 
 openButton.addEventListener(
   "click",
@@ -740,20 +1212,28 @@ async function openMission(){
 
   const missionId =
     document
-      .getElementById("missionId")
+      .getElementById(
+        "missionId"
+      )
       .value
       .trim();
 
+
   const helperId =
     document
-      .getElementById("helperId")
+      .getElementById(
+        "helperId"
+      )
       .value
       .trim()
       .toUpperCase();
 
+
   const helperEmail =
     document
-      .getElementById("helperEmail")
+      .getElementById(
+        "helperEmail"
+      )
       .value
       .trim()
       .toLowerCase();
@@ -778,15 +1258,17 @@ async function openMission(){
     true;
 
   openButton.textContent =
-    "Securing Mission...";
+    "Securing Mission…";
 
 
   try{
+
 
     const result =
       await postJSON(
         SESSION_API,
         {
+
           mission_id:
             missionId,
 
@@ -795,6 +1277,7 @@ async function openMission(){
 
           helper_email:
             helperEmail
+
         }
       );
 
@@ -802,37 +1285,46 @@ async function openMission(){
     mission =
       result.mission;
 
+
     helperToken =
       result.helper_token;
 
-    trackingToken =
-      result.tracking_token;
 
     sessionExpiresAt =
       result.expires_at;
 
 
     /*
-     * Tokens intentionally remain only in
-     * JavaScript memory.
+     * IMPORTANT:
      *
-     * Do NOT place them in localStorage.
+     * The Helper token remains only
+     * in this page's JavaScript memory.
+     *
+     * It is NOT stored in localStorage.
      */
-
-
-    renderMission();
 
 
     loginCard.style.display =
       "none";
 
+
     missionCenter.style.display =
       "block";
+
+
+    renderMission();
+
+
+    initializeMap();
+
+
+    await loadPrivateRoute();
 
 
     showMessage(
       "Secure HUG Mission opened."
     );
+
 
   }
   catch(error){
@@ -852,38 +1344,49 @@ async function openMission(){
       "Open My HUG Mission";
 
   }
+
 }
 
 
-/* ==========================================
-   RENDER
-========================================== */
+/* =========================================
+   RENDER MISSION
+========================================= */
 
 function renderMission(){
 
+  if(!mission){
+    return;
+  }
+
+
   document
-    .getElementById("missionNumber")
+    .getElementById(
+      "missionNumber"
+    )
     .textContent =
       mission.id;
 
 
   document
-    .getElementById("missionType")
+    .getElementById(
+      "missionType"
+    )
     .textContent =
       mission.type ||
       "HUG Mission";
 
 
-  const status =
-    document
-      .getElementById("missionStatus");
+  const statusElement =
+    document.getElementById(
+      "missionStatus"
+    );
 
 
-  status.textContent =
+  statusElement.textContent =
     mission.status;
 
 
-  status.className =
+  statusElement.className =
     "status-pill";
 
 
@@ -892,15 +1395,19 @@ function renderMission(){
     "Delivered"
   ){
 
-    status.classList.add(
-      "delivered"
-    );
+    statusElement
+      .classList
+      .add(
+        "delivered"
+      );
 
   }
 
 
   document
-    .getElementById("missionArea")
+    .getElementById(
+      "missionArea"
+    )
     .textContent =
       [
         mission.area,
@@ -912,24 +1419,33 @@ function renderMission(){
 
 
   document
-    .getElementById("missionTiming")
+    .getElementById(
+      "missionTiming"
+    )
     .textContent =
       mission.timing ||
       "Active";
 
 
   document
-    .getElementById("missionSummary")
+    .getElementById(
+      "missionSummary"
+    )
     .textContent =
       mission.summary ||
-      "Follow the approved mission instructions.";
+      "Follow the approved HUG Mission instructions.";
 
 
   renderProgress();
 
   renderNextButton();
+
 }
 
+
+/* =========================================
+   PROGRESS
+========================================= */
 
 function renderProgress(){
 
@@ -940,58 +1456,83 @@ function renderProgress(){
 
 
   document
-    .getElementById("progress")
+    .getElementById(
+      "progress"
+    )
     .innerHTML =
+
       STATUS_FLOW
         .map(
           (item,index) => {
+
 
             let cls =
               "progress-step";
 
 
             if(
-              index < currentIndex
+              index <
+              currentIndex
             ){
+
               cls +=
                 " complete";
+
             }
 
 
             if(
-              index === currentIndex
+              index ===
+              currentIndex
             ){
+
               cls +=
                 " current";
+
             }
 
 
             if(
-              item === "Delivered" &&
+              item ===
+                "Delivered" &&
               mission.status ===
-              "Delivered"
+                "Delivered"
             ){
+
               cls +=
                 " delivered complete";
+
             }
 
 
             const icon =
-              item === "Delivered"
+
+              item ===
+                "Delivered"
+
                 ? "❤️"
-                : index < currentIndex
+
+                : index <
+                    currentIndex
+
                   ? "✓"
+
                   : index + 1;
 
 
             return `
+
               <div class="${cls}">
 
-                <div class="progress-dot">
+                <div
+                  class="progress-dot"
+                >
                   ${icon}
                 </div>
 
-                <div class="progress-copy">
+                <div
+                  class="progress-copy"
+                >
 
                   <strong>
                     ${item}
@@ -1004,14 +1545,19 @@ function renderProgress(){
                 </div>
 
               </div>
+
             `;
+
           }
         )
         .join("");
+
 }
 
 
-function statusDescription(status){
+function statusDescription(
+  status
+){
 
   const descriptions = {
 
@@ -1033,9 +1579,18 @@ function statusDescription(status){
   };
 
 
-  return descriptions[status] || "";
+  return (
+    descriptions[
+      status
+    ] || ""
+  );
+
 }
 
+
+/* =========================================
+   NEXT BUTTON
+========================================= */
 
 function renderNextButton(){
 
@@ -1047,14 +1602,21 @@ function renderNextButton(){
 
   if(
     index === -1 ||
-    index >= STATUS_FLOW.length - 1
+    index >=
+      STATUS_FLOW.length - 1
   ){
 
-    nextStatusButton.style.display =
-      "none";
+    nextStatusButton
+      .style
+      .display =
+        "none";
 
-    startLocationButton.style.display =
-      "none";
+
+    startLocationButton
+      .style
+      .display =
+        "none";
+
 
     return;
   }
@@ -1083,26 +1645,572 @@ function renderNextButton(){
   };
 
 
-  nextStatusButton.dataset.status =
-    next;
+  nextStatusButton
+    .dataset
+    .status =
+      next;
 
-  nextStatusButton.textContent =
-    labels[next] ||
-    "Continue HUG";
 
-  nextStatusButton.style.display =
-    "block";
+  nextStatusButton
+    .textContent =
+      labels[next] ||
+      "Continue HUG";
+
+
+  nextStatusButton
+    .style
+    .display =
+      "block";
+
 }
 
 
-/* ==========================================
-   STATUS
-========================================== */
+/* =========================================
+   INITIALIZE MAP
+========================================= */
 
-nextStatusButton.addEventListener(
-  "click",
-  updateStatus
-);
+function initializeMap(){
+
+  if(map){
+    return;
+  }
+
+
+  map =
+    L.map(
+      "hugMap",
+      {
+        zoomControl:true
+      }
+    )
+    .setView(
+      [
+        40.7128,
+        -74.0060
+      ],
+      11
+    );
+
+
+  L.tileLayer(
+    "https://tile.openstreetmap.org/{z}/{x}/{y}.png",
+    {
+
+      maxZoom:
+        19,
+
+      attribution:
+        "&copy; OpenStreetMap contributors"
+
+    }
+  )
+  .addTo(
+    map
+  );
+
+
+  setTimeout(
+    () => {
+
+      map.invalidateSize();
+
+    },
+    150
+  );
+
+}
+
+
+/* =========================================
+   PRIVATE ROUTE
+========================================= */
+
+async function loadPrivateRoute(){
+
+  if(
+    !mission ||
+    !helperToken
+  ){
+    return;
+  }
+
+
+  try{
+
+
+    const result =
+      await postJSON(
+        ROUTE_API,
+        {
+
+          mission_id:
+            mission.id,
+
+          helper_token:
+            helperToken
+
+        }
+      );
+
+
+    routeData =
+      result.route;
+
+
+    renderRoute(
+      result
+    );
+
+
+  }
+  catch(error){
+
+
+    routeStatus.className =
+      "route-status locked";
+
+
+    routeStatus.textContent =
+      error.message;
+
+
+  }
+
+}
+
+
+/* =========================================
+   ROUTE RENDER
+========================================= */
+
+function renderRoute(
+  result
+){
+
+  clearRouteMarkers();
+
+
+  if(
+    mission.status ===
+    "Delivered"
+  ){
+
+    routeStatus.className =
+      "route-status unlocked";
+
+
+    routeStatus.textContent =
+      "HUG Delivered ❤️";
+
+
+    document
+      .getElementById(
+        "pickupLabel"
+      )
+      .textContent =
+        "Mission complete";
+
+
+    document
+      .getElementById(
+        "destinationLabel"
+      )
+      .textContent =
+        "Mission complete";
+
+
+    return;
+  }
+
+
+  if(
+    !result.route
+  ){
+
+    routeStatus.className =
+      "route-status locked";
+
+
+    routeStatus.textContent =
+      result.message ||
+      "The private route has not been prepared yet.";
+
+
+    document
+      .getElementById(
+        "pickupLabel"
+      )
+      .textContent =
+        "Waiting for HUGS";
+
+
+    document
+      .getElementById(
+        "destinationLabel"
+      )
+      .textContent =
+        "🔒 Protected";
+
+
+    return;
+  }
+
+
+  const pickup =
+    result.route.pickup;
+
+
+  if(pickup){
+
+    document
+      .getElementById(
+        "pickupLabel"
+      )
+      .textContent =
+        pickup.label ||
+        "HUG Pickup";
+
+
+    const pickupIcon =
+      L.divIcon(
+        {
+
+          className:"",
+
+          html:
+            '<div class="pickup-pin">📍</div>',
+
+          iconSize:
+            [46,46],
+
+          iconAnchor:
+            [23,23]
+
+        }
+      );
+
+
+    pickupMarker =
+      L.marker(
+        [
+          pickup.latitude,
+          pickup.longitude
+        ],
+        {
+          icon:
+            pickupIcon
+        }
+      )
+      .addTo(
+        map
+      );
+
+
+    pickupMarker
+      .bindPopup(
+        "<strong>HUG Pickup</strong><br>" +
+        escapeHTML(
+          pickup.label ||
+          "Pickup"
+        )
+      );
+
+
+    map.setView(
+      [
+        pickup.latitude,
+        pickup.longitude
+      ],
+      15
+    );
+
+  }
+
+
+  if(
+    result.destination_unlocked &&
+    result.route.destination
+  ){
+
+    const destination =
+      result.route.destination;
+
+
+    routeStatus.className =
+      "route-status unlocked";
+
+
+    routeStatus.textContent =
+      "❤️ Destination unlocked. Continue the HUG Mission safely.";
+
+
+    document
+      .getElementById(
+        "destinationLabel"
+      )
+      .textContent =
+        destination.label ||
+        "HUG Destination";
+
+
+    const destinationIcon =
+      L.divIcon(
+        {
+
+          className:"",
+
+          html:
+            '<div class="destination-pin">❤️</div>',
+
+          iconSize:
+            [48,48],
+
+          iconAnchor:
+            [24,24]
+
+        }
+      );
+
+
+    destinationMarker =
+      L.marker(
+        [
+          destination.latitude,
+          destination.longitude
+        ],
+        {
+          icon:
+            destinationIcon
+        }
+      )
+      .addTo(
+        map
+      );
+
+
+    destinationMarker
+      .bindPopup(
+        "<strong>HUG Destination</strong><br>" +
+        escapeHTML(
+          destination.label ||
+          "Destination"
+        )
+      );
+
+
+    drawRouteLine();
+
+
+    fitVisibleRoute();
+
+  }
+  else{
+
+
+    routeStatus.className =
+      "route-status locked";
+
+
+    routeStatus.textContent =
+      "🔒 Destination remains protected until the HUG is received.";
+
+
+    document
+      .getElementById(
+        "destinationLabel"
+      )
+      .textContent =
+        "🔒 Protected until items are received";
+
+  }
+
+}
+
+
+/* =========================================
+   ROUTE LINE
+========================================= */
+
+function drawRouteLine(){
+
+  if(
+    !routeData?.pickup ||
+    !routeData?.destination
+  ){
+    return;
+  }
+
+
+  if(routeLine){
+
+    map.removeLayer(
+      routeLine
+    );
+
+  }
+
+
+  /*
+   * This line currently represents the
+   * secure pickup-to-destination connection.
+   *
+   * A street-routing provider can replace
+   * this with turn-by-turn geometry later.
+   */
+
+
+  routeLine =
+    L.polyline(
+      [
+
+        [
+          routeData.pickup.latitude,
+          routeData.pickup.longitude
+        ],
+
+        [
+          routeData.destination.latitude,
+          routeData.destination.longitude
+        ]
+
+      ],
+      {
+
+        weight:
+          5,
+
+        opacity:
+          .75,
+
+        dashArray:
+          "10 9"
+
+      }
+    )
+    .addTo(
+      map
+    );
+
+}
+
+
+/* =========================================
+   CLEAR ROUTE
+========================================= */
+
+function clearRouteMarkers(){
+
+  if(!map){
+    return;
+  }
+
+
+  if(pickupMarker){
+
+    map.removeLayer(
+      pickupMarker
+    );
+
+    pickupMarker =
+      null;
+
+  }
+
+
+  if(destinationMarker){
+
+    map.removeLayer(
+      destinationMarker
+    );
+
+    destinationMarker =
+      null;
+
+  }
+
+
+  if(routeLine){
+
+    map.removeLayer(
+      routeLine
+    );
+
+    routeLine =
+      null;
+
+  }
+
+}
+
+
+/* =========================================
+   FIT MAP
+========================================= */
+
+function fitVisibleRoute(){
+
+  const points =
+    [];
+
+
+  if(pickupMarker){
+
+    points.push(
+      pickupMarker
+        .getLatLng()
+    );
+
+  }
+
+
+  if(destinationMarker){
+
+    points.push(
+      destinationMarker
+        .getLatLng()
+    );
+
+  }
+
+
+  if(helperMarker){
+
+    points.push(
+      helperMarker
+        .getLatLng()
+    );
+
+  }
+
+
+  if(
+    points.length >= 2
+  ){
+
+    map.fitBounds(
+      L.latLngBounds(
+        points
+      ),
+      {
+        padding:
+          [45,45]
+      }
+    );
+
+  }
+
+}
+
+
+/* =========================================
+   STATUS UPDATE
+========================================= */
+
+nextStatusButton
+  .addEventListener(
+    "click",
+    updateStatus
+  );
 
 
 async function updateStatus(){
@@ -1122,7 +2230,8 @@ async function updateStatus(){
 
 
   if(
-    next === "Delivered" &&
+    next ===
+      "Delivered" &&
     !confirm(
       "Confirm this HUG has been delivered?"
     )
@@ -1137,10 +2246,12 @@ async function updateStatus(){
 
   try{
 
+
     const result =
       await postJSON(
         STATUS_API,
         {
+
           mission_id:
             mission.id,
 
@@ -1149,6 +2260,7 @@ async function updateStatus(){
 
           status:
             next
+
         }
       );
 
@@ -1160,6 +2272,25 @@ async function updateStatus(){
     renderMission();
 
 
+    /*
+     * Reload the private route after
+     * every status change.
+     *
+     * This is what causes the destination
+     * to unlock after Items Received.
+     */
+
+
+    if(
+      mission.status !==
+      "Delivered"
+    ){
+
+      await loadPrivateRoute();
+
+    }
+
+
     if(
       mission.status ===
       "Delivered"
@@ -1167,16 +2298,59 @@ async function updateStatus(){
 
       stopLocalWatch();
 
+
       helperToken =
         null;
 
-      trackingToken =
-        null;
 
       sessionExpiresAt =
         null;
 
+
+      routeData =
+        null;
+
+
+      clearRouteMarkers();
+
+
+      if(helperMarker){
+
+        map.removeLayer(
+          helperMarker
+        );
+
+        helperMarker =
+          null;
+
+      }
+
+
       setLocationOff();
+
+
+      routeStatus.className =
+        "route-status unlocked";
+
+
+      routeStatus.textContent =
+        "HUG Delivered ❤️";
+
+
+      document
+        .getElementById(
+          "pickupLabel"
+        )
+        .textContent =
+          "Mission complete";
+
+
+      document
+        .getElementById(
+          "destinationLabel"
+        )
+        .textContent =
+          "Mission complete";
 
     }
 
@@ -1186,32 +2360,39 @@ async function updateStatus(){
       "Mission updated."
     );
 
+
   }
   catch(error){
+
 
     showMessage(
       error.message,
       "error"
     );
 
+
   }
   finally{
+
 
     nextStatusButton.disabled =
       false;
 
+
   }
+
 }
 
 
-/* ==========================================
-   START GPS
-========================================== */
+/* =========================================
+   START LIVE GPS
+========================================= */
 
-startLocationButton.addEventListener(
-  "click",
-  startLocation
-);
+startLocationButton
+  .addEventListener(
+    "click",
+    startLocation
+  );
 
 
 function startLocation(){
@@ -1243,11 +2424,19 @@ function startLocation(){
   }
 
 
+  if(
+    watchId !== null
+  ){
+    return;
+  }
+
+
   startLocationButton.disabled =
     true;
 
+
   startLocationButton.textContent =
-    "Requesting Location...";
+    "Requesting Location…";
 
 
   watchId =
@@ -1259,27 +2448,56 @@ function startLocation(){
         handleLocationError,
 
         {
-          enableHighAccuracy:true,
-          maximumAge:10000,
-          timeout:20000
+
+          enableHighAccuracy:
+            true,
+
+          maximumAge:
+            10000,
+
+          timeout:
+            20000
+
         }
 
       );
+
 }
 
+
+/* =========================================
+   GPS POSITION
+========================================= */
 
 async function handlePosition(
   position
 ){
 
+  if(
+    !mission ||
+    !helperToken
+  ){
+    return;
+  }
+
+
   const now =
     Date.now();
 
+
+  /*
+   * Send approximately every 10 seconds.
+   */
 
   if(
     now - lastSent <
     10000
   ){
+
+    updateLocalHelperMarker(
+      position.coords
+    );
+
     return;
   }
 
@@ -1290,6 +2508,7 @@ async function handlePosition(
 
   try{
 
+
     const coords =
       position.coords;
 
@@ -1297,6 +2516,7 @@ async function handlePosition(
     await postJSON(
       LOCATION_API,
       {
+
         action:
           "update",
 
@@ -1320,6 +2540,7 @@ async function handlePosition(
 
         speed:
           coords.speed
+
       }
     );
 
@@ -1328,9 +2549,11 @@ async function handlePosition(
       true;
 
 
-    liveDot.classList.add(
-      "active"
-    );
+    liveDot
+      .classList
+      .add(
+        "active"
+      );
 
 
     liveText.textContent =
@@ -1343,32 +2566,148 @@ async function handlePosition(
         .toLocaleTimeString();
 
 
-    startLocationButton.style.display =
-      "none";
+    startLocationButton
+      .style
+      .display =
+        "none";
 
 
-    stopLocationButton.style.display =
-      "block";
+    stopLocationButton
+      .style
+      .display =
+        "block";
+
+
+    updateLocalHelperMarker(
+      coords
+    );
 
 
   }
   catch(error){
+
 
     showMessage(
       error.message,
       "error"
     );
 
+
   }
+
 }
 
+
+/* =========================================
+   HELPER MARKER
+========================================= */
+
+function updateLocalHelperMarker(
+  coords
+){
+
+  if(!map){
+    return;
+  }
+
+
+  const position = [
+
+    coords.latitude,
+
+    coords.longitude
+
+  ];
+
+
+  if(!helperMarker){
+
+
+    const helperIcon =
+      L.divIcon(
+        {
+
+          className:"",
+
+          html:
+            '<div class="helper-pin">🐻</div>',
+
+          iconSize:
+            [54,54],
+
+          iconAnchor:
+            [27,27]
+
+        }
+      );
+
+
+    helperMarker =
+      L.marker(
+        position,
+        {
+          icon:
+            helperIcon
+        }
+      )
+      .addTo(
+        map
+      );
+
+
+    helperMarker
+      .bindPopup(
+        "<strong>HUGS Helper</strong><br>Your current active position."
+      );
+
+
+  }
+  else{
+
+
+    helperMarker
+      .setLatLng(
+        position
+      );
+
+
+  }
+
+
+  if(
+    routeData?.destination
+  ){
+
+    fitVisibleRoute();
+
+  }
+  else{
+
+
+    map.panTo(
+      position
+    );
+
+
+  }
+
+}
+
+
+/* =========================================
+   GPS ERROR
+========================================= */
 
 function handleLocationError(
   error
 ){
 
+  stopLocalWatch();
+
+
   startLocationButton.disabled =
     false;
+
 
   startLocationButton.textContent =
     "Start Live HUG";
@@ -1378,19 +2717,29 @@ function handleLocationError(
     "HUGS could not access your location.";
 
 
-  if(error.code === 1){
+  if(
+    error.code === 1
+  ){
 
     text =
       "Location permission was not granted.";
 
   }
-  else if(error.code === 2){
+
+
+  if(
+    error.code === 2
+  ){
 
     text =
       "Your current location is unavailable.";
 
   }
-  else if(error.code === 3){
+
+
+  if(
+    error.code === 3
+  ){
 
     text =
       "Location request timed out.";
@@ -1402,17 +2751,19 @@ function handleLocationError(
     text,
     "error"
   );
+
 }
 
 
-/* ==========================================
+/* =========================================
    STOP GPS
-========================================== */
+========================================= */
 
-stopLocationButton.addEventListener(
-  "click",
-  stopLocation
-);
+stopLocationButton
+  .addEventListener(
+    "click",
+    stopLocation
+  );
 
 
 async function stopLocation(){
@@ -1427,9 +2778,11 @@ async function stopLocation(){
 
     try{
 
+
       await postJSON(
         LOCATION_API,
         {
+
           action:
             "stop",
 
@@ -1438,19 +2791,40 @@ async function stopLocation(){
 
           helper_token:
             helperToken
+
         }
       );
 
+
     }
     catch(error){
+
 
       showMessage(
         error.message,
         "error"
       );
 
+
       return;
+
     }
+
+  }
+
+
+  if(
+    helperMarker &&
+    map
+  ){
+
+    map.removeLayer(
+      helperMarker
+    );
+
+
+    helperMarker =
+      null;
 
   }
 
@@ -1461,8 +2835,13 @@ async function stopLocation(){
   showMessage(
     "Live HUG location sharing stopped."
   );
+
 }
 
+
+/* =========================================
+   LOCAL WATCH
+========================================= */
 
 function stopLocalWatch(){
 
@@ -1476,25 +2855,34 @@ function stopLocalWatch(){
         watchId
       );
 
+
     watchId =
       null;
 
   }
+
 }
 
+
+/* =========================================
+   LOCATION OFF UI
+========================================= */
 
 function setLocationOff(){
 
   sharing =
     false;
 
+
   lastSent =
     0;
 
 
-  liveDot.classList.remove(
-    "active"
-  );
+  liveDot
+    .classList
+    .remove(
+      "active"
+    );
 
 
   liveText.textContent =
@@ -1505,41 +2893,52 @@ function setLocationOff(){
     "HUGS is not receiving your location.";
 
 
-  stopLocationButton.style.display =
-    "none";
+  stopLocationButton
+    .style
+    .display =
+      "none";
 
 
   if(
     mission &&
     mission.status !==
-    "Delivered" &&
+      "Delivered" &&
     helperToken
   ){
 
-    startLocationButton.style.display =
-      "block";
+    startLocationButton
+      .style
+      .display =
+        "block";
+
 
     startLocationButton.disabled =
       false;
+
 
     startLocationButton.textContent =
       "Start Live HUG";
 
   }
+
 }
 
 
-/* ==========================================
-   CLOSE
-========================================== */
+/* =========================================
+   CLOSE MISSION
+========================================= */
 
 document
-  .getElementById("closeButton")
+  .getElementById(
+    "closeButton"
+  )
   .addEventListener(
     "click",
     async () => {
 
+
       if(sharing){
+
 
         const confirmed =
           confirm(
@@ -1563,38 +2962,118 @@ document
       mission =
         null;
 
+
       helperToken =
         null;
 
-      trackingToken =
-        null;
 
       sessionExpiresAt =
         null;
 
 
-      missionCenter.style.display =
-        "none";
+      routeData =
+        null;
 
-      loginCard.style.display =
-        "block";
+
+      clearRouteMarkers();
+
+
+      if(
+        helperMarker &&
+        map
+      ){
+
+        map.removeLayer(
+          helperMarker
+        );
+
+
+        helperMarker =
+          null;
+
+      }
+
+
+      missionCenter
+        .style
+        .display =
+          "none";
+
+
+      loginCard
+        .style
+        .display =
+          "block";
 
 
       document
-        .getElementById("helperEmail")
+        .getElementById(
+          "helperEmail"
+        )
         .value =
           "";
 
 
       setLocationOff();
 
+
     }
   );
 
 
+/* =========================================
+   ESCAPE POPUP TEXT
+========================================= */
+
+function escapeHTML(
+  value
+){
+
+  return String(
+    value || ""
+  )
+  .replace(
+    /&/g,
+    "&amp;"
+  )
+  .replace(
+    /</g,
+    "&lt;"
+  )
+  .replace(
+    />/g,
+    "&gt;"
+  )
+  .replace(
+    /"/g,
+    "&quot;"
+  )
+  .replace(
+    /'/g,
+    "&#039;"
+  );
+
+}
+
+
+/* =========================================
+   PAGE EXIT
+========================================= */
+
 window.addEventListener(
   "pagehide",
-  stopLocalWatch
+  () => {
+
+    /*
+     * Stop the browser GPS watcher.
+     *
+     * We intentionally do not rely on a
+     * network request during pagehide.
+     */
+
+    stopLocalWatch();
+
+  }
 );
 
 </script>
