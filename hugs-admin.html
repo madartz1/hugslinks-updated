@@ -405,12 +405,9 @@
       color:var(--muted);
     }
 
-    /* ======================================
-       ROUTE CONTROL
-    ====================================== */
-
     .route-panel{
       max-width:850px;
+      margin-bottom:22px;
       padding:26px;
       background:white;
       border:1px solid var(--border);
@@ -419,7 +416,7 @@
     }
 
     .route-panel h3{
-      margin-top:0;
+      margin-top:5px;
       color:var(--navy);
     }
 
@@ -485,6 +482,32 @@
       color:var(--green);
       line-height:1.6;
       font-weight:700;
+    }
+
+    .tracking-result{
+      display:none;
+      margin-top:22px;
+      padding:20px;
+      border:1px solid #b9d5ff;
+      border-radius:18px;
+      background:#f2f7ff;
+    }
+
+    .tracking-result-notice{
+      margin-bottom:15px;
+      color:#244b7e;
+      line-height:1.6;
+    }
+
+    .tracking-code{
+      font-family:
+        ui-monospace,
+        SFMono-Regular,
+        Menlo,
+        Monaco,
+        Consolas,
+        monospace;
+      word-break:break-all;
     }
 
     .message{
@@ -571,8 +594,9 @@
     <p>
       Review HUG Requests, approve HUGS Helpers,
       create safe public missions, manage
-      Helper-to-Mission connections and privately
-      prepare delivery routes.
+      Helper-to-Mission connections, prepare
+      private delivery routes and issue protected
+      recipient tracking access.
     </p>
 
   </div>
@@ -588,17 +612,15 @@
 
     <strong>Private administration area.</strong>
 
-    Requester, Helper, pickup and destination
-    information shown here must remain private.
-    Only sanitized mission information should
-    appear on the public HUG Missions board.
+    Requester, Helper, pickup, destination and
+    tracking information shown here must remain
+    private. Only sanitized mission information
+    should appear on the public HUG Missions board.
 
   </div>
 
 
-  <!-- ======================================
-       LOGIN
-  ======================================= -->
+  <!-- LOGIN -->
 
   <section
     class="login-card"
@@ -639,9 +661,7 @@
   </section>
 
 
-  <!-- ======================================
-       DASHBOARD
-  ======================================= -->
+  <!-- DASHBOARD -->
 
   <section id="adminDashboard">
 
@@ -673,8 +693,6 @@
 
     </div>
 
-
-    <!-- COUNTS -->
 
     <div class="summary-grid">
 
@@ -727,10 +745,6 @@
 
     </div>
 
-
-    <!-- ======================================
-         TABS
-    ======================================= -->
 
     <div class="admin-tabs">
 
@@ -826,14 +840,14 @@
     </section>
 
 
-    <!-- ======================================
-         PRIVATE MISSION ROUTES
-    ======================================= -->
+    <!-- ROUTES -->
 
     <section
       class="admin-section"
       id="routesSection"
     >
+
+      <!-- PRIVATE ROUTE -->
 
       <div class="route-panel">
 
@@ -884,8 +898,6 @@
 
         <div class="route-grid">
 
-
-          <!-- PICKUP -->
 
           <div class="route-location">
 
@@ -948,8 +960,6 @@
 
           </div>
 
-
-          <!-- DESTINATION -->
 
           <div class="route-location">
 
@@ -1066,6 +1076,218 @@
 
       </div>
 
+
+      <!-- RECIPIENT TRACKING -->
+
+      <div class="route-panel">
+
+        <div class="record-id">
+          PRIVATE RECIPIENT TRACKING
+        </div>
+
+        <h3>
+          Issue Recipient Tracking Access
+        </h3>
+
+        <p class="route-intro">
+          Generate a private tracking credential
+          for the recipient of an active HUG
+          Mission.
+        </p>
+
+
+        <div class="route-warning">
+
+          <strong>
+            Private credential:
+          </strong>
+
+          Only give this tracking code to the
+          intended recipient.
+
+          <br><br>
+
+          Issuing a new code invalidates the
+          previously issued recipient tracking
+          code for the active Helper session.
+
+        </div>
+
+
+        <div class="field">
+
+          <label for="trackingMissionId">
+            Active Mission Number
+          </label>
+
+          <input
+            id="trackingMissionId"
+            type="text"
+            autocomplete="off"
+            placeholder="Example: HUG-2026-XXXXXXXX"
+          >
+
+        </div>
+
+
+        <div class="action-row">
+
+          <button
+            class="primary-button"
+            id="issueTrackingButton"
+            type="button"
+          >
+            Issue Recipient Tracking Access
+          </button>
+
+          <button
+            class="secondary-button"
+            id="clearTrackingButton"
+            type="button"
+          >
+            Clear Tracking Access
+          </button>
+
+        </div>
+
+
+        <div
+          class="tracking-result"
+          id="trackingAccessResult"
+        >
+
+          <div class="tracking-result-notice">
+
+            <strong>
+              Recipient tracking access created.
+            </strong>
+
+            <br>
+
+            Copy this code now. HUGS will not be
+            able to retrieve this exact plaintext
+            code again.
+
+          </div>
+
+
+          <div class="record-details">
+
+            <div class="detail">
+
+              <strong>
+                Mission
+              </strong>
+
+              <span id="trackingResultMission">
+                —
+              </span>
+
+            </div>
+
+
+            <div class="detail">
+
+              <strong>
+                Mission Status
+              </strong>
+
+              <span id="trackingResultStatus">
+                —
+              </span>
+
+            </div>
+
+
+            <div class="detail">
+
+              <strong>
+                Expires
+              </strong>
+
+              <span id="trackingResultExpires">
+                —
+              </span>
+
+            </div>
+
+          </div>
+
+
+          <div class="field">
+
+            <label for="trackingCodeDisplay">
+              Private Recipient Tracking Code
+            </label>
+
+            <input
+              class="tracking-code"
+              id="trackingCodeDisplay"
+              type="text"
+              readonly
+              autocomplete="off"
+              spellcheck="false"
+            >
+
+          </div>
+
+
+          <div class="action-row">
+
+            <button
+              class="primary-button"
+              id="copyTrackingCodeButton"
+              type="button"
+            >
+              Copy Tracking Code
+            </button>
+
+            <button
+              class="secondary-button"
+              id="copyTrackingPageButton"
+              type="button"
+            >
+              Copy Tracking Page Address
+            </button>
+
+            <button
+              class="danger-button"
+              id="hideTrackingCodeButton"
+              type="button"
+            >
+              Clear Code From Screen
+            </button>
+
+          </div>
+
+
+          <div class="route-privacy">
+
+            <strong>
+              Give the recipient two things:
+            </strong>
+
+            <br><br>
+
+            1. The private HUGS tracking page.
+
+            <br>
+
+            2. The tracking code shown above.
+
+            <br><br>
+
+            The code is intentionally kept out of
+            the URL so it does not become part of
+            browser history, analytics or referral
+            information.
+
+          </div>
+
+        </div>
+
+      </div>
+
     </section>
 
   </section>
@@ -1093,6 +1315,9 @@ const API =
 const ROUTE_API =
   "/.netlify/functions/admin-hug-route";
 
+const TRACKING_ACCESS_API =
+  "/.netlify/functions/admin-issue-hug-tracking";
+
 
 let adminToken = "";
 
@@ -1101,6 +1326,21 @@ let requestRecords = [];
 let helperRecords = [];
 
 let matchRecords = [];
+
+
+/*
+ * Recipient tracking token.
+ *
+ * MEMORY ONLY.
+ *
+ * Never place this value in:
+ * localStorage
+ * sessionStorage
+ * cookies
+ * URL parameters
+ */
+
+let issuedTrackingToken = "";
 
 
 /* ==========================================
@@ -1154,6 +1394,39 @@ const clearRouteButton =
 
 const routeResult =
   document.getElementById("routeResult");
+
+const issueTrackingButton =
+  document.getElementById("issueTrackingButton");
+
+const clearTrackingButton =
+  document.getElementById("clearTrackingButton");
+
+const trackingMissionId =
+  document.getElementById("trackingMissionId");
+
+const trackingAccessResult =
+  document.getElementById("trackingAccessResult");
+
+const trackingResultMission =
+  document.getElementById("trackingResultMission");
+
+const trackingResultStatus =
+  document.getElementById("trackingResultStatus");
+
+const trackingResultExpires =
+  document.getElementById("trackingResultExpires");
+
+const trackingCodeDisplay =
+  document.getElementById("trackingCodeDisplay");
+
+const copyTrackingCodeButton =
+  document.getElementById("copyTrackingCodeButton");
+
+const copyTrackingPageButton =
+  document.getElementById("copyTrackingPageButton");
+
+const hideTrackingCodeButton =
+  document.getElementById("hideTrackingCodeButton");
 
 
 /* ==========================================
@@ -1424,16 +1697,32 @@ function lockAdmin(){
   adminToken = "";
 
   requestRecords = [];
+
   helperRecords = [];
+
   matchRecords = [];
+
+  issuedTrackingToken = "";
 
 
   requestList.innerHTML = "";
+
   helperList.innerHTML = "";
+
   matchList.innerHTML = "";
 
 
   clearRouteForm();
+
+  clearIssuedTrackingToken();
+
+
+  if(trackingMissionId){
+
+    trackingMissionId.value =
+      "";
+
+  }
 
 
   dashboard.style.display =
@@ -1560,7 +1849,9 @@ refreshButton.addEventListener(
     try{
 
       await loadRequests();
+
       await loadHelpers();
+
       await loadMatches();
 
 
@@ -3204,6 +3495,457 @@ function clearRouteForm(){
 
 
 /* ==========================================
+   RECIPIENT TRACKING ACCESS
+========================================== */
+
+issueTrackingButton.addEventListener(
+  "click",
+  issueRecipientTracking
+);
+
+
+clearTrackingButton.addEventListener(
+  "click",
+  clearTrackingAccess
+);
+
+
+copyTrackingCodeButton.addEventListener(
+  "click",
+  copyTrackingCode
+);
+
+
+copyTrackingPageButton.addEventListener(
+  "click",
+  copyTrackingPage
+);
+
+
+hideTrackingCodeButton.addEventListener(
+  "click",
+  clearIssuedTrackingToken
+);
+
+
+/* ==========================================
+   ISSUE TRACKING
+========================================== */
+
+async function issueRecipientTracking(){
+
+  const missionId =
+    trackingMissionId
+      .value
+      .trim()
+      .toUpperCase();
+
+
+  if(!missionId){
+
+    showMessage(
+      "Enter the active HUG Mission number.",
+      "error"
+    );
+
+    return;
+
+  }
+
+
+  if(
+    !/^HUG-\d{4}-[A-Za-z0-9-]{4,40}$/
+      .test(missionId)
+  ){
+
+    showMessage(
+      "Enter a valid HUG Mission number.",
+      "error"
+    );
+
+    return;
+
+  }
+
+
+  clearIssuedTrackingToken();
+
+
+  if(
+    !confirm(
+      "Issue new private recipient tracking access for " +
+      missionId +
+      "? Any previously issued tracking code for the active session will stop working."
+    )
+  ){
+    return;
+  }
+
+
+  issueTrackingButton.disabled =
+    true;
+
+  issueTrackingButton.textContent =
+    "Issuing Private Access...";
+
+
+  try{
+
+    const result =
+      await adminFetch(
+        TRACKING_ACCESS_API,
+        {
+
+          method:"POST",
+
+          body:
+            JSON.stringify({
+
+              mission_id:
+                missionId
+
+            })
+
+        }
+      );
+
+
+    if(
+      typeof result.tracking_token !==
+        "string" ||
+      !result.tracking_token
+    ){
+
+      throw new Error(
+        "HUGS did not return a recipient tracking credential."
+      );
+
+    }
+
+
+    issuedTrackingToken =
+      result.tracking_token;
+
+
+    trackingCodeDisplay.value =
+      issuedTrackingToken;
+
+
+    trackingResultMission.textContent =
+      result.mission_id ||
+      missionId;
+
+
+    trackingResultStatus.textContent =
+      result.mission_status ||
+      "Active";
+
+
+    trackingResultExpires.textContent =
+      formatPrivateDate(
+        result.expires_at
+      );
+
+
+    trackingAccessResult.style.display =
+      "block";
+
+
+    showMessage(
+      "Private recipient tracking access issued."
+    );
+
+
+  }
+  catch(error){
+
+    clearIssuedTrackingToken();
+
+
+    showMessage(
+      error.message,
+      "error"
+    );
+
+  }
+  finally{
+
+    issueTrackingButton.disabled =
+      false;
+
+    issueTrackingButton.textContent =
+      "Issue Recipient Tracking Access";
+
+  }
+
+}
+
+
+/* ==========================================
+   COPY TRACKING CODE
+========================================== */
+
+async function copyTrackingCode(){
+
+  if(!issuedTrackingToken){
+
+    showMessage(
+      "There is no active tracking code to copy.",
+      "error"
+    );
+
+    return;
+
+  }
+
+
+  try{
+
+    await copyPrivateText(
+      issuedTrackingToken
+    );
+
+
+    showMessage(
+      "Recipient tracking code copied."
+    );
+
+  }
+  catch{
+
+    showMessage(
+      "The tracking code could not be copied automatically. Select and copy it manually.",
+      "error"
+    );
+
+  }
+
+}
+
+
+/* ==========================================
+   COPY TRACKING PAGE
+========================================== */
+
+async function copyTrackingPage(){
+
+  const trackingPage =
+    new URL(
+      "hug-tracking.html",
+      window.location.href
+    )
+    .href;
+
+
+  try{
+
+    await copyPrivateText(
+      trackingPage
+    );
+
+
+    showMessage(
+      "Recipient tracking page address copied."
+    );
+
+  }
+  catch{
+
+    showMessage(
+      "The tracking page address could not be copied automatically.",
+      "error"
+    );
+
+  }
+
+}
+
+
+/* ==========================================
+   PRIVATE COPY
+========================================== */
+
+async function copyPrivateText(text){
+
+  if(
+    navigator.clipboard &&
+    window.isSecureContext
+  ){
+
+    await navigator.clipboard
+      .writeText(text);
+
+    return;
+
+  }
+
+
+  const temporary =
+    document.createElement(
+      "textarea"
+    );
+
+
+  temporary.value =
+    text;
+
+
+  temporary.setAttribute(
+    "readonly",
+    ""
+  );
+
+
+  temporary.style.position =
+    "fixed";
+
+  temporary.style.opacity =
+    "0";
+
+  temporary.style.pointerEvents =
+    "none";
+
+
+  document.body.appendChild(
+    temporary
+  );
+
+
+  temporary.select();
+
+
+  temporary.setSelectionRange(
+    0,
+    temporary.value.length
+  );
+
+
+  const copied =
+    document.execCommand(
+      "copy"
+    );
+
+
+  temporary.remove();
+
+
+  if(!copied){
+
+    throw new Error(
+      "Copy failed."
+    );
+
+  }
+
+}
+
+
+/* ==========================================
+   CLEAR DISPLAYED TRACKING TOKEN
+========================================== */
+
+function clearIssuedTrackingToken(){
+
+  issuedTrackingToken =
+    "";
+
+
+  if(trackingCodeDisplay){
+
+    trackingCodeDisplay.value =
+      "";
+
+  }
+
+
+  if(trackingAccessResult){
+
+    trackingAccessResult.style.display =
+      "none";
+
+  }
+
+
+  if(trackingResultMission){
+
+    trackingResultMission.textContent =
+      "—";
+
+  }
+
+
+  if(trackingResultStatus){
+
+    trackingResultStatus.textContent =
+      "—";
+
+  }
+
+
+  if(trackingResultExpires){
+
+    trackingResultExpires.textContent =
+      "—";
+
+  }
+
+}
+
+
+/* ==========================================
+   CLEAR TRACKING CONTROL
+========================================== */
+
+function clearTrackingAccess(){
+
+  clearIssuedTrackingToken();
+
+
+  if(trackingMissionId){
+
+    trackingMissionId.value =
+      "";
+
+  }
+
+
+  showMessage(
+    "Recipient tracking control cleared."
+  );
+
+}
+
+
+/* ==========================================
+   PRIVATE DATE
+========================================== */
+
+function formatPrivateDate(value){
+
+  if(!value){
+    return "Unknown";
+  }
+
+
+  const date =
+    new Date(value);
+
+
+  if(
+    Number.isNaN(
+      date.getTime()
+    )
+  ){
+    return "Unknown";
+  }
+
+
+  return date.toLocaleString();
+
+}
+
+
+/* ==========================================
    DATE
 ========================================== */
 
@@ -3308,7 +4050,19 @@ window.addEventListener(
   "pagehide",
   () => {
 
-    adminToken = "";
+    adminToken =
+      "";
+
+    issuedTrackingToken =
+      "";
+
+
+    if(trackingCodeDisplay){
+
+      trackingCodeDisplay.value =
+        "";
+
+    }
 
   }
 );
@@ -3316,4 +4070,4 @@ window.addEventListener(
 </script>
 
 </body>
-</html>
+</html>a
