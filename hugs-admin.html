@@ -128,7 +128,8 @@
     }
 
     .field input,
-    .field textarea{
+    .field textarea,
+    .field select{
       width:100%;
       padding:13px 14px;
       border:1px solid var(--border);
@@ -404,6 +405,88 @@
       color:var(--muted);
     }
 
+    /* ======================================
+       ROUTE CONTROL
+    ====================================== */
+
+    .route-panel{
+      max-width:850px;
+      padding:26px;
+      background:white;
+      border:1px solid var(--border);
+      border-radius:22px;
+      box-shadow:0 8px 28px rgba(7,29,64,.05);
+    }
+
+    .route-panel h3{
+      margin-top:0;
+      color:var(--navy);
+    }
+
+    .route-intro{
+      line-height:1.7;
+      color:var(--muted);
+    }
+
+    .route-warning{
+      margin:20px 0;
+      padding:17px;
+      background:#fff7e5;
+      border:1px solid #efd18c;
+      border-radius:15px;
+      color:#62470d;
+      line-height:1.6;
+    }
+
+    .route-grid{
+      display:grid;
+      grid-template-columns:
+        repeat(
+          2,
+          minmax(0,1fr)
+        );
+      gap:18px;
+    }
+
+    .route-location{
+      padding:20px;
+      background:#f8fafc;
+      border:1px solid var(--border);
+      border-radius:18px;
+    }
+
+    .route-location h4{
+      margin:0 0 15px;
+      color:var(--navy);
+    }
+
+    .coordinate-grid{
+      display:grid;
+      grid-template-columns:1fr 1fr;
+      gap:12px;
+    }
+
+    .route-privacy{
+      margin-top:20px;
+      padding:17px;
+      border-left:4px solid var(--blue);
+      background:#eef5ff;
+      border-radius:0 14px 14px 0;
+      line-height:1.65;
+      color:#244b7e;
+    }
+
+    .route-result{
+      display:none;
+      margin-top:18px;
+      padding:16px;
+      border-radius:14px;
+      background:#eaf8f0;
+      color:var(--green);
+      line-height:1.6;
+      font-weight:700;
+    }
+
     .message{
       display:none;
       position:fixed;
@@ -429,6 +512,14 @@
       background:var(--red);
     }
 
+    @media(max-width:750px){
+
+      .route-grid{
+        grid-template-columns:1fr;
+      }
+
+    }
+
     @media(max-width:650px){
 
       .record-card{
@@ -451,6 +542,14 @@
         flex:1;
       }
 
+      .coordinate-grid{
+        grid-template-columns:1fr;
+      }
+
+      .route-panel{
+        padding:18px;
+      }
+
     }
 
   </style>
@@ -459,268 +558,527 @@
 
 <body>
 
-  <section class="admin-hero">
+<section class="admin-hero">
 
-    <div class="admin-shell">
+  <div class="admin-shell">
 
-      <div class="admin-badge">
-        Private HUGS Control Center
-      </div>
+    <div class="admin-badge">
+      Private HUGS Control Center
+    </div>
 
-      <h1>HUGS Admin</h1>
+    <h1>HUGS Admin</h1>
 
-      <p>
-        Review HUG Requests, approve HUGS Helpers,
-        create safe public missions and manage
-        Helper-to-Mission connections.
-      </p>
+    <p>
+      Review HUG Requests, approve HUGS Helpers,
+      create safe public missions, manage
+      Helper-to-Mission connections and privately
+      prepare delivery routes.
+    </p>
+
+  </div>
+
+</section>
+
+
+<main class="admin-content">
+
+<div class="admin-shell">
+
+  <div class="security-notice">
+
+    <strong>Private administration area.</strong>
+
+    Requester, Helper, pickup and destination
+    information shown here must remain private.
+    Only sanitized mission information should
+    appear on the public HUG Missions board.
+
+  </div>
+
+
+  <!-- ======================================
+       LOGIN
+  ======================================= -->
+
+  <section
+    class="login-card"
+    id="loginCard"
+  >
+
+    <h2>Admin Access</h2>
+
+    <p>
+      Enter your HUGS Admin Token.
+      The token is kept only in this browser tab
+      while the Admin Center is open.
+    </p>
+
+    <div class="field">
+
+      <label for="adminToken">
+        Admin Token
+      </label>
+
+      <input
+        type="password"
+        id="adminToken"
+        autocomplete="off"
+        placeholder="Enter admin token"
+      >
 
     </div>
+
+    <button
+      class="primary-button"
+      id="loginButton"
+      type="button"
+    >
+      Open HUGS Admin
+    </button>
 
   </section>
 
 
-  <main class="admin-content">
+  <!-- ======================================
+       DASHBOARD
+  ======================================= -->
 
-    <div class="admin-shell">
+  <section id="adminDashboard">
 
-      <div class="security-notice">
+    <div class="admin-toolbar">
 
-        <strong>Private administration area.</strong>
+      <h2>
+        HUGS Help Operations
+      </h2>
 
-        Requester and Helper information shown here
-        must remain private. Only sanitized mission
-        information should be published to the public
-        HUG Missions board.
+      <div class="toolbar-buttons">
+
+        <button
+          class="secondary-button"
+          id="refreshButton"
+          type="button"
+        >
+          Refresh
+        </button>
+
+        <button
+          class="danger-button"
+          id="logoutButton"
+          type="button"
+        >
+          Lock Admin
+        </button>
+
+      </div>
+
+    </div>
+
+
+    <!-- COUNTS -->
+
+    <div class="summary-grid">
+
+      <div class="summary-card">
+
+        <span
+          class="summary-number"
+          id="pendingRequestCount"
+        >
+          0
+        </span>
+
+        <span class="summary-label">
+          Pending Requests
+        </span>
 
       </div>
 
 
-      <!-- LOGIN -->
+      <div class="summary-card">
 
-      <section
-        class="login-card"
-        id="loginCard"
-      >
-
-        <h2>Admin Access</h2>
-
-        <p>
-          Enter your HUGS Admin Token.
-          The token is not stored in this page.
-        </p>
-
-        <div class="field">
-
-          <label for="adminToken">
-            Admin Token
-          </label>
-
-          <input
-            type="password"
-            id="adminToken"
-            autocomplete="off"
-            placeholder="Enter admin token"
-          >
-
-        </div>
-
-        <button
-          class="primary-button"
-          id="loginButton"
-          type="button"
+        <span
+          class="summary-number"
+          id="registeredHelperCount"
         >
-          Open HUGS Admin
-        </button>
+          0
+        </span>
 
-      </section>
+        <span class="summary-label">
+          Helpers Awaiting Approval
+        </span>
 
-
-      <!-- DASHBOARD -->
-
-      <section id="adminDashboard">
-
-        <div class="admin-toolbar">
-
-          <h2>
-            HUGS Help Operations
-          </h2>
-
-          <div class="toolbar-buttons">
-
-            <button
-              class="secondary-button"
-              id="refreshButton"
-              type="button"
-            >
-              Refresh
-            </button>
-
-            <button
-              class="danger-button"
-              id="logoutButton"
-              type="button"
-            >
-              Lock Admin
-            </button>
-
-          </div>
-
-        </div>
+      </div>
 
 
-        <!-- COUNTS -->
+      <div class="summary-card">
 
-        <div class="summary-grid">
-
-          <div class="summary-card">
-
-            <span
-              class="summary-number"
-              id="pendingRequestCount"
-            >
-              0
-            </span>
-
-            <span class="summary-label">
-              Pending Requests
-            </span>
-
-          </div>
-
-
-          <div class="summary-card">
-
-            <span
-              class="summary-number"
-              id="registeredHelperCount"
-            >
-              0
-            </span>
-
-            <span class="summary-label">
-              Helpers Awaiting Approval
-            </span>
-
-          </div>
-
-
-          <div class="summary-card">
-
-            <span
-              class="summary-number"
-              id="pendingMatchCount"
-            >
-              0
-            </span>
-
-            <span class="summary-label">
-              Pending Helper Matches
-            </span>
-
-          </div>
-
-        </div>
-
-
-        <!-- TABS -->
-
-        <div class="admin-tabs">
-
-          <button
-            class="tab-button active"
-            data-tab="requests"
-            type="button"
-          >
-            HUG Requests
-          </button>
-
-          <button
-            class="tab-button"
-            data-tab="helpers"
-            type="button"
-          >
-            HUGS Helpers
-          </button>
-
-          <button
-            class="tab-button"
-            data-tab="matches"
-            type="button"
-          >
-            Helper Matches
-          </button>
-
-        </div>
-
-
-        <!-- REQUESTS -->
-
-        <section
-          class="admin-section active"
-          id="requestsSection"
+        <span
+          class="summary-number"
+          id="pendingMatchCount"
         >
+          0
+        </span>
 
-          <div
-            class="record-grid"
-            id="requestList"
-          >
-            <div class="loading">
-              Loading HUG Requests...
-            </div>
-          </div>
+        <span class="summary-label">
+          Pending Helper Matches
+        </span>
 
-        </section>
-
-
-        <!-- HELPERS -->
-
-        <section
-          class="admin-section"
-          id="helpersSection"
-        >
-
-          <div
-            class="record-grid"
-            id="helperList"
-          >
-            <div class="loading">
-              Loading HUGS Helpers...
-            </div>
-          </div>
-
-        </section>
-
-
-        <!-- MATCHES -->
-
-        <section
-          class="admin-section"
-          id="matchesSection"
-        >
-
-          <div
-            class="record-grid"
-            id="matchList"
-          >
-            <div class="loading">
-              Loading Helper matches...
-            </div>
-          </div>
-
-        </section>
-
-      </section>
+      </div>
 
     </div>
 
-  </main>
+
+    <!-- ======================================
+         TABS
+    ======================================= -->
+
+    <div class="admin-tabs">
+
+      <button
+        class="tab-button active"
+        data-tab="requests"
+        type="button"
+      >
+        HUG Requests
+      </button>
+
+      <button
+        class="tab-button"
+        data-tab="helpers"
+        type="button"
+      >
+        HUGS Helpers
+      </button>
+
+      <button
+        class="tab-button"
+        data-tab="matches"
+        type="button"
+      >
+        Helper Matches
+      </button>
+
+      <button
+        class="tab-button"
+        data-tab="routes"
+        type="button"
+      >
+        Mission Routes
+      </button>
+
+    </div>
 
 
-  <div
-    class="message"
-    id="messageBox"
-  ></div>
+    <!-- REQUESTS -->
+
+    <section
+      class="admin-section active"
+      id="requestsSection"
+    >
+
+      <div
+        class="record-grid"
+        id="requestList"
+      >
+        <div class="loading">
+          Loading HUG Requests...
+        </div>
+      </div>
+
+    </section>
+
+
+    <!-- HELPERS -->
+
+    <section
+      class="admin-section"
+      id="helpersSection"
+    >
+
+      <div
+        class="record-grid"
+        id="helperList"
+      >
+        <div class="loading">
+          Loading HUGS Helpers...
+        </div>
+      </div>
+
+    </section>
+
+
+    <!-- MATCHES -->
+
+    <section
+      class="admin-section"
+      id="matchesSection"
+    >
+
+      <div
+        class="record-grid"
+        id="matchList"
+      >
+        <div class="loading">
+          Loading Helper matches...
+        </div>
+      </div>
+
+    </section>
+
+
+    <!-- ======================================
+         PRIVATE MISSION ROUTES
+    ======================================= -->
+
+    <section
+      class="admin-section"
+      id="routesSection"
+    >
+
+      <div class="route-panel">
+
+        <div class="record-id">
+          PRIVATE ROUTING
+        </div>
+
+        <h3>
+          Prepare HUG Mission Route
+        </h3>
+
+        <p class="route-intro">
+          Add the private pickup and destination
+          after a Helper has been assigned to a
+          HUG Mission.
+        </p>
+
+
+        <div class="route-warning">
+
+          <strong>
+            Important:
+          </strong>
+
+          These locations are private operational
+          information. Do not put exact addresses
+          or coordinates into the public Mission
+          summary.
+
+        </div>
+
+
+        <div class="field">
+
+          <label for="routeMissionId">
+            Assigned Mission Number
+          </label>
+
+          <input
+            id="routeMissionId"
+            type="text"
+            autocomplete="off"
+            placeholder="Example: HUG-2026-XXXXXXXX"
+          >
+
+        </div>
+
+
+        <div class="route-grid">
+
+
+          <!-- PICKUP -->
+
+          <div class="route-location">
+
+            <h4>
+              📍 Pickup
+            </h4>
+
+            <div class="field">
+
+              <label for="pickupLabel">
+                Pickup Label
+              </label>
+
+              <input
+                id="pickupLabel"
+                type="text"
+                autocomplete="off"
+                placeholder="Example: Community Food Partner"
+              >
+
+            </div>
+
+
+            <div class="coordinate-grid">
+
+              <div class="field">
+
+                <label for="pickupLatitude">
+                  Latitude
+                </label>
+
+                <input
+                  id="pickupLatitude"
+                  type="number"
+                  step="any"
+                  inputmode="decimal"
+                  placeholder="40.000000"
+                >
+
+              </div>
+
+
+              <div class="field">
+
+                <label for="pickupLongitude">
+                  Longitude
+                </label>
+
+                <input
+                  id="pickupLongitude"
+                  type="number"
+                  step="any"
+                  inputmode="decimal"
+                  placeholder="-73.000000"
+                >
+
+              </div>
+
+            </div>
+
+          </div>
+
+
+          <!-- DESTINATION -->
+
+          <div class="route-location">
+
+            <h4>
+              ❤️ Destination
+            </h4>
+
+            <div class="field">
+
+              <label for="destinationLabel">
+                Destination Label
+              </label>
+
+              <input
+                id="destinationLabel"
+                type="text"
+                autocomplete="off"
+                placeholder="Example: Recipient Delivery"
+              >
+
+            </div>
+
+
+            <div class="coordinate-grid">
+
+              <div class="field">
+
+                <label for="destinationLatitude">
+                  Latitude
+                </label>
+
+                <input
+                  id="destinationLatitude"
+                  type="number"
+                  step="any"
+                  inputmode="decimal"
+                  placeholder="40.000000"
+                >
+
+              </div>
+
+
+              <div class="field">
+
+                <label for="destinationLongitude">
+                  Longitude
+                </label>
+
+                <input
+                  id="destinationLongitude"
+                  type="number"
+                  step="any"
+                  inputmode="decimal"
+                  placeholder="-73.000000"
+                >
+
+              </div>
+
+            </div>
+
+          </div>
+
+        </div>
+
+
+        <div class="route-privacy">
+
+          <strong>
+            Destination Privacy Lock
+          </strong>
+
+          <br>
+
+          The assigned Helper receives the pickup
+          first. The destination remains hidden
+          while the Mission is
+          <strong>Accepted</strong> or
+          <strong>At Pickup</strong>.
+
+          <br><br>
+
+          The destination becomes available only
+          after the Helper confirms
+          <strong>Items Received</strong>.
+
+        </div>
+
+
+        <div class="action-row">
+
+          <button
+            class="primary-button"
+            id="saveRouteButton"
+            type="button"
+          >
+            Save Private Route
+          </button>
+
+          <button
+            class="secondary-button"
+            id="clearRouteButton"
+            type="button"
+          >
+            Clear Form
+          </button>
+
+        </div>
+
+
+        <div
+          class="route-result"
+          id="routeResult"
+        ></div>
+
+      </div>
+
+    </section>
+
+  </section>
+
+</div>
+
+</main>
+
+
+<div
+  class="message"
+  id="messageBox"
+></div>
 
 
 <script>
@@ -731,6 +1089,9 @@
 
 const API =
   "/.netlify/functions/admin-hug-missions";
+
+const ROUTE_API =
+  "/.netlify/functions/admin-hug-route";
 
 
 let adminToken = "";
@@ -784,6 +1145,15 @@ const pendingMatchCount =
 
 const messageBox =
   document.getElementById("messageBox");
+
+const saveRouteButton =
+  document.getElementById("saveRouteButton");
+
+const clearRouteButton =
+  document.getElementById("clearRouteButton");
+
+const routeResult =
+  document.getElementById("routeResult");
 
 
 /* ==========================================
@@ -857,6 +1227,15 @@ async function adminFetch(
   options = {}
 ){
 
+  if(!adminToken){
+
+    throw new Error(
+      "HUGS Admin is locked."
+    );
+
+  }
+
+
   const requestHeaders = {
 
     ...(options.headers || {}),
@@ -867,9 +1246,7 @@ async function adminFetch(
   };
 
 
-  if(
-    options.body
-  ){
+  if(options.body){
 
     requestHeaders[
       "Content-Type"
@@ -898,7 +1275,7 @@ async function adminFetch(
       await response.json();
 
   }
-  catch(error){
+  catch{
 
     throw new Error(
       "The HUGS Admin service returned an invalid response."
@@ -946,9 +1323,7 @@ loginButton.addEventListener(
       tokenInput.value.trim();
 
 
-    if(
-      !entered
-    ){
+    if(!entered){
 
       showMessage(
         "Enter the HUGS Admin Token.",
@@ -1056,6 +1431,9 @@ function lockAdmin(){
   requestList.innerHTML = "";
   helperList.innerHTML = "";
   matchList.innerHTML = "";
+
+
+  clearRouteForm();
 
 
   dashboard.style.display =
@@ -1706,9 +2084,7 @@ async function approveRequest(requestId){
       .trim();
 
 
-  if(
-    !summary
-  ){
+  if(!summary){
 
     showMessage(
       "Write a safe public Mission summary before approving.",
@@ -2526,14 +2902,314 @@ async function declineMatch(matchId){
 
 
 /* ==========================================
+   PRIVATE ROUTE
+========================================== */
+
+saveRouteButton.addEventListener(
+  "click",
+  savePrivateRoute
+);
+
+
+clearRouteButton.addEventListener(
+  "click",
+  clearRouteForm
+);
+
+
+async function savePrivateRoute(){
+
+  const missionId =
+    document
+      .getElementById(
+        "routeMissionId"
+      )
+      .value
+      .trim()
+      .toUpperCase();
+
+
+  const pickupLabel =
+    document
+      .getElementById(
+        "pickupLabel"
+      )
+      .value
+      .trim();
+
+
+  const pickupLatitude =
+    Number(
+      document
+        .getElementById(
+          "pickupLatitude"
+        )
+        .value
+    );
+
+
+  const pickupLongitude =
+    Number(
+      document
+        .getElementById(
+          "pickupLongitude"
+        )
+        .value
+    );
+
+
+  const destinationLabel =
+    document
+      .getElementById(
+        "destinationLabel"
+      )
+      .value
+      .trim();
+
+
+  const destinationLatitude =
+    Number(
+      document
+        .getElementById(
+          "destinationLatitude"
+        )
+        .value
+    );
+
+
+  const destinationLongitude =
+    Number(
+      document
+        .getElementById(
+          "destinationLongitude"
+        )
+        .value
+    );
+
+
+  if(!missionId){
+
+    showMessage(
+      "Enter the assigned HUG Mission number.",
+      "error"
+    );
+
+    return;
+
+  }
+
+
+  if(
+    !pickupLabel ||
+    !destinationLabel
+  ){
+
+    showMessage(
+      "Enter both the pickup and destination labels.",
+      "error"
+    );
+
+    return;
+
+  }
+
+
+  if(
+    !validLatitude(
+      pickupLatitude
+    ) ||
+    !validLongitude(
+      pickupLongitude
+    ) ||
+    !validLatitude(
+      destinationLatitude
+    ) ||
+    !validLongitude(
+      destinationLongitude
+    )
+  ){
+
+    showMessage(
+      "Enter valid pickup and destination coordinates.",
+      "error"
+    );
+
+    return;
+
+  }
+
+
+  if(
+    !confirm(
+      "Save this private pickup and destination for " +
+      missionId +
+      "?"
+    )
+  ){
+    return;
+  }
+
+
+  saveRouteButton.disabled =
+    true;
+
+  saveRouteButton.textContent =
+    "Saving Private Route...";
+
+
+  try{
+
+    const result =
+      await adminFetch(
+        ROUTE_API,
+        {
+
+          method:"POST",
+
+          body:
+            JSON.stringify({
+
+              mission_id:
+                missionId,
+
+              pickup_label:
+                pickupLabel,
+
+              pickup_latitude:
+                pickupLatitude,
+
+              pickup_longitude:
+                pickupLongitude,
+
+              destination_label:
+                destinationLabel,
+
+              destination_latitude:
+                destinationLatitude,
+
+              destination_longitude:
+                destinationLongitude
+
+            })
+
+        }
+      );
+
+
+    routeResult.style.display =
+      "block";
+
+
+    routeResult.innerHTML =
+
+      "✓ Private route saved for <strong>" +
+      escapeHTML(
+        result.mission_id ||
+        missionId
+      ) +
+      "</strong>.<br><br>" +
+
+      "The Helper receives the pickup first. " +
+      "The destination remains protected until " +
+      "the mission reaches <strong>Items Received</strong>.";
+
+
+    showMessage(
+      "Private HUG route saved."
+    );
+
+
+  }
+  catch(error){
+
+    routeResult.style.display =
+      "none";
+
+
+    showMessage(
+      error.message,
+      "error"
+    );
+
+  }
+  finally{
+
+    saveRouteButton.disabled =
+      false;
+
+    saveRouteButton.textContent =
+      "Save Private Route";
+
+  }
+
+}
+
+
+function validLatitude(value){
+
+  return (
+    Number.isFinite(value) &&
+    value >= -90 &&
+    value <= 90
+  );
+
+}
+
+
+function validLongitude(value){
+
+  return (
+    Number.isFinite(value) &&
+    value >= -180 &&
+    value <= 180
+  );
+
+}
+
+
+function clearRouteForm(){
+
+  [
+    "routeMissionId",
+    "pickupLabel",
+    "pickupLatitude",
+    "pickupLongitude",
+    "destinationLabel",
+    "destinationLatitude",
+    "destinationLongitude"
+  ]
+  .forEach(
+    id => {
+
+      const field =
+        document.getElementById(id);
+
+      if(field){
+
+        field.value = "";
+
+      }
+
+    }
+  );
+
+
+  routeResult.style.display =
+    "none";
+
+  routeResult.innerHTML =
+    "";
+
+}
+
+
+/* ==========================================
    DATE
 ========================================== */
 
 function formatDate(value){
 
-  if(
-    !value
-  ){
+  if(!value){
     return "Unknown";
   }
 
@@ -2622,6 +3298,20 @@ document
 
     }
   );
+
+
+/* ==========================================
+   PAGE EXIT
+========================================== */
+
+window.addEventListener(
+  "pagehide",
+  () => {
+
+    adminToken = "";
+
+  }
+);
 
 </script>
 
