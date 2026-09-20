@@ -2,42 +2,49 @@ import { getStore } from "@netlify/blobs";
 
 /*
  * HUGSLinks
- * Admin HUG Mission Approval Layer
+ * Admin HUG Help Control API
  *
  * File:
  * netlify/functions/admin-hug-missions.mjs
  *
- * PURPOSE
- * -------
- * Internal/server-side mission management.
+ * ADMIN CAPABILITIES
+ * ------------------
+ * GET:
+ *   ?view=requests
+ *   ?view=helpers
+ *   ?view=matches
  *
- * This endpoint can:
+ * POST actions:
+ *   approve-request
+ *   hold-request
+ *   decline-request
  *
- * 1. List private HUG Requests for review
- * 2. Approve a request and create a sanitized mission
- * 3. Hold a request
- * 4. Decline a request
- * 5. List pending Helper match requests
- * 6. Approve a Helper match
- * 7. Decline a Helper match
+ *   approve-helper
+ *   pause-helper
+ *   reactivate-helper
+ *
+ *   approve-match
+ *   decline-match
  *
  * SECURITY
  * --------
- * Requires a server-side environment variable:
+ * Requires:
  *
  * HUGS_ADMIN_TOKEN
  *
- * NEVER put that token inside public HTML,
- * JavaScript, GitHub source, or browser code.
+ * as a Netlify server environment variable.
  */
 
 
 /* ==========================================
-   STORES
+   STORE NAMES
 ========================================== */
 
 const REQUEST_STORE_NAME =
   "hugs-help-requests";
+
+const HELPER_STORE_NAME =
+  "hugs-help-helpers";
 
 const MISSION_STORE_NAME =
   "hugs-help-missions";
@@ -46,8 +53,15 @@ const MATCH_STORE_NAME =
   "hugs-help-matches";
 
 
+/* ==========================================
+   COLLECTION KEYS
+========================================== */
+
 const REQUESTS_KEY =
   "requests";
+
+const HELPERS_KEY =
+  "helpers";
 
 const MISSIONS_KEY =
   "missions";
@@ -57,7 +71,7 @@ const MATCHES_KEY =
 
 
 /* ==========================================
-   RESPONSE HEADERS
+   HEADERS
 ========================================== */
 
 const headers = {
@@ -72,7 +86,7 @@ const headers = {
 
 
 /* ==========================================
-   JSON RESPONSE
+   RESPONSE
 ========================================== */
 
 function jsonResponse(
@@ -124,34 +138,36 @@ function cleanText(
 
 
 /* ==========================================
-   ADMIN AUTHORIZATION
+   ADMIN AUTH
 ========================================== */
 
 function getAdminToken(
   request
 ){
 
-  const auth =
+  const authorization =
     request.headers.get(
       "authorization"
     ) || "";
 
 
   if(
-    auth.toLowerCase()
+    !authorization
+      .toLowerCase()
       .startsWith(
         "bearer "
       )
   ){
 
-    return auth
-      .slice(7)
-      .trim();
+    return "";
 
   }
 
 
-  return "";
+  return authorization
+    .slice(7)
+    .trim();
+
 }
 
 
@@ -159,18 +175,13 @@ function authorized(
   request
 ){
 
-  const expectedToken =
+  const expected =
     process.env
       .HUGS_ADMIN_TOKEN;
 
 
-  /*
-   * Fail closed if the server secret
-   * has not been configured.
-   */
-
   if(
-    !expectedToken
+    !expected
   ){
 
     console.error(
@@ -182,14 +193,14 @@ function authorized(
   }
 
 
-  const suppliedToken =
+  const supplied =
     getAdminToken(
       request
     );
 
 
   if(
-    !suppliedToken
+    !supplied
   ){
 
     return false;
@@ -197,49 +208,7 @@ function authorized(
   }
 
 
-  /*
-   * Straight comparison is sufficient for this
-   * phase because this endpoint will be replaced
-   * by authenticated admin accounts later.
-   */
-
-  return suppliedToken ===
-    expectedToken;
-
-}
-
-
-/* ==========================================
-   GENERATE MISSION ID
-========================================== */
-
-function createMissionId(){
-
-  const year =
-    new Date()
-      .getFullYear();
-
-
-  const random =
-    crypto
-      .randomUUID()
-      .replaceAll(
-        "-",
-        ""
-      )
-      .slice(
-        0,
-        8
-      )
-      .toUpperCase();
-
-
-  return (
-    "HUG-" +
-    year +
-    "-" +
-    random
-  );
+  return supplied === expected;
 
 }
 
@@ -314,12 +283,14 @@ async function saveCollection(
   await store.setJSON(
     key,
     {
+
       updated_at:
         new Date()
           .toISOString(),
 
       [property]:
         collection
+
     }
   );
 
@@ -327,64 +298,139 @@ async function saveCollection(
 
 
 /* ==========================================
-   FIND REQUEST
+   SORT NEWEST FIRST
+========================================== */
+
+function newestFirst(
+  records
+){
+
+  return records.sort(
+    (a,b) => {
+
+      const aTime =
+        Date.parse(
+          a.created_at || ""
+        ) || 0;
+
+
+      const bTime =
+        Date.parse(
+          b.created_at || ""
+        ) || 0;
+
+
+      return bTime - aTime;
+
+    }
+  );
+
+}
+
+
+/* ==========================================
+   FINDERS
 ========================================== */
 
 function findRequest(
   requests,
-  requestId
+  id
 ){
 
   return requests.find(
     item =>
       String(
         item?.id || ""
-      ) === requestId
+      ) === id
   );
 
 }
 
 
-/* ==========================================
-   FIND MISSION
-========================================== */
+function findHelper(
+  helpers,
+  id
+){
+
+  return helpers.find(
+    item =>
+      String(
+        item?.id || ""
+      )
+      .toUpperCase() ===
+      id.toUpperCase()
+  );
+
+}
+
 
 function findMission(
   missions,
-  missionId
+  id
 ){
 
   return missions.find(
     item =>
       String(
         item?.id || ""
-      ) === missionId
+      ) === id
   );
 
 }
 
 
-/* ==========================================
-   FIND MATCH
-========================================== */
-
 function findMatch(
   matches,
-  matchId
+  id
 ){
 
   return matches.find(
     item =>
       String(
         item?.id || ""
-      ) === matchId
+      ) === id
   );
 
 }
 
 
 /* ==========================================
-   PUBLIC MISSION CREATOR
+   MISSION ID
+========================================== */
+
+function createMissionId(){
+
+  const year =
+    new Date()
+      .getFullYear();
+
+
+  const random =
+    crypto
+      .randomUUID()
+      .replaceAll(
+        "-",
+        ""
+      )
+      .slice(
+        0,
+        8
+      )
+      .toUpperCase();
+
+
+  return (
+    "HUG-" +
+    year +
+    "-" +
+    random
+  );
+
+}
+
+
+/* ==========================================
+   SAFE PUBLIC MISSION
 ========================================== */
 
 function createPublicMission(
@@ -393,56 +439,8 @@ function createPublicMission(
 ){
 
   /*
-   * CRITICAL PRIVACY BOUNDARY
-   *
-   * Do NOT spread hugRequest into this object.
-   *
-   * We construct the public mission manually
-   * so private fields cannot accidentally leak.
-   */
-
-
-  const type =
-    cleanText(
-      input.type ||
-      hugRequest.request_type ||
-      "Community Support",
-      100
-    );
-
-
-  const city =
-    cleanText(
-      input.city ||
-      hugRequest.city ||
-      "",
-      100
-    );
-
-
-  const area =
-    cleanText(
-      input.area ||
-      hugRequest.borough_area ||
-      "",
-      100
-    );
-
-
-  const timing =
-    cleanText(
-      input.timing ||
-      hugRequest.time_needed ||
-      "Flexible",
-      100
-    );
-
-
-  /*
-   * Summary MUST be supplied/reviewed by HUGS.
-   *
-   * We intentionally do not automatically use
-   * the requester's full request_details field.
+   * NEVER copy the complete request object
+   * into a public mission.
    */
 
   const summary =
@@ -468,13 +466,37 @@ function createPublicMission(
     id:
       createMissionId(),
 
-    type,
+    type:
+      cleanText(
+        input.type ||
+        hugRequest.request_type ||
+        "Community Support",
+        100
+      ),
 
-    city,
+    city:
+      cleanText(
+        input.city ||
+        hugRequest.city ||
+        "",
+        100
+      ),
 
-    area,
+    area:
+      cleanText(
+        input.area ||
+        hugRequest.borough_area ||
+        "",
+        100
+      ),
 
-    timing,
+    timing:
+      cleanText(
+        input.timing ||
+        hugRequest.time_needed ||
+        "Flexible",
+        100
+      ),
 
     summary,
 
@@ -489,12 +511,10 @@ function createPublicMission(
         .toISOString(),
 
     /*
-     * Internal linkage is intentionally kept
-     * in storage.
+     * Internal linkage.
      *
-     * The public hugs-missions endpoint does
-     * not allow this field through its
-     * public-field whitelist.
+     * hugs-missions.mjs does not expose
+     * this field publicly.
      */
 
     source_request_id:
@@ -519,7 +539,7 @@ async function listRequests(){
     );
 
 
-  const requests =
+  const records =
     await readCollection(
       store,
       REQUESTS_KEY,
@@ -527,37 +547,42 @@ async function listRequests(){
     );
 
 
-  /*
-   * Admin endpoint may see private request
-   * information because this endpoint is
-   * protected by server-side authorization.
-   */
-
-  return requests.sort(
-    (a,b) => {
-
-      const aTime =
-        Date.parse(
-          a.created_at || ""
-        ) || 0;
-
-
-      const bTime =
-        Date.parse(
-          b.created_at || ""
-        ) || 0;
-
-
-      return bTime - aTime;
-
-    }
+  return newestFirst(
+    records
   );
 
 }
 
 
 /* ==========================================
-   LIST MATCH REQUESTS
+   LIST HELPERS
+========================================== */
+
+async function listHelpers(){
+
+  const store =
+    getStore(
+      HELPER_STORE_NAME
+    );
+
+
+  const records =
+    await readCollection(
+      store,
+      HELPERS_KEY,
+      "helpers"
+    );
+
+
+  return newestFirst(
+    records
+  );
+
+}
+
+
+/* ==========================================
+   LIST MATCHES
 ========================================== */
 
 async function listMatches(){
@@ -568,7 +593,7 @@ async function listMatches(){
     );
 
 
-  const matches =
+  const records =
     await readCollection(
       store,
       MATCHES_KEY,
@@ -576,31 +601,15 @@ async function listMatches(){
     );
 
 
-  return matches.sort(
-    (a,b) => {
-
-      const aTime =
-        Date.parse(
-          a.created_at || ""
-        ) || 0;
-
-
-      const bTime =
-        Date.parse(
-          b.created_at || ""
-        ) || 0;
-
-
-      return bTime - aTime;
-
-    }
+  return newestFirst(
+    records
   );
 
 }
 
 
 /* ==========================================
-   APPROVE HUG REQUEST
+   APPROVE REQUEST
 ========================================== */
 
 async function approveRequest(
@@ -619,12 +628,14 @@ async function approveRequest(
   ){
 
     return {
+
       status:400,
 
       body:{
         ok:false,
         error:"Request ID is required."
       }
+
     };
 
   }
@@ -670,22 +681,20 @@ async function approveRequest(
   ){
 
     return {
+
       status:404,
 
       body:{
         ok:false,
         error:"HUG Request not found."
       }
+
     };
 
   }
 
 
-  /*
-   * Prevent accidental duplicate mission creation.
-   */
-
-  const existingMission =
+  const existing =
     missions.find(
       mission =>
         mission.source_request_id ===
@@ -694,10 +703,11 @@ async function approveRequest(
 
 
   if(
-    existingMission
+    existing
   ){
 
     return {
+
       status:409,
 
       body:{
@@ -707,8 +717,9 @@ async function approveRequest(
           "A HUG Mission already exists for this request.",
 
         mission_id:
-          existingMission.id
+          existing.id
       }
+
     };
 
   }
@@ -729,12 +740,14 @@ async function approveRequest(
   catch(error){
 
     return {
+
       status:400,
 
       body:{
         ok:false,
         error:error.message
       }
+
     };
 
   }
@@ -745,6 +758,11 @@ async function approveRequest(
   );
 
 
+  const now =
+    new Date()
+      .toISOString();
+
+
   hugRequest.review_status =
     "Approved";
 
@@ -752,14 +770,8 @@ async function approveRequest(
     mission.id;
 
   hugRequest.reviewed_at =
-    new Date()
-      .toISOString();
+    now;
 
-
-  /*
-   * Save the public mission and update the
-   * private request separately.
-   */
 
   await saveCollection(
     missionStore,
@@ -778,23 +790,27 @@ async function approveRequest(
 
 
   return {
+
     status:201,
 
     body:{
+
       ok:true,
 
       message:
         "HUG Request approved and sanitized mission created.",
 
       mission
+
     }
+
   };
 
 }
 
 
 /* ==========================================
-   HOLD / DECLINE REQUEST
+   REQUEST STATUS
 ========================================== */
 
 async function updateRequestStatus(
@@ -814,12 +830,14 @@ async function updateRequestStatus(
   ){
 
     return {
+
       status:400,
 
       body:{
         ok:false,
         error:"Request ID is required."
       }
+
     };
 
   }
@@ -851,12 +869,14 @@ async function updateRequestStatus(
   ){
 
     return {
+
       status:404,
 
       body:{
         ok:false,
         error:"HUG Request not found."
       }
+
     };
 
   }
@@ -864,7 +884,6 @@ async function updateRequestStatus(
 
   hugRequest.review_status =
     status;
-
 
   hugRequest.reviewed_at =
     new Date()
@@ -893,9 +912,11 @@ async function updateRequestStatus(
 
 
   return {
+
     status:200,
 
     body:{
+
       ok:true,
 
       request_id:
@@ -903,14 +924,164 @@ async function updateRequestStatus(
 
       review_status:
         status
+
     }
+
   };
 
 }
 
 
 /* ==========================================
-   APPROVE HELPER MATCH
+   HELPER STATUS
+========================================== */
+
+async function updateHelperStatus(
+  body,
+  newStatus
+){
+
+  const helperId =
+    cleanText(
+      body.helper_id,
+      80
+    )
+    .toUpperCase();
+
+
+  if(
+    !helperId
+  ){
+
+    return {
+
+      status:400,
+
+      body:{
+        ok:false,
+        error:"Helper ID is required."
+      }
+
+    };
+
+  }
+
+
+  const store =
+    getStore(
+      HELPER_STORE_NAME
+    );
+
+
+  const helpers =
+    await readCollection(
+      store,
+      HELPERS_KEY,
+      "helpers"
+    );
+
+
+  const helper =
+    findHelper(
+      helpers,
+      helperId
+    );
+
+
+  if(
+    !helper
+  ){
+
+    return {
+
+      status:404,
+
+      body:{
+        ok:false,
+        error:"HUGS Helper not found."
+      }
+
+    };
+
+  }
+
+
+  const now =
+    new Date()
+      .toISOString();
+
+
+  helper.status =
+    newStatus;
+
+  helper.reviewed_at =
+    now;
+
+
+  if(
+    newStatus === "Approved"
+  ){
+
+    helper.approved_at =
+      now;
+
+  }
+
+
+  if(
+    newStatus === "Paused"
+  ){
+
+    helper.paused_at =
+      now;
+
+  }
+
+
+  if(
+    body.review_note
+  ){
+
+    helper.review_note =
+      cleanText(
+        body.review_note,
+        1000
+      );
+
+  }
+
+
+  await saveCollection(
+    store,
+    HELPERS_KEY,
+    "helpers",
+    helpers
+  );
+
+
+  return {
+
+    status:200,
+
+    body:{
+
+      ok:true,
+
+      helper_id:
+        helper.id,
+
+      helper_status:
+        helper.status
+
+    }
+
+  };
+
+}
+
+
+/* ==========================================
+   APPROVE MATCH
 ========================================== */
 
 async function approveMatch(
@@ -929,12 +1100,14 @@ async function approveMatch(
   ){
 
     return {
+
       status:400,
 
       body:{
         ok:false,
         error:"Match ID is required."
       }
+
     };
 
   }
@@ -949,6 +1122,12 @@ async function approveMatch(
   const missionStore =
     getStore(
       MISSION_STORE_NAME
+    );
+
+
+  const helperStore =
+    getStore(
+      HELPER_STORE_NAME
     );
 
 
@@ -968,6 +1147,14 @@ async function approveMatch(
     );
 
 
+  const helpers =
+    await readCollection(
+      helperStore,
+      HELPERS_KEY,
+      "helpers"
+    );
+
+
   const match =
     findMatch(
       matches,
@@ -980,12 +1167,14 @@ async function approveMatch(
   ){
 
     return {
+
       status:404,
 
       body:{
         ok:false,
         error:"Helper match request not found."
       }
+
     };
 
   }
@@ -997,14 +1186,116 @@ async function approveMatch(
   ){
 
     return {
+
       status:409,
 
       body:{
+
         ok:false,
 
         error:
           "This Helper match has already been reviewed."
+
       }
+
+    };
+
+  }
+
+
+  /*
+   * IMPORTANT:
+   *
+   * Verify Helper again at assignment time.
+   *
+   * We do not rely only on the earlier
+   * accept-hug-mission check.
+   */
+
+  const helper =
+    findHelper(
+      helpers,
+      String(
+        match.helper_id || ""
+      )
+    );
+
+
+  if(
+    !helper
+  ){
+
+    return {
+
+      status:404,
+
+      body:{
+        ok:false,
+        error:"Associated HUGS Helper not found."
+      }
+
+    };
+
+  }
+
+
+  if(
+    helper.status !==
+    "Approved"
+  ){
+
+    return {
+
+      status:409,
+
+      body:{
+
+        ok:false,
+
+        error:
+          "This Helper must be approved before assignment."
+
+      }
+
+    };
+
+  }
+
+
+  const registeredEmail =
+    String(
+      helper.email || ""
+    )
+    .trim()
+    .toLowerCase();
+
+
+  const matchEmail =
+    String(
+      match.helper_email || ""
+    )
+    .trim()
+    .toLowerCase();
+
+
+  if(
+    registeredEmail !==
+    matchEmail
+  ){
+
+    return {
+
+      status:409,
+
+      body:{
+
+        ok:false,
+
+        error:
+          "Helper verification no longer matches the registration."
+
+      }
+
     };
 
   }
@@ -1022,12 +1313,14 @@ async function approveMatch(
   ){
 
     return {
+
       status:404,
 
       body:{
         ok:false,
         error:"Associated HUG Mission not found."
       }
+
     };
 
   }
@@ -1039,14 +1332,18 @@ async function approveMatch(
   ){
 
     return {
+
       status:409,
 
       body:{
+
         ok:false,
 
         error:
           "This HUG Mission is no longer available."
+
       }
+
     };
 
   }
@@ -1056,10 +1353,6 @@ async function approveMatch(
     new Date()
       .toISOString();
 
-
-  /*
-   * Assign selected Helper.
-   */
 
   match.status =
     "Approved";
@@ -1071,15 +1364,11 @@ async function approveMatch(
     now;
 
 
-  /*
-   * Mission leaves the public Available board.
-   */
-
   mission.status =
     "Accepted";
 
   mission.assigned_helper_id =
-    match.helper_id;
+    helper.id;
 
   mission.assigned_match_id =
     match.id;
@@ -1089,8 +1378,8 @@ async function approveMatch(
 
 
   /*
-   * Other pending requests for this same mission
-   * are closed automatically.
+   * Close other pending applications
+   * for the same mission.
    */
 
   for(
@@ -1136,23 +1425,27 @@ async function approveMatch(
 
 
   return {
+
     status:200,
 
     body:{
+
       ok:true,
 
       message:
-        "Helper approved and HUG Mission assigned.",
+        "Approved Helper assigned to HUG Mission.",
 
       mission_id:
         mission.id,
 
       helper_id:
-        match.helper_id,
+        helper.id,
 
-      status:
+      mission_status:
         mission.status
+
     }
+
   };
 
 }
@@ -1178,12 +1471,14 @@ async function declineMatch(
   ){
 
     return {
+
       status:400,
 
       body:{
         ok:false,
         error:"Match ID is required."
       }
+
     };
 
   }
@@ -1215,12 +1510,14 @@ async function declineMatch(
   ){
 
     return {
+
       status:404,
 
       body:{
         ok:false,
         error:"Helper match request not found."
       }
+
     };
 
   }
@@ -1232,14 +1529,18 @@ async function declineMatch(
   ){
 
     return {
+
       status:409,
 
       body:{
+
         ok:false,
 
         error:
           "This Helper match has already been reviewed."
+
       }
+
     };
 
   }
@@ -1275,9 +1576,11 @@ async function declineMatch(
 
 
   return {
+
     status:200,
 
     body:{
+
       ok:true,
 
       match_id:
@@ -1285,7 +1588,9 @@ async function declineMatch(
 
       status:
         "Declined"
+
     }
+
   };
 
 }
@@ -1301,9 +1606,9 @@ export default async (
 ) => {
 
 
-  /*
-   * This entire endpoint is private.
-   */
+  /* ========================================
+     AUTHENTICATION
+  ======================================== */
 
   if(
     !authorized(
@@ -1314,9 +1619,7 @@ export default async (
     return jsonResponse(
       {
         ok:false,
-
-        error:
-          "Unauthorized."
+        error:"Unauthorized."
       },
       401
     );
@@ -1329,11 +1632,11 @@ export default async (
 
     /* ======================================
        GET
-       List requests or matches
     ====================================== */
 
     if(
-      request.method === "GET"
+      request.method ===
+      "GET"
     ){
 
       const url =
@@ -1348,6 +1651,8 @@ export default async (
         ) || "requests";
 
 
+      /* REQUESTS */
+
       if(
         view === "requests"
       ){
@@ -1358,17 +1663,47 @@ export default async (
 
         return jsonResponse(
           {
+
             ok:true,
 
             count:
               requests.length,
 
             requests
+
           }
         );
 
       }
 
+
+      /* HELPERS */
+
+      if(
+        view === "helpers"
+      ){
+
+        const helpers =
+          await listHelpers();
+
+
+        return jsonResponse(
+          {
+
+            ok:true,
+
+            count:
+              helpers.length,
+
+            helpers
+
+          }
+        );
+
+      }
+
+
+      /* MATCHES */
 
       if(
         view === "matches"
@@ -1380,12 +1715,14 @@ export default async (
 
         return jsonResponse(
           {
+
             ok:true,
 
             count:
               matches.length,
 
             matches
+
           }
         );
 
@@ -1395,9 +1732,7 @@ export default async (
       return jsonResponse(
         {
           ok:false,
-
-          error:
-            "Unknown admin view."
+          error:"Unknown admin view."
         },
         400
       );
@@ -1407,11 +1742,11 @@ export default async (
 
     /* ======================================
        POST
-       Administrative actions
     ====================================== */
 
     if(
-      request.method === "POST"
+      request.method ===
+      "POST"
     ){
 
       let body;
@@ -1428,9 +1763,7 @@ export default async (
         return jsonResponse(
           {
             ok:false,
-
-            error:
-              "Invalid JSON request."
+            error:"Invalid JSON request."
           },
           400
         );
@@ -1452,6 +1785,8 @@ export default async (
         action
       ){
 
+
+        /* REQUESTS */
 
         case "approve-request":
 
@@ -1485,6 +1820,43 @@ export default async (
           break;
 
 
+        /* HELPERS */
+
+        case "approve-helper":
+
+          result =
+            await updateHelperStatus(
+              body,
+              "Approved"
+            );
+
+          break;
+
+
+        case "pause-helper":
+
+          result =
+            await updateHelperStatus(
+              body,
+              "Paused"
+            );
+
+          break;
+
+
+        case "reactivate-helper":
+
+          result =
+            await updateHelperStatus(
+              body,
+              "Approved"
+            );
+
+          break;
+
+
+        /* MATCHES */
+
         case "approve-match":
 
           result =
@@ -1510,9 +1882,7 @@ export default async (
           return jsonResponse(
             {
               ok:false,
-
-              error:
-                "Unknown admin action."
+              error:"Unknown admin action."
             },
             400
           );
@@ -1531,9 +1901,7 @@ export default async (
     return jsonResponse(
       {
         ok:false,
-
-        error:
-          "Method not allowed."
+        error:"Method not allowed."
       },
       405
     );
@@ -1542,18 +1910,21 @@ export default async (
   }
   catch(error){
 
+
     console.error(
-      "HUGS Admin Mission error:",
+      "HUGS Admin error:",
       error
     );
 
 
     return jsonResponse(
       {
+
         ok:false,
 
         error:
-          "The HUGS admin service could not complete this request."
+          "The HUGS Admin service could not complete this request."
+
       },
       500
     );
