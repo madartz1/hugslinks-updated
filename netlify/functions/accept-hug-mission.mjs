@@ -533,23 +533,26 @@ export default async (
      * Suspended
      */
 
-    if(
-      helperStatus !== "Registered" &&
-      helperStatus !== "Approved"
-    ){
+    /*
+ * Only Helpers reviewed and approved by
+ * HUGS may request active missions.
+ */
 
-      return jsonResponse(
-        {
-          ok:false,
+if(
+  helperStatus !== "Approved"
+){
 
-          error:
-            "This HUGS Helper registration is not currently eligible for HUG Missions."
-        },
-        403
-      );
+  return jsonResponse(
+    {
+      ok:false,
 
-    }
+      error:
+        "Your HUGS Helper registration must be approved before you can request a HUG Mission."
+    },
+    403
+  );
 
+}
 
     /* ======================================
        LOAD MISSIONS
