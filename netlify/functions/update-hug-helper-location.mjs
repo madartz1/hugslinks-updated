@@ -1,47 +1,40 @@
 import { getStore } from "@netlify/blobs";
+import crypto from "node:crypto";
 
 /*
  * HUGSLinks
- * Active HUG Live Location Update
+ * Secure Live Helper Location
  *
  * File:
  * netlify/functions/update-hug-helper-location.mjs
  *
- * PURPOSE
- * -------
- * Receives location updates from an APPROVED
- * Helper during an ASSIGNED active HUG Mission.
+ * SECURITY
+ * --------
+ * Requires:
+ * - Mission ID
+ * - Active Helper session token
  *
- * IMPORTANT
- * ---------
- * This information is PRIVATE.
+ * Stores ONLY the latest active location.
  *
- * Never expose this store through:
- * hugs-missions.mjs
- *
- * Location sharing ends when:
- * - Helper stops sharing
- * - Mission is Delivered
- * - Mission is Canceled
- * - Helper is no longer approved
+ * No permanent GPS breadcrumb history.
  */
 
 
-const HELPER_STORE_NAME =
-  "hugs-help-helpers";
-
 const MISSION_STORE_NAME =
   "hugs-help-missions";
+
+const SESSION_STORE_NAME =
+  "hugs-help-mission-sessions";
 
 const LOCATION_STORE_NAME =
   "hugs-help-live-locations";
 
 
-const HELPERS_KEY =
-  "helpers";
-
 const MISSIONS_KEY =
   "missions";
+
+const SESSIONS_KEY =
+  "sessions";
 
 const LOCATIONS_KEY =
   "active-locations";
@@ -62,7 +55,10 @@ const headers = {
     "application/json; charset=utf-8",
 
   "Cache-Control":
-    "no-store, no-cache, must-revalidate"
+    "no-store, no-cache, must-revalidate",
+
+  "Pragma":
+    "no-cache"
 
 };
 
@@ -88,7 +84,7 @@ function jsonResponse(
 
 
 /* ==========================================
-   CLEAN TEXT
+   CLEAN
 ========================================== */
 
 function cleanText(
@@ -118,33 +114,21 @@ function cleanText(
 
 
 /* ==========================================
-   EMAIL
+   TOKEN HASH
 ========================================== */
 
-function validEmail(email){
+function hashToken(token){
 
-  return /^[^\s@]+@[^\s@]+\.[^\s@]+$/
-    .test(email);
+  return crypto
+    .createHash("sha256")
+    .update(token)
+    .digest("hex");
 
 }
 
 
 /* ==========================================
-   HELPER ID
-========================================== */
-
-function validHelperId(
-  helperId
-){
-
-  return /^HELPER-\d{4}-\d{6}$/i
-    .test(helperId);
-
-}
-
-
-/* ==========================================
-   NUMBER
+   COORDINATE
 ========================================== */
 
 function validCoordinate(
@@ -164,7 +148,7 @@ function validCoordinate(
 
 
 /* ==========================================
-   COLLECTION READER
+   COLLECTION
 ========================================== */
 
 async function readCollection(
@@ -235,6 +219,64 @@ async function saveLocations(
 
 
 /* ==========================================
+   SAVE SESSIONS
+========================================== */
+
+async function saveSessions(
+  store,
+  sessions
+){
+
+  await store.setJSON(
+    SESSIONS_KEY,
+    {
+
+      updated_at:
+        new Date()
+          .toISOString(),
+
+      sessions
+
+    }
+  );
+
+}
+
+
+/* ==========================================
+   REMOVE LOCATION
+========================================== */
+
+async function removeLocation(
+  locationStore,
+  locations,
+  missionId
+){
+
+  const remaining =
+    locations.filter(
+      item =>
+        item.mission_id !==
+        missionId
+    );
+
+
+  if(
+    remaining.length !==
+    locations.length
+  ){
+
+    await saveLocations(
+      locationStore,
+      remaining
+    );
+
+  }
+
+}
+
+
+/* ==========================================
    MAIN
 ========================================== */
 
@@ -285,7 +327,7 @@ export default async (
 
 
     /* ======================================
-       IDENTITY
+       INPUT
     ====================================== */
 
     const missionId =
@@ -295,33 +337,24 @@ export default async (
       );
 
 
-    const helperId =
+    const helperToken =
       cleanText(
-        body?.helper_id,
-        80
-      )
-      .toUpperCase();
-
-
-    const helperEmail =
-      cleanText(
-        body?.helper_email,
-        254
-      )
-      .toLowerCase();
+        body?.helper_token,
+        200
+      );
 
 
     const action =
       cleanText(
         body?.action,
         40
-      );
+      )
+      .toLowerCase();
 
 
     if(
       !missionId ||
-      !helperId ||
-      !helperEmail
+      !helperToken
     ){
 
       return jsonResponse(
@@ -329,7 +362,7 @@ export default async (
           ok:false,
 
           error:
-            "Mission and Helper verification are required."
+            "Mission and secure Helper session are required."
         },
         400
       );
@@ -338,14 +371,88 @@ export default async (
 
 
     if(
-      !validHelperId(helperId) ||
-      !validEmail(helperEmail)
+      action !== "update" &&
+      action !== "stop"
     ){
 
       return jsonResponse(
         {
           ok:false,
-          error:"Helper verification failed."
+          error:"Invalid location action."
+        },
+        400
+      );
+
+    }
+
+
+    /* ======================================
+       VERIFY SESSION
+    ====================================== */
+
+    const sessionStore =
+      getStore(
+        SESSION_STORE_NAME
+      );
+
+
+    const sessions =
+      await readCollection(
+        sessionStore,
+        SESSIONS_KEY,
+        "sessions"
+      );
+
+
+    const helperTokenHash =
+      hashToken(
+        helperToken
+      );
+
+
+    const sessionIndex =
+      sessions.findIndex(
+        item =>
+
+          item.mission_id ===
+            missionId &&
+
+          item.helper_token_hash ===
+            helperTokenHash
+      );
+
+
+    if(
+      sessionIndex === -1
+    ){
+
+      return jsonResponse(
+        {
+          ok:false,
+          error:"Invalid HUG Mission session."
+        },
+        403
+      );
+
+    }
+
+
+    const session =
+      sessions[
+        sessionIndex
+      ];
+
+
+    if(
+      session.active !== true
+    ){
+
+      return jsonResponse(
+        {
+          ok:false,
+
+          error:
+            "This HUG Mission session is no longer active."
         },
         403
       );
@@ -354,53 +461,72 @@ export default async (
 
 
     /* ======================================
-       VERIFY HELPER
+       SESSION EXPIRATION
     ====================================== */
 
-    const helperStore =
-      getStore(
-        HELPER_STORE_NAME
-      );
-
-
-    const helpers =
-      await readCollection(
-        helperStore,
-        HELPERS_KEY,
-        "helpers"
-      );
-
-
-    const helper =
-      helpers.find(
-        item =>
-
-          String(
-            item?.id || ""
-          )
-          .toUpperCase() ===
-            helperId &&
-
-          String(
-            item?.email || ""
-          )
-          .trim()
-          .toLowerCase() ===
-            helperEmail
-      );
+    const expiration =
+      new Date(
+        session.expires_at
+      )
+      .getTime();
 
 
     if(
-      !helper ||
-      helper.status !== "Approved"
+      !Number.isFinite(
+        expiration
+      ) ||
+      expiration <= Date.now()
     ){
+
+      session.active =
+        false;
+
+      session.ended_at =
+        new Date()
+          .toISOString();
+
+      session.ended_reason =
+        "Session expired";
+
+
+      await saveSessions(
+        sessionStore,
+        sessions
+      );
+
+
+      /*
+       * Remove any last live location
+       * for the expired session.
+       */
+
+      const expiredLocationStore =
+        getStore(
+          LOCATION_STORE_NAME
+        );
+
+
+      const expiredLocations =
+        await readCollection(
+          expiredLocationStore,
+          LOCATIONS_KEY,
+          "locations"
+        );
+
+
+      await removeLocation(
+        expiredLocationStore,
+        expiredLocations,
+        missionId
+      );
+
 
       return jsonResponse(
         {
           ok:false,
 
           error:
-            "This Helper is not currently approved."
+            "This HUG Mission session has expired. Open the mission again."
         },
         403
       );
@@ -448,12 +574,21 @@ export default async (
     }
 
 
+    /* ======================================
+       VERIFY ASSIGNMENT
+    ====================================== */
+
     if(
       String(
-        mission.assigned_helper_id || ""
+        mission.assigned_helper_id ||
+        ""
       )
       .toUpperCase() !==
-      helperId
+      String(
+        session.helper_id ||
+        ""
+      )
+      .toUpperCase()
     ){
 
       return jsonResponse(
@@ -461,7 +596,7 @@ export default async (
           ok:false,
 
           error:
-            "This HUG Mission is not assigned to this Helper."
+            "This secure session is not authorized for this HUG Mission."
         },
         403
       );
@@ -487,48 +622,32 @@ export default async (
       );
 
 
-    const existingIndex =
-      locations.findIndex(
-        item =>
-          item.mission_id ===
-          missionId
-      );
-
-
     /* ======================================
-       STOP SHARING
+       STOP
     ====================================== */
 
     if(
       action === "stop"
     ){
 
-      if(
-        existingIndex !== -1
-      ){
-
-        locations.splice(
-          existingIndex,
-          1
-        );
-
-
-        await saveLocations(
-          locationStore,
-          locations
-        );
-
-      }
+      await removeLocation(
+        locationStore,
+        locations,
+        missionId
+      );
 
 
       return jsonResponse(
         {
           ok:true,
 
-          message:
-            "Live HUG location sharing stopped.",
+          mission_id:
+            missionId,
 
-          sharing:false
+          sharing:false,
+
+          message:
+            "Live HUG location sharing stopped."
         }
       );
 
@@ -536,7 +655,7 @@ export default async (
 
 
     /* ======================================
-       MISSION MUST BE ACTIVE
+       ACTIVE MISSION ONLY
     ====================================== */
 
     if(
@@ -545,12 +664,24 @@ export default async (
       )
     ){
 
+      /*
+       * If the mission is no longer active,
+       * remove any stored position.
+       */
+
+      await removeLocation(
+        locationStore,
+        locations,
+        missionId
+      );
+
+
       return jsonResponse(
         {
           ok:false,
 
           error:
-            "Live location sharing is only available during an active HUG Mission."
+            "Live location sharing is not available for this mission status."
         },
         409
       );
@@ -599,7 +730,7 @@ export default async (
 
 
     /* ======================================
-       OPTIONAL LOCATION INFORMATION
+       OPTIONAL GPS DATA
     ====================================== */
 
     let accuracy =
@@ -621,6 +752,32 @@ export default async (
     }
 
 
+    /*
+     * Reject obviously unusable accuracy.
+     *
+     * 10 km+ accuracy generally does not
+     * provide meaningful live delivery
+     * tracking.
+     */
+
+    if(
+      accuracy !== null &&
+      accuracy > 10000
+    ){
+
+      return jsonResponse(
+        {
+          ok:false,
+
+          error:
+            "The current location is not accurate enough for live HUG tracking."
+        },
+        422
+      );
+
+    }
+
+
     let heading =
       Number(
         body?.heading
@@ -630,7 +787,9 @@ export default async (
     if(
       !Number.isFinite(
         heading
-      )
+      ) ||
+      heading < 0 ||
+      heading > 360
     ){
 
       heading =
@@ -649,7 +808,8 @@ export default async (
       !Number.isFinite(
         speed
       ) ||
-      speed < 0
+      speed < 0 ||
+      speed > 100
     ){
 
       speed =
@@ -658,13 +818,20 @@ export default async (
     }
 
 
+    /* ======================================
+       TIMESTAMP
+    ====================================== */
+
     const now =
-      new Date()
-        .toISOString();
+      new Date();
+
+
+    const nowISO =
+      now.toISOString();
 
 
     /* ======================================
-       PRIVATE ACTIVE LOCATION
+       PRIVATE LOCATION RECORD
     ====================================== */
 
     const locationRecord = {
@@ -673,7 +840,7 @@ export default async (
         missionId,
 
       helper_id:
-        helperId,
+        session.helper_id,
 
       latitude,
 
@@ -689,20 +856,23 @@ export default async (
         true,
 
       updated_at:
-        now
+        nowISO
 
     };
 
 
     /*
-     * We intentionally store only the latest
-     * active position here rather than creating
-     * a permanent breadcrumb trail.
+     * ONE current location per mission.
      *
-     * This gives us live tracking without
-     * unnecessarily building a detailed
-     * historical location database.
+     * No route history is retained here.
      */
+
+    const existingIndex =
+      locations.findIndex(
+        item =>
+          item.mission_id ===
+          missionId
+      );
 
 
     if(
@@ -730,17 +900,21 @@ export default async (
     );
 
 
+    /* ======================================
+       SUCCESS
+    ====================================== */
+
     return jsonResponse(
       {
         ok:true,
 
-        sharing:true,
-
         mission_id:
           missionId,
 
+        sharing:true,
+
         updated_at:
-          now
+          nowISO
       }
     );
 
@@ -750,7 +924,7 @@ export default async (
 
 
     console.error(
-      "HUG live location update error:",
+      "Secure HUG location error:",
       error
     );
 
@@ -760,7 +934,7 @@ export default async (
         ok:false,
 
         error:
-          "HUG live location could not be updated."
+          "Live HUG location could not be updated."
       },
       500
     );
