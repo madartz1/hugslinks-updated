@@ -1,0 +1,2730 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+  <meta charset="UTF-8">
+
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0"
+  >
+
+  <meta
+    name="robots"
+    content="noindex, nofollow, noarchive"
+  >
+
+  <title>
+    HUGS Admin | HUGSLinks
+  </title>
+
+  <link
+    rel="stylesheet"
+    href="styles.css"
+  >
+
+  <style>
+
+    :root{
+      --admin-navy:#06162f;
+      --admin-blue:#1267ff;
+      --admin-electric:#20a8ff;
+      --admin-gold:#d9ad45;
+      --admin-light:#f4f7fb;
+      --admin-white:#ffffff;
+      --admin-text:#14213d;
+      --admin-muted:#68758b;
+      --admin-border:#dce3ec;
+      --admin-green:#137a4b;
+      --admin-red:#b42318;
+      --admin-orange:#a15c00;
+    }
+
+
+    body{
+      background:
+        var(--admin-light);
+    }
+
+
+    .admin-page{
+      min-height:100vh;
+    }
+
+
+    .admin-shell{
+      width:min(1180px,92%);
+      margin:0 auto;
+    }
+
+
+    .admin-hero{
+      background:
+        linear-gradient(
+          135deg,
+          #06162f,
+          #0a3478
+        );
+
+      color:white;
+
+      padding:
+        70px 20px 55px;
+
+      text-align:center;
+    }
+
+
+    .admin-badge{
+      display:inline-block;
+
+      padding:
+        8px 15px;
+
+      border:
+        1px solid
+        rgba(255,255,255,.3);
+
+      border-radius:999px;
+
+      font-size:.78rem;
+
+      font-weight:800;
+
+      letter-spacing:.1em;
+
+      text-transform:uppercase;
+
+      margin-bottom:18px;
+    }
+
+
+    .admin-hero h1{
+      margin:
+        0 0 14px;
+
+      font-size:
+        clamp(
+          2.2rem,
+          6vw,
+          4rem
+        );
+    }
+
+
+    .admin-hero p{
+      max-width:760px;
+
+      margin:
+        0 auto;
+
+      line-height:1.7;
+
+      color:
+        rgba(
+          255,
+          255,
+          255,
+          .86
+        );
+    }
+
+
+    .admin-content{
+      padding:
+        40px 0 80px;
+    }
+
+
+    .security-notice{
+      background:#fff7e5;
+
+      border:
+        1px solid
+        #f1d38a;
+
+      border-radius:18px;
+
+      padding:18px;
+
+      margin-bottom:25px;
+
+      color:#62470d;
+
+      line-height:1.6;
+    }
+
+
+    .login-card{
+      max-width:650px;
+
+      margin:
+        20px auto;
+
+      background:white;
+
+      border-radius:24px;
+
+      padding:
+        30px;
+
+      box-shadow:
+        0 12px 40px
+        rgba(7,29,64,.08);
+    }
+
+
+    .login-card h2{
+      color:
+        var(--admin-navy);
+
+      margin-top:0;
+    }
+
+
+    .field{
+      margin-bottom:18px;
+    }
+
+
+    .field label{
+      display:block;
+
+      margin-bottom:7px;
+
+      font-weight:800;
+
+      color:
+        var(--admin-navy);
+    }
+
+
+    .field input,
+    .field textarea,
+    .field select{
+
+      width:100%;
+
+      box-sizing:border-box;
+
+      padding:
+        13px 14px;
+
+      border:
+        1px solid
+        var(--admin-border);
+
+      border-radius:12px;
+
+      background:white;
+
+      color:
+        var(--admin-text);
+
+      font:
+        inherit;
+    }
+
+
+    .field textarea{
+      min-height:125px;
+
+      resize:vertical;
+    }
+
+
+    .primary-button,
+    .secondary-button,
+    .danger-button,
+    .hold-button{
+
+      border:0;
+
+      border-radius:12px;
+
+      padding:
+        12px 17px;
+
+      font-weight:800;
+
+      cursor:pointer;
+
+      font-size:.94rem;
+    }
+
+
+    .primary-button{
+      background:
+        var(--admin-blue);
+
+      color:white;
+    }
+
+
+    .secondary-button{
+      background:
+        var(--admin-navy);
+
+      color:white;
+    }
+
+
+    .danger-button{
+      background:
+        #fff0ee;
+
+      color:
+        var(--admin-red);
+
+      border:
+        1px solid
+        #f4c7c3;
+    }
+
+
+    .hold-button{
+      background:
+        #fff7e5;
+
+      color:
+        var(--admin-orange);
+
+      border:
+        1px solid
+        #efd18c;
+    }
+
+
+    button:disabled{
+      opacity:.55;
+      cursor:not-allowed;
+    }
+
+
+    .admin-dashboard{
+      display:none;
+    }
+
+
+    .admin-toolbar{
+      display:flex;
+
+      justify-content:
+        space-between;
+
+      align-items:center;
+
+      gap:15px;
+
+      flex-wrap:wrap;
+
+      margin-bottom:25px;
+    }
+
+
+    .admin-toolbar h2{
+      margin:0;
+
+      color:
+        var(--admin-navy);
+    }
+
+
+    .toolbar-buttons{
+      display:flex;
+
+      gap:10px;
+
+      flex-wrap:wrap;
+    }
+
+
+    .admin-tabs{
+      display:flex;
+
+      gap:10px;
+
+      flex-wrap:wrap;
+
+      margin-bottom:25px;
+    }
+
+
+    .tab-button{
+      border:
+        1px solid
+        var(--admin-border);
+
+      background:white;
+
+      color:
+        var(--admin-navy);
+
+      padding:
+        12px 18px;
+
+      border-radius:999px;
+
+      font-weight:800;
+
+      cursor:pointer;
+    }
+
+
+    .tab-button.active{
+      background:
+        var(--admin-navy);
+
+      color:white;
+    }
+
+
+    .summary-grid{
+      display:grid;
+
+      grid-template-columns:
+        repeat(
+          auto-fit,
+          minmax(180px,1fr)
+        );
+
+      gap:15px;
+
+      margin-bottom:30px;
+    }
+
+
+    .summary-card{
+      background:white;
+
+      border:
+        1px solid
+        var(--admin-border);
+
+      border-radius:18px;
+
+      padding:20px;
+    }
+
+
+    .summary-number{
+      display:block;
+
+      font-size:2rem;
+
+      font-weight:900;
+
+      color:
+        var(--admin-blue);
+    }
+
+
+    .summary-label{
+      color:
+        var(--admin-muted);
+
+      font-size:.9rem;
+    }
+
+
+    .admin-section{
+      display:none;
+    }
+
+
+    .admin-section.active{
+      display:block;
+    }
+
+
+    .record-grid{
+      display:grid;
+
+      gap:20px;
+    }
+
+
+    .record-card{
+      background:white;
+
+      border:
+        1px solid
+        var(--admin-border);
+
+      border-radius:22px;
+
+      padding:24px;
+
+      box-shadow:
+        0 8px 28px
+        rgba(7,29,64,.05);
+    }
+
+
+    .record-top{
+      display:flex;
+
+      justify-content:
+        space-between;
+
+      align-items:flex-start;
+
+      gap:15px;
+
+      flex-wrap:wrap;
+
+      margin-bottom:18px;
+    }
+
+
+    .record-id{
+      font-size:.78rem;
+
+      font-weight:900;
+
+      letter-spacing:.04em;
+
+      color:
+        var(--admin-blue);
+
+      word-break:break-word;
+    }
+
+
+    .record-card h3{
+      margin:
+        5px 0;
+
+      color:
+        var(--admin-navy);
+    }
+
+
+    .status{
+      display:inline-block;
+
+      padding:
+        7px 11px;
+
+      border-radius:999px;
+
+      font-size:.76rem;
+
+      font-weight:900;
+    }
+
+
+    .status-pending{
+      background:#eef5ff;
+      color:#1459b8;
+    }
+
+
+    .status-approved{
+      background:#eaf8f0;
+      color:var(--admin-green);
+    }
+
+
+    .status-hold{
+      background:#fff6df;
+      color:var(--admin-orange);
+    }
+
+
+    .status-declined{
+      background:#fff0ee;
+      color:var(--admin-red);
+    }
+
+
+    .record-details{
+      display:grid;
+
+      grid-template-columns:
+        repeat(
+          auto-fit,
+          minmax(200px,1fr)
+        );
+
+      gap:12px;
+
+      margin:
+        18px 0;
+    }
+
+
+    .detail{
+      background:#f8fafc;
+
+      border-radius:12px;
+
+      padding:13px;
+    }
+
+
+    .detail strong{
+      display:block;
+
+      color:
+        var(--admin-navy);
+
+      margin-bottom:4px;
+
+      font-size:.8rem;
+
+      text-transform:uppercase;
+
+      letter-spacing:.04em;
+    }
+
+
+    .private-box{
+      background:#fff8e8;
+
+      border-left:
+        4px solid
+        var(--admin-gold);
+
+      padding:16px;
+
+      border-radius:
+        0 12px 12px 0;
+
+      margin:
+        18px 0;
+
+      white-space:
+        pre-wrap;
+
+      line-height:1.6;
+    }
+
+
+    .privacy-warning{
+      font-size:.82rem;
+
+      color:
+        var(--admin-red);
+
+      font-weight:800;
+
+      margin-bottom:7px;
+    }
+
+
+    .mission-builder{
+      border-top:
+        1px solid
+        var(--admin-border);
+
+      margin-top:22px;
+
+      padding-top:22px;
+    }
+
+
+    .mission-builder h4{
+      color:
+        var(--admin-navy);
+
+      margin-top:0;
+    }
+
+
+    .action-row{
+      display:flex;
+
+      gap:10px;
+
+      flex-wrap:wrap;
+
+      margin-top:18px;
+    }
+
+
+    .empty-state{
+      background:white;
+
+      border:
+        1px dashed
+        var(--admin-border);
+
+      border-radius:20px;
+
+      padding:45px 25px;
+
+      text-align:center;
+
+      color:
+        var(--admin-muted);
+    }
+
+
+    .message{
+      display:none;
+
+      position:fixed;
+
+      left:50%;
+
+      bottom:25px;
+
+      transform:
+        translateX(-50%);
+
+      width:
+        min(520px,90%);
+
+      padding:
+        15px 18px;
+
+      border-radius:14px;
+
+      color:white;
+
+      font-weight:800;
+
+      z-index:9999;
+
+      box-shadow:
+        0 12px 35px
+        rgba(0,0,0,.2);
+    }
+
+
+    .message.success{
+      display:block;
+      background:#137a4b;
+    }
+
+
+    .message.error{
+      display:block;
+      background:#a92018;
+    }
+
+
+    .loading{
+      padding:30px;
+
+      text-align:center;
+
+      color:
+        var(--admin-muted);
+    }
+
+
+    @media(max-width:650px){
+
+      .record-card{
+        padding:18px;
+      }
+
+      .admin-hero{
+        padding:
+          50px 18px 40px;
+      }
+
+      .primary-button,
+      .secondary-button,
+      .danger-button,
+      .hold-button{
+        width:100%;
+      }
+
+      .action-row{
+        display:grid;
+      }
+
+    }
+
+  </style>
+
+</head>
+
+
+<body>
+
+<div class="admin-page">
+
+
+  <!-- ======================================
+       ADMIN HERO
+  ======================================= -->
+
+  <section class="admin-hero">
+
+    <div class="admin-shell">
+
+      <div class="admin-badge">
+        Private HUGS Control Center
+      </div>
+
+      <h1>
+        HUGS Admin
+      </h1>
+
+      <p>
+        Review private HUG Requests,
+        create safe public HUG Missions,
+        and approve Helper-to-Mission
+        connections.
+      </p>
+
+    </div>
+
+  </section>
+
+
+  <!-- ======================================
+       CONTENT
+  ======================================= -->
+
+  <main class="admin-content">
+
+    <div class="admin-shell">
+
+
+      <div class="security-notice">
+
+        <strong>
+          Private administration area.
+        </strong>
+
+        Requester and Helper information shown
+        here must not be copied into a public
+        HUG Mission. Only publish the minimum
+        information a Helper needs to understand
+        the mission.
+
+      </div>
+
+
+      <!-- ==================================
+           LOGIN
+      =================================== -->
+
+      <section
+        class="login-card"
+        id="loginCard"
+      >
+
+        <h2>
+          Admin Access
+        </h2>
+
+        <p>
+          Enter your HUGS Admin Token to open
+          the review dashboard.
+        </p>
+
+        <div class="field">
+
+          <label for="adminToken">
+            Admin Token
+          </label>
+
+          <input
+            type="password"
+            id="adminToken"
+            autocomplete="current-password"
+            placeholder="Enter admin token"
+          >
+
+        </div>
+
+        <button
+          class="primary-button"
+          id="loginButton"
+          type="button"
+        >
+          Open HUGS Admin
+        </button>
+
+      </section>
+
+
+      <!-- ==================================
+           DASHBOARD
+      =================================== -->
+
+      <section
+        class="admin-dashboard"
+        id="adminDashboard"
+      >
+
+
+        <div class="admin-toolbar">
+
+          <h2>
+            HUGS Help Operations
+          </h2>
+
+
+          <div class="toolbar-buttons">
+
+            <button
+              class="secondary-button"
+              id="refreshButton"
+              type="button"
+            >
+              Refresh
+            </button>
+
+            <button
+              class="danger-button"
+              id="logoutButton"
+              type="button"
+            >
+              Lock Admin
+            </button>
+
+          </div>
+
+        </div>
+
+
+        <!-- SUMMARY -->
+
+        <div class="summary-grid">
+
+          <div class="summary-card">
+
+            <span
+              class="summary-number"
+              id="pendingRequestCount"
+            >
+              0
+            </span>
+
+            <span class="summary-label">
+              Pending Requests
+            </span>
+
+          </div>
+
+
+          <div class="summary-card">
+
+            <span
+              class="summary-number"
+              id="pendingMatchCount"
+            >
+              0
+            </span>
+
+            <span class="summary-label">
+              Pending Helper Matches
+            </span>
+
+          </div>
+
+        </div>
+
+
+        <!-- TABS -->
+
+        <div class="admin-tabs">
+
+          <button
+            class="tab-button active"
+            data-tab="requests"
+            type="button"
+          >
+            HUG Requests
+          </button>
+
+          <button
+            class="tab-button"
+            data-tab="matches"
+            type="button"
+          >
+            Helper Matches
+          </button>
+
+        </div>
+
+
+        <!-- REQUESTS -->
+
+        <section
+          class="admin-section active"
+          id="requestsSection"
+        >
+
+          <div
+            class="record-grid"
+            id="requestList"
+          >
+
+            <div class="loading">
+              Loading HUG Requests...
+            </div>
+
+          </div>
+
+        </section>
+
+
+        <!-- MATCHES -->
+
+        <section
+          class="admin-section"
+          id="matchesSection"
+        >
+
+          <div
+            class="record-grid"
+            id="matchList"
+          >
+
+            <div class="loading">
+              Loading Helper matches...
+            </div>
+
+          </div>
+
+        </section>
+
+
+      </section>
+
+    </div>
+
+  </main>
+
+
+  <div
+    class="message"
+    id="messageBox"
+  ></div>
+
+
+</div>
+
+
+<script>
+
+
+/* ==========================================
+   HUGS ADMIN
+========================================== */
+
+
+const API =
+  "/.netlify/functions/admin-hug-missions";
+
+
+let adminToken = "";
+
+let requestRecords = [];
+
+let matchRecords = [];
+
+
+/* ==========================================
+   ELEMENTS
+========================================== */
+
+const loginCard =
+  document.getElementById(
+    "loginCard"
+  );
+
+
+const dashboard =
+  document.getElementById(
+    "adminDashboard"
+  );
+
+
+const tokenInput =
+  document.getElementById(
+    "adminToken"
+  );
+
+
+const loginButton =
+  document.getElementById(
+    "loginButton"
+  );
+
+
+const refreshButton =
+  document.getElementById(
+    "refreshButton"
+  );
+
+
+const logoutButton =
+  document.getElementById(
+    "logoutButton"
+  );
+
+
+const requestList =
+  document.getElementById(
+    "requestList"
+  );
+
+
+const matchList =
+  document.getElementById(
+    "matchList"
+  );
+
+
+const pendingRequestCount =
+  document.getElementById(
+    "pendingRequestCount"
+  );
+
+
+const pendingMatchCount =
+  document.getElementById(
+    "pendingMatchCount"
+  );
+
+
+const messageBox =
+  document.getElementById(
+    "messageBox"
+  );
+
+
+/* ==========================================
+   ESCAPE HTML
+========================================== */
+
+function escapeHTML(value){
+
+  return String(
+    value ?? ""
+  )
+  .replaceAll(
+    "&",
+    "&amp;"
+  )
+  .replaceAll(
+    "<",
+    "&lt;"
+  )
+  .replaceAll(
+    ">",
+    "&gt;"
+  )
+  .replaceAll(
+    '"',
+    "&quot;"
+  )
+  .replaceAll(
+    "'",
+    "&#039;"
+  );
+
+}
+
+
+/* ==========================================
+   MESSAGE
+========================================== */
+
+function showMessage(
+  text,
+  type = "success"
+){
+
+  messageBox.textContent =
+    text;
+
+  messageBox.className =
+    "message " + type;
+
+
+  clearTimeout(
+    showMessage.timer
+  );
+
+
+  showMessage.timer =
+    setTimeout(
+      () => {
+
+        messageBox.className =
+          "message";
+
+      },
+      4500
+    );
+
+}
+
+
+/* ==========================================
+   ADMIN FETCH
+========================================== */
+
+async function adminFetch(
+  url,
+  options = {}
+){
+
+  const headers = {
+
+    ...(options.headers || {}),
+
+    Authorization:
+      "Bearer " + adminToken
+
+  };
+
+
+  if(
+    options.body
+  ){
+
+    headers[
+      "Content-Type"
+    ] =
+      "application/json";
+
+  }
+
+
+  const response =
+    await fetch(
+      url,
+      {
+        ...options,
+        headers
+      }
+    );
+
+
+  let result;
+
+
+  try{
+
+    result =
+      await response.json();
+
+  }
+  catch(error){
+
+    throw new Error(
+      "The admin service returned an invalid response."
+    );
+
+  }
+
+
+  if(
+    !response.ok ||
+    result.ok !== true
+  ){
+
+    if(
+      response.status === 401
+    ){
+
+      lockAdmin();
+
+    }
+
+
+    throw new Error(
+      result.error ||
+      "Admin request failed."
+    );
+
+  }
+
+
+  return result;
+
+}
+
+
+/* ==========================================
+   LOGIN
+========================================== */
+
+loginButton.addEventListener(
+  "click",
+  async () => {
+
+    const entered =
+      tokenInput.value.trim();
+
+
+    if(
+      !entered
+    ){
+
+      showMessage(
+        "Enter the HUGS Admin Token.",
+        "error"
+      );
+
+      return;
+
+    }
+
+
+    adminToken =
+      entered;
+
+
+    loginButton.disabled =
+      true;
+
+    loginButton.textContent =
+      "Opening...";
+
+
+    try{
+
+      /*
+       * Validate token by requesting
+       * the protected request list.
+       */
+
+      await loadRequests();
+
+
+      loginCard.style.display =
+        "none";
+
+      dashboard.style.display =
+        "block";
+
+
+      tokenInput.value =
+        "";
+
+
+      await loadMatches();
+
+
+      updateCounts();
+
+
+    }
+    catch(error){
+
+      adminToken =
+        "";
+
+      showMessage(
+        error.message,
+        "error"
+      );
+
+    }
+    finally{
+
+      loginButton.disabled =
+        false;
+
+      loginButton.textContent =
+        "Open HUGS Admin";
+
+    }
+
+  }
+);
+
+
+/* ==========================================
+   ENTER KEY LOGIN
+========================================== */
+
+tokenInput.addEventListener(
+  "keydown",
+  event => {
+
+    if(
+      event.key === "Enter"
+    ){
+
+      loginButton.click();
+
+    }
+
+  }
+);
+
+
+/* ==========================================
+   LOCK ADMIN
+========================================== */
+
+function lockAdmin(){
+
+  adminToken =
+    "";
+
+  requestRecords =
+    [];
+
+  matchRecords =
+    [];
+
+
+  requestList.innerHTML =
+    "";
+
+  matchList.innerHTML =
+    "";
+
+
+  dashboard.style.display =
+    "none";
+
+  loginCard.style.display =
+    "block";
+
+
+  tokenInput.value =
+    "";
+
+}
+
+
+logoutButton.addEventListener(
+  "click",
+  () => {
+
+    lockAdmin();
+
+    showMessage(
+      "HUGS Admin locked."
+    );
+
+  }
+);
+
+
+/* ==========================================
+   LOAD REQUESTS
+========================================== */
+
+async function loadRequests(){
+
+  requestList.innerHTML =
+    '<div class="loading">Loading HUG Requests...</div>';
+
+
+  const result =
+    await adminFetch(
+      API + "?view=requests"
+    );
+
+
+  requestRecords =
+    Array.isArray(
+      result.requests
+    )
+      ? result.requests
+      : [];
+
+
+  renderRequests();
+
+  updateCounts();
+
+}
+
+
+/* ==========================================
+   LOAD MATCHES
+========================================== */
+
+async function loadMatches(){
+
+  matchList.innerHTML =
+    '<div class="loading">Loading Helper matches...</div>';
+
+
+  const result =
+    await adminFetch(
+      API + "?view=matches"
+    );
+
+
+  matchRecords =
+    Array.isArray(
+      result.matches
+    )
+      ? result.matches
+      : [];
+
+
+  renderMatches();
+
+  updateCounts();
+
+}
+
+
+/* ==========================================
+   REFRESH
+========================================== */
+
+refreshButton.addEventListener(
+  "click",
+  async () => {
+
+    refreshButton.disabled =
+      true;
+
+    refreshButton.textContent =
+      "Refreshing...";
+
+
+    try{
+
+      await loadRequests();
+
+      await loadMatches();
+
+
+      showMessage(
+        "HUGS Admin refreshed."
+      );
+
+    }
+    catch(error){
+
+      showMessage(
+        error.message,
+        "error"
+      );
+
+    }
+    finally{
+
+      refreshButton.disabled =
+        false;
+
+      refreshButton.textContent =
+        "Refresh";
+
+    }
+
+  }
+);
+
+
+/* ==========================================
+   COUNTS
+========================================== */
+
+function updateCounts(){
+
+  pendingRequestCount.textContent =
+    requestRecords.filter(
+      request =>
+        (
+          request.review_status ||
+          "Pending Review"
+        ) ===
+        "Pending Review"
+    ).length;
+
+
+  pendingMatchCount.textContent =
+    matchRecords.filter(
+      match =>
+        match.status ===
+        "Pending Review"
+    ).length;
+
+}
+
+
+/* ==========================================
+   STATUS CLASS
+========================================== */
+
+function statusClass(
+  status
+){
+
+  if(
+    status === "Approved"
+  ){
+
+    return "status-approved";
+
+  }
+
+
+  if(
+    status === "Declined"
+  ){
+
+    return "status-declined";
+
+  }
+
+
+  if(
+    status === "On Hold"
+  ){
+
+    return "status-hold";
+
+  }
+
+
+  return "status-pending";
+
+}
+
+
+/* ==========================================
+   RENDER REQUESTS
+========================================== */
+
+function renderRequests(){
+
+  if(
+    requestRecords.length === 0
+  ){
+
+    requestList.innerHTML = `
+      <div class="empty-state">
+        <h3>No HUG Requests Yet</h3>
+        <p>
+          New HUG Requests will appear here
+          after the private request intake
+          system begins receiving submissions.
+        </p>
+      </div>
+    `;
+
+    return;
+
+  }
+
+
+  requestList.innerHTML =
+    requestRecords
+      .map(
+        request =>
+          requestCard(
+            request
+          )
+      )
+      .join("");
+
+}
+
+
+/* ==========================================
+   REQUEST CARD
+========================================== */
+
+function requestCard(
+  request
+){
+
+  const id =
+    escapeHTML(
+      request.id
+    );
+
+
+  const status =
+    escapeHTML(
+      request.review_status ||
+      "Pending Review"
+    );
+
+
+  const name =
+    escapeHTML(
+      [
+        request.first_name,
+        request.last_name
+      ]
+      .filter(Boolean)
+      .join(" ")
+    );
+
+
+  return `
+
+    <article class="record-card">
+
+      <div class="record-top">
+
+        <div>
+
+          <div class="record-id">
+            ${id}
+          </div>
+
+          <h3>
+            ${escapeHTML(
+              request.request_type ||
+              "HUG Request"
+            )}
+          </h3>
+
+        </div>
+
+        <span
+          class="status
+          ${statusClass(
+            request.review_status
+          )}"
+        >
+          ${status}
+        </span>
+
+      </div>
+
+
+      <div class="record-details">
+
+        <div class="detail">
+
+          <strong>
+            Requester
+          </strong>
+
+          ${name || "Not provided"}
+
+        </div>
+
+
+        <div class="detail">
+
+          <strong>
+            Email
+          </strong>
+
+          ${escapeHTML(
+            request.email ||
+            "Not provided"
+          )}
+
+        </div>
+
+
+        <div class="detail">
+
+          <strong>
+            Phone
+          </strong>
+
+          ${escapeHTML(
+            request.phone ||
+            "Not provided"
+          )}
+
+        </div>
+
+
+        <div class="detail">
+
+          <strong>
+            General Area
+          </strong>
+
+          ${escapeHTML(
+            [
+              request.borough_area,
+              request.city,
+              request.zip_code
+            ]
+            .filter(Boolean)
+            .join(", ")
+          )}
+
+        </div>
+
+
+        <div class="detail">
+
+          <strong>
+            Timing
+          </strong>
+
+          ${escapeHTML(
+            request.time_needed ||
+            "Flexible"
+          )}
+
+        </div>
+
+
+        <div class="detail">
+
+          <strong>
+            Submitted
+          </strong>
+
+          ${formatDate(
+            request.created_at
+          )}
+
+        </div>
+
+      </div>
+
+
+      <div class="private-box">
+
+        <div class="privacy-warning">
+          PRIVATE — DO NOT COPY DIRECTLY
+          TO THE PUBLIC MISSION BOARD
+        </div>
+
+        ${escapeHTML(
+          request.request_details ||
+          "No details provided."
+        )}
+
+      </div>
+
+
+      ${
+        request.accessibility_considerations
+        ?
+        `
+
+        <div class="private-box">
+
+          <div class="privacy-warning">
+            PRIVATE ACCESSIBILITY INFORMATION
+          </div>
+
+          ${escapeHTML(
+            request.accessibility_considerations
+          )}
+
+        </div>
+
+        `
+        :
+        ""
+      }
+
+
+      ${
+        (
+          request.review_status ||
+          "Pending Review"
+        ) === "Pending Review"
+
+        ?
+
+        missionBuilder(
+          request
+        )
+
+        :
+
+        reviewedRequestInfo(
+          request
+        )
+      }
+
+    </article>
+
+  `;
+
+}
+
+
+/* ==========================================
+   MISSION BUILDER
+========================================== */
+
+function missionBuilder(
+  request
+){
+
+  const safeId =
+    escapeHTML(
+      request.id
+    );
+
+
+  return `
+
+    <div class="mission-builder">
+
+      <h4>
+        Create Safe Public HUG Mission
+      </h4>
+
+      <p>
+        Rewrite the request using only the
+        information a Helper needs. Do not
+        include the requester's name, email,
+        phone number, exact address, shelter
+        information, medical details, or
+        identifying private information.
+      </p>
+
+
+      <div class="field">
+
+        <label>
+          Public Mission Type
+        </label>
+
+        <input
+          id="type-${safeId}"
+          value="${escapeHTML(
+            request.request_type ||
+            ""
+          )}"
+        >
+
+      </div>
+
+
+      <div class="field">
+
+        <label>
+          Public City
+        </label>
+
+        <input
+          id="city-${safeId}"
+          value="${escapeHTML(
+            request.city ||
+            ""
+          )}"
+        >
+
+      </div>
+
+
+      <div class="field">
+
+        <label>
+          Public General Area
+        </label>
+
+        <input
+          id="area-${safeId}"
+          value="${escapeHTML(
+            request.borough_area ||
+            ""
+          )}"
+          placeholder="Example: Queens"
+        >
+
+      </div>
+
+
+      <div class="field">
+
+        <label>
+          Timing
+        </label>
+
+        <input
+          id="timing-${safeId}"
+          value="${escapeHTML(
+            request.time_needed ||
+            "Flexible"
+          )}"
+        >
+
+      </div>
+
+
+      <div class="field">
+
+        <label>
+          Public Mission Summary
+        </label>
+
+        <textarea
+          id="summary-${safeId}"
+          maxlength="600"
+          placeholder="Example: HUGS community member needs a grocery pickup and local delivery within Queens. Helper should be comfortable carrying two grocery bags."
+        ></textarea>
+
+      </div>
+
+
+      <div class="action-row">
+
+        <button
+          class="primary-button"
+          type="button"
+          onclick="approveRequest(
+            '${safeId}'
+          )"
+        >
+          Approve & Create Mission
+        </button>
+
+
+        <button
+          class="hold-button"
+          type="button"
+          onclick="holdRequest(
+            '${safeId}'
+          )"
+        >
+          Place on Hold
+        </button>
+
+
+        <button
+          class="danger-button"
+          type="button"
+          onclick="declineRequest(
+            '${safeId}'
+          )"
+        >
+          Decline Request
+        </button>
+
+      </div>
+
+    </div>
+
+  `;
+
+}
+
+
+/* ==========================================
+   REVIEWED REQUEST
+========================================== */
+
+function reviewedRequestInfo(
+  request
+){
+
+  return `
+
+    <div class="mission-builder">
+
+      <strong>
+        Review complete:
+      </strong>
+
+      ${escapeHTML(
+        request.review_status
+      )}
+
+      ${
+        request.mission_id
+        ?
+        `
+
+        <p>
+          Mission:
+          <strong>
+            ${escapeHTML(
+              request.mission_id
+            )}
+          </strong>
+        </p>
+
+        `
+        :
+        ""
+      }
+
+    </div>
+
+  `;
+
+}
+
+
+/* ==========================================
+   APPROVE REQUEST
+========================================== */
+
+async function approveRequest(
+  requestId
+){
+
+  const type =
+    document.getElementById(
+      "type-" +
+      requestId
+    ).value.trim();
+
+
+  const city =
+    document.getElementById(
+      "city-" +
+      requestId
+    ).value.trim();
+
+
+  const area =
+    document.getElementById(
+      "area-" +
+      requestId
+    ).value.trim();
+
+
+  const timing =
+    document.getElementById(
+      "timing-" +
+      requestId
+    ).value.trim();
+
+
+  const summary =
+    document.getElementById(
+      "summary-" +
+      requestId
+    ).value.trim();
+
+
+  if(
+    !summary
+  ){
+
+    showMessage(
+      "Write a safe public Mission summary before approving.",
+      "error"
+    );
+
+    return;
+
+  }
+
+
+  if(
+    !confirm(
+      "Approve this request and publish the sanitized HUG Mission?"
+    )
+  ){
+
+    return;
+
+  }
+
+
+  try{
+
+    const result =
+      await adminFetch(
+        API,
+        {
+
+          method:"POST",
+
+          body:
+            JSON.stringify({
+
+              action:
+                "approve-request",
+
+              request_id:
+                requestId,
+
+              type,
+
+              city,
+
+              area,
+
+              timing,
+
+              summary
+
+            })
+
+        }
+      );
+
+
+    showMessage(
+      "Mission " +
+      result.mission.id +
+      " created."
+    );
+
+
+    await loadRequests();
+
+
+  }
+  catch(error){
+
+    showMessage(
+      error.message,
+      "error"
+    );
+
+  }
+
+}
+
+
+/* ==========================================
+   HOLD REQUEST
+========================================== */
+
+async function holdRequest(
+  requestId
+){
+
+  if(
+    !confirm(
+      "Place this HUG Request on hold?"
+    )
+  ){
+
+    return;
+
+  }
+
+
+  await requestAction(
+    "hold-request",
+    requestId,
+    "Request placed on hold."
+  );
+
+}
+
+
+/* ==========================================
+   DECLINE REQUEST
+========================================== */
+
+async function declineRequest(
+  requestId
+){
+
+  if(
+    !confirm(
+      "Decline this HUG Request?"
+    )
+  ){
+
+    return;
+
+  }
+
+
+  await requestAction(
+    "decline-request",
+    requestId,
+    "Request declined."
+  );
+
+}
+
+
+/* ==========================================
+   GENERIC REQUEST ACTION
+========================================== */
+
+async function requestAction(
+  action,
+  requestId,
+  successMessage
+){
+
+  try{
+
+    await adminFetch(
+      API,
+      {
+
+        method:"POST",
+
+        body:
+          JSON.stringify({
+
+            action,
+
+            request_id:
+              requestId
+
+          })
+
+      }
+    );
+
+
+    showMessage(
+      successMessage
+    );
+
+
+    await loadRequests();
+
+
+  }
+  catch(error){
+
+    showMessage(
+      error.message,
+      "error"
+    );
+
+  }
+
+}
+
+
+/* ==========================================
+   RENDER MATCHES
+========================================== */
+
+function renderMatches(){
+
+  if(
+    matchRecords.length === 0
+  ){
+
+    matchList.innerHTML = `
+
+      <div class="empty-state">
+
+        <h3>
+          No Helper Match Requests
+        </h3>
+
+        <p>
+          When a verified HUGS Helper selects
+          “I Can Help,” their request will
+          appear here for review.
+        </p>
+
+      </div>
+
+    `;
+
+    return;
+
+  }
+
+
+  matchList.innerHTML =
+    matchRecords
+      .map(
+        match =>
+          matchCard(
+            match
+          )
+      )
+      .join("");
+
+}
+
+
+/* ==========================================
+   MATCH CARD
+========================================== */
+
+function matchCard(
+  match
+){
+
+  const id =
+    escapeHTML(
+      match.id
+    );
+
+
+  const status =
+    escapeHTML(
+      match.status ||
+      "Pending Review"
+    );
+
+
+  return `
+
+    <article class="record-card">
+
+      <div class="record-top">
+
+        <div>
+
+          <div class="record-id">
+            ${id}
+          </div>
+
+          <h3>
+            Helper Match Request
+          </h3>
+
+        </div>
+
+        <span
+          class="status
+          ${statusClass(
+            match.status
+          )}"
+        >
+          ${status}
+        </span>
+
+      </div>
+
+
+      <div class="record-details">
+
+        <div class="detail">
+
+          <strong>
+            Mission
+          </strong>
+
+          ${escapeHTML(
+            match.mission_id
+          )}
+
+        </div>
+
+
+        <div class="detail">
+
+          <strong>
+            Helper
+          </strong>
+
+          ${escapeHTML(
+            match.helper_id
+          )}
+
+        </div>
+
+
+        <div class="detail">
+
+          <strong>
+            Registered Email
+          </strong>
+
+          ${escapeHTML(
+            match.helper_email
+          )}
+
+        </div>
+
+
+        <div class="detail">
+
+          <strong>
+            Requested
+          </strong>
+
+          ${formatDate(
+            match.created_at
+          )}
+
+        </div>
+
+      </div>
+
+
+      ${
+        match.status ===
+        "Pending Review"
+
+        ?
+
+        `
+
+        <div class="action-row">
+
+          <button
+            class="primary-button"
+            type="button"
+            onclick="approveMatch(
+              '${id}'
+            )"
+          >
+            Approve Helper
+          </button>
+
+
+          <button
+            class="danger-button"
+            type="button"
+            onclick="declineMatch(
+              '${id}'
+            )"
+          >
+            Decline Match
+          </button>
+
+        </div>
+
+        `
+
+        :
+
+        `
+
+        <p>
+          Match review complete:
+          <strong>
+            ${status}
+          </strong>
+        </p>
+
+        `
+      }
+
+    </article>
+
+  `;
+
+}
+
+
+/* ==========================================
+   APPROVE MATCH
+========================================== */
+
+async function approveMatch(
+  matchId
+){
+
+  if(
+    !confirm(
+      "Approve this Helper for the HUG Mission?"
+    )
+  ){
+
+    return;
+
+  }
+
+
+  try{
+
+    const result =
+      await adminFetch(
+        API,
+        {
+
+          method:"POST",
+
+          body:
+            JSON.stringify({
+
+              action:
+                "approve-match",
+
+              match_id:
+                matchId
+
+            })
+
+        }
+      );
+
+
+    showMessage(
+      "Helper approved. Mission is now Accepted."
+    );
+
+
+    await loadMatches();
+
+
+  }
+  catch(error){
+
+    showMessage(
+      error.message,
+      "error"
+    );
+
+  }
+
+}
+
+
+/* ==========================================
+   DECLINE MATCH
+========================================== */
+
+async function declineMatch(
+  matchId
+){
+
+  if(
+    !confirm(
+      "Decline this Helper match request?"
+    )
+  ){
+
+    return;
+
+  }
+
+
+  try{
+
+    await adminFetch(
+      API,
+      {
+
+        method:"POST",
+
+        body:
+          JSON.stringify({
+
+            action:
+              "decline-match",
+
+            match_id:
+              matchId
+
+          })
+
+        }
+      );
+
+
+    showMessage(
+      "Helper match declined."
+    );
+
+
+    await loadMatches();
+
+
+  }
+  catch(error){
+
+    showMessage(
+      error.message,
+      "error"
+    );
+
+  }
+
+}
+
+
+/* ==========================================
+   DATE
+========================================== */
+
+function formatDate(
+  value
+){
+
+  if(
+    !value
+  ){
+
+    return "Unknown";
+
+  }
+
+
+  const date =
+    new Date(
+      value
+    );
+
+
+  if(
+    Number.isNaN(
+      date.getTime()
+    )
+  ){
+
+    return escapeHTML(
+      value
+    );
+
+  }
+
+
+  return escapeHTML(
+    date.toLocaleString()
+  );
+
+}
+
+
+/* ==========================================
+   TABS
+========================================== */
+
+document
+  .querySelectorAll(
+    ".tab-button"
+  )
+  .forEach(
+    button => {
+
+      button.addEventListener(
+        "click",
+        () => {
+
+          document
+            .querySelectorAll(
+              ".tab-button"
+            )
+            .forEach(
+              item =>
+                item.classList.remove(
+                  "active"
+                )
+            );
+
+
+          button.classList.add(
+            "active"
+          );
+
+
+          document
+            .querySelectorAll(
+              ".admin-section"
+            )
+            .forEach(
+              section =>
+                section.classList.remove(
+                  "active"
+                )
+            );
+
+
+          const target =
+            document.getElementById(
+              button.dataset.tab +
+              "Section"
+            );
+
+
+          target.classList.add(
+            "active"
+          );
+
+        }
+      );
+
+    }
+  );
+
+
+</script>
+
+</body>
+
+</html>
