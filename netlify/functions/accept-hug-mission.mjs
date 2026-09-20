@@ -2,28 +2,38 @@ import { getStore } from "@netlify/blobs";
 
 /*
  * HUGSLinks
- * Request to Accept a HUG Mission
+ * Verified HUG Mission Interest / Matching
  *
  * File:
  * netlify/functions/accept-hug-mission.mjs
  *
- * PURPOSE
- * -------
- * Allows a registered HUGS Helper to express
- * interest in an AVAILABLE HUG Mission.
+ * FLOW
+ * ----
+ * Helper clicks "I Can Help"
+ *      ↓
+ * Helper ID + email submitted
+ *      ↓
+ * Private Helper registry verified
+ *      ↓
+ * Mission verified as Approved + Available
+ *      ↓
+ * Match request stored as Pending Review
+ *      ↓
+ * HUGS reviews before assignment
  *
- * IMPORTANT:
- *
- * This does NOT automatically assign the mission.
- *
- * The connection is stored as:
- *
- * Pending Review
- *
- * HUGSLinks can approve the Helper / Mission
- * connection separately.
+ * IMPORTANT
+ * ---------
+ * This function DOES NOT automatically assign
+ * the Helper to the mission.
  */
 
+
+/* ==========================================
+   STORE NAMES
+========================================== */
+
+const HELPER_STORE_NAME =
+  "hugs-help-helpers";
 
 const MISSION_STORE_NAME =
   "hugs-help-missions";
@@ -31,12 +41,24 @@ const MISSION_STORE_NAME =
 const MATCH_STORE_NAME =
   "hugs-help-matches";
 
+
+/* ==========================================
+   COLLECTION KEYS
+========================================== */
+
+const HELPERS_KEY =
+  "helpers";
+
 const MISSIONS_KEY =
   "missions";
 
 const MATCHES_KEY =
   "mission-match-requests";
 
+
+/* ==========================================
+   RESPONSE HEADERS
+========================================== */
 
 const headers = {
 
@@ -50,7 +72,7 @@ const headers = {
 
 
 /* ==========================================
-   RESPONSE HELPER
+   JSON RESPONSE
 ========================================== */
 
 function jsonResponse(
@@ -102,7 +124,7 @@ function cleanText(
 
 
 /* ==========================================
-   VALIDATE EMAIL
+   EMAIL VALIDATION
 ========================================== */
 
 function validEmail(
@@ -118,18 +140,12 @@ function validEmail(
 
 
 /* ==========================================
-   VALIDATE HELPER ID
+   HELPER ID FORMAT
 ========================================== */
 
 function validHelperId(
   helperId
 ){
-
-  /*
-   * Expected:
-   *
-   * HELPER-2026-123456
-   */
 
   return /^HELPER-\d{4}-\d{6}$/i
     .test(
@@ -140,17 +156,13 @@ function validHelperId(
 
 
 /* ==========================================
-   CREATE MATCH REQUEST ID
+   MATCH ID
 ========================================== */
 
 function createMatchId(){
 
-  const now =
-    new Date();
-
-
   const datePart =
-    now
+    new Date()
       .toISOString()
       .slice(
         0,
@@ -187,16 +199,18 @@ function createMatchId(){
 
 
 /* ==========================================
-   READ MISSIONS
+   READ COLLECTION
 ========================================== */
 
-async function readMissions(
-  store
+async function readCollection(
+  store,
+  key,
+  property
 ){
 
   const stored =
     await store.get(
-      MISSIONS_KEY,
+      key,
       {
         type:"json",
         consistency:"strong"
@@ -215,14 +229,18 @@ async function readMissions(
 
   if(
     Array.isArray(
-      stored.missions
+      stored[property]
     )
   ){
 
-    return stored.missions;
+    return stored[property];
 
   }
 
+
+  /*
+   * Migration tolerance.
+   */
 
   if(
     Array.isArray(
@@ -241,61 +259,7 @@ async function readMissions(
 
 
 /* ==========================================
-   READ MATCH REQUESTS
-========================================== */
-
-async function readMatches(
-  store
-){
-
-  const stored =
-    await store.get(
-      MATCHES_KEY,
-      {
-        type:"json",
-        consistency:"strong"
-      }
-    );
-
-
-  if(
-    !stored
-  ){
-
-    return [];
-
-  }
-
-
-  if(
-    Array.isArray(
-      stored.matches
-    )
-  ){
-
-    return stored.matches;
-
-  }
-
-
-  if(
-    Array.isArray(
-      stored
-    )
-  ){
-
-    return stored;
-
-  }
-
-
-  return [];
-
-}
-
-
-/* ==========================================
-   SAVE MATCH REQUESTS
+   SAVE MATCHES
 ========================================== */
 
 async function saveMatches(
@@ -306,11 +270,13 @@ async function saveMatches(
   await store.setJSON(
     MATCHES_KEY,
     {
+
       updated_at:
         new Date()
           .toISOString(),
 
       matches
+
     }
   );
 
@@ -351,9 +317,9 @@ export default async (
   try{
 
 
-    /* ----------------------------------------
-       READ REQUEST BODY
-    ---------------------------------------- */
+    /* ======================================
+       READ JSON
+    ====================================== */
 
     let body;
 
@@ -379,9 +345,9 @@ export default async (
     }
 
 
-    /* ----------------------------------------
+    /* ======================================
        CLEAN VALUES
-    ---------------------------------------- */
+    ====================================== */
 
     const missionId =
       cleanText(
@@ -406,9 +372,9 @@ export default async (
       .toLowerCase();
 
 
-    /* ----------------------------------------
-       REQUIRED FIELDS
-    ---------------------------------------- */
+    /* ======================================
+       REQUIRED VALUES
+    ====================================== */
 
     if(
       !missionId ||
@@ -429,9 +395,9 @@ export default async (
     }
 
 
-    /* ----------------------------------------
+    /* ======================================
        HELPER ID FORMAT
-    ---------------------------------------- */
+    ====================================== */
 
     if(
       !validHelperId(
@@ -444,7 +410,7 @@ export default async (
           ok:false,
 
           error:
-            "The HUGS Helper reference number is not valid."
+            "Please enter a valid HUGS Helper reference number."
         },
         400
       );
@@ -452,9 +418,9 @@ export default async (
     }
 
 
-    /* ----------------------------------------
+    /* ======================================
        EMAIL FORMAT
-    ---------------------------------------- */
+    ====================================== */
 
     if(
       !validEmail(
@@ -475,9 +441,119 @@ export default async (
     }
 
 
-    /* ----------------------------------------
+    /* ======================================
+       VERIFY PRIVATE HELPER RECORD
+    ====================================== */
+
+    const helperStore =
+      getStore(
+        HELPER_STORE_NAME
+      );
+
+
+    const helpers =
+      await readCollection(
+        helperStore,
+        HELPERS_KEY,
+        "helpers"
+      );
+
+
+    const helper =
+      helpers.find(
+        item => {
+
+          const storedId =
+            String(
+              item?.id || ""
+            )
+            .toUpperCase();
+
+
+          const storedEmail =
+            String(
+              item?.email || ""
+            )
+            .trim()
+            .toLowerCase();
+
+
+          return (
+            storedId ===
+              helperId &&
+
+            storedEmail ===
+              helperEmail
+          );
+
+        }
+      );
+
+
+    if(
+      !helper
+    ){
+
+      /*
+       * Deliberately do not reveal whether
+       * the ID or email was the incorrect
+       * piece of information.
+       */
+
+      return jsonResponse(
+        {
+          ok:false,
+
+          error:
+            "We could not verify this HUGS Helper registration. Check your Helper reference number and registered email."
+        },
+        403
+      );
+
+    }
+
+
+    /* ======================================
+       HELPER STATUS
+    ====================================== */
+
+    const helperStatus =
+      String(
+        helper.status || ""
+      );
+
+
+    /*
+     * Phase 1 currently creates Helpers as
+     * "Registered".
+     *
+     * Later we can add:
+     * Approved
+     * Paused
+     * Suspended
+     */
+
+    if(
+      helperStatus !== "Registered" &&
+      helperStatus !== "Approved"
+    ){
+
+      return jsonResponse(
+        {
+          ok:false,
+
+          error:
+            "This HUGS Helper registration is not currently eligible for HUG Missions."
+        },
+        403
+      );
+
+    }
+
+
+    /* ======================================
        LOAD MISSIONS
-    ---------------------------------------- */
+    ====================================== */
 
     const missionStore =
       getStore(
@@ -486,14 +562,16 @@ export default async (
 
 
     const missions =
-      await readMissions(
-        missionStore
+      await readCollection(
+        missionStore,
+        MISSIONS_KEY,
+        "missions"
       );
 
 
-    /* ----------------------------------------
+    /* ======================================
        FIND MISSION
-    ---------------------------------------- */
+    ====================================== */
 
     const mission =
       missions.find(
@@ -521,9 +599,9 @@ export default async (
     }
 
 
-    /* ----------------------------------------
-       MUST BE APPROVED
-    ---------------------------------------- */
+    /* ======================================
+       MISSION MUST BE APPROVED
+    ====================================== */
 
     if(
       mission.approved !== true
@@ -542,13 +620,12 @@ export default async (
     }
 
 
-    /* ----------------------------------------
-       MUST STILL BE AVAILABLE
-    ---------------------------------------- */
+    /* ======================================
+       MISSION MUST BE AVAILABLE
+    ====================================== */
 
     if(
-      mission.status !==
-      "Available"
+      mission.status !== "Available"
     ){
 
       return jsonResponse(
@@ -564,9 +641,9 @@ export default async (
     }
 
 
-    /* ----------------------------------------
-       LOAD MATCH REQUESTS
-    ---------------------------------------- */
+    /* ======================================
+       LOAD EXISTING MATCH REQUESTS
+    ====================================== */
 
     const matchStore =
       getStore(
@@ -575,35 +652,39 @@ export default async (
 
 
     const matches =
-      await readMatches(
-        matchStore
+      await readCollection(
+        matchStore,
+        MATCHES_KEY,
+        "matches"
       );
 
 
-    /* ----------------------------------------
-       PREVENT DUPLICATE REQUEST
-    ---------------------------------------- */
+    /* ======================================
+       PREVENT DUPLICATE INTEREST
+    ====================================== */
 
     const existingMatch =
       matches.find(
         item =>
 
-          item.mission_id ===
-            missionId &&
+          String(
+            item?.mission_id || ""
+          ) === missionId &&
 
-          (
-            item.helper_id ===
-              helperId ||
-
-            item.helper_email ===
-              helperEmail
-          ) &&
+          String(
+            item?.helper_id || ""
+          )
+          .toUpperCase() ===
+            helperId &&
 
           item.status !==
             "Declined" &&
 
           item.status !==
-            "Canceled"
+            "Canceled" &&
+
+          item.status !==
+            "Mission Assigned"
       );
 
 
@@ -616,7 +697,7 @@ export default async (
           ok:false,
 
           error:
-            "You have already requested this HUG Mission.",
+            "You have already requested to help with this HUG Mission.",
 
           match_id:
             existingMatch.id,
@@ -630,9 +711,14 @@ export default async (
     }
 
 
-    /* ----------------------------------------
-       CREATE PENDING MATCH
-    ---------------------------------------- */
+    /* ======================================
+       CREATE MATCH REQUEST
+    ====================================== */
+
+    const now =
+      new Date()
+        .toISOString();
+
 
     const matchRequest = {
 
@@ -652,8 +738,7 @@ export default async (
         "Pending Review",
 
       created_at:
-        new Date()
-          .toISOString(),
+        now,
 
       reviewed_at:
         null,
@@ -669,9 +754,9 @@ export default async (
     );
 
 
-    /* ----------------------------------------
+    /* ======================================
        SAVE
-    ---------------------------------------- */
+    ====================================== */
 
     await saveMatches(
       matchStore,
@@ -682,13 +767,12 @@ export default async (
     /*
      * IMPORTANT:
      *
-     * We DO NOT change the mission from
-     * Available to Accepted here.
+     * The mission remains AVAILABLE here.
      *
-     * Multiple Helpers may express interest.
+     * Expressing interest is NOT assignment.
      *
-     * HUGSLinks decides which Helper is
-     * appropriate before assignment.
+     * The protected admin function later
+     * approves one Helper.
      */
 
 
@@ -697,13 +781,13 @@ export default async (
         ok:true,
 
         message:
-          "Your request to help with this HUG Mission has been received.",
+          "Your request to help with this HUG Mission has been received for review.",
 
         match_id:
           matchRequest.id,
 
         status:
-          matchRequest.status
+          "Pending Review"
       },
       201
     );
@@ -714,7 +798,7 @@ export default async (
 
 
     console.error(
-      "Accept HUG Mission error:",
+      "Verified HUG Mission match error:",
       error
     );
 
@@ -724,7 +808,7 @@ export default async (
         ok:false,
 
         error:
-          "We could not process this HUG Mission request right now."
+          "We could not process your HUG Mission request right now."
       },
       500
     );
