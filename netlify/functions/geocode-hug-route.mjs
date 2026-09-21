@@ -1,125 +1,85 @@
+import crypto from "node:crypto";
+
 /*
-==========================================================
-HUGSLinks
-geocode-hug-route.mjs
+ * HUGSLinks
+ * Secure Private HUG Route Geocoder
+ *
+ * FILE:
+ * netlify/functions/geocode-hug-route.mjs
+ *
+ * PURPOSE
+ * -------
+ * - Accept private pickup and destination addresses
+ *   from authenticated HUGS Admin.
+ *
+ * - Send the addresses to Mapbox Geocoding API v6.
+ *
+ * - Return standardized addresses and coordinates
+ *   for Admin review.
+ *
+ * - Keep MAPBOX_ACCESS_TOKEN server-side.
+ *
+ * - Never write addresses into the public
+ *   HUG Mission collection.
+ *
+ * REQUIRED NETLIFY ENVIRONMENT VARIABLES
+ * --------------------------------------
+ *
+ * HUGS_ADMIN_TOKEN
+ * MAPBOX_ACCESS_TOKEN
+ */
 
-Private HUG Mission address geocoder.
 
-Purpose:
-- Accept pickup and destination addresses from HUGS Admin
-- Require HUGS Admin authorization
-- Send addresses to Mapbox Geocoding API v6
-- Return standardized locations + coordinates
-- Keep the Mapbox token on the server
-- Never expose the Mapbox token to browser HTML
+/* ==========================================
+   HEADERS
+========================================== */
 
-Required Netlify environment variables:
+const headers = {
 
-HUGS_ADMIN_TOKEN
-MAPBOX_ACCESS_TOKEN
-==========================================================
-*/
+  "Content-Type":
+    "application/json; charset=utf-8",
+
+  "Cache-Control":
+    "no-store, no-cache, must-revalidate",
+
+  "Pragma":
+    "no-cache",
+
+  "Expires":
+    "0",
+
+  "X-Content-Type-Options":
+    "nosniff",
+
+  "Referrer-Policy":
+    "no-referrer"
+
+};
 
 
-/* ========================================================
-   RESPONSE HELPERS
-======================================================== */
+/* ==========================================
+   RESPONSE
+========================================== */
 
 function jsonResponse(
-  statusCode,
-  body
+  body,
+  status = 200
 ){
 
-  return {
-
-    statusCode,
-
-    headers:{
-
-      "Content-Type":
-        "application/json",
-
-      "Cache-Control":
-        "no-store, no-cache, must-revalidate",
-
-      "Pragma":
-        "no-cache",
-
-      "X-Content-Type-Options":
-        "nosniff"
-
-    },
-
-    body:
-      JSON.stringify(body)
-
-  };
-
-}
-
-
-/* ========================================================
-   ADMIN AUTHORIZATION
-======================================================== */
-
-function getAdminToken(event){
-
-  const authorization =
-    event.headers?.authorization ||
-    event.headers?.Authorization ||
-    "";
-
-
-  if(
-    authorization.startsWith(
-      "Bearer "
-    )
-  ){
-
-    return authorization
-      .slice(7)
-      .trim();
-
-  }
-
-
-  return "";
-
-}
-
-
-function authorized(event){
-
-  const expectedToken =
-    process.env.HUGS_ADMIN_TOKEN;
-
-
-  if(!expectedToken){
-
-    console.error(
-      "HUGS_ADMIN_TOKEN is not configured."
-    );
-
-    return false;
-
-  }
-
-
-  const providedToken =
-    getAdminToken(event);
-
-
-  return (
-    providedToken &&
-    providedToken === expectedToken
+  return new Response(
+    JSON.stringify(body),
+    {
+      status,
+      headers
+    }
   );
 
 }
 
 
-/* ========================================================
-   INPUT CLEANING
-======================================================== */
+/* ==========================================
+   CLEAN TEXT
+========================================== */
 
 function cleanText(
   value,
@@ -138,6 +98,10 @@ function cleanText(
   return value
     .trim()
     .replace(
+      /[\u0000-\u001F\u007F]/g,
+      ""
+    )
+    .replace(
       /\s+/g,
       " "
     )
@@ -149,9 +113,163 @@ function cleanText(
 }
 
 
-/* ========================================================
+/* ==========================================
+   TIMING-SAFE TOKEN COMPARISON
+========================================== */
+
+function safeTokenEqual(
+  suppliedToken,
+  configuredToken
+){
+
+  if(
+    typeof suppliedToken !== "string" ||
+    typeof configuredToken !== "string" ||
+    !suppliedToken ||
+    !configuredToken
+  ){
+
+    return false;
+
+  }
+
+
+  const supplied =
+    Buffer.from(
+      suppliedToken,
+      "utf8"
+    );
+
+
+  const configured =
+    Buffer.from(
+      configuredToken,
+      "utf8"
+    );
+
+
+  if(
+    supplied.length !==
+    configured.length
+  ){
+
+    return false;
+
+  }
+
+
+  return crypto.timingSafeEqual(
+    supplied,
+    configured
+  );
+
+}
+
+
+/* ==========================================
+   ADMIN AUTHENTICATION
+========================================== */
+
+function authorizedAdmin(
+  request
+){
+
+  const configuredToken =
+    process.env.HUGS_ADMIN_TOKEN;
+
+
+  if(!configuredToken){
+
+    return {
+
+      configured:false,
+
+      authorized:false
+
+    };
+
+  }
+
+
+  const authorization =
+    request.headers.get(
+      "authorization"
+    ) || "";
+
+
+  const prefix =
+    "Bearer ";
+
+
+  if(
+    !authorization.startsWith(
+      prefix
+    )
+  ){
+
+    return {
+
+      configured:true,
+
+      authorized:false
+
+    };
+
+  }
+
+
+  const suppliedToken =
+    authorization
+      .slice(
+        prefix.length
+      )
+      .trim();
+
+
+  return {
+
+    configured:true,
+
+    authorized:
+      safeTokenEqual(
+        suppliedToken,
+        configuredToken
+      )
+
+  };
+
+}
+
+
+/* ==========================================
+   COORDINATE VALIDATION
+========================================== */
+
+function validLatitude(value){
+
+  return (
+    Number.isFinite(value) &&
+    value >= -90 &&
+    value <= 90
+  );
+
+}
+
+
+function validLongitude(value){
+
+  return (
+    Number.isFinite(value) &&
+    value >= -180 &&
+    value <= 180
+  );
+
+}
+
+
+/* ==========================================
    MAPBOX GEOCODER
-======================================================== */
+========================================== */
 
 async function geocodeAddress(
   address,
@@ -172,7 +290,9 @@ async function geocodeAddress(
 
   /*
    * HUGS currently operates in the U.S.
-   * This reduces incorrect international matches.
+   *
+   * Restricting the search reduces accidental
+   * international matches.
    */
 
   endpoint.searchParams.set(
@@ -182,8 +302,7 @@ async function geocodeAddress(
 
 
   /*
-   * We want an address rather than broad
-   * city/state results.
+   * Exact address-level results only.
    */
 
   endpoint.searchParams.set(
@@ -193,8 +312,9 @@ async function geocodeAddress(
 
 
   /*
-   * One completed search rather than
-   * autocomplete requests on every keystroke.
+   * Admin submits a completed address.
+   *
+   * We do not call Mapbox on every keystroke.
    */
 
   endpoint.searchParams.set(
@@ -203,6 +323,11 @@ async function geocodeAddress(
   );
 
 
+  /*
+   * We need one candidate for the Admin
+   * verification screen.
+   */
+
   endpoint.searchParams.set(
     "limit",
     "1"
@@ -210,11 +335,14 @@ async function geocodeAddress(
 
 
   /*
-   * HUGS needs to retain the coordinates
-   * with the active Mission route.
+   * HUGS intends to retain the verified
+   * coordinates with the private active
+   * Mission route.
    *
-   * Permanent geocoding permits storage
-   * according to Mapbox's Geocoding terms.
+   * IMPORTANT:
+   * Confirm the production Mapbox account/token
+   * is eligible for permanent geocoding before
+   * enabling this in production.
    */
 
   endpoint.searchParams.set(
@@ -233,12 +361,19 @@ async function geocodeAddress(
     await fetch(
       endpoint.toString(),
       {
+
         method:"GET",
 
         headers:{
+
           "Accept":
             "application/json"
-        }
+
+        },
+
+        cache:
+          "no-store"
+
       }
     );
 
@@ -278,10 +413,18 @@ async function geocodeAddress(
   }
 
 
+  /* ======================================
+     FIRST MATCH
+  ====================================== */
+
   const feature =
-    Array.isArray(data.features)
-      ? data.features[0]
-      : null;
+    Array.isArray(
+      data.features
+    )
+      ?
+      data.features[0]
+      :
+      null;
 
 
   if(!feature){
@@ -291,12 +434,18 @@ async function geocodeAddress(
   }
 
 
+  /* ======================================
+     COORDINATES
+  ====================================== */
+
   const coordinates =
     feature.geometry?.coordinates;
 
 
   if(
-    !Array.isArray(coordinates) ||
+    !Array.isArray(
+      coordinates
+    ) ||
     coordinates.length < 2
   ){
 
@@ -318,8 +467,12 @@ async function geocodeAddress(
 
 
   if(
-    !Number.isFinite(latitude) ||
-    !Number.isFinite(longitude)
+    !validLatitude(
+      latitude
+    ) ||
+    !validLongitude(
+      longitude
+    )
   ){
 
     return null;
@@ -327,50 +480,85 @@ async function geocodeAddress(
   }
 
 
-  /*
-   * Mapbox v6 normally supplies the useful
-   * display fields through feature.properties.
-   *
-   * Fallbacks are included defensively.
-   */
+  /* ======================================
+     MAPBOX PROPERTIES
+  ====================================== */
 
   const properties =
-    feature.properties || {};
+    feature.properties ||
+    {};
 
 
   const name =
-    properties.name ||
-    feature.text ||
-    "";
+    cleanText(
+      properties.name ||
+      feature.text ||
+      "",
+      200
+    );
 
 
   const placeFormatted =
-    properties.place_formatted ||
-    feature.place_name ||
-    "";
+    cleanText(
+      properties.place_formatted ||
+      feature.place_name ||
+      "",
+      350
+    );
 
+
+  /*
+   * Mapbox v6 may supply full_address.
+   *
+   * Otherwise construct a readable address.
+   */
 
   const fullAddress =
-    properties.full_address ||
-    [
-      name,
-      placeFormatted
-    ]
-    .filter(Boolean)
-    .join(", ") ||
-    address;
+    cleanText(
+      properties.full_address ||
+      [
+        name,
+        placeFormatted
+      ]
+      .filter(Boolean)
+      .join(", ") ||
+      address,
+      450
+    );
 
 
   const accuracy =
-    properties.coordinates?.accuracy ||
-    properties.accuracy ||
-    null;
+    cleanText(
+      properties.coordinates?.accuracy ||
+      properties.accuracy ||
+      "",
+      100
+    ) || null;
 
+
+  /*
+   * match_code can be an object.
+   *
+   * Keep it structured rather than converting
+   * it to "[object Object]".
+   */
 
   const matchCode =
-    properties.match_code ||
-    null;
 
+    properties.match_code &&
+    typeof properties.match_code ===
+      "object"
+
+      ?
+      properties.match_code
+
+      :
+      null;
+
+
+  /* ======================================
+     SAFE RESULT
+  ====================================== */
 
   return {
 
@@ -394,172 +582,220 @@ async function geocodeAddress(
 }
 
 
-/* ========================================================
-   MAIN HANDLER
-======================================================== */
+/* ==========================================
+   MAIN
+========================================== */
 
-export async function handler(
-  event
-){
+export default async request => {
 
-  /*
-   * POST only.
-   */
+
+  /* ======================================
+     POST ONLY
+  ====================================== */
 
   if(
-    event.httpMethod !== "POST"
+    request.method !== "POST"
   ){
 
     return jsonResponse(
-      405,
       {
+
         ok:false,
+
         error:
           "Method not allowed."
-      }
+
+      },
+      405
     );
 
   }
-
-
-  /*
-   * Admin authorization.
-   */
-
-  if(
-    !authorized(event)
-  ){
-
-    return jsonResponse(
-      401,
-      {
-        ok:false,
-        error:
-          "Unauthorized HUGS Admin request."
-      }
-    );
-
-  }
-
-
-  /*
-   * Mapbox token remains server-side.
-   */
-
-  const mapboxToken =
-    process.env.MAPBOX_ACCESS_TOKEN;
-
-
-  if(!mapboxToken){
-
-    console.error(
-      "MAPBOX_ACCESS_TOKEN is not configured."
-    );
-
-
-    return jsonResponse(
-      503,
-      {
-        ok:false,
-        error:
-          "HUGS routing service is not configured yet."
-      }
-    );
-
-  }
-
-
-  /*
-   * Parse request.
-   */
-
-  let body;
 
 
   try{
 
-    body =
-      JSON.parse(
-        event.body || "{}"
+
+    /* ======================================
+       ADMIN AUTHENTICATION
+    ====================================== */
+
+    const admin =
+      authorizedAdmin(
+        request
       );
 
-  }
-  catch{
 
-    return jsonResponse(
-      400,
-      {
-        ok:false,
-        error:
-          "Invalid request data."
-      }
-    );
+    if(
+      !admin.configured
+    ){
 
-  }
+      console.error(
+        "HUGS_ADMIN_TOKEN is not configured."
+      );
 
 
-  const pickupAddress =
-    cleanText(
-      body.pickup_address
-    );
+      return jsonResponse(
+        {
+
+          ok:false,
+
+          error:
+            "Admin service is not configured."
+
+        },
+        500
+      );
+
+    }
 
 
-  const destinationAddress =
-    cleanText(
-      body.destination_address
-    );
+    if(
+      !admin.authorized
+    ){
+
+      return jsonResponse(
+        {
+
+          ok:false,
+
+          error:
+            "Unauthorized."
+
+        },
+        401
+      );
+
+    }
 
 
-  /*
-   * Both locations are required.
-   */
+    /* ======================================
+       MAPBOX CONFIGURATION
+    ====================================== */
 
-  if(
-    !pickupAddress ||
-    !destinationAddress
-  ){
-
-    return jsonResponse(
-      400,
-      {
-        ok:false,
-        error:
-          "Enter both the pickup and destination addresses."
-      }
-    );
-
-  }
+    const mapboxToken =
+      process.env
+        .MAPBOX_ACCESS_TOKEN;
 
 
-  /*
-   * Mapbox search text is limited.
-   * Reject semicolons because Mapbox's
-   * forward-geocoding query does not permit
-   * them in search text.
-   */
+    if(!mapboxToken){
 
-  if(
-    pickupAddress.includes(";") ||
-    destinationAddress.includes(";")
-  ){
-
-    return jsonResponse(
-      400,
-      {
-        ok:false,
-        error:
-          "Pickup and destination addresses cannot contain semicolons."
-      }
-    );
-
-  }
+      console.error(
+        "MAPBOX_ACCESS_TOKEN is not configured."
+      );
 
 
-  try{
+      return jsonResponse(
+        {
+
+          ok:false,
+
+          error:
+            "HUGS routing service is not configured yet."
+
+        },
+        503
+      );
+
+    }
+
+
+    /* ======================================
+       REQUEST BODY
+    ====================================== */
+
+    let body;
+
+
+    try{
+
+      body =
+        await request.json();
+
+    }
+    catch{
+
+      return jsonResponse(
+        {
+
+          ok:false,
+
+          error:
+            "Invalid request data."
+
+        },
+        400
+      );
+
+    }
+
+
+    /* ======================================
+       PRIVATE ADDRESSES
+    ====================================== */
+
+    const pickupAddress =
+      cleanText(
+        body?.pickup_address
+      );
+
+
+    const destinationAddress =
+      cleanText(
+        body?.destination_address
+      );
+
+
+    if(
+      !pickupAddress ||
+      !destinationAddress
+    ){
+
+      return jsonResponse(
+        {
+
+          ok:false,
+
+          error:
+            "Enter both the pickup and destination addresses."
+
+        },
+        400
+      );
+
+    }
+
 
     /*
-     * Run both searches together.
+     * Mapbox free-form forward search does not
+     * accept semicolons in the search text.
+     *
+     * It also prevents multiple locations from
+     * being packed into one HUG route field.
      */
+
+    if(
+      pickupAddress.includes(";") ||
+      destinationAddress.includes(";")
+    ){
+
+      return jsonResponse(
+        {
+
+          ok:false,
+
+          error:
+            "Enter one pickup address and one destination address."
+
+        },
+        400
+      );
+
+    }
+
+
+    /* ======================================
+       GEOCODE BOTH LOCATIONS
+    ====================================== */
 
     const [
       pickup,
@@ -580,73 +816,127 @@ export async function handler(
       ]);
 
 
+    /* ======================================
+       PICKUP RESULT
+    ====================================== */
+
     if(!pickup){
 
       return jsonResponse(
-        404,
         {
+
           ok:false,
+
           error:
             "The pickup address could not be located. Check the address and try again."
-        }
+
+        },
+        404
       );
 
     }
 
+
+    /* ======================================
+       DESTINATION RESULT
+    ====================================== */
 
     if(!destination){
 
       return jsonResponse(
-        404,
         {
+
           ok:false,
+
           error:
             "The destination address could not be located. Check the address and try again."
-        }
+
+        },
+        404
       );
 
     }
 
 
-    /*
-     * Return only the information HUGS
-     * Admin needs.
-     *
-     * The Mapbox access token is never
-     * returned.
-     */
+    /* ======================================
+       RESPONSE CONTRACT
+    ====================================== */
 
     return jsonResponse(
-      200,
       {
 
         ok:true,
 
-        pickup,
+        pickup:{
 
-        destination
+          input_address:
+            pickup.input_address,
+
+          formatted_address:
+            pickup.formatted_address,
+
+          latitude:
+            pickup.latitude,
+
+          longitude:
+            pickup.longitude,
+
+          accuracy:
+            pickup.accuracy,
+
+          match_code:
+            pickup.match_code
+
+        },
+
+        destination:{
+
+          input_address:
+            destination.input_address,
+
+          formatted_address:
+            destination.formatted_address,
+
+          latitude:
+            destination.latitude,
+
+          longitude:
+            destination.longitude,
+
+          accuracy:
+            destination.accuracy,
+
+          match_code:
+            destination.match_code
+
+        }
 
       }
     );
 
+
   }
   catch(error){
 
+
     console.error(
-      "HUG route geocoding failed:",
+      "Secure HUG route geocoding failed:",
       error
     );
 
 
     return jsonResponse(
-      502,
       {
+
         ok:false,
+
         error:
           "HUGS could not verify the route locations right now."
-      }
+
+      },
+      502
     );
 
   }
 
-}
+};
