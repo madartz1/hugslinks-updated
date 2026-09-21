@@ -1,864 +1,794 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
-  <meta charset="UTF-8">
-
-  <meta
-    name="viewport"
-    content="width=device-width, initial-scale=1.0, viewport-fit=cover"
-  >
-
-  <meta name="robots" content="noindex,nofollow,noarchive">
-
-  <title>My HUG Mission | HUGSLinks</title>
-
-  <link rel="stylesheet" href="styles.css">
-
-  <!-- Leaflet -->
-  <link
-    rel="stylesheet"
-    href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
-  >
-
-  <style>
-    :root{
-      --navy:#06162f;
-      --blue:#1267ff;
-      --blue2:#00a8ff;
-      --gold:#d9ad45;
-      --white:#ffffff;
-      --light:#f3f7fc;
-      --text:#14213d;
-      --muted:#68758b;
-      --border:#dce4ef;
-      --green:#128452;
-      --red:#b42318;
-      --shadow:0 14px 40px rgba(6,22,47,.10);
-    }
-
-    *{
-      box-sizing:border-box;
-    }
-
-    body{
-      margin:0;
-      background:var(--light);
-      color:var(--text);
-      font-family:
-        system-ui,
-        -apple-system,
-        BlinkMacSystemFont,
-        "Segoe UI",
-        sans-serif;
-    }
-
-    button,
-    input{
-      font:inherit;
-    }
-
-    .mission-shell{
-      width:min(760px,92%);
-      margin:0 auto;
-    }
-
-    .mission-hero{
-      padding:45px 18px 38px;
-      text-align:center;
-      color:white;
-      background:
-        radial-gradient(
-          circle at top,
-          #1267ff 0%,
-          #0a3478 36%,
-          #06162f 78%
-        );
-    }
-
-    .mission-badge{
-      display:inline-block;
-      padding:7px 13px;
-      margin-bottom:15px;
-      border:1px solid rgba(255,255,255,.35);
-      border-radius:999px;
-      font-size:.76rem;
-      font-weight:900;
-      letter-spacing:.08em;
-      text-transform:uppercase;
-    }
-
-    .mission-hero h1{
-      margin:0 0 10px;
-      font-size:clamp(2rem,8vw,3.5rem);
-    }
-
-    .mission-hero p{
-      max-width:620px;
-      margin:0 auto;
-      line-height:1.65;
-      color:rgba(255,255,255,.88);
-    }
-
-    main{
-      padding:28px 0 80px;
-    }
-
-    .card{
-      margin-bottom:20px;
-      padding:22px;
-      background:white;
-      border:1px solid var(--border);
-      border-radius:22px;
-      box-shadow:var(--shadow);
-    }
-
-    .card h2,
-    .card h3{
-      margin-top:0;
-      color:var(--navy);
-    }
-
-    .field{
-      margin-bottom:16px;
-    }
-
-    .field label{
-      display:block;
-      margin-bottom:7px;
-      font-weight:850;
-      color:var(--navy);
-    }
-
-    .field input{
-      width:100%;
-      padding:14px;
-      border:1px solid var(--border);
-      border-radius:13px;
-      background:white;
-      color:var(--text);
-    }
-
-    .primary,
-    .secondary,
-    .stop-button{
-      width:100%;
-      min-height:50px;
-      padding:13px 18px;
-      border-radius:14px;
-      font-weight:900;
-      cursor:pointer;
-    }
-
-    .primary{
-      border:0;
-      background:var(--blue);
-      color:white;
-    }
-
-    .secondary{
-      border:1px solid var(--border);
-      background:white;
-      color:var(--navy);
-    }
-
-    .stop-button{
-      border:1px solid #f1b9b5;
-      background:#fff0ee;
-      color:var(--red);
-    }
-
-    button:disabled{
-      opacity:.55;
-      cursor:not-allowed;
-    }
-
-    #missionCenter{
-      display:none;
-    }
-
-    .mission-number{
-      margin-bottom:5px;
-      color:var(--blue);
-      font-size:.8rem;
-      font-weight:900;
-      letter-spacing:.04em;
-    }
-
-    .status-pill{
-      display:inline-block;
-      padding:8px 13px;
-      border-radius:999px;
-      background:#eaf2ff;
-      color:#1259bd;
-      font-size:.82rem;
-      font-weight:900;
-    }
-
-    .status-pill.delivered{
-      background:#e7f8ef;
-      color:var(--green);
-    }
-
-    .mission-details{
-      display:grid;
-      grid-template-columns:
-        repeat(
-          auto-fit,
-          minmax(150px,1fr)
-        );
-      gap:11px;
-      margin-top:18px;
-    }
-
-    .detail{
-      padding:14px;
-      background:#f7f9fc;
-      border-radius:13px;
-      overflow-wrap:anywhere;
-    }
-
-    .detail strong{
-      display:block;
-      margin-bottom:5px;
-      color:var(--navy);
-      font-size:.75rem;
-      text-transform:uppercase;
-    }
-
-    .summary{
-      margin-top:18px;
-      padding:17px;
-      border-left:4px solid var(--gold);
-      border-radius:0 13px 13px 0;
-      background:#fff9eb;
-      line-height:1.65;
-    }
-
-    .progress{
-      margin-top:24px;
-    }
-
-    .progress-step{
-      display:flex;
-      gap:13px;
-      position:relative;
-      min-height:68px;
-    }
-
-    .progress-step:not(:last-child)::before{
-      content:"";
-      position:absolute;
-      left:17px;
-      top:34px;
-      width:3px;
-      height:39px;
-      background:#dce4ef;
-    }
-
-    .progress-step.complete:not(:last-child)::before{
-      background:var(--blue);
-    }
-
-    .progress-dot{
-      position:relative;
-      z-index:2;
-      display:flex;
-      align-items:center;
-      justify-content:center;
-      flex:0 0 36px;
-      width:36px;
-      height:36px;
-      border-radius:50%;
-      background:#e7edf5;
-      color:#748198;
-      font-weight:900;
-    }
-
-    .progress-step.complete .progress-dot,
-    .progress-step.current .progress-dot{
-      background:var(--blue);
-      color:white;
-    }
-
-    .progress-step.delivered .progress-dot{
-      background:var(--green);
-    }
-
-    .progress-copy strong{
-      display:block;
-      color:var(--navy);
-    }
-
-    .progress-copy span{
-      color:var(--muted);
-      font-size:.87rem;
-    }
-
-    .next-action{
-      margin-top:20px;
-      padding-top:20px;
-      border-top:1px solid var(--border);
-    }
-
-    .route-card{
-      overflow:hidden;
-      padding:0;
-    }
-
-    .route-header{
-      padding:22px 22px 12px;
-    }
-
-    .route-header p{
-      color:var(--muted);
-      line-height:1.55;
-    }
-
-    .route-stats{
-      display:grid;
-      grid-template-columns:
-        repeat(3,1fr);
-      gap:10px;
-      padding:0 22px 18px;
-    }
-
-    .route-stat{
-      padding:13px 9px;
-      border-radius:14px;
-      background:#f5f8fc;
-      text-align:center;
-    }
-
-    .route-stat strong{
-      display:block;
-      margin-bottom:4px;
-      color:var(--navy);
-      font-size:1.05rem;
-    }
-
-    .route-stat span{
-      color:var(--muted);
-      font-size:.72rem;
-      font-weight:800;
-      text-transform:uppercase;
-    }
-
-    #hugMap{
-      width:100%;
-      height:360px;
-      background:#eaf0f7;
-    }
-
-    .route-message{
-      padding:14px 22px;
-      background:#f7f9fc;
-      color:var(--muted);
-      line-height:1.5;
-      font-size:.88rem;
-    }
-
-    .route-target{
-      padding:18px 22px;
-      border-top:1px solid var(--border);
-    }
-
-    .route-target strong{
-      display:block;
-      margin-bottom:5px;
-      color:var(--navy);
-    }
-
-    .route-target span{
-      color:var(--muted);
-      line-height:1.5;
-    }
-
-    .location-controls{
-      padding:22px;
-      border-top:1px solid var(--border);
-    }
-
-    .live-indicator{
-      display:flex;
-      align-items:center;
-      gap:9px;
-      margin-bottom:15px;
-      font-weight:850;
-    }
-
-    .live-dot{
-      width:11px;
-      height:11px;
-      border-radius:50%;
-      background:#a7b0bf;
-    }
-
-    .live-dot.active{
-      background:var(--green);
-      box-shadow:
-        0 0 0 6px rgba(18,132,82,.12);
-    }
-
-    .location-info{
-      margin:14px 0;
-      padding:13px;
-      background:#f7f9fc;
-      border-radius:12px;
-      color:var(--muted);
-      font-size:.87rem;
-      line-height:1.55;
-    }
-
-    .privacy-note{
-      padding:17px;
-      border:1px solid #d6e6ff;
-      border-radius:15px;
-      background:#f2f7ff;
-      color:#26456f;
-      line-height:1.6;
-      font-size:.9rem;
-    }
-
-    .turns{
-      padding:0 22px 22px;
-    }
-
-    .turns h3{
-      margin-bottom:12px;
-    }
-
-    .turn-list{
-      margin:0;
-      padding:0;
-      list-style:none;
-    }
-
-    .turn-list li{
-      padding:11px 0;
-      border-bottom:1px solid var(--border);
-      color:var(--text);
-      line-height:1.45;
-    }
-
-    .turn-list li:last-child{
-      border-bottom:0;
-    }
-
-    .bear-map-icon{
-      display:flex;
-      align-items:center;
-      justify-content:center;
-      width:42px;
-      height:42px;
-      border:3px solid white;
-      border-radius:50%;
-      background:var(--blue);
-      font-size:1.35rem;
-      box-shadow:0 5px 15px rgba(6,22,47,.25);
-    }
-
-    .map-pin-icon{
-      display:flex;
-      align-items:center;
-      justify-content:center;
-      width:38px;
-      height:38px;
-      border:3px solid white;
-      border-radius:50%;
-      background:var(--navy);
-      font-size:1.15rem;
-      box-shadow:0 5px 15px rgba(6,22,47,.2);
-    }
-
-    .message{
-      display:none;
-      position:fixed;
-      z-index:9999;
-      left:50%;
-      bottom:22px;
-      transform:translateX(-50%);
-      width:min(520px,90%);
-      padding:15px 17px;
-      border-radius:14px;
-      color:white;
-      font-weight:850;
-      box-shadow:0 12px 30px rgba(0,0,0,.2);
-    }
-
-    .message.success{
-      display:block;
-      background:var(--green);
-    }
-
-    .message.error{
-      display:block;
-      background:var(--red);
-    }
-
-    @media(max-width:520px){
-
-      .card{
-        padding:18px;
-      }
-
-      .route-card{
-        padding:0;
-      }
-
-      .route-stats{
-        grid-template-columns:1fr;
-      }
-
-      #hugMap{
-        height:310px;
-      }
-
-    }
-  </style>
+
+<meta charset="UTF-8">
+
+<meta
+  name="viewport"
+  content="width=device-width,initial-scale=1,viewport-fit=cover"
+>
+
+<meta
+  name="robots"
+  content="noindex,nofollow,noarchive"
+>
+
+<meta
+  name="referrer"
+  content="no-referrer"
+>
+
+<title>HUGS Helper Mission Center | HUGSLinks</title>
+
+<link
+  rel="stylesheet"
+  href="styles.css"
+>
+
+<link
+  rel="stylesheet"
+  href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+>
+
+<style>
+
+:root{
+  --navy:#06162f;
+  --blue:#1267ff;
+  --gold:#d9ad45;
+  --green:#137a4b;
+  --light:#f4f7fb;
+  --white:#ffffff;
+  --text:#14213d;
+  --muted:#68758b;
+  --border:#dce3ec;
+  --red:#b42318;
+  --orange:#a15c00;
+}
+
+*{
+  box-sizing:border-box;
+}
+
+body{
+  margin:0;
+  background:var(--light);
+  color:var(--text);
+  font-family:
+    system-ui,
+    -apple-system,
+    BlinkMacSystemFont,
+    "Segoe UI",
+    sans-serif;
+}
+
+button,
+input{
+  font:inherit;
+}
+
+.helper-header{
+  padding:
+    calc(30px + env(safe-area-inset-top))
+    18px
+    30px;
+  text-align:center;
+  color:white;
+  background:
+    linear-gradient(
+      135deg,
+      var(--navy),
+      #0b449b
+    );
+}
+
+.helper-header h1{
+  margin:0 0 8px;
+}
+
+.helper-header p{
+  max-width:700px;
+  margin:0 auto;
+  line-height:1.6;
+  color:rgba(255,255,255,.86);
+}
+
+.shell{
+  width:min(980px,94%);
+  margin:24px auto 65px;
+}
+
+.card{
+  margin-bottom:20px;
+  padding:22px;
+  background:white;
+  border:1px solid var(--border);
+  border-radius:22px;
+  box-shadow:
+    0 10px 35px rgba(6,22,47,.07);
+}
+
+.card h2,
+.card h3{
+  color:var(--navy);
+}
+
+.field{
+  margin-bottom:17px;
+}
+
+.field label{
+  display:block;
+  margin-bottom:7px;
+  color:var(--navy);
+  font-weight:850;
+}
+
+.field input{
+  width:100%;
+  padding:13px 14px;
+  border:1px solid var(--border);
+  border-radius:12px;
+  background:white;
+  color:var(--text);
+}
+
+.primary-button,
+.secondary-button,
+.danger-button,
+.status-button{
+  padding:12px 17px;
+  border-radius:12px;
+  font-weight:850;
+  cursor:pointer;
+}
+
+.primary-button{
+  border:0;
+  background:var(--blue);
+  color:white;
+}
+
+.secondary-button{
+  border:0;
+  background:var(--navy);
+  color:white;
+}
+
+.danger-button{
+  border:1px solid #f2c8c3;
+  background:#fff0ee;
+  color:var(--red);
+}
+
+.status-button{
+  border:1px solid var(--border);
+  background:white;
+  color:var(--navy);
+}
+
+.status-button.next{
+  border-color:var(--blue);
+  background:var(--blue);
+  color:white;
+}
+
+button:disabled{
+  opacity:.55;
+  cursor:not-allowed;
+}
+
+.action-row{
+  display:flex;
+  gap:10px;
+  flex-wrap:wrap;
+  margin-top:18px;
+}
+
+.notice{
+  padding:15px;
+  border-left:4px solid var(--blue);
+  border-radius:0 14px 14px 0;
+  background:#eef5ff;
+  color:#315780;
+  line-height:1.6;
+}
+
+.warning{
+  padding:15px;
+  border:1px solid #efd18c;
+  border-radius:14px;
+  background:#fff7e5;
+  color:#62470d;
+  line-height:1.6;
+}
+
+.error{
+  color:var(--red);
+  font-weight:800;
+}
+
+.success{
+  color:var(--green);
+  font-weight:800;
+}
+
+#missionCenter{
+  display:none;
+}
+
+.mission-top{
+  display:flex;
+  justify-content:space-between;
+  gap:15px;
+  flex-wrap:wrap;
+  align-items:flex-start;
+}
+
+.mission-id{
+  color:var(--blue);
+  font-size:.82rem;
+  font-weight:900;
+}
+
+.status-pill{
+  display:inline-block;
+  padding:8px 13px;
+  border-radius:999px;
+  background:#eaf2ff;
+  color:#1259bd;
+  font-weight:900;
+}
+
+.status-pill.delivered{
+  background:#eaf8f0;
+  color:var(--green);
+}
+
+.detail-grid{
+  display:grid;
+  grid-template-columns:
+    repeat(
+      auto-fit,
+      minmax(180px,1fr)
+    );
+  gap:12px;
+  margin-top:18px;
+}
+
+.detail{
+  padding:14px;
+  border-radius:13px;
+  background:#f8fafc;
+}
+
+.detail strong{
+  display:block;
+  margin-bottom:5px;
+  color:var(--navy);
+  font-size:.78rem;
+  text-transform:uppercase;
+}
+
+#map{
+  width:100%;
+  height:460px;
+  border-radius:18px;
+  overflow:hidden;
+  background:#e8edf4;
+}
+
+.map-meta{
+  display:grid;
+  grid-template-columns:
+    repeat(
+      auto-fit,
+      minmax(160px,1fr)
+    );
+  gap:12px;
+  margin-top:16px;
+}
+
+.map-meta .detail{
+  background:#f4f8ff;
+}
+
+.live-line{
+  display:flex;
+  gap:9px;
+  align-items:center;
+  margin-top:14px;
+  color:var(--muted);
+}
+
+.live-dot{
+  width:11px;
+  height:11px;
+  flex:0 0 auto;
+  border-radius:50%;
+  background:#a8b1c0;
+}
+
+.live-dot.on{
+  background:var(--green);
+  box-shadow:
+    0 0 0 6px rgba(19,122,75,.12);
+}
+
+.helper-pin,
+.target-pin{
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  width:50px;
+  height:50px;
+  border:4px solid white;
+  border-radius:50%;
+  box-shadow:
+    0 5px 16px rgba(0,0,0,.28);
+  font-size:25px;
+}
+
+.helper-pin{
+  background:var(--blue);
+}
+
+.target-pin{
+  background:var(--gold);
+}
+
+.steps{
+  margin:18px 0 0;
+  padding:0;
+  list-style:none;
+}
+
+.steps li{
+  padding:11px 0;
+  border-bottom:1px solid var(--border);
+  line-height:1.45;
+}
+
+.steps li:last-child{
+  border-bottom:0;
+}
+
+.closed-card{
+  display:none;
+  background:#f0fbf5;
+  border-color:#bde7cf;
+}
+
+.closed-card h2{
+  color:var(--green);
+}
+
+@media(max-width:650px){
+
+  #map{
+    height:390px;
+  }
+
+  .action-row{
+    display:grid;
+  }
+
+  .action-row button{
+    width:100%;
+  }
+
+}
+
+</style>
+
 </head>
 
 
 <body>
 
-<section class="mission-hero">
-  <div class="mission-shell">
 
-    <div class="mission-badge">
-      HUGS Helper
-    </div>
+<header class="helper-header">
 
-    <h1>My HUG Mission</h1>
+<h1>
+  HUGS Helper Mission Center
+</h1>
 
-    <p>
-      Follow your protected HUG route from pickup
-      through delivery while sharing only the
-      location needed for the active mission.
-    </p>
+<p>
+  Open your assigned mission, follow the mission
+  stages, share location only while helping, and
+  access private routing safely.
+</p>
 
-  </div>
-</section>
+</header>
 
 
-<main>
+<main class="shell">
 
-<div class="mission-shell">
 
+<!-- ======================================
+     OPEN MISSION
+======================================= -->
 
-  <!-- VERIFICATION -->
+<section
+  class="card"
+  id="openMissionCard"
+>
 
-  <section
-    class="card"
-    id="verificationCard"
-  >
+<h2>
+  Open Assigned HUG Mission
+</h2>
 
-    <h2>Open Your Mission</h2>
+<p>
+  Enter the Mission number, your approved HUGS
+  Helper number, and the email used when you
+  registered.
+</p>
 
-    <p>
-      Enter the information connected to your
-      approved HUG Mission.
-    </p>
 
+<div class="field">
 
-    <div class="field">
+<label for="missionIdInput">
+  Mission Number
+</label>
 
-      <label for="missionId">
-        Mission Number
-      </label>
-
-      <input
-        id="missionId"
-        autocomplete="off"
-        placeholder="HUG-2026-XXXXXXXX"
-      >
-
-    </div>
-
-
-    <div class="field">
-
-      <label for="helperId">
-        HUGS Helper Number
-      </label>
-
-      <input
-        id="helperId"
-        autocomplete="off"
-        placeholder="HELPER-2026-000000"
-      >
-
-    </div>
-
-
-    <div class="field">
-
-      <label for="helperEmail">
-        Registered Email
-      </label>
-
-      <input
-        id="helperEmail"
-        type="email"
-        autocomplete="email"
-        placeholder="you@example.com"
-      >
-
-    </div>
-
-
-    <button
-      class="primary"
-      id="openMissionButton"
-      type="button"
-    >
-      Open My HUG Mission
-    </button>
-
-  </section>
-
-
-  <!-- MISSION CENTER -->
-
-  <section id="missionCenter">
-
-
-    <div class="card">
-
-      <div
-        class="mission-number"
-        id="missionNumber"
-      >
-        HUG Mission
-      </div>
-
-      <h2 id="missionTitle">
-        Active HUG Mission
-      </h2>
-
-      <span
-        class="status-pill"
-        id="missionStatus"
-      >
-        Accepted
-      </span>
-
-
-      <div class="mission-details">
-
-        <div class="detail">
-          <strong>Area</strong>
-          <span id="missionArea">
-            Assigned area
-          </span>
-        </div>
-
-        <div class="detail">
-          <strong>Timing</strong>
-          <span id="missionTiming">
-            Active
-          </span>
-        </div>
-
-      </div>
-
-
-      <div
-        class="summary"
-        id="missionSummary"
-      >
-        Follow the approved HUG Mission instructions.
-      </div>
-
-    </div>
-
-
-    <!-- JOURNEY -->
-
-    <div class="card">
-
-      <h2>HUG Journey</h2>
-
-      <div
-        class="progress"
-        id="progressTracker"
-      ></div>
-
-
-      <div
-        class="next-action"
-        id="nextAction"
-      >
-
-        <button
-          class="primary"
-          id="nextStatusButton"
-          type="button"
-        >
-          Continue HUG
-        </button>
-
-      </div>
-
-    </div>
-
-
-    <!-- ROUTE -->
-
-    <div class="card route-card">
-
-      <div class="route-header">
-
-        <h2>HUGS Live Route</h2>
-
-        <p id="routeHeading">
-          Start Live HUG to calculate your protected route.
-        </p>
-
-      </div>
-
-
-      <div class="route-stats">
-
-        <div class="route-stat">
-          <strong id="routeDistance">—</strong>
-          <span>Distance</span>
-        </div>
-
-        <div class="route-stat">
-          <strong id="routeTime">—</strong>
-          <span>Travel Time</span>
-        </div>
-
-        <div class="route-stat">
-          <strong id="routeETA">—</strong>
-          <span>Estimated Arrival</span>
-        </div>
-
-      </div>
-
-
-      <div
-        id="hugMap"
-        aria-label="Protected HUG Mission route map"
-      ></div>
-
-
-      <div
-        class="route-message"
-        id="routeMessage"
-      >
-        The destination remains protected until
-        the HUG has been received.
-      </div>
-
-
-      <div class="route-target">
-
-        <strong id="targetTitle">
-          Current Target
-        </strong>
-
-        <span id="targetLabel">
-          Route information will appear here.
-        </span>
-
-      </div>
-
-
-      <div
-        class="turns"
-        id="turnSection"
-        style="display:none;"
-      >
-
-        <h3>Route Steps</h3>
-
-        <ol
-          class="turn-list"
-          id="turnList"
-        ></ol>
-
-      </div>
-
-
-      <div class="location-controls">
-
-        <div class="live-indicator">
-
-          <span
-            class="live-dot"
-            id="liveDot"
-          ></span>
-
-          <span id="liveText">
-            Location sharing is off
-          </span>
-
-        </div>
-
-
-        <button
-          class="primary"
-          id="startLocationButton"
-          type="button"
-        >
-          Start Live HUG
-        </button>
-
-
-        <button
-          class="stop-button"
-          id="stopLocationButton"
-          type="button"
-          style="display:none;margin-top:10px;"
-        >
-          Stop Location Sharing
-        </button>
-
-
-        <div
-          class="location-info"
-          id="locationInfo"
-        >
-          HUGS is not receiving your location.
-        </div>
-
-
-        <div class="privacy-note">
-
-          <strong>Location privacy:</strong>
-
-          HUGS stores only the latest active
-          position needed for this mission.
-          A location history is not created here.
-          The recipient destination remains
-          protected until the HUG is received.
-
-        </div>
-
-      </div>
-
-    </div>
-
-
-    <button
-      class="secondary"
-      id="closeMissionButton"
-      type="button"
-    >
-      Close Mission Center
-    </button>
-
-  </section>
+<input
+  id="missionIdInput"
+  type="text"
+  autocomplete="off"
+  placeholder="HUG-2026-XXXXXXXX"
+>
 
 </div>
 
-</main>
+
+<div class="field">
+
+<label for="helperIdInput">
+  HUGS Helper Number
+</label>
+
+<input
+  id="helperIdInput"
+  type="text"
+  autocomplete="off"
+  placeholder="HELPER-2026-000000"
+>
+
+</div>
+
+
+<div class="field">
+
+<label for="helperEmailInput">
+  Registered Email
+</label>
+
+<input
+  id="helperEmailInput"
+  type="email"
+  autocomplete="email"
+  placeholder="you@example.com"
+>
+
+</div>
+
+
+<button
+  class="primary-button"
+  id="openMissionButton"
+  type="button"
+>
+  Open Mission
+</button>
+
+
+<p
+  id="openError"
+  class="error"
+  aria-live="polite"
+></p>
+
+
+<div class="notice">
+
+  Your Helper credentials are used to create a
+  temporary secure mission session.
+
+  After the mission opens, status changes, private
+  routing and live-location sharing use that
+  temporary session instead of repeatedly sending
+  your email address.
+
+</div>
+
+</section>
+
+
+<!-- ======================================
+     MISSION CENTER
+======================================= -->
+
+<section id="missionCenter">
+
+
+<!-- MISSION -->
+
+<div class="card">
+
+<div class="mission-top">
+
+<div>
+
+<div
+  class="mission-id"
+  id="missionNumber"
+></div>
+
+<h2 id="missionType">
+  HUG Mission
+</h2>
+
+</div>
+
+
+<span
+  class="status-pill"
+  id="missionStatus"
+>
+  Accepted
+</span>
+
+</div>
+
+
+<div class="detail-grid">
+
+<div class="detail">
+
+<strong>
+  General Area
+</strong>
+
+<span id="missionArea">
+  —
+</span>
+
+</div>
+
+
+<div class="detail">
+
+<strong>
+  Timing
+</strong>
+
+<span id="missionTiming">
+  —
+</span>
+
+</div>
+
+</div>
+
+</div>
+
+
+<!-- STATUS -->
+
+<div class="card">
+
+<h3>
+  Mission Progress
+</h3>
+
+<p>
+  Mission stages must be completed in order.
+</p>
 
 
 <div
-  class="message"
-  id="messageBox"
+  class="action-row"
+  id="statusActions"
 ></div>
+
+
+<p
+  id="statusMessage"
+  aria-live="polite"
+></p>
+
+</div>
+
+
+<!-- LOCATION -->
+
+<div class="card">
+
+<h3>
+  Live Location Sharing
+</h3>
+
+<p>
+  Share your current location only while actively
+  completing this HUG Mission.
+</p>
+
+
+<div class="action-row">
+
+<button
+  class="primary-button"
+  id="startLocationButton"
+  type="button"
+>
+  Start Live Location
+</button>
+
+<button
+  class="danger-button"
+  id="stopLocationButton"
+  type="button"
+  disabled
+>
+  Stop Live Location
+</button>
+
+</div>
+
+
+<div class="live-line">
+
+<span
+  class="live-dot"
+  id="locationDot"
+></span>
+
+<span id="locationText">
+  Location sharing is off.
+</span>
+
+</div>
+
+
+<div class="notice">
+
+  HUGS stores only the current live location needed
+  for the active mission. This page does not build a
+  breadcrumb route history.
+
+</div>
+
+</div>
+
+
+<!-- NAVIGATION -->
+
+<div class="card">
+
+<h3>
+  Private HUG Route
+</h3>
+
+<p
+  id="routePrivacyText"
+  class="warning"
+>
+  The pickup becomes available first. Recipient
+  destination information remains protected until
+  Items Received.
+</p>
+
+
+<div id="map"></div>
+
+
+<div class="map-meta">
+
+<div class="detail">
+
+<strong>
+  Going To
+</strong>
+
+<span id="routeTarget">
+  Waiting for private route…
+</span>
+
+</div>
+
+
+<div class="detail">
+
+<strong>
+  Distance
+</strong>
+
+<span id="routeDistance">
+  —
+</span>
+
+</div>
+
+
+<div class="detail">
+
+<strong>
+  Estimated Travel
+</strong>
+
+<span id="routeDuration">
+  —
+</span>
+
+</div>
+
+
+<div class="detail">
+
+<strong>
+  ETA
+</strong>
+
+<span id="routeEta">
+  —
+</span>
+
+</div>
+
+</div>
+
+
+<ul
+  class="steps"
+  id="routeSteps"
+></ul>
+
+</div>
+
+
+<!-- COMPLETE -->
+
+<div
+  class="card closed-card"
+  id="closedCard"
+>
+
+<h2>
+  HUG Delivered ❤️
+</h2>
+
+<p>
+  Mission complete. Live location, private route
+  access and this secure Helper session have ended.
+</p>
+
+</div>
+
+
+<!-- CLOSE -->
+
+<div class="card">
+
+<div class="action-row">
+
+<button
+  class="secondary-button"
+  id="closeMissionButton"
+  type="button"
+>
+  Close Mission
+</button>
+
+</div>
+
+</div>
+
+
+</section>
+
+</main>
 
 
 <script
@@ -869,7 +799,7 @@
 <script>
 
 /* ==========================================
-   APIs
+   APIS
 ========================================== */
 
 const SESSION_API =
@@ -886,42 +816,59 @@ const ROUTE_API =
 
 
 /* ==========================================
-   STATE
+   TIMING
 ========================================== */
 
-let currentMission =
-  null;
+const LOCATION_SEND_INTERVAL_MS =
+  10000;
 
-let currentHelperId =
-  "";
+const ROUTE_REFRESH_INTERVAL_MS =
+  20000;
 
-let currentHelperEmail =
-  "";
 
+/* ==========================================
+   MISSION STATUS
+========================================== */
+
+const STATUS_FLOW = [
+
+  "Accepted",
+
+  "At Pickup",
+
+  "Items Received",
+
+  "On the Way",
+
+  "Delivered"
+
+];
+
+
+/* ==========================================
+   PRIVATE STATE
+========================================== */
 
 /*
- * IMPORTANT:
+ * SECURITY:
  *
- * The Helper token lives in JavaScript
- * memory only.
+ * helperToken exists only in JS memory.
  *
- * It is NOT written to:
- *
- * localStorage
- * sessionStorage
- * cookies
- * URL parameters
+ * Never place it in:
+ * - localStorage
+ * - sessionStorage
+ * - cookies
+ * - query strings
  */
 
 let helperToken =
   "";
 
-
-let watchId =
+let currentMission =
   null;
 
-let sharingLocation =
-  false;
+let geolocationWatchId =
+  null;
 
 let lastLocationSentAt =
   0;
@@ -929,10 +876,11 @@ let lastLocationSentAt =
 let lastRouteRefreshAt =
   0;
 
+let locationSharing =
+  false;
 
-/* ==========================================
-   MAP STATE
-========================================== */
+let latestPosition =
+  null;
 
 let map =
   null;
@@ -943,155 +891,213 @@ let helperMarker =
 let targetMarker =
   null;
 
-let routeLine =
+let routeLayer =
   null;
 
+let routeRefreshBusy =
+  false;
 
-/* ==========================================
-   STATUS
-========================================== */
-
-const STATUS_FLOW = [
-  "Accepted",
-  "At Pickup",
-  "Items Received",
-  "On the Way",
-  "Delivered"
-];
+let statusUpdateBusy =
+  false;
 
 
 /* ==========================================
    ELEMENTS
 ========================================== */
 
-const verificationCard =
-  document.getElementById("verificationCard");
+const openMissionCard =
+  document.getElementById(
+    "openMissionCard"
+  );
 
 const missionCenter =
-  document.getElementById("missionCenter");
+  document.getElementById(
+    "missionCenter"
+  );
 
 const missionIdInput =
-  document.getElementById("missionId");
+  document.getElementById(
+    "missionIdInput"
+  );
 
 const helperIdInput =
-  document.getElementById("helperId");
+  document.getElementById(
+    "helperIdInput"
+  );
 
 const helperEmailInput =
-  document.getElementById("helperEmail");
+  document.getElementById(
+    "helperEmailInput"
+  );
 
 const openMissionButton =
-  document.getElementById("openMissionButton");
+  document.getElementById(
+    "openMissionButton"
+  );
 
-const closeMissionButton =
-  document.getElementById("closeMissionButton");
+const openError =
+  document.getElementById(
+    "openError"
+  );
 
 const missionNumber =
-  document.getElementById("missionNumber");
+  document.getElementById(
+    "missionNumber"
+  );
 
-const missionTitle =
-  document.getElementById("missionTitle");
+const missionType =
+  document.getElementById(
+    "missionType"
+  );
 
 const missionStatus =
-  document.getElementById("missionStatus");
+  document.getElementById(
+    "missionStatus"
+  );
 
 const missionArea =
-  document.getElementById("missionArea");
+  document.getElementById(
+    "missionArea"
+  );
 
 const missionTiming =
-  document.getElementById("missionTiming");
+  document.getElementById(
+    "missionTiming"
+  );
 
-const missionSummary =
-  document.getElementById("missionSummary");
+const statusActions =
+  document.getElementById(
+    "statusActions"
+  );
 
-const progressTracker =
-  document.getElementById("progressTracker");
-
-const nextStatusButton =
-  document.getElementById("nextStatusButton");
+const statusMessage =
+  document.getElementById(
+    "statusMessage"
+  );
 
 const startLocationButton =
-  document.getElementById("startLocationButton");
+  document.getElementById(
+    "startLocationButton"
+  );
 
 const stopLocationButton =
-  document.getElementById("stopLocationButton");
+  document.getElementById(
+    "stopLocationButton"
+  );
 
-const liveDot =
-  document.getElementById("liveDot");
+const locationDot =
+  document.getElementById(
+    "locationDot"
+  );
 
-const liveText =
-  document.getElementById("liveText");
+const locationText =
+  document.getElementById(
+    "locationText"
+  );
 
-const locationInfo =
-  document.getElementById("locationInfo");
+const routePrivacyText =
+  document.getElementById(
+    "routePrivacyText"
+  );
 
-const routeHeading =
-  document.getElementById("routeHeading");
+const routeTarget =
+  document.getElementById(
+    "routeTarget"
+  );
 
 const routeDistance =
-  document.getElementById("routeDistance");
+  document.getElementById(
+    "routeDistance"
+  );
 
-const routeTime =
-  document.getElementById("routeTime");
+const routeDuration =
+  document.getElementById(
+    "routeDuration"
+  );
 
-const routeETA =
-  document.getElementById("routeETA");
+const routeEta =
+  document.getElementById(
+    "routeEta"
+  );
 
-const routeMessage =
-  document.getElementById("routeMessage");
+const routeSteps =
+  document.getElementById(
+    "routeSteps"
+  );
 
-const targetLabel =
-  document.getElementById("targetLabel");
+const closedCard =
+  document.getElementById(
+    "closedCard"
+  );
 
-const turnSection =
-  document.getElementById("turnSection");
-
-const turnList =
-  document.getElementById("turnList");
-
-const messageBox =
-  document.getElementById("messageBox");
-
-
-/* ==========================================
-   MESSAGE
-========================================== */
-
-function showMessage(
-  text,
-  type = "success"
-){
-
-  messageBox.textContent =
-    text;
-
-  messageBox.className =
-    "message " + type;
-
-
-  clearTimeout(
-    showMessage.timer
+const closeMissionButton =
+  document.getElementById(
+    "closeMissionButton"
   );
 
 
-  showMessage.timer =
-    setTimeout(
-      () => {
+/* ==========================================
+   EVENTS
+========================================== */
 
-        messageBox.className =
-          "message";
+openMissionButton.addEventListener(
+  "click",
+  openMission
+);
 
-      },
-      4500
-    );
+
+missionIdInput.addEventListener(
+  "keydown",
+  openOnEnter
+);
+
+helperIdInput.addEventListener(
+  "keydown",
+  openOnEnter
+);
+
+helperEmailInput.addEventListener(
+  "keydown",
+  openOnEnter
+);
+
+
+startLocationButton.addEventListener(
+  "click",
+  startLocationSharing
+);
+
+
+stopLocationButton.addEventListener(
+  "click",
+  stopLocationSharing
+);
+
+
+closeMissionButton.addEventListener(
+  "click",
+  closeMission
+);
+
+
+function openOnEnter(event){
+
+  if(
+    event.key === "Enter"
+  ){
+
+    openMission();
+
+  }
 
 }
 
 
 /* ==========================================
-   REQUEST
+   POST JSON
 ========================================== */
 
-async function apiRequest(
+async function postJSON(
   url,
   body
 ){
@@ -1104,9 +1110,17 @@ async function apiRequest(
         method:"POST",
 
         headers:{
+
           "Content-Type":
             "application/json"
+
         },
+
+        cache:"no-store",
+
+        credentials:"omit",
+
+        referrerPolicy:"no-referrer",
 
         body:
           JSON.stringify(body)
@@ -1140,7 +1154,7 @@ async function apiRequest(
 
     throw new Error(
       result.error ||
-      "HUGS could not complete the request."
+      "HUGS request failed."
     );
 
   }
@@ -1152,27 +1166,32 @@ async function apiRequest(
 
 
 /* ==========================================
-   OPEN MISSION + CREATE SESSION
+   OPEN SECURE SESSION
 ========================================== */
 
-openMissionButton.addEventListener(
-  "click",
-  openMission
-);
-
-
 async function openMission(){
+
+  if(helperToken){
+    return;
+  }
+
+
+  openError.textContent =
+    "";
+
 
   const missionId =
     missionIdInput
       .value
       .trim();
 
+
   const helperId =
     helperIdInput
       .value
       .trim()
       .toUpperCase();
+
 
   const helperEmail =
     helperEmailInput
@@ -1187,9 +1206,8 @@ async function openMission(){
     !helperEmail
   ){
 
-    showMessage(
-      "Enter your Mission Number, Helper Number and registered email.",
-      "error"
+    showOpenError(
+      "Enter the Mission number, Helper number and registered email."
     );
 
     return;
@@ -1201,22 +1219,13 @@ async function openMission(){
     true;
 
   openMissionButton.textContent =
-    "Opening Secure Mission...";
+    "Opening Secure Mission…";
 
 
   try{
 
-    /*
-     * Creating the session also verifies:
-     *
-     * - approved Helper
-     * - matching email
-     * - assigned Mission
-     * - active Mission status
-     */
-
     const result =
-      await apiRequest(
+      await postJSON(
         SESSION_API,
         {
 
@@ -1233,45 +1242,47 @@ async function openMission(){
       );
 
 
-    /*
-     * IMPORTANT:
-     *
-     * We intentionally use ONLY
-     * result.helper_token here.
-     *
-     * The tracking token returned by the
-     * current backend is intentionally
-     * ignored by this Helper interface.
-     */
-
-    helperToken =
-      result.helper_token ||
-      "";
-
-
-    if(!helperToken){
+    if(
+      typeof result.helper_token !==
+        "string" ||
+      !result.helper_token
+    ){
 
       throw new Error(
-        "A secure Helper session could not be created."
+        "HUGS did not return a secure Helper session."
       );
 
     }
 
 
-    currentHelperId =
-      helperId;
+    /*
+     * MEMORY ONLY.
+     */
 
-    currentHelperEmail =
-      helperEmail;
+    helperToken =
+      result.helper_token;
+
 
     currentMission =
       result.mission;
 
 
-    renderMission();
+    /*
+     * Remove credentials from the visible form
+     * immediately after session establishment.
+     */
+
+    missionIdInput.value =
+      "";
+
+    helperIdInput.value =
+      "";
+
+    helperEmailInput.value =
+      "";
 
 
-    verificationCard.style.display =
+    openMissionCard.style.display =
       "none";
 
     missionCenter.style.display =
@@ -1280,21 +1291,10 @@ async function openMission(){
 
     initializeMap();
 
-
-    /*
-     * Fetch the protected pickup.
-     *
-     * At this point there may be no
-     * live Helper GPS position yet.
-     */
+    renderMission();
 
     await refreshRoute(
       true
-    );
-
-
-    showMessage(
-      "Secure HUG Mission opened."
     );
 
   }
@@ -1303,19 +1303,20 @@ async function openMission(){
     helperToken =
       "";
 
-    showMessage(
-      error.message,
-      "error"
+    currentMission =
+      null;
+
+
+    showOpenError(
+      error.message
     );
 
-  }
-  finally{
 
     openMissionButton.disabled =
       false;
 
     openMissionButton.textContent =
-      "Open My HUG Mission";
+      "Open Mission";
 
   }
 
@@ -1335,12 +1336,12 @@ function renderMission(){
 
   missionNumber.textContent =
     currentMission.id ||
-    "HUG Mission";
+    "";
 
 
-  missionTitle.textContent =
+  missionType.textContent =
     currentMission.type ||
-    "Active HUG Mission";
+    "HUG Mission";
 
 
   missionStatus.textContent =
@@ -1349,19 +1350,12 @@ function renderMission(){
 
 
   missionStatus.className =
-    "status-pill";
-
-
-  if(
     currentMission.status ===
     "Delivered"
-  ){
 
-    missionStatus.classList.add(
-      "delivered"
-    );
+      ? "status-pill delivered"
 
-  }
+      : "status-pill";
 
 
   missionArea.textContent =
@@ -1371,301 +1365,210 @@ function renderMission(){
     ]
     .filter(Boolean)
     .join(", ") ||
-    "Assigned area";
+    "General service area";
 
 
   missionTiming.textContent =
     currentMission.timing ||
-    "Active";
+    "Flexible";
 
 
-  missionSummary.textContent =
-    currentMission.summary ||
-    "Follow the approved HUG Mission instructions.";
+  renderStatusAction();
+
+  renderRoutePrivacy();
 
 
-  renderProgress();
+  if(
+    currentMission.status ===
+    "Delivered"
+  ){
 
-  renderNextAction();
+    handleDeliveredUI();
 
-}
+  }
+  else{
 
+    closedCard.style.display =
+      "none";
 
-/* ==========================================
-   PROGRESS
-========================================== */
-
-function renderProgress(){
-
-  const currentIndex =
-    STATUS_FLOW.indexOf(
-      currentMission.status
-    );
-
-
-  progressTracker.innerHTML =
-    STATUS_FLOW
-      .map(
-        (status,index) => {
-
-          let className =
-            "progress-step";
-
-
-          if(
-            index < currentIndex
-          ){
-
-            className +=
-              " complete";
-
-          }
-
-
-          if(
-            index === currentIndex
-          ){
-
-            className +=
-              " current";
-
-          }
-
-
-          if(
-            status === "Delivered" &&
-            currentMission.status ===
-            "Delivered"
-          ){
-
-            className +=
-              " delivered complete";
-
-          }
-
-
-          const icon =
-            status === "Delivered"
-              ? "❤️"
-              : index < currentIndex
-                ? "✓"
-                : index + 1;
-
-
-          return `
-
-            <div class="${className}">
-
-              <div class="progress-dot">
-                ${icon}
-              </div>
-
-              <div class="progress-copy">
-
-                <strong>
-                  ${status}
-                </strong>
-
-                <span>
-                  ${progressDescription(status)}
-                </span>
-
-              </div>
-
-            </div>
-
-          `;
-
-        }
-      )
-      .join("");
+  }
 
 }
 
 
 /* ==========================================
-   DESCRIPTION
+   STATUS BUTTON
 ========================================== */
 
-function progressDescription(
-  status
-){
+function renderStatusAction(){
 
-  const descriptions = {
-
-    "Accepted":
-      "HUG Mission assigned.",
-
-    "At Pickup":
-      "Helper arrived at the pickup.",
-
-    "Items Received":
-      "Items are in the Helper's care.",
-
-    "On the Way":
-      "HUG is traveling to the destination.",
-
-    "Delivered":
-      "HUG successfully delivered."
-
-  };
+  statusActions.innerHTML =
+    "";
 
 
-  return descriptions[status] || "";
+  if(
+    !currentMission ||
+    currentMission.status ===
+      "Delivered"
+  ){
 
-}
+    return;
+
+  }
 
 
-/* ==========================================
-   NEXT ACTION
-========================================== */
-
-function renderNextAction(){
-
-  const currentIndex =
+  const position =
     STATUS_FLOW.indexOf(
       currentMission.status
     );
 
 
   if(
-    currentIndex === -1 ||
-    currentIndex >=
+    position < 0 ||
+    position >=
       STATUS_FLOW.length - 1
   ){
 
-    nextStatusButton.style.display =
-      "none";
-
     return;
 
   }
 
 
-  const nextStatus =
+  const next =
     STATUS_FLOW[
-      currentIndex + 1
+      position + 1
     ];
 
 
-  nextStatusButton.style.display =
-    "block";
-
-  nextStatusButton.dataset.status =
-    nextStatus;
-
-  nextStatusButton.textContent =
-    buttonText(
-      nextStatus
+  const button =
+    document.createElement(
+      "button"
     );
 
+
+  button.type =
+    "button";
+
+  button.className =
+    "status-button next";
+
+  button.textContent =
+    next === "Delivered"
+
+      ? "Confirm HUG Delivered"
+
+      : "Mark " + next;
+
+
+  button.addEventListener(
+    "click",
+    () => {
+
+      updateMissionStatus(
+        next,
+        button
+      );
+
+    }
+  );
+
+
+  statusActions.appendChild(
+    button
+  );
+
 }
 
 
 /* ==========================================
-   BUTTON
+   SECURE STATUS UPDATE
 ========================================== */
 
-function buttonText(status){
+async function updateMissionStatus(
+  requestedStatus,
+  button
+){
 
-  const labels = {
+  if(
+    statusUpdateBusy ||
+    !helperToken ||
+    !currentMission
+  ){
 
-    "At Pickup":
-      "I've Arrived at Pickup",
-
-    "Items Received":
-      "Items Received",
-
-    "On the Way":
-      "Start Delivery",
-
-    "Delivered":
-      "HUG Delivered ❤️"
-
-  };
-
-
-  return labels[status] ||
-    "Continue HUG";
-
-}
-
-
-/* ==========================================
-   STATUS UPDATE
-========================================== */
-
-nextStatusButton.addEventListener(
-  "click",
-  updateMissionStatus
-);
-
-
-async function updateMissionStatus(){
-
-  if(!currentMission){
     return;
+
   }
 
 
-  const nextStatus =
-    nextStatusButton
-      .dataset
-      .status;
+  const confirmation =
+    requestedStatus ===
+    "Delivered"
 
+      ?
 
-  if(!nextStatus){
-    return;
-  }
+      "Confirm that this HUG has been delivered? Live location, private routing and this secure mission session will end."
+
+      :
+
+      "Update this mission to " +
+      requestedStatus +
+      "?";
 
 
   if(
-    nextStatus === "Delivered"
+    !window.confirm(
+      confirmation
+    )
   ){
 
-    const confirmed =
-      confirm(
-        "Confirm that this HUG has been delivered?"
-      );
-
-
-    if(!confirmed){
-      return;
-    }
+    return;
 
   }
 
 
-  nextStatusButton.disabled =
+  statusUpdateBusy =
     true;
+
+  statusMessage.textContent =
+    "";
+
+
+  if(button){
+
+    button.disabled =
+      true;
+
+    button.textContent =
+      "Updating…";
+
+  }
 
 
   try{
 
     /*
-     * Existing status endpoint currently
-     * uses Helper ID + registered email.
+     * SECURITY UPGRADE:
      *
-     * We preserve that existing contract
-     * here instead of guessing at a new one.
+     * Helper ID + email are NOT sent here.
+     *
+     * Status authorization now uses the same
+     * temporary helper_token as live location
+     * and private routing.
      */
 
     const result =
-      await apiRequest(
+      await postJSON(
         STATUS_API,
         {
 
           mission_id:
             currentMission.id,
 
-          helper_id:
-            currentHelperId,
-
-          helper_email:
-            currentHelperEmail,
+          helper_token:
+            helperToken,
 
           status:
-            nextStatus
+            requestedStatus
 
         }
       );
@@ -1673,6 +1576,58 @@ async function updateMissionStatus(){
 
     currentMission.status =
       result.status;
+
+
+    if(
+      result.status ===
+      "At Pickup"
+    ){
+
+      currentMission.at_pickup_at =
+        result.updated_at;
+
+    }
+
+
+    if(
+      result.status ===
+      "Items Received"
+    ){
+
+      currentMission.items_received_at =
+        result.updated_at;
+
+    }
+
+
+    if(
+      result.status ===
+      "On the Way"
+    ){
+
+      currentMission.on_the_way_at =
+        result.updated_at;
+
+    }
+
+
+    if(
+      result.status ===
+      "Delivered"
+    ){
+
+      currentMission.delivered_at =
+        result.updated_at;
+
+    }
+
+
+    statusMessage.className =
+      "success";
+
+    statusMessage.textContent =
+      result.message ||
+      "Mission status updated.";
 
 
     renderMission();
@@ -1683,60 +1638,68 @@ async function updateMissionStatus(){
       "Delivered"
     ){
 
-      await stopLocationSharing(
-        true
-      );
+      /*
+       * Backend has now:
+       *
+       * - saved Delivered
+       * - removed live location
+       * - ended the secure session
+       * - invalidated recipient tracking
+       *
+       * Remove the local token immediately.
+       */
 
+      stopLocalGeolocation();
+
+      helperToken =
+        "";
 
       clearRouteDisplay();
 
-
-      routeHeading.textContent =
-        "HUG Delivered ❤️";
-
-      routeMessage.textContent =
-        "This private route is now closed.";
-
-      targetLabel.textContent =
-        "Mission complete.";
-
-    }
-    else{
-
-      /*
-       * This is especially important when
-       * changing to Items Received.
-       *
-       * The next secure route request will
-       * now be allowed to receive the
-       * destination.
-       */
-
-      await refreshRoute(
-        true
-      );
+      return;
 
     }
 
 
-    showMessage(
-      result.message ||
-      "Mission updated."
+    /*
+     * Important privacy transition:
+     *
+     * When Items Received is confirmed,
+     * get-hug-route.mjs may now release the
+     * protected destination to this assigned
+     * Helper.
+     */
+
+    await refreshRoute(
+      true
     );
+
 
   }
   catch(error){
 
-    showMessage(
-      error.message,
-      "error"
-    );
+    statusMessage.className =
+      "error";
+
+    statusMessage.textContent =
+      error.message;
+
 
   }
   finally{
 
-    nextStatusButton.disabled =
+    statusUpdateBusy =
       false;
+
+
+    if(
+      currentMission?.status !==
+      "Delivered"
+    ){
+
+      renderStatusAction();
+
+    }
 
   }
 
@@ -1744,26 +1707,419 @@ async function updateMissionStatus(){
 
 
 /* ==========================================
-   MAP
+   GEOLOCATION
 ========================================== */
 
-function initializeMap(){
+function startLocationSharing(){
 
-  if(map){
-
-    setTimeout(
-      () => map.invalidateSize(),
-      100
-    );
+  if(
+    !helperToken ||
+    !currentMission
+  ){
 
     return;
 
   }
 
 
+  if(
+    currentMission.status ===
+    "Delivered"
+  ){
+
+    return;
+
+  }
+
+
+  if(
+    !navigator.geolocation
+  ){
+
+    locationText.textContent =
+      "This device does not support location sharing.";
+
+    return;
+
+  }
+
+
+  if(
+    geolocationWatchId !==
+    null
+  ){
+
+    return;
+
+  }
+
+
+  startLocationButton.disabled =
+    true;
+
+
+  locationText.textContent =
+    "Requesting your location…";
+
+
+  geolocationWatchId =
+    navigator.geolocation
+      .watchPosition(
+
+        handlePosition,
+
+        handleLocationError,
+
+        {
+
+          enableHighAccuracy:true,
+
+          maximumAge:5000,
+
+          timeout:15000
+
+        }
+
+      );
+
+}
+
+
+/* ==========================================
+   POSITION
+========================================== */
+
+async function handlePosition(
+  position
+){
+
+  if(
+    !helperToken ||
+    !currentMission
+  ){
+
+    stopLocalGeolocation();
+
+    return;
+
+  }
+
+
+  latestPosition =
+    position;
+
+
+  const now =
+    Date.now();
+
+
+  /*
+   * Update local marker immediately.
+   */
+
+  updateHelperMapMarker(
+    position.coords.latitude,
+    position.coords.longitude
+  );
+
+
+  if(
+    now -
+    lastLocationSentAt <
+    LOCATION_SEND_INTERVAL_MS
+  ){
+
+    return;
+
+  }
+
+
+  lastLocationSentAt =
+    now;
+
+
+  try{
+
+    const result =
+      await postJSON(
+        LOCATION_API,
+        {
+
+          action:
+            "update",
+
+          mission_id:
+            currentMission.id,
+
+          helper_token:
+            helperToken,
+
+          latitude:
+            position.coords.latitude,
+
+          longitude:
+            position.coords.longitude,
+
+          accuracy:
+            Number.isFinite(
+              position.coords.accuracy
+            )
+              ?
+              position.coords.accuracy
+              :
+              null,
+
+          heading:
+            Number.isFinite(
+              position.coords.heading
+            )
+              ?
+              position.coords.heading
+              :
+              null,
+
+          speed:
+            Number.isFinite(
+              position.coords.speed
+            )
+              ?
+              position.coords.speed
+              :
+              null
+
+        }
+      );
+
+
+    locationSharing =
+      true;
+
+
+    locationDot.classList.add(
+      "on"
+    );
+
+
+    locationText.textContent =
+      "Live location is being shared for this HUG Mission.";
+
+
+    startLocationButton.disabled =
+      true;
+
+    stopLocationButton.disabled =
+      false;
+
+
+    if(
+      now -
+      lastRouteRefreshAt >=
+      ROUTE_REFRESH_INTERVAL_MS
+    ){
+
+      await refreshRoute();
+
+    }
+
+  }
+  catch(error){
+
+    locationDot.classList.remove(
+      "on"
+    );
+
+
+    locationText.textContent =
+      error.message;
+
+
+    const message =
+      String(
+        error.message || ""
+      )
+      .toLowerCase();
+
+
+    if(
+      message.includes("expired") ||
+      message.includes("invalid") ||
+      message.includes("no longer active") ||
+      message.includes("not assigned")
+    ){
+
+      stopLocalGeolocation();
+
+      helperToken =
+        "";
+
+    }
+
+  }
+
+}
+
+
+/* ==========================================
+   LOCATION ERROR
+========================================== */
+
+function handleLocationError(
+  error
+){
+
+  locationDot.classList.remove(
+    "on"
+  );
+
+
+  if(
+    error?.code === 1
+  ){
+
+    locationText.textContent =
+      "Location permission was not granted.";
+
+  }
+  else{
+
+    locationText.textContent =
+      "HUGS could not get your current location.";
+
+  }
+
+
+  stopLocalGeolocation();
+
+}
+
+
+/* ==========================================
+   STOP LOCATION
+========================================== */
+
+async function stopLocationSharing(){
+
+  stopLocalGeolocation();
+
+
+  if(
+    !helperToken ||
+    !currentMission
+  ){
+
+    return;
+
+  }
+
+
+  try{
+
+    await postJSON(
+      LOCATION_API,
+      {
+
+        action:
+          "stop",
+
+        mission_id:
+          currentMission.id,
+
+        helper_token:
+          helperToken
+
+      }
+    );
+
+
+    locationSharing =
+      false;
+
+
+    locationDot.classList.remove(
+      "on"
+    );
+
+
+    locationText.textContent =
+      "Location sharing is off.";
+
+
+    startLocationButton.disabled =
+      false;
+
+    stopLocationButton.disabled =
+      true;
+
+
+    removeHelperMapMarker();
+
+
+  }
+  catch(error){
+
+    locationText.textContent =
+      error.message;
+
+  }
+
+}
+
+
+/* ==========================================
+   LOCAL GEOLOCATION STOP
+========================================== */
+
+function stopLocalGeolocation(){
+
+  if(
+    geolocationWatchId !==
+    null
+  ){
+
+    navigator.geolocation
+      .clearWatch(
+        geolocationWatchId
+      );
+
+
+    geolocationWatchId =
+      null;
+
+  }
+
+
+  locationSharing =
+    false;
+
+
+  locationDot.classList.remove(
+    "on"
+  );
+
+
+  startLocationButton.disabled =
+    false;
+
+  stopLocationButton.disabled =
+    true;
+
+}
+
+
+/* ==========================================
+   MAP INITIALIZATION
+========================================== */
+
+function initializeMap(){
+
+  if(map){
+    return;
+  }
+
+
   map =
     L.map(
-      "hugMap",
+      "map",
       {
         zoomControl:true
       }
@@ -1777,17 +2133,8 @@ function initializeMap(){
     );
 
 
-  /*
-   * Prototype map tiles.
-   *
-   * Before public production scale,
-   * HUGS should use a production tile
-   * provider rather than relying on the
-   * public OpenStreetMap tile service.
-   */
-
   L.tileLayer(
-    "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
+    "https://tile.openstreetmap.org/{z}/{x}/{y}.png",
     {
 
       maxZoom:19,
@@ -1801,75 +2148,109 @@ function initializeMap(){
 
 
   setTimeout(
-    () => map.invalidateSize(),
-    100
+    () => {
+
+      if(map){
+
+        map.invalidateSize();
+
+      }
+
+    },
+    120
   );
 
 }
 
 
 /* ==========================================
-   ICONS
+   HELPER MAP MARKER
 ========================================== */
 
-function bearIcon(){
-
-  return L.divIcon({
-
-    className:"",
-
-    html:
-      '<div class="bear-map-icon">🐻</div>',
-
-    iconSize:[
-      42,
-      42
-    ],
-
-    iconAnchor:[
-      21,
-      21
-    ]
-
-  });
-
-}
-
-
-function targetIcon(
-  destinationUnlocked
+function updateHelperMapMarker(
+  latitude,
+  longitude
 ){
 
-  return L.divIcon({
+  if(!map){
+    return;
+  }
 
-    className:"",
 
-    html:
-      '<div class="map-pin-icon">' +
-      (
-        destinationUnlocked
-          ? "❤️"
-          : "📍"
-      ) +
-      '</div>',
+  const point = [
+    latitude,
+    longitude
+  ];
 
-    iconSize:[
-      38,
-      38
-    ],
 
-    iconAnchor:[
-      19,
-      19
-    ]
+  if(!helperMarker){
 
-  });
+    const icon =
+      L.divIcon(
+        {
+
+          className:"",
+
+          html:
+            '<div class="helper-pin">🐻</div>',
+
+          iconSize:
+            [50,50],
+
+          iconAnchor:
+            [25,25]
+
+        }
+      );
+
+
+    helperMarker =
+      L.marker(
+        point,
+        {
+          icon
+        }
+      )
+      .addTo(map);
+
+  }
+  else{
+
+    helperMarker.setLatLng(
+      point
+    );
+
+  }
 
 }
 
 
 /* ==========================================
-   ROUTE REQUEST
+   REMOVE HELPER MARKER
+========================================== */
+
+function removeHelperMapMarker(){
+
+  if(
+    map &&
+    helperMarker
+  ){
+
+    map.removeLayer(
+      helperMarker
+    );
+
+
+    helperMarker =
+      null;
+
+  }
+
+}
+
+
+/* ==========================================
+   ROUTE
 ========================================== */
 
 async function refreshRoute(
@@ -1877,9 +2258,18 @@ async function refreshRoute(
 ){
 
   if(
+    !helperToken ||
     !currentMission ||
-    !helperToken
+    currentMission.status ===
+      "Delivered"
   ){
+
+    return;
+
+  }
+
+
+  if(routeRefreshBusy){
     return;
   }
 
@@ -1888,32 +2278,26 @@ async function refreshRoute(
     Date.now();
 
 
-  /*
-   * Route recalculation is intentionally
-   * slower than GPS uploads.
-   *
-   * GPS: approximately every 10 sec.
-   * Route: approximately every 20 sec.
-   */
-
   if(
     !force &&
     now -
     lastRouteRefreshAt <
-    20000
+    ROUTE_REFRESH_INTERVAL_MS
   ){
+
     return;
+
   }
 
 
-  lastRouteRefreshAt =
-    now;
+  routeRefreshBusy =
+    true;
 
 
   try{
 
     const result =
-      await apiRequest(
+      await postJSON(
         ROUTE_API,
         {
 
@@ -1927,14 +2311,16 @@ async function refreshRoute(
       );
 
 
+    lastRouteRefreshAt =
+      Date.now();
+
+
     if(
       result.mission_status
     ){
 
       currentMission.status =
         result.mission_status;
-
-      renderMission();
 
     }
 
@@ -1943,11 +2329,18 @@ async function refreshRoute(
       result
     );
 
+
   }
   catch(error){
 
-    routeMessage.textContent =
+    routeTarget.textContent =
       error.message;
+
+  }
+  finally{
+
+    routeRefreshBusy =
+      false;
 
   }
 
@@ -1960,87 +2353,79 @@ async function refreshRoute(
 
 function renderRoute(result){
 
-  initializeMap();
-
-
   if(
-    result.mission_status ===
+    currentMission?.status ===
     "Delivered"
   ){
 
     clearRouteDisplay();
 
-    routeHeading.textContent =
-      "HUG Delivered ❤️";
-
-    routeMessage.textContent =
-      "This private route is closed.";
-
-    targetLabel.textContent =
-      "Mission complete.";
-
     return;
 
   }
 
 
-  const protectedRoute =
+  renderRoutePrivacy();
+
+
+  const route =
     result.route ||
     null;
 
 
+  /*
+   * Backend privacy rules decide which
+   * destination information may be returned.
+   */
+
+  let target =
+    null;
+
+
   if(
-    !protectedRoute
+    result.destination_unlocked &&
+    route?.destination
   ){
 
-    clearRouteDisplay();
+    target =
+      route.destination;
 
-    routeHeading.textContent =
-      "Route Waiting";
+  }
+  else if(
+    route?.pickup
+  ){
 
-    routeMessage.textContent =
-      result.message ||
-      "The private route has not been prepared yet.";
-
-    targetLabel.textContent =
-      "Waiting for HUGS route information.";
-
-    return;
+    target =
+      route.pickup;
 
   }
 
 
-  const destinationUnlocked =
-    result.destination_unlocked ===
-    true;
-
-
-  const target =
-
-    destinationUnlocked
-
-      ?
-      protectedRoute.destination
-
-      :
-      protectedRoute.pickup;
-
-
   if(target){
 
-    targetLabel.textContent =
+    routeTarget.textContent =
       target.label ||
       (
-        destinationUnlocked
-          ? "HUG Destination"
-          : "HUG Pickup"
+        result.destination_unlocked
+          ?
+          "Recipient Destination"
+          :
+          "Pickup"
       );
 
 
     updateTargetMarker(
-      target,
-      destinationUnlocked
+      target
     );
+
+  }
+  else{
+
+    routeTarget.textContent =
+      "Private route has not been prepared yet.";
+
+
+    removeTargetMarker();
 
   }
 
@@ -2049,106 +2434,135 @@ function renderRoute(result){
     result.helper_location
   ){
 
-    updateHelperMarker(
-      result.helper_location
-    );
-
-  }
-
-
-  if(
-    result.navigation
-  ){
-
-    renderNavigation(
-      result.navigation,
-      target,
-      result.helper_location
-    );
-
-  }
-  else{
-
-    clearNavigationOnly();
-
-
-    routeHeading.textContent =
-      destinationUnlocked
-        ? "Destination Unlocked"
-        : "Route to Pickup";
-
-
-    routeMessage.textContent =
-      result.message ||
-      (
-        sharingLocation
-          ?
-          "Waiting for route calculation."
-          :
-          "Start Live HUG to calculate your route."
+    const helperLat =
+      Number(
+        result.helper_location.latitude ??
+        result.helper_location.lat
       );
 
 
-    fitKnownMarkers();
+    const helperLon =
+      Number(
+        result.helper_location.longitude ??
+        result.helper_location.lon ??
+        result.helper_location.lng
+      );
+
+
+    if(
+      Number.isFinite(helperLat) &&
+      Number.isFinite(helperLon)
+    ){
+
+      updateHelperMapMarker(
+        helperLat,
+        helperLon
+      );
+
+    }
 
   }
+
+
+  const navigation =
+    result.navigation ||
+    null;
+
+
+  if(!navigation){
+
+    clearNavigationOnly();
+
+    fitVisibleMarkers();
+
+    return;
+
+  }
+
+
+  routeDistance.textContent =
+    formatDistance(
+      navigation.distance_miles,
+      navigation.distance_meters
+    );
+
+
+  routeDuration.textContent =
+    formatDuration(
+      navigation.duration_minutes,
+      navigation.duration_seconds
+    );
+
+
+  routeEta.textContent =
+    formatEta(
+      navigation.estimated_arrival
+    );
+
+
+  drawNavigationGeometry(
+    navigation.geometry
+  );
+
+
+  renderSteps(
+    navigation.steps
+  );
+
+
+  fitRoute();
 
 }
 
 
 /* ==========================================
-   HELPER MARKER
+   ROUTE PRIVACY COPY
 ========================================== */
 
-function updateHelperMarker(
-  location
-){
+function renderRoutePrivacy(){
 
-  const latitude =
-    Number(
-      location.latitude
-    );
-
-  const longitude =
-    Number(
-      location.longitude
-    );
-
-
-  if(
-    !Number.isFinite(latitude) ||
-    !Number.isFinite(longitude)
-  ){
+  if(!currentMission){
     return;
   }
 
 
-  if(!helperMarker){
+  if(
+    currentMission.status ===
+    "Accepted" ||
+    currentMission.status ===
+    "At Pickup"
+  ){
 
-    helperMarker =
-      L.marker(
-        [
-          latitude,
-          longitude
-        ],
-        {
-          icon:
-            bearIcon()
-        }
-      )
-      .addTo(map);
+    routePrivacyText.innerHTML =
+      "<strong>Pickup Route:</strong> " +
+      "The recipient destination remains protected. " +
+      "It becomes available only after you confirm " +
+      "<strong>Items Received</strong>.";
 
-  }
-  else{
-
-    helperMarker.setLatLng(
-      [
-        latitude,
-        longitude
-      ]
-    );
+    return;
 
   }
+
+
+  if(
+    currentMission.status ===
+    "Items Received" ||
+    currentMission.status ===
+    "On the Way"
+  ){
+
+    routePrivacyText.innerHTML =
+      "<strong>Delivery Route:</strong> " +
+      "The destination is now available for this " +
+      "assigned mission.";
+
+    return;
+
+  }
+
+
+  routePrivacyText.textContent =
+    "Private route closed.";
 
 }
 
@@ -2157,19 +2571,25 @@ function updateHelperMarker(
    TARGET MARKER
 ========================================== */
 
-function updateTargetMarker(
-  target,
-  destinationUnlocked
-){
+function updateTargetMarker(target){
+
+  if(!map){
+    return;
+  }
+
 
   const latitude =
     Number(
-      target.latitude
+      target.latitude ??
+      target.lat
     );
+
 
   const longitude =
     Number(
-      target.longitude
+      target.longitude ??
+      target.lon ??
+      target.lng
     );
 
 
@@ -2177,11 +2597,81 @@ function updateTargetMarker(
     !Number.isFinite(latitude) ||
     !Number.isFinite(longitude)
   ){
+
+    removeTargetMarker();
+
     return;
+
   }
 
 
+  const point = [
+    latitude,
+    longitude
+  ];
+
+
+  if(!targetMarker){
+
+    const icon =
+      L.divIcon(
+        {
+
+          className:"",
+
+          html:
+            '<div class="target-pin">📍</div>',
+
+          iconSize:
+            [50,50],
+
+          iconAnchor:
+            [25,25]
+
+        }
+      );
+
+
+    targetMarker =
+      L.marker(
+        point,
+        {
+          icon
+        }
+      )
+      .addTo(map);
+
+  }
+  else{
+
+    targetMarker.setLatLng(
+      point
+    );
+
+  }
+
+
+  if(target.label){
+
+    targetMarker.bindPopup(
+      escapeHTML(
+        target.label
+      )
+    );
+
+  }
+
+}
+
+
+/* ==========================================
+   REMOVE TARGET
+========================================== */
+
+function removeTargetMarker(){
+
   if(
+    map &&
     targetMarker
   ){
 
@@ -2189,172 +2679,36 @@ function updateTargetMarker(
       targetMarker
     );
 
+
+    targetMarker =
+      null;
+
   }
-
-
-  targetMarker =
-    L.marker(
-      [
-        latitude,
-        longitude
-      ],
-      {
-        icon:
-          targetIcon(
-            destinationUnlocked
-          )
-      }
-    )
-    .addTo(map);
 
 }
 
 
 /* ==========================================
-   NAVIGATION
+   ROUTE GEOMETRY
 ========================================== */
 
-function renderNavigation(
-  navigation,
-  target,
-  helperLocation
-){
-
-  routeDistance.textContent =
-    Number.isFinite(
-      Number(
-        navigation.distance_miles
-      )
-    )
-      ?
-      Number(
-        navigation.distance_miles
-      )
-      .toFixed(1) +
-      " mi"
-      :
-      "—";
-
-
-  routeTime.textContent =
-    Number.isFinite(
-      Number(
-        navigation.duration_minutes
-      )
-    )
-      ?
-      Math.max(
-        1,
-        Math.round(
-          Number(
-            navigation.duration_minutes
-          )
-        )
-      ) +
-      " min"
-      :
-      "—";
-
-
-  if(
-    navigation.estimated_arrival
-  ){
-
-    const eta =
-      new Date(
-        navigation.estimated_arrival
-      );
-
-
-    routeETA.textContent =
-      Number.isFinite(
-        eta.getTime()
-      )
-        ?
-        eta.toLocaleTimeString(
-          [],
-          {
-            hour:"numeric",
-            minute:"2-digit"
-          }
-        )
-        :
-        "—";
-
-  }
-  else{
-
-    routeETA.textContent =
-      "—";
-
-  }
-
-
-  routeHeading.textContent =
-
-    currentMission.status ===
-      "Accepted" ||
-
-    currentMission.status ===
-      "At Pickup"
-
-      ?
-      "Route to HUG Pickup"
-
-      :
-      "Route to HUG Destination";
-
-
-  routeMessage.textContent =
-    currentMission.status ===
-      "Accepted" ||
-
-    currentMission.status ===
-      "At Pickup"
-
-      ?
-      "Follow the protected route to the pickup."
-
-      :
-      "The destination is unlocked. Follow the protected delivery route.";
-
-
-  drawRouteGeometry(
-    navigation.geometry
-  );
-
-
-  renderTurns(
-    navigation.steps
-  );
-
-
-  fitRoute(
-    navigation.geometry,
-    target,
-    helperLocation
-  );
-
-}
-
-
-/* ==========================================
-   DRAW ROUTE
-========================================== */
-
-function drawRouteGeometry(
+function drawNavigationGeometry(
   geometry
 ){
 
-  if(
-    routeLine
-  ){
+  if(!map){
+    return;
+  }
+
+
+  if(routeLayer){
 
     map.removeLayer(
-      routeLine
+      routeLayer
     );
 
-    routeLine =
+
+    routeLayer =
       null;
 
   }
@@ -2374,23 +2728,26 @@ function drawRouteGeometry(
   }
 
 
-  /*
-   * GeoJSON:
-   * [longitude, latitude]
-   *
-   * Leaflet:
-   * [latitude, longitude]
-   */
-
   const points =
     geometry.coordinates
       .map(
         coordinate => {
 
+          if(
+            !Array.isArray(coordinate) ||
+            coordinate.length < 2
+          ){
+
+            return null;
+
+          }
+
+
           const longitude =
             Number(
               coordinate[0]
             );
+
 
           const latitude =
             Number(
@@ -2402,7 +2759,9 @@ function drawRouteGeometry(
             !Number.isFinite(latitude) ||
             !Number.isFinite(longitude)
           ){
+
             return null;
+
           }
 
 
@@ -2419,16 +2778,18 @@ function drawRouteGeometry(
   if(
     points.length < 2
   ){
+
     return;
+
   }
 
 
-  routeLine =
+  routeLayer =
     L.polyline(
       points,
       {
         weight:6,
-        opacity:.82
+        opacity:.78
       }
     )
     .addTo(map);
@@ -2437,43 +2798,34 @@ function drawRouteGeometry(
 
 
 /* ==========================================
-   ROUTE STEPS
+   STEPS
 ========================================== */
 
-function renderTurns(steps){
+function renderSteps(steps){
+
+  routeSteps.innerHTML =
+    "";
+
 
   if(
     !Array.isArray(steps) ||
     steps.length === 0
   ){
 
-    turnSection.style.display =
-      "none";
-
-    turnList.innerHTML =
-      "";
-
     return;
 
   }
 
 
-  /*
-   * textContent is used instead of injecting
-   * Mapbox instruction text directly as HTML.
-   */
-
-  turnList.innerHTML =
-    "";
-
-
   for(
-    const step of steps
+    const step
+    of steps
   ){
 
     const instruction =
       String(
-        step.instruction ||
+        step?.instruction ||
+        step?.maneuver?.instruction ||
         ""
       )
       .trim();
@@ -2494,37 +2846,167 @@ function renderTurns(steps){
       instruction;
 
 
-    turnList.appendChild(
+    routeSteps.appendChild(
       item
     );
 
   }
 
+}
 
-  turnSection.style.display =
-    turnList.children.length
-      ? "block"
-      : "none";
+
+/* ==========================================
+   FORMAT ROUTE DATA
+========================================== */
+
+function formatDistance(
+  miles,
+  meters
+){
+
+  const milesNumber =
+    Number(miles);
+
+
+  if(
+    Number.isFinite(
+      milesNumber
+    )
+  ){
+
+    return (
+      milesNumber.toFixed(1) +
+      " mi"
+    );
+
+  }
+
+
+  const metersNumber =
+    Number(meters);
+
+
+  if(
+    Number.isFinite(
+      metersNumber
+    )
+  ){
+
+    return (
+      (
+        metersNumber /
+        1609.344
+      )
+      .toFixed(1) +
+      " mi"
+    );
+
+  }
+
+
+  return "—";
+
+}
+
+
+function formatDuration(
+  minutes,
+  seconds
+){
+
+  let value =
+    Number(minutes);
+
+
+  if(
+    !Number.isFinite(value)
+  ){
+
+    const secondsNumber =
+      Number(seconds);
+
+
+    if(
+      Number.isFinite(
+        secondsNumber
+      )
+    ){
+
+      value =
+        secondsNumber /
+        60;
+
+    }
+
+  }
+
+
+  if(
+    !Number.isFinite(value)
+  ){
+
+    return "—";
+
+  }
+
+
+  return (
+    Math.max(
+      1,
+      Math.round(value)
+    ) +
+    " min"
+  );
+
+}
+
+
+function formatEta(value){
+
+  if(!value){
+    return "—";
+  }
+
+
+  const date =
+    new Date(value);
+
+
+  if(
+    Number.isNaN(
+      date.getTime()
+    )
+  ){
+
+    return "—";
+
+  }
+
+
+  return date.toLocaleTimeString(
+    [],
+    {
+      hour:"numeric",
+      minute:"2-digit"
+    }
+  );
 
 }
 
 
 /* ==========================================
-   FIT MAP
+   MAP FIT
 ========================================== */
 
-function fitRoute(
-  geometry,
-  target,
-  helperLocation
-){
+function fitRoute(){
 
   if(
-    routeLine
+    map &&
+    routeLayer
   ){
 
     const bounds =
-      routeLine.getBounds();
+      routeLayer.getBounds();
 
 
     if(
@@ -2534,10 +3016,7 @@ function fitRoute(
       map.fitBounds(
         bounds,
         {
-          padding:[
-            35,
-            35
-          ]
+          padding:[35,35]
         }
       );
 
@@ -2548,14 +3027,20 @@ function fitRoute(
   }
 
 
-  fitKnownMarkers();
+  fitVisibleMarkers();
 
 }
 
 
-function fitKnownMarkers(){
+function fitVisibleMarkers(){
 
-  const points = [];
+  if(!map){
+    return;
+  }
+
+
+  const points =
+    [];
 
 
   if(helperMarker){
@@ -2576,31 +3061,22 @@ function fitKnownMarkers(){
   }
 
 
-  if(
-    points.length === 1
-  ){
+  if(points.length === 1){
 
     map.setView(
       points[0],
-      14
+      15
     );
 
   }
 
 
-  if(
-    points.length > 1
-  ){
+  if(points.length > 1){
 
     map.fitBounds(
-      L.latLngBounds(
-        points
-      ),
+      L.latLngBounds(points),
       {
-        padding:[
-          35,
-          35
-        ]
+        padding:[35,35]
       }
     );
 
@@ -2618,383 +3094,113 @@ function clearNavigationOnly(){
   routeDistance.textContent =
     "—";
 
-  routeTime.textContent =
+  routeDuration.textContent =
     "—";
 
-  routeETA.textContent =
+  routeEta.textContent =
     "—";
+
+  routeSteps.innerHTML =
+    "";
 
 
   if(
-    routeLine &&
-    map
+    map &&
+    routeLayer
   ){
 
     map.removeLayer(
-      routeLine
+      routeLayer
     );
 
-    routeLine =
+
+    routeLayer =
       null;
 
   }
 
-
-  turnList.innerHTML =
-    "";
-
-  turnSection.style.display =
-    "none";
-
 }
 
-
-/* ==========================================
-   CLEAR ROUTE
-========================================== */
 
 function clearRouteDisplay(){
 
   clearNavigationOnly();
 
+  removeTargetMarker();
 
-  if(
-    helperMarker &&
-    map
-  ){
-
-    map.removeLayer(
-      helperMarker
-    );
-
-    helperMarker =
-      null;
-
-  }
+  removeHelperMapMarker();
 
 
-  if(
-    targetMarker &&
-    map
-  ){
-
-    map.removeLayer(
-      targetMarker
-    );
-
-    targetMarker =
-      null;
-
-  }
+  routeTarget.textContent =
+    "Private route closed.";
 
 }
 
 
 /* ==========================================
-   START LOCATION
+   DELIVERED UI
 ========================================== */
 
-startLocationButton.addEventListener(
-  "click",
-  startLocationSharing
-);
+function handleDeliveredUI(){
 
+  stopLocalGeolocation();
 
-function startLocationSharing(){
-
-  if(
-    !currentMission ||
-    !helperToken
-  ){
-
-    showMessage(
-      "Open your secure HUG Mission first.",
-      "error"
-    );
-
-    return;
-
-  }
-
-
-  if(
-    currentMission.status ===
-    "Delivered"
-  ){
-
-    showMessage(
-      "This HUG has already been delivered.",
-      "error"
-    );
-
-    return;
-
-  }
-
-
-  if(
-    !navigator.geolocation
-  ){
-
-    showMessage(
-      "Location services are not supported on this device.",
-      "error"
-    );
-
-    return;
-
-  }
+  clearRouteDisplay();
 
 
   startLocationButton.disabled =
     true;
 
-  startLocationButton.textContent =
-    "Requesting Location...";
+  stopLocationButton.disabled =
+    true;
 
 
-  watchId =
-    navigator.geolocation.watchPosition(
-
-      handleLocation,
-
-      handleLocationError,
-
-      {
-        enableHighAccuracy:true,
-        maximumAge:5000,
-        timeout:20000
-      }
-
-    );
-
-}
+  locationText.textContent =
+    "Live location sharing ended.";
 
 
-/* ==========================================
-   LOCATION UPDATE
-========================================== */
-
-async function handleLocation(
-  position
-){
-
-  const now =
-    Date.now();
+  routePrivacyText.textContent =
+    "Mission complete. Private route access has ended.";
 
 
-  if(
-    now -
-    lastLocationSentAt <
-    10000
-  ){
-    return;
-  }
+  closedCard.style.display =
+    "block";
 
 
-  lastLocationSentAt =
-    now;
-
-
-  const coords =
-    position.coords;
-
-
-  try{
-
-    await apiRequest(
-      LOCATION_API,
-      {
-
-        action:"update",
-
-        mission_id:
-          currentMission.id,
-
-        helper_token:
-          helperToken,
-
-        latitude:
-          coords.latitude,
-
-        longitude:
-          coords.longitude,
-
-        accuracy:
-          coords.accuracy,
-
-        heading:
-          coords.heading,
-
-        speed:
-          coords.speed
-
-      }
-    );
-
-
-    sharingLocation =
-      true;
-
-
-    liveDot.classList.add(
-      "active"
-    );
-
-
-    liveText.textContent =
-      "Live HUG location is sharing";
-
-
-    locationInfo.textContent =
-      "Location updated " +
-      new Date()
-        .toLocaleTimeString();
-
-
-    startLocationButton.style.display =
-      "none";
-
-    stopLocationButton.style.display =
-      "block";
-
-
-    /*
-     * Update the visible Helper marker
-     * immediately.
-     */
-
-    updateHelperMarker({
-
-      latitude:
-        coords.latitude,
-
-      longitude:
-        coords.longitude
-
-    });
-
-
-    /*
-     * Route recalculation is separately
-     * throttled to approximately 20 sec.
-     */
-
-    await refreshRoute(
-      false
-    );
-
-  }
-  catch(error){
-
-    showMessage(
-      error.message,
-      "error"
-    );
-
-  }
+  statusActions.innerHTML =
+    "";
 
 }
 
 
 /* ==========================================
-   LOCATION ERROR
+   CLOSE MISSION
 ========================================== */
 
-function handleLocationError(
-  error
-){
+async function closeMission(){
 
-  startLocationButton.disabled =
-    false;
-
-  startLocationButton.textContent =
-    "Start Live HUG";
-
-
-  let message =
-    "HUGS could not access your location.";
-
+  /*
+   * If the secure session is still active,
+   * make a best-effort stop request so current
+   * location is removed before closing.
+   */
 
   if(
-    error.code === 1
-  ){
-
-    message =
-      "Location permission was not granted. You can still complete the HUG without live tracking.";
-
-  }
-
-
-  if(
-    error.code === 2
-  ){
-
-    message =
-      "Your current location is unavailable.";
-
-  }
-
-
-  if(
-    error.code === 3
-  ){
-
-    message =
-      "Location request timed out. Try again.";
-
-  }
-
-
-  showMessage(
-    message,
-    "error"
-  );
-
-}
-
-
-/* ==========================================
-   STOP LOCATION
-========================================== */
-
-stopLocationButton.addEventListener(
-  "click",
-  () => stopLocationSharing(false)
-);
-
-
-async function stopLocationSharing(
-  automatic = false
-){
-
-  if(
-    watchId !== null
-  ){
-
-    navigator.geolocation
-      .clearWatch(
-        watchId
-      );
-
-    watchId =
-      null;
-
-  }
-
-
-  if(
+    helperToken &&
     currentMission &&
-    helperToken
+    currentMission.status !==
+      "Delivered" &&
+    locationSharing
   ){
 
     try{
 
-      await apiRequest(
+      await postJSON(
         LOCATION_API,
         {
 
-          action:"stop",
+          action:
+            "stop",
 
           mission_id:
             currentMission.id,
@@ -3006,24 +3212,39 @@ async function stopLocationSharing(
       );
 
     }
-    catch(error){
+    catch{
 
-      if(!automatic){
-
-        showMessage(
-          error.message,
-          "error"
-        );
-
-      }
+      /*
+       * Do not retain the local credential
+       * just because network cleanup failed.
+       */
 
     }
 
   }
 
 
-  sharingLocation =
-    false;
+  resetMissionCenter();
+
+}
+
+
+/* ==========================================
+   RESET
+========================================== */
+
+function resetMissionCenter(){
+
+  stopLocalGeolocation();
+
+  helperToken =
+    "";
+
+  currentMission =
+    null;
+
+  latestPosition =
+    null;
 
   lastLocationSentAt =
     0;
@@ -3031,124 +3252,173 @@ async function stopLocationSharing(
   lastRouteRefreshAt =
     0;
 
+  routeRefreshBusy =
+    false;
 
-  liveDot.classList.remove(
-    "active"
+  statusUpdateBusy =
+    false;
+
+
+  clearRouteDisplay();
+
+
+  if(map){
+
+    map.remove();
+
+    map =
+      null;
+
+  }
+
+
+  helperMarker =
+    null;
+
+  targetMarker =
+    null;
+
+  routeLayer =
+    null;
+
+
+  missionNumber.textContent =
+    "";
+
+  missionType.textContent =
+    "HUG Mission";
+
+  missionStatus.textContent =
+    "Accepted";
+
+  missionStatus.className =
+    "status-pill";
+
+  missionArea.textContent =
+    "—";
+
+  missionTiming.textContent =
+    "—";
+
+
+  statusActions.innerHTML =
+    "";
+
+  statusMessage.textContent =
+    "";
+
+  statusMessage.className =
+    "";
+
+
+  locationDot.classList.remove(
+    "on"
   );
 
-
-  liveText.textContent =
-    "Location sharing is off";
-
-
-  locationInfo.textContent =
-    "HUGS is not receiving your location.";
-
-
-  startLocationButton.style.display =
-    currentMission &&
-    currentMission.status !==
-      "Delivered"
-      ?
-      "block"
-      :
-      "none";
+  locationText.textContent =
+    "Location sharing is off.";
 
 
   startLocationButton.disabled =
     false;
 
-  startLocationButton.textContent =
-    "Start Live HUG";
+  stopLocationButton.disabled =
+    true;
 
 
-  stopLocationButton.style.display =
+  routeTarget.textContent =
+    "Waiting for private route…";
+
+  routeDistance.textContent =
+    "—";
+
+  routeDuration.textContent =
+    "—";
+
+  routeEta.textContent =
+    "—";
+
+  routeSteps.innerHTML =
+    "";
+
+
+  closedCard.style.display =
     "none";
 
 
-  if(!automatic){
+  missionCenter.style.display =
+    "none";
 
-    showMessage(
-      "Live HUG location sharing stopped."
-    );
+  openMissionCard.style.display =
+    "block";
 
-  }
+
+  openMissionButton.disabled =
+    false;
+
+  openMissionButton.textContent =
+    "Open Mission";
+
+
+  missionIdInput.value =
+    "";
+
+  helperIdInput.value =
+    "";
+
+  helperEmailInput.value =
+    "";
+
+
+  openError.textContent =
+    "";
 
 }
 
 
 /* ==========================================
-   CLOSE MISSION
+   ERROR
 ========================================== */
 
-closeMissionButton.addEventListener(
-  "click",
-  async () => {
+function showOpenError(text){
+
+  openError.textContent =
+    text;
+
+}
 
 
-    if(
-      sharingLocation
-    ){
+/* ==========================================
+   ESCAPE
+========================================== */
 
-      const confirmed =
-        confirm(
-          "Location sharing is active. Stop sharing and close the Mission Center?"
-        );
+function escapeHTML(value){
 
+  return String(
+    value ?? ""
+  )
+  .replaceAll(
+    "&",
+    "&amp;"
+  )
+  .replaceAll(
+    "<",
+    "&lt;"
+  )
+  .replaceAll(
+    ">",
+    "&gt;"
+  )
+  .replaceAll(
+    '"',
+    "&quot;"
+  )
+  .replaceAll(
+    "'",
+    "&#039;"
+  );
 
-      if(!confirmed){
-        return;
-      }
-
-
-      await stopLocationSharing(
-        true
-      );
-
-    }
-
-
-    /*
-     * Remove sensitive values from browser
-     * memory.
-     */
-
-    helperToken =
-      "";
-
-    currentMission =
-      null;
-
-    currentHelperId =
-      "";
-
-    currentHelperEmail =
-      "";
-
-    lastRouteRefreshAt =
-      0;
-
-
-    clearRouteDisplay();
-
-
-    missionCenter.style.display =
-      "none";
-
-    verificationCard.style.display =
-      "block";
-
-
-    helperEmailInput.value =
-      "";
-
-
-    showMessage(
-      "Mission Center closed."
-    );
-
-  }
-);
+}
 
 
 /* ==========================================
@@ -3159,28 +3429,21 @@ window.addEventListener(
   "pagehide",
   () => {
 
-
-    if(
-      watchId !== null
-    ){
-
-      navigator.geolocation
-        .clearWatch(
-          watchId
-        );
-
-      watchId =
-        null;
-
-    }
-
-
     /*
-     * The Helper token is memory-only.
+     * Do not attempt to preserve the session
+     * credential when leaving the page.
      */
+
+    stopLocalGeolocation();
 
     helperToken =
       "";
+
+    latestPosition =
+      null;
+
+    currentMission =
+      null;
 
   }
 );
@@ -3188,4 +3451,5 @@ window.addEventListener(
 </script>
 
 </body>
+
 </html>
