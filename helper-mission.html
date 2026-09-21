@@ -385,9 +385,7 @@ button:disabled{
 
 </head>
 
-
 <body>
-
 
 <header class="helper-header">
 
@@ -403,13 +401,7 @@ button:disabled{
 
 </header>
 
-
 <main class="shell">
-
-
-<!-- ======================================
-     OPEN MISSION
-======================================= -->
 
 <section
   class="card"
@@ -426,7 +418,6 @@ button:disabled{
   registered.
 </p>
 
-
 <div class="field">
 
 <label for="missionIdInput">
@@ -441,7 +432,6 @@ button:disabled{
 >
 
 </div>
-
 
 <div class="field">
 
@@ -458,7 +448,6 @@ button:disabled{
 
 </div>
 
-
 <div class="field">
 
 <label for="helperEmailInput">
@@ -474,7 +463,6 @@ button:disabled{
 
 </div>
 
-
 <button
   class="primary-button"
   id="openMissionButton"
@@ -483,13 +471,11 @@ button:disabled{
   Open Mission
 </button>
 
-
 <p
   id="openError"
   class="error"
   aria-live="polite"
 ></p>
-
 
 <div class="notice">
 
@@ -505,15 +491,7 @@ button:disabled{
 
 </section>
 
-
-<!-- ======================================
-     MISSION CENTER
-======================================= -->
-
 <section id="missionCenter">
-
-
-<!-- MISSION -->
 
 <div class="card">
 
@@ -532,7 +510,6 @@ button:disabled{
 
 </div>
 
-
 <span
   class="status-pill"
   id="missionStatus"
@@ -541,7 +518,6 @@ button:disabled{
 </span>
 
 </div>
-
 
 <div class="detail-grid">
 
@@ -556,7 +532,6 @@ button:disabled{
 </span>
 
 </div>
-
 
 <div class="detail">
 
@@ -574,9 +549,6 @@ button:disabled{
 
 </div>
 
-
-<!-- STATUS -->
-
 <div class="card">
 
 <h3>
@@ -587,12 +559,10 @@ button:disabled{
   Mission stages must be completed in order.
 </p>
 
-
 <div
   class="action-row"
   id="statusActions"
 ></div>
-
 
 <p
   id="statusMessage"
@@ -600,9 +570,6 @@ button:disabled{
 ></p>
 
 </div>
-
-
-<!-- LOCATION -->
 
 <div class="card">
 
@@ -614,7 +581,6 @@ button:disabled{
   Share your current location only while actively
   completing this HUG Mission.
 </p>
-
 
 <div class="action-row">
 
@@ -637,7 +603,6 @@ button:disabled{
 
 </div>
 
-
 <div class="live-line">
 
 <span
@@ -651,7 +616,6 @@ button:disabled{
 
 </div>
 
-
 <div class="notice">
 
   HUGS stores only the current live location needed
@@ -661,9 +625,6 @@ button:disabled{
 </div>
 
 </div>
-
-
-<!-- NAVIGATION -->
 
 <div class="card">
 
@@ -680,9 +641,7 @@ button:disabled{
   Items Received.
 </p>
 
-
 <div id="map"></div>
-
 
 <div class="map-meta">
 
@@ -698,7 +657,6 @@ button:disabled{
 
 </div>
 
-
 <div class="detail">
 
 <strong>
@@ -711,7 +669,6 @@ button:disabled{
 
 </div>
 
-
 <div class="detail">
 
 <strong>
@@ -723,7 +680,6 @@ button:disabled{
 </span>
 
 </div>
-
 
 <div class="detail">
 
@@ -739,16 +695,12 @@ button:disabled{
 
 </div>
 
-
 <ul
   class="steps"
   id="routeSteps"
 ></ul>
 
 </div>
-
-
-<!-- COMPLETE -->
 
 <div
   class="card closed-card"
@@ -766,9 +718,6 @@ button:disabled{
 
 </div>
 
-
-<!-- CLOSE -->
-
 <div class="card">
 
 <div class="action-row">
@@ -785,22 +734,15 @@ button:disabled{
 
 </div>
 
-
 </section>
 
 </main>
-
 
 <script
   src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
 ></script>
 
-
 <script>
-
-/* ==========================================
-   APIS
-========================================== */
 
 const SESSION_API =
   "/.netlify/functions/create-hug-mission-session";
@@ -814,237 +756,116 @@ const LOCATION_API =
 const ROUTE_API =
   "/.netlify/functions/get-hug-route";
 
-
-/* ==========================================
-   TIMING
-========================================== */
-
 const LOCATION_SEND_INTERVAL_MS =
   10000;
 
 const ROUTE_REFRESH_INTERVAL_MS =
   20000;
 
-
-/* ==========================================
-   MISSION STATUS
-========================================== */
-
 const STATUS_FLOW = [
-
   "Accepted",
-
   "At Pickup",
-
   "Items Received",
-
   "On the Way",
-
   "Delivered"
-
 ];
 
-
-/* ==========================================
-   PRIVATE STATE
-========================================== */
-
-/*
- * SECURITY:
- *
- * helperToken exists only in JS memory.
- *
- * Never place it in:
- * - localStorage
- * - sessionStorage
- * - cookies
- * - query strings
- */
-
-let helperToken =
-  "";
-
-let currentMission =
-  null;
-
-let geolocationWatchId =
-  null;
-
-let lastLocationSentAt =
-  0;
-
-let lastRouteRefreshAt =
-  0;
-
-let locationSharing =
-  false;
-
-let latestPosition =
-  null;
-
-let map =
-  null;
-
-let helperMarker =
-  null;
-
-let targetMarker =
-  null;
-
-let routeLayer =
-  null;
-
-let routeRefreshBusy =
-  false;
-
-let statusUpdateBusy =
-  false;
-
-
-/* ==========================================
-   ELEMENTS
-========================================== */
+let helperToken = "";
+let currentMission = null;
+let geolocationWatchId = null;
+let lastLocationSentAt = 0;
+let lastRouteRefreshAt = 0;
+let locationSharing = false;
+let latestPosition = null;
+let map = null;
+let helperMarker = null;
+let targetMarker = null;
+let routeLayer = null;
+let routeRefreshBusy = false;
+let statusUpdateBusy = false;
 
 const openMissionCard =
-  document.getElementById(
-    "openMissionCard"
-  );
+  document.getElementById("openMissionCard");
 
 const missionCenter =
-  document.getElementById(
-    "missionCenter"
-  );
+  document.getElementById("missionCenter");
 
 const missionIdInput =
-  document.getElementById(
-    "missionIdInput"
-  );
+  document.getElementById("missionIdInput");
 
 const helperIdInput =
-  document.getElementById(
-    "helperIdInput"
-  );
+  document.getElementById("helperIdInput");
 
 const helperEmailInput =
-  document.getElementById(
-    "helperEmailInput"
-  );
+  document.getElementById("helperEmailInput");
 
 const openMissionButton =
-  document.getElementById(
-    "openMissionButton"
-  );
+  document.getElementById("openMissionButton");
 
 const openError =
-  document.getElementById(
-    "openError"
-  );
+  document.getElementById("openError");
 
 const missionNumber =
-  document.getElementById(
-    "missionNumber"
-  );
+  document.getElementById("missionNumber");
 
 const missionType =
-  document.getElementById(
-    "missionType"
-  );
+  document.getElementById("missionType");
 
 const missionStatus =
-  document.getElementById(
-    "missionStatus"
-  );
+  document.getElementById("missionStatus");
 
 const missionArea =
-  document.getElementById(
-    "missionArea"
-  );
+  document.getElementById("missionArea");
 
 const missionTiming =
-  document.getElementById(
-    "missionTiming"
-  );
+  document.getElementById("missionTiming");
 
 const statusActions =
-  document.getElementById(
-    "statusActions"
-  );
+  document.getElementById("statusActions");
 
 const statusMessage =
-  document.getElementById(
-    "statusMessage"
-  );
+  document.getElementById("statusMessage");
 
 const startLocationButton =
-  document.getElementById(
-    "startLocationButton"
-  );
+  document.getElementById("startLocationButton");
 
 const stopLocationButton =
-  document.getElementById(
-    "stopLocationButton"
-  );
+  document.getElementById("stopLocationButton");
 
 const locationDot =
-  document.getElementById(
-    "locationDot"
-  );
+  document.getElementById("locationDot");
 
 const locationText =
-  document.getElementById(
-    "locationText"
-  );
+  document.getElementById("locationText");
 
 const routePrivacyText =
-  document.getElementById(
-    "routePrivacyText"
-  );
+  document.getElementById("routePrivacyText");
 
 const routeTarget =
-  document.getElementById(
-    "routeTarget"
-  );
+  document.getElementById("routeTarget");
 
 const routeDistance =
-  document.getElementById(
-    "routeDistance"
-  );
+  document.getElementById("routeDistance");
 
 const routeDuration =
-  document.getElementById(
-    "routeDuration"
-  );
+  document.getElementById("routeDuration");
 
 const routeEta =
-  document.getElementById(
-    "routeEta"
-  );
+  document.getElementById("routeEta");
 
 const routeSteps =
-  document.getElementById(
-    "routeSteps"
-  );
+  document.getElementById("routeSteps");
 
 const closedCard =
-  document.getElementById(
-    "closedCard"
-  );
+  document.getElementById("closedCard");
 
 const closeMissionButton =
-  document.getElementById(
-    "closeMissionButton"
-  );
-
-
-/* ==========================================
-   EVENTS
-========================================== */
+  document.getElementById("closeMissionButton");
 
 openMissionButton.addEventListener(
   "click",
   openMission
 );
-
 
 missionIdInput.addEventListener(
   "keydown",
@@ -1061,41 +882,28 @@ helperEmailInput.addEventListener(
   openOnEnter
 );
 
-
 startLocationButton.addEventListener(
   "click",
   startLocationSharing
 );
-
 
 stopLocationButton.addEventListener(
   "click",
   stopLocationSharing
 );
 
-
 closeMissionButton.addEventListener(
   "click",
   closeMission
 );
 
-
 function openOnEnter(event){
 
-  if(
-    event.key === "Enter"
-  ){
-
+  if(event.key === "Enter"){
     openMission();
-
   }
 
 }
-
-
-/* ==========================================
-   POST JSON
-========================================== */
 
 async function postJSON(
   url,
@@ -1106,14 +914,11 @@ async function postJSON(
     await fetch(
       url,
       {
-
         method:"POST",
 
         headers:{
-
           "Content-Type":
             "application/json"
-
         },
 
         cache:"no-store",
@@ -1124,13 +929,10 @@ async function postJSON(
 
         body:
           JSON.stringify(body)
-
       }
     );
 
-
   let result;
-
 
   try{
 
@@ -1146,7 +948,6 @@ async function postJSON(
 
   }
 
-
   if(
     !response.ok ||
     result.ok !== true
@@ -1159,15 +960,51 @@ async function postJSON(
 
   }
 
-
   return result;
 
 }
 
+function isSessionFailure(
+  message
+){
 
-/* ==========================================
-   OPEN SECURE SESSION
-========================================== */
+  const text =
+    String(
+      message || ""
+    )
+    .toLowerCase();
+
+  return (
+    text.includes("expired") ||
+    text.includes("invalid") ||
+    text.includes("inactive") ||
+    text.includes("no longer active") ||
+    text.includes("not assigned") ||
+    text.includes("session") ||
+    text.includes("unauthorized")
+  );
+
+}
+
+function endInvalidSession(
+  message
+){
+
+  stopLocalGeolocation();
+
+  helperToken = "";
+  latestPosition = null;
+
+  clearRouteDisplay();
+
+  resetMissionCenter();
+
+  showOpenError(
+    message ||
+    "Your secure HUG Mission session has ended. Please open the mission again."
+  );
+
+}
 
 async function openMission(){
 
@@ -1175,16 +1012,12 @@ async function openMission(){
     return;
   }
 
-
-  openError.textContent =
-    "";
-
+  openError.textContent = "";
 
   const missionId =
     missionIdInput
       .value
       .trim();
-
 
   const helperId =
     helperIdInput
@@ -1192,13 +1025,11 @@ async function openMission(){
       .trim()
       .toUpperCase();
 
-
   const helperEmail =
     helperEmailInput
       .value
       .trim()
       .toLowerCase();
-
 
   if(
     !missionId ||
@@ -1214,13 +1045,11 @@ async function openMission(){
 
   }
 
-
   openMissionButton.disabled =
     true;
 
   openMissionButton.textContent =
     "Opening Secure Mission…";
-
 
   try{
 
@@ -1228,7 +1057,6 @@ async function openMission(){
       await postJSON(
         SESSION_API,
         {
-
           mission_id:
             missionId,
 
@@ -1237,10 +1065,8 @@ async function openMission(){
 
           helper_email:
             helperEmail
-
         }
       );
-
 
     if(
       typeof result.helper_token !==
@@ -1254,40 +1080,21 @@ async function openMission(){
 
     }
 
-
-    /*
-     * MEMORY ONLY.
-     */
-
     helperToken =
       result.helper_token;
-
 
     currentMission =
       result.mission;
 
-
-    /*
-     * Remove credentials from the visible form
-     * immediately after session establishment.
-     */
-
-    missionIdInput.value =
-      "";
-
-    helperIdInput.value =
-      "";
-
-    helperEmailInput.value =
-      "";
-
+    missionIdInput.value = "";
+    helperIdInput.value = "";
+    helperEmailInput.value = "";
 
     openMissionCard.style.display =
       "none";
 
     missionCenter.style.display =
       "block";
-
 
     initializeMap();
 
@@ -1300,17 +1107,12 @@ async function openMission(){
   }
   catch(error){
 
-    helperToken =
-      "";
-
-    currentMission =
-      null;
-
+    helperToken = "";
+    currentMission = null;
 
     showOpenError(
       error.message
     );
-
 
     openMissionButton.disabled =
       false;
@@ -1322,41 +1124,28 @@ async function openMission(){
 
 }
 
-
-/* ==========================================
-   RENDER MISSION
-========================================== */
-
 function renderMission(){
 
   if(!currentMission){
     return;
   }
 
-
   missionNumber.textContent =
-    currentMission.id ||
-    "";
-
+    currentMission.id || "";
 
   missionType.textContent =
     currentMission.type ||
     "HUG Mission";
 
-
   missionStatus.textContent =
     currentMission.status ||
     "Accepted";
 
-
   missionStatus.className =
     currentMission.status ===
     "Delivered"
-
       ? "status-pill delivered"
-
       : "status-pill";
-
 
   missionArea.textContent =
     [
@@ -1367,16 +1156,13 @@ function renderMission(){
     .join(", ") ||
     "General service area";
 
-
   missionTiming.textContent =
     currentMission.timing ||
     "Flexible";
 
-
   renderStatusAction();
 
   renderRoutePrivacy();
-
 
   if(
     currentMission.status ===
@@ -1395,56 +1181,72 @@ function renderMission(){
 
 }
 
+function getStatusButtonLabel(
+  next
+){
 
-/* ==========================================
-   STATUS BUTTON
-========================================== */
+  if(
+    next === "At Pickup"
+  ){
+    return "I’m At Pickup";
+  }
+
+  if(
+    next === "Items Received"
+  ){
+    return "Items Received";
+  }
+
+  if(
+    next === "On the Way"
+  ){
+    return "Start Delivery";
+  }
+
+  if(
+    next === "Delivered"
+  ){
+    return "Mark Delivered";
+  }
+
+  return "Continue";
+
+}
 
 function renderStatusAction(){
 
-  statusActions.innerHTML =
-    "";
-
+  statusActions.innerHTML = "";
 
   if(
     !currentMission ||
     currentMission.status ===
       "Delivered"
   ){
-
     return;
-
   }
-
 
   const position =
     STATUS_FLOW.indexOf(
       currentMission.status
     );
 
-
   if(
     position < 0 ||
     position >=
       STATUS_FLOW.length - 1
   ){
-
     return;
-
   }
-
 
   const next =
     STATUS_FLOW[
       position + 1
     ];
 
-
   const button =
     document.createElement(
       "button"
     );
-
 
   button.type =
     "button";
@@ -1453,12 +1255,9 @@ function renderStatusAction(){
     "status-button next";
 
   button.textContent =
-    next === "Delivered"
-
-      ? "Confirm HUG Delivered"
-
-      : "Mark " + next;
-
+    getStatusButtonLabel(
+      next
+    );
 
   button.addEventListener(
     "click",
@@ -1472,17 +1271,11 @@ function renderStatusAction(){
     }
   );
 
-
   statusActions.appendChild(
     button
   );
 
 }
-
-
-/* ==========================================
-   SECURE STATUS UPDATE
-========================================== */
 
 async function updateMissionStatus(
   requestedStatus,
@@ -1494,44 +1287,32 @@ async function updateMissionStatus(
     !helperToken ||
     !currentMission
   ){
-
     return;
-
   }
-
 
   const confirmation =
     requestedStatus ===
     "Delivered"
-
       ?
-
       "Confirm that this HUG has been delivered? Live location, private routing and this secure mission session will end."
-
       :
-
       "Update this mission to " +
       requestedStatus +
       "?";
-
 
   if(
     !window.confirm(
       confirmation
     )
   ){
-
     return;
-
   }
-
 
   statusUpdateBusy =
     true;
 
   statusMessage.textContent =
     "";
-
 
   if(button){
 
@@ -1543,24 +1324,12 @@ async function updateMissionStatus(
 
   }
 
-
   try{
-
-    /*
-     * SECURITY UPGRADE:
-     *
-     * Helper ID + email are NOT sent here.
-     *
-     * Status authorization now uses the same
-     * temporary helper_token as live location
-     * and private routing.
-     */
 
     const result =
       await postJSON(
         STATUS_API,
         {
-
           mission_id:
             currentMission.id,
 
@@ -1569,58 +1338,43 @@ async function updateMissionStatus(
 
           status:
             requestedStatus
-
         }
       );
 
-
     currentMission.status =
       result.status;
-
 
     if(
       result.status ===
       "At Pickup"
     ){
-
       currentMission.at_pickup_at =
         result.updated_at;
-
     }
-
 
     if(
       result.status ===
       "Items Received"
     ){
-
       currentMission.items_received_at =
         result.updated_at;
-
     }
-
 
     if(
       result.status ===
       "On the Way"
     ){
-
       currentMission.on_the_way_at =
         result.updated_at;
-
     }
-
 
     if(
       result.status ===
       "Delivered"
     ){
-
       currentMission.delivered_at =
         result.updated_at;
-
     }
-
 
     statusMessage.className =
       "success";
@@ -1629,30 +1383,16 @@ async function updateMissionStatus(
       result.message ||
       "Mission status updated.";
 
-
     renderMission();
-
 
     if(
       result.status ===
       "Delivered"
     ){
 
-      /*
-       * Backend has now:
-       *
-       * - saved Delivered
-       * - removed live location
-       * - ended the secure session
-       * - invalidated recipient tracking
-       *
-       * Remove the local token immediately.
-       */
-
       stopLocalGeolocation();
 
-      helperToken =
-        "";
+      helperToken = "";
 
       clearRouteDisplay();
 
@@ -1660,23 +1400,26 @@ async function updateMissionStatus(
 
     }
 
-
-    /*
-     * Important privacy transition:
-     *
-     * When Items Received is confirmed,
-     * get-hug-route.mjs may now release the
-     * protected destination to this assigned
-     * Helper.
-     */
-
     await refreshRoute(
       true
     );
 
-
   }
   catch(error){
+
+    if(
+      isSessionFailure(
+        error.message
+      )
+    ){
+
+      endInvalidSession(
+        error.message
+      );
+
+      return;
+
+    }
 
     statusMessage.className =
       "error";
@@ -1684,13 +1427,11 @@ async function updateMissionStatus(
     statusMessage.textContent =
       error.message;
 
-
   }
   finally{
 
     statusUpdateBusy =
       false;
-
 
     if(
       currentMission?.status !==
@@ -1705,32 +1446,16 @@ async function updateMissionStatus(
 
 }
 
-
-/* ==========================================
-   GEOLOCATION
-========================================== */
-
 function startLocationSharing(){
 
   if(
     !helperToken ||
-    !currentMission
-  ){
-
-    return;
-
-  }
-
-
-  if(
+    !currentMission ||
     currentMission.status ===
-    "Delivered"
+      "Delivered"
   ){
-
     return;
-
   }
-
 
   if(
     !navigator.geolocation
@@ -1743,51 +1468,32 @@ function startLocationSharing(){
 
   }
 
-
   if(
     geolocationWatchId !==
     null
   ){
-
     return;
-
   }
-
 
   startLocationButton.disabled =
     true;
 
-
   locationText.textContent =
     "Requesting your location…";
-
 
   geolocationWatchId =
     navigator.geolocation
       .watchPosition(
-
         handlePosition,
-
         handleLocationError,
-
         {
-
           enableHighAccuracy:true,
-
           maximumAge:5000,
-
           timeout:15000
-
         }
-
       );
 
 }
-
-
-/* ==========================================
-   POSITION
-========================================== */
 
 async function handlePosition(
   position
@@ -1804,112 +1510,92 @@ async function handlePosition(
 
   }
 
-
   latestPosition =
     position;
 
-
   const now =
     Date.now();
-
-
-  /*
-   * Update local marker immediately.
-   */
 
   updateHelperMapMarker(
     position.coords.latitude,
     position.coords.longitude
   );
 
-
   if(
     now -
     lastLocationSentAt <
     LOCATION_SEND_INTERVAL_MS
   ){
-
     return;
-
   }
-
 
   lastLocationSentAt =
     now;
 
-
   try{
 
-    const result =
-      await postJSON(
-        LOCATION_API,
-        {
+    await postJSON(
+      LOCATION_API,
+      {
+        action:
+          "update",
 
-          action:
-            "update",
+        mission_id:
+          currentMission.id,
 
-          mission_id:
-            currentMission.id,
+        helper_token:
+          helperToken,
 
-          helper_token:
-            helperToken,
+        latitude:
+          position.coords.latitude,
 
-          latitude:
-            position.coords.latitude,
+        longitude:
+          position.coords.longitude,
 
-          longitude:
-            position.coords.longitude,
+        accuracy:
+          Number.isFinite(
+            position.coords.accuracy
+          )
+            ?
+            position.coords.accuracy
+            :
+            null,
 
-          accuracy:
-            Number.isFinite(
-              position.coords.accuracy
-            )
-              ?
-              position.coords.accuracy
-              :
-              null,
+        heading:
+          Number.isFinite(
+            position.coords.heading
+          )
+            ?
+            position.coords.heading
+            :
+            null,
 
-          heading:
-            Number.isFinite(
-              position.coords.heading
-            )
-              ?
-              position.coords.heading
-              :
-              null,
-
-          speed:
-            Number.isFinite(
-              position.coords.speed
-            )
-              ?
-              position.coords.speed
-              :
-              null
-
-        }
-      );
-
+        speed:
+          Number.isFinite(
+            position.coords.speed
+          )
+            ?
+            position.coords.speed
+            :
+            null
+      }
+    );
 
     locationSharing =
       true;
-
 
     locationDot.classList.add(
       "on"
     );
 
-
     locationText.textContent =
       "Live location is being shared for this HUG Mission.";
-
 
     startLocationButton.disabled =
       true;
 
     stopLocationButton.disabled =
       false;
-
 
     if(
       now -
@@ -1928,40 +1614,24 @@ async function handlePosition(
       "on"
     );
 
-
     locationText.textContent =
       error.message;
 
-
-    const message =
-      String(
-        error.message || ""
-      )
-      .toLowerCase();
-
-
     if(
-      message.includes("expired") ||
-      message.includes("invalid") ||
-      message.includes("no longer active") ||
-      message.includes("not assigned")
+      isSessionFailure(
+        error.message
+      )
     ){
 
-      stopLocalGeolocation();
-
-      helperToken =
-        "";
+      endInvalidSession(
+        error.message
+      );
 
     }
 
   }
 
 }
-
-
-/* ==========================================
-   LOCATION ERROR
-========================================== */
 
 function handleLocationError(
   error
@@ -1970,7 +1640,6 @@ function handleLocationError(
   locationDot.classList.remove(
     "on"
   );
-
 
   if(
     error?.code === 1
@@ -1987,37 +1656,26 @@ function handleLocationError(
 
   }
 
-
   stopLocalGeolocation();
 
 }
-
-
-/* ==========================================
-   STOP LOCATION
-========================================== */
 
 async function stopLocationSharing(){
 
   stopLocalGeolocation();
 
-
   if(
     !helperToken ||
     !currentMission
   ){
-
     return;
-
   }
-
 
   try{
 
     await postJSON(
       LOCATION_API,
       {
-
         action:
           "stop",
 
@@ -2026,23 +1684,18 @@ async function stopLocationSharing(){
 
         helper_token:
           helperToken
-
       }
     );
 
-
     locationSharing =
       false;
-
 
     locationDot.classList.remove(
       "on"
     );
 
-
     locationText.textContent =
       "Location sharing is off.";
-
 
     startLocationButton.disabled =
       false;
@@ -2050,12 +1703,24 @@ async function stopLocationSharing(){
     stopLocationButton.disabled =
       true;
 
-
     removeHelperMapMarker();
-
 
   }
   catch(error){
+
+    if(
+      isSessionFailure(
+        error.message
+      )
+    ){
+
+      endInvalidSession(
+        error.message
+      );
+
+      return;
+
+    }
 
     locationText.textContent =
       error.message;
@@ -2063,11 +1728,6 @@ async function stopLocationSharing(){
   }
 
 }
-
-
-/* ==========================================
-   LOCAL GEOLOCATION STOP
-========================================== */
 
 function stopLocalGeolocation(){
 
@@ -2081,21 +1741,17 @@ function stopLocalGeolocation(){
         geolocationWatchId
       );
 
-
     geolocationWatchId =
       null;
 
   }
 
-
   locationSharing =
     false;
-
 
   locationDot.classList.remove(
     "on"
   );
-
 
   startLocationButton.disabled =
     false;
@@ -2105,17 +1761,11 @@ function stopLocalGeolocation(){
 
 }
 
-
-/* ==========================================
-   MAP INITIALIZATION
-========================================== */
-
 function initializeMap(){
 
   if(map){
     return;
   }
-
 
   map =
     L.map(
@@ -2132,28 +1782,22 @@ function initializeMap(){
       11
     );
 
-
   L.tileLayer(
     "https://tile.openstreetmap.org/{z}/{x}/{y}.png",
     {
-
       maxZoom:19,
 
       attribution:
         "&copy; OpenStreetMap contributors"
-
     }
   )
   .addTo(map);
-
 
   setTimeout(
     () => {
 
       if(map){
-
         map.invalidateSize();
-
       }
 
     },
@@ -2161,11 +1805,6 @@ function initializeMap(){
   );
 
 }
-
-
-/* ==========================================
-   HELPER MAP MARKER
-========================================== */
 
 function updateHelperMapMarker(
   latitude,
@@ -2176,19 +1815,16 @@ function updateHelperMapMarker(
     return;
   }
 
-
   const point = [
     latitude,
     longitude
   ];
-
 
   if(!helperMarker){
 
     const icon =
       L.divIcon(
         {
-
           className:"",
 
           html:
@@ -2199,10 +1835,8 @@ function updateHelperMapMarker(
 
           iconAnchor:
             [25,25]
-
         }
       );
-
 
     helperMarker =
       L.marker(
@@ -2224,11 +1858,6 @@ function updateHelperMapMarker(
 
 }
 
-
-/* ==========================================
-   REMOVE HELPER MARKER
-========================================== */
-
 function removeHelperMapMarker(){
 
   if(
@@ -2240,18 +1869,12 @@ function removeHelperMapMarker(){
       helperMarker
     );
 
-
     helperMarker =
       null;
 
   }
 
 }
-
-
-/* ==========================================
-   ROUTE
-========================================== */
 
 async function refreshRoute(
   force = false
@@ -2263,20 +1886,15 @@ async function refreshRoute(
     currentMission.status ===
       "Delivered"
   ){
-
     return;
-
   }
-
 
   if(routeRefreshBusy){
     return;
   }
 
-
   const now =
     Date.now();
-
 
   if(
     !force &&
@@ -2284,15 +1902,11 @@ async function refreshRoute(
     lastRouteRefreshAt <
     ROUTE_REFRESH_INTERVAL_MS
   ){
-
     return;
-
   }
-
 
   routeRefreshBusy =
     true;
-
 
   try{
 
@@ -2300,38 +1914,65 @@ async function refreshRoute(
       await postJSON(
         ROUTE_API,
         {
-
           mission_id:
             currentMission.id,
 
           helper_token:
             helperToken
-
         }
       );
-
 
     lastRouteRefreshAt =
       Date.now();
 
-
     if(
-      result.mission_status
+      result.mission_status &&
+      result.mission_status !==
+        currentMission.status
     ){
 
       currentMission.status =
         result.mission_status;
 
-    }
+      renderMission();
 
+      if(
+        currentMission.status ===
+        "Delivered"
+      ){
+
+        stopLocalGeolocation();
+
+        helperToken = "";
+
+        clearRouteDisplay();
+
+        return;
+
+      }
+
+    }
 
     renderRoute(
       result
     );
 
-
   }
   catch(error){
+
+    if(
+      isSessionFailure(
+        error.message
+      )
+    ){
+
+      endInvalidSession(
+        error.message
+      );
+
+      return;
+
+    }
 
     routeTarget.textContent =
       error.message;
@@ -2346,11 +1987,6 @@ async function refreshRoute(
 
 }
 
-
-/* ==========================================
-   RENDER ROUTE
-========================================== */
-
 function renderRoute(result){
 
   if(
@@ -2364,23 +2000,14 @@ function renderRoute(result){
 
   }
 
-
   renderRoutePrivacy();
-
 
   const route =
     result.route ||
     null;
 
-
-  /*
-   * Backend privacy rules decide which
-   * destination information may be returned.
-   */
-
   let target =
     null;
-
 
   if(
     result.destination_unlocked &&
@@ -2400,7 +2027,6 @@ function renderRoute(result){
 
   }
 
-
   if(target){
 
     routeTarget.textContent =
@@ -2413,7 +2039,6 @@ function renderRoute(result){
           "Pickup"
       );
 
-
     updateTargetMarker(
       target
     );
@@ -2424,11 +2049,9 @@ function renderRoute(result){
     routeTarget.textContent =
       "Private route has not been prepared yet.";
 
-
     removeTargetMarker();
 
   }
-
 
   if(
     result.helper_location
@@ -2440,14 +2063,12 @@ function renderRoute(result){
         result.helper_location.lat
       );
 
-
     const helperLon =
       Number(
         result.helper_location.longitude ??
         result.helper_location.lon ??
         result.helper_location.lng
       );
-
 
     if(
       Number.isFinite(helperLat) &&
@@ -2463,11 +2084,9 @@ function renderRoute(result){
 
   }
 
-
   const navigation =
     result.navigation ||
     null;
-
 
   if(!navigation){
 
@@ -2479,13 +2098,11 @@ function renderRoute(result){
 
   }
 
-
   routeDistance.textContent =
     formatDistance(
       navigation.distance_miles,
       navigation.distance_meters
     );
-
 
   routeDuration.textContent =
     formatDuration(
@@ -2493,38 +2110,28 @@ function renderRoute(result){
       navigation.duration_seconds
     );
 
-
   routeEta.textContent =
     formatEta(
       navigation.estimated_arrival
     );
 
-
   drawNavigationGeometry(
     navigation.geometry
   );
-
 
   renderSteps(
     navigation.steps
   );
 
-
   fitRoute();
 
 }
-
-
-/* ==========================================
-   ROUTE PRIVACY COPY
-========================================== */
 
 function renderRoutePrivacy(){
 
   if(!currentMission){
     return;
   }
-
 
   if(
     currentMission.status ===
@@ -2543,7 +2150,6 @@ function renderRoutePrivacy(){
 
   }
 
-
   if(
     currentMission.status ===
     "Items Received" ||
@@ -2560,16 +2166,10 @@ function renderRoutePrivacy(){
 
   }
 
-
   routePrivacyText.textContent =
     "Private route closed.";
 
 }
-
-
-/* ==========================================
-   TARGET MARKER
-========================================== */
 
 function updateTargetMarker(target){
 
@@ -2577,13 +2177,11 @@ function updateTargetMarker(target){
     return;
   }
 
-
   const latitude =
     Number(
       target.latitude ??
       target.lat
     );
-
 
   const longitude =
     Number(
@@ -2591,7 +2189,6 @@ function updateTargetMarker(target){
       target.lon ??
       target.lng
     );
-
 
   if(
     !Number.isFinite(latitude) ||
@@ -2604,19 +2201,16 @@ function updateTargetMarker(target){
 
   }
 
-
   const point = [
     latitude,
     longitude
   ];
-
 
   if(!targetMarker){
 
     const icon =
       L.divIcon(
         {
-
           className:"",
 
           html:
@@ -2627,10 +2221,8 @@ function updateTargetMarker(target){
 
           iconAnchor:
             [25,25]
-
         }
       );
-
 
     targetMarker =
       L.marker(
@@ -2650,7 +2242,6 @@ function updateTargetMarker(target){
 
   }
 
-
   if(target.label){
 
     targetMarker.bindPopup(
@@ -2663,11 +2254,6 @@ function updateTargetMarker(target){
 
 }
 
-
-/* ==========================================
-   REMOVE TARGET
-========================================== */
-
 function removeTargetMarker(){
 
   if(
@@ -2679,18 +2265,12 @@ function removeTargetMarker(){
       targetMarker
     );
 
-
     targetMarker =
       null;
 
   }
 
 }
-
-
-/* ==========================================
-   ROUTE GEOMETRY
-========================================== */
 
 function drawNavigationGeometry(
   geometry
@@ -2700,19 +2280,16 @@ function drawNavigationGeometry(
     return;
   }
 
-
   if(routeLayer){
 
     map.removeLayer(
       routeLayer
     );
 
-
     routeLayer =
       null;
 
   }
-
 
   if(
     !geometry ||
@@ -2722,11 +2299,8 @@ function drawNavigationGeometry(
       geometry.coordinates
     )
   ){
-
     return;
-
   }
-
 
   const points =
     geometry.coordinates
@@ -2737,33 +2311,25 @@ function drawNavigationGeometry(
             !Array.isArray(coordinate) ||
             coordinate.length < 2
           ){
-
             return null;
-
           }
-
 
           const longitude =
             Number(
               coordinate[0]
             );
 
-
           const latitude =
             Number(
               coordinate[1]
             );
 
-
           if(
             !Number.isFinite(latitude) ||
             !Number.isFinite(longitude)
           ){
-
             return null;
-
           }
-
 
           return [
             latitude,
@@ -2774,15 +2340,11 @@ function drawNavigationGeometry(
       )
       .filter(Boolean);
 
-
   if(
     points.length < 2
   ){
-
     return;
-
   }
-
 
   routeLayer =
     L.polyline(
@@ -2796,26 +2358,16 @@ function drawNavigationGeometry(
 
 }
 
-
-/* ==========================================
-   STEPS
-========================================== */
-
 function renderSteps(steps){
 
-  routeSteps.innerHTML =
-    "";
-
+  routeSteps.innerHTML = "";
 
   if(
     !Array.isArray(steps) ||
     steps.length === 0
   ){
-
     return;
-
   }
-
 
   for(
     const step
@@ -2830,21 +2382,17 @@ function renderSteps(steps){
       )
       .trim();
 
-
     if(!instruction){
       continue;
     }
-
 
     const item =
       document.createElement(
         "li"
       );
 
-
     item.textContent =
       instruction;
-
 
     routeSteps.appendChild(
       item
@@ -2854,11 +2402,6 @@ function renderSteps(steps){
 
 }
 
-
-/* ==========================================
-   FORMAT ROUTE DATA
-========================================== */
-
 function formatDistance(
   miles,
   meters
@@ -2866,7 +2409,6 @@ function formatDistance(
 
   const milesNumber =
     Number(miles);
-
 
   if(
     Number.isFinite(
@@ -2881,10 +2423,8 @@ function formatDistance(
 
   }
 
-
   const metersNumber =
     Number(meters);
-
 
   if(
     Number.isFinite(
@@ -2903,11 +2443,9 @@ function formatDistance(
 
   }
 
-
   return "—";
 
 }
-
 
 function formatDuration(
   minutes,
@@ -2917,14 +2455,12 @@ function formatDuration(
   let value =
     Number(minutes);
 
-
   if(
     !Number.isFinite(value)
   ){
 
     const secondsNumber =
       Number(seconds);
-
 
     if(
       Number.isFinite(
@@ -2940,15 +2476,11 @@ function formatDuration(
 
   }
 
-
   if(
     !Number.isFinite(value)
   ){
-
     return "—";
-
   }
-
 
   return (
     Math.max(
@@ -2960,28 +2492,22 @@ function formatDuration(
 
 }
 
-
 function formatEta(value){
 
   if(!value){
     return "—";
   }
 
-
   const date =
     new Date(value);
-
 
   if(
     Number.isNaN(
       date.getTime()
     )
   ){
-
     return "—";
-
   }
-
 
   return date.toLocaleTimeString(
     [],
@@ -2993,11 +2519,6 @@ function formatEta(value){
 
 }
 
-
-/* ==========================================
-   MAP FIT
-========================================== */
-
 function fitRoute(){
 
   if(
@@ -3007,7 +2528,6 @@ function fitRoute(){
 
     const bounds =
       routeLayer.getBounds();
-
 
     if(
       bounds.isValid()
@@ -3026,11 +2546,9 @@ function fitRoute(){
 
   }
 
-
   fitVisibleMarkers();
 
 }
-
 
 function fitVisibleMarkers(){
 
@@ -3038,10 +2556,8 @@ function fitVisibleMarkers(){
     return;
   }
 
-
   const points =
     [];
-
 
   if(helperMarker){
 
@@ -3051,7 +2567,6 @@ function fitVisibleMarkers(){
 
   }
 
-
   if(targetMarker){
 
     points.push(
@@ -3059,7 +2574,6 @@ function fitVisibleMarkers(){
     );
 
   }
-
 
   if(points.length === 1){
 
@@ -3069,7 +2583,6 @@ function fitVisibleMarkers(){
     );
 
   }
-
 
   if(points.length > 1){
 
@@ -3083,11 +2596,6 @@ function fitVisibleMarkers(){
   }
 
 }
-
-
-/* ==========================================
-   CLEAR NAVIGATION
-========================================== */
 
 function clearNavigationOnly(){
 
@@ -3103,7 +2611,6 @@ function clearNavigationOnly(){
   routeSteps.innerHTML =
     "";
 
-
   if(
     map &&
     routeLayer
@@ -3113,14 +2620,12 @@ function clearNavigationOnly(){
       routeLayer
     );
 
-
     routeLayer =
       null;
 
   }
 
 }
-
 
 function clearRouteDisplay(){
 
@@ -3130,16 +2635,10 @@ function clearRouteDisplay(){
 
   removeHelperMapMarker();
 
-
   routeTarget.textContent =
     "Private route closed.";
 
 }
-
-
-/* ==========================================
-   DELIVERED UI
-========================================== */
 
 function handleDeliveredUI(){
 
@@ -3147,43 +2646,27 @@ function handleDeliveredUI(){
 
   clearRouteDisplay();
 
-
   startLocationButton.disabled =
     true;
 
   stopLocationButton.disabled =
     true;
 
-
   locationText.textContent =
     "Live location sharing ended.";
-
 
   routePrivacyText.textContent =
     "Mission complete. Private route access has ended.";
 
-
   closedCard.style.display =
     "block";
-
 
   statusActions.innerHTML =
     "";
 
 }
 
-
-/* ==========================================
-   CLOSE MISSION
-========================================== */
-
 async function closeMission(){
-
-  /*
-   * If the secure session is still active,
-   * make a best-effort stop request so current
-   * location is removed before closing.
-   */
 
   if(
     helperToken &&
@@ -3198,7 +2681,6 @@ async function closeMission(){
       await postJSON(
         LOCATION_API,
         {
-
           action:
             "stop",
 
@@ -3207,83 +2689,47 @@ async function closeMission(){
 
           helper_token:
             helperToken
-
         }
       );
 
     }
     catch{
 
-      /*
-       * Do not retain the local credential
-       * just because network cleanup failed.
-       */
-
     }
 
   }
-
 
   resetMissionCenter();
 
 }
 
-
-/* ==========================================
-   RESET
-========================================== */
-
 function resetMissionCenter(){
 
   stopLocalGeolocation();
 
-  helperToken =
-    "";
-
-  currentMission =
-    null;
-
-  latestPosition =
-    null;
-
-  lastLocationSentAt =
-    0;
-
-  lastRouteRefreshAt =
-    0;
-
-  routeRefreshBusy =
-    false;
-
-  statusUpdateBusy =
-    false;
-
+  helperToken = "";
+  currentMission = null;
+  latestPosition = null;
+  lastLocationSentAt = 0;
+  lastRouteRefreshAt = 0;
+  routeRefreshBusy = false;
+  statusUpdateBusy = false;
 
   clearRouteDisplay();
-
 
   if(map){
 
     map.remove();
 
-    map =
-      null;
+    map = null;
 
   }
 
+  helperMarker = null;
+  targetMarker = null;
+  routeLayer = null;
 
-  helperMarker =
-    null;
-
-  targetMarker =
-    null;
-
-  routeLayer =
-    null;
-
-
-  missionNumber.textContent =
-    "";
+  missionNumber.textContent = "";
 
   missionType.textContent =
     "HUG Mission";
@@ -3300,7 +2746,6 @@ function resetMissionCenter(){
   missionTiming.textContent =
     "—";
 
-
   statusActions.innerHTML =
     "";
 
@@ -3310,7 +2755,6 @@ function resetMissionCenter(){
   statusMessage.className =
     "";
 
-
   locationDot.classList.remove(
     "on"
   );
@@ -3318,13 +2762,11 @@ function resetMissionCenter(){
   locationText.textContent =
     "Location sharing is off.";
 
-
   startLocationButton.disabled =
     false;
 
   stopLocationButton.disabled =
     true;
-
 
   routeTarget.textContent =
     "Waiting for private route…";
@@ -3341,10 +2783,8 @@ function resetMissionCenter(){
   routeSteps.innerHTML =
     "";
 
-
   closedCard.style.display =
     "none";
-
 
   missionCenter.style.display =
     "none";
@@ -3352,13 +2792,11 @@ function resetMissionCenter(){
   openMissionCard.style.display =
     "block";
 
-
   openMissionButton.disabled =
     false;
 
   openMissionButton.textContent =
     "Open Mission";
-
 
   missionIdInput.value =
     "";
@@ -3369,16 +2807,10 @@ function resetMissionCenter(){
   helperEmailInput.value =
     "";
 
-
   openError.textContent =
     "";
 
 }
-
-
-/* ==========================================
-   ERROR
-========================================== */
 
 function showOpenError(text){
 
@@ -3386,11 +2818,6 @@ function showOpenError(text){
     text;
 
 }
-
-
-/* ==========================================
-   ESCAPE
-========================================== */
 
 function escapeHTML(value){
 
@@ -3420,30 +2847,15 @@ function escapeHTML(value){
 
 }
 
-
-/* ==========================================
-   PAGE EXIT
-========================================== */
-
 window.addEventListener(
   "pagehide",
   () => {
 
-    /*
-     * Do not attempt to preserve the session
-     * credential when leaving the page.
-     */
-
     stopLocalGeolocation();
 
-    helperToken =
-      "";
-
-    latestPosition =
-      null;
-
-    currentMission =
-      null;
+    helperToken = "";
+    latestPosition = null;
+    currentMission = null;
 
   }
 );
