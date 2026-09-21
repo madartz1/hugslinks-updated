@@ -1,32 +1,52 @@
 import { getStore } from "@netlify/blobs";
+import crypto from "node:crypto";
 
 /*
  * HUGSLinks
- * Assigned Helper Mission Status
+ * Secure Assigned Helper Mission Status
  *
  * File:
  * netlify/functions/update-hug-mission-status.mjs
  *
+ * AUTHORIZATION
+ * -------------
+ * The Helper browser sends ONLY:
+ *
+ * - mission_id
+ * - helper_token
+ * - status
+ *
+ * Helper ID and email are NOT repeatedly sent.
+ *
+ * The temporary helper_token is verified against
+ * the SHA-256 hash stored in the private mission
+ * session.
+ *
  * STATUS JOURNEY
  * --------------
- * Accepted
- * At Pickup
- * Items Received
- * On the Way
- * Delivered
  *
- * Only the assigned, approved Helper
- * may update the mission.
+ * Accepted
+ *   ↓
+ * At Pickup
+ *   ↓
+ * Items Received
+ *   ↓
+ * On the Way
+ *   ↓
+ * Delivered
  *
  * DELIVERY PRIVACY
  * ----------------
+ *
+ * Delivered is a hard privacy boundary.
+ *
  * When a mission becomes Delivered:
  *
- * - Final Delivered status is saved.
- * - Current Helper live location is removed.
- * - Matching active mission sessions are ended.
- * - Recipient tracking therefore cannot continue.
- * - No historical location data is retained here.
+ * - Delivered is saved first.
+ * - Active mission sessions are ended.
+ * - Current Helper location is removed.
+ * - Recipient tracking becomes unusable.
+ * - No location history is retained here.
  */
 
 
@@ -52,10 +72,6 @@ const MISSIONS_KEY =
 const SESSIONS_KEY =
   "sessions";
 
-/*
- * Must match:
- * update-hug-helper-location.mjs
- */
 const LOCATIONS_KEY =
   "active-locations";
 
@@ -75,7 +91,10 @@ const headers = {
     "0",
 
   "X-Content-Type-Options":
-    "nosniff"
+    "nosniff",
+
+  "Referrer-Policy":
+    "no-referrer"
 
 };
 
@@ -133,20 +152,18 @@ function cleanText(
 
 
 /* ==========================================
-   EMAIL
+   VALIDATION
 ========================================== */
 
-function validEmail(email){
+function validMissionId(
+  missionId
+){
 
-  return /^[^\s@]+@[^\s@]+\.[^\s@]+$/
-    .test(email);
+  return /^HUG-\d{4}-[A-Za-z0-9-]{4,40}$/
+    .test(missionId);
 
 }
 
-
-/* ==========================================
-   HELPER ID
-========================================== */
 
 function validHelperId(
   helperId
@@ -158,16 +175,77 @@ function validHelperId(
 }
 
 
-/* ==========================================
-   MISSION ID
-========================================== */
-
-function validMissionId(
-  missionId
+function validHelperToken(
+  token
 ){
 
-  return /^HUG-\d{4}-[A-Za-z0-9-]{4,40}$/
-    .test(missionId);
+  return /^[a-f0-9]{64}$/i
+    .test(token);
+
+}
+
+
+/* ==========================================
+   TOKEN HASH
+========================================== */
+
+function hashToken(token){
+
+  return crypto
+    .createHash("sha256")
+    .update(token)
+    .digest("hex");
+
+}
+
+
+/* ==========================================
+   TIMING SAFE HASH COMPARISON
+========================================== */
+
+function safeHashEqual(
+  suppliedHash,
+  storedHash
+){
+
+  if(
+    typeof suppliedHash !== "string" ||
+    typeof storedHash !== "string"
+  ){
+
+    return false;
+
+  }
+
+
+  const supplied =
+    Buffer.from(
+      suppliedHash,
+      "utf8"
+    );
+
+
+  const stored =
+    Buffer.from(
+      storedHash,
+      "utf8"
+    );
+
+
+  if(
+    supplied.length !==
+    stored.length
+  ){
+
+    return false;
+
+  }
+
+
+  return crypto.timingSafeEqual(
+    supplied,
+    stored
+  );
 
 }
 
@@ -331,17 +409,9 @@ function nextStatus(
 
 
   if(
-    position === -1
-  ){
-
-    return null;
-
-  }
-
-
-  if(
+    position === -1 ||
     position >=
-    STATUS_FLOW.length - 1
+      STATUS_FLOW.length - 1
   ){
 
     return null;
@@ -352,6 +422,128 @@ function nextStatus(
   return STATUS_FLOW[
     position + 1
   ];
+
+}
+
+
+/* ==========================================
+   REMOVE CURRENT LIVE LOCATION
+========================================== */
+
+async function removeMissionLocation(
+  missionId,
+  helperId
+){
+
+  const locationStore =
+    getStore(
+      LOCATION_STORE_NAME
+    );
+
+
+  const locations =
+    await readCollection(
+      locationStore,
+      LOCATIONS_KEY,
+      "locations"
+    );
+
+
+  const filtered =
+    locations.filter(
+      location => {
+
+        const sameMission =
+          String(
+            location?.mission_id || ""
+          ) ===
+          missionId;
+
+
+        const sameHelper =
+          String(
+            location?.helper_id || ""
+          )
+          .trim()
+          .toUpperCase() ===
+          helperId;
+
+
+        return !(
+          sameMission &&
+          sameHelper
+        );
+
+      }
+    );
+
+
+  if(
+    filtered.length ===
+    locations.length
+  ){
+
+    return false;
+
+  }
+
+
+  await saveLocations(
+    locationStore,
+    filtered
+  );
+
+
+  return true;
+
+}
+
+
+/* ==========================================
+   EXPIRED SESSION CLEANUP
+========================================== */
+
+async function expireSession(
+  sessionStore,
+  sessions,
+  session,
+  now,
+  missionId,
+  helperId
+){
+
+  session.active =
+    false;
+
+  session.ended_at =
+    now;
+
+  session.ended_reason =
+    "Session expired";
+
+
+  await saveSessions(
+    sessionStore,
+    sessions
+  );
+
+
+  try{
+
+    await removeMissionLocation(
+      missionId,
+      helperId
+    );
+
+  }
+  catch(error){
+
+    console.error(
+      "Expired HUG session location cleanup error:",
+      error
+    );
+
+  }
 
 }
 
@@ -399,11 +591,7 @@ async function closeDeliveredMission(
     ]);
 
 
-  /* ======================================
-     END ACTIVE SESSIONS
-  ====================================== */
-
-  let sessionsChanged =
+  let sessionsEnded =
     false;
 
 
@@ -416,9 +604,7 @@ async function closeDeliveredMission(
       String(
         session?.mission_id || ""
       ) ===
-      String(
-        missionId
-      );
+      missionId;
 
 
     const sameHelper =
@@ -426,13 +612,8 @@ async function closeDeliveredMission(
         session?.helper_id || ""
       )
       .trim()
-      .toUpperCase()
-      ===
-      String(
-        helperId
-      )
-      .trim()
-      .toUpperCase();
+      .toUpperCase() ===
+      helperId;
 
 
     if(
@@ -450,17 +631,13 @@ async function closeDeliveredMission(
       session.ended_reason =
         "Mission delivered";
 
-      sessionsChanged =
+      sessionsEnded =
         true;
 
     }
 
   }
 
-
-  /* ======================================
-     REMOVE LIVE LOCATION
-  ====================================== */
 
   const filteredLocations =
     locations.filter(
@@ -470,9 +647,7 @@ async function closeDeliveredMission(
           String(
             location?.mission_id || ""
           ) ===
-          String(
-            missionId
-          );
+          missionId;
 
 
         const sameHelper =
@@ -480,19 +655,9 @@ async function closeDeliveredMission(
             location?.helper_id || ""
           )
           .trim()
-          .toUpperCase()
-          ===
-          String(
-            helperId
-          )
-          .trim()
-          .toUpperCase();
+          .toUpperCase() ===
+          helperId;
 
-
-        /*
-         * Remove matching live-location
-         * entry on delivery.
-         */
 
         return !(
           sameMission &&
@@ -503,7 +668,7 @@ async function closeDeliveredMission(
     );
 
 
-  const locationsChanged =
+  const locationRemoved =
     filteredLocations.length !==
     locations.length;
 
@@ -512,7 +677,7 @@ async function closeDeliveredMission(
     [];
 
 
-  if(sessionsChanged){
+  if(sessionsEnded){
 
     writes.push(
       saveSessions(
@@ -524,7 +689,7 @@ async function closeDeliveredMission(
   }
 
 
-  if(locationsChanged){
+  if(locationRemoved){
 
     writes.push(
       saveLocations(
@@ -548,10 +713,10 @@ async function closeDeliveredMission(
   return {
 
     sessions_ended:
-      sessionsChanged,
+      sessionsEnded,
 
     location_removed:
-      locationsChanged
+      locationRemoved
 
   };
 
@@ -562,10 +727,7 @@ async function closeDeliveredMission(
    MAIN
 ========================================== */
 
-export default async (
-  request,
-  context
-) => {
+export default async request => {
 
 
   /* ======================================
@@ -578,8 +740,12 @@ export default async (
 
     return jsonResponse(
       {
+
         ok:false,
-        error:"Method not allowed."
+
+        error:
+          "Method not allowed."
+
       },
       405
     );
@@ -591,7 +757,7 @@ export default async (
 
 
     /* ======================================
-       BODY
+       REQUEST BODY
     ====================================== */
 
     let body;
@@ -607,8 +773,12 @@ export default async (
 
       return jsonResponse(
         {
+
           ok:false,
-          error:"Invalid request."
+
+          error:
+            "Invalid request."
+
         },
         400
       );
@@ -627,20 +797,11 @@ export default async (
       );
 
 
-    const helperId =
+    const helperToken =
       cleanText(
-        body?.helper_id,
-        80
-      )
-      .toUpperCase();
-
-
-    const helperEmail =
-      cleanText(
-        body?.helper_email,
-        254
-      )
-      .toLowerCase();
+        body?.helper_token,
+        128
+      );
 
 
     const requestedStatus =
@@ -652,8 +813,7 @@ export default async (
 
     if(
       !missionId ||
-      !helperId ||
-      !helperEmail ||
+      !helperToken ||
       !requestedStatus
     ){
 
@@ -663,7 +823,7 @@ export default async (
           ok:false,
 
           error:
-            "Mission, Helper ID, email and status are required."
+            "Mission, secure Helper session and status are required."
 
         },
         400
@@ -680,8 +840,12 @@ export default async (
 
       return jsonResponse(
         {
+
           ok:false,
-          error:"Invalid HUG Mission number."
+
+          error:
+            "Invalid HUG Mission number."
+
         },
         400
       );
@@ -690,34 +854,21 @@ export default async (
 
 
     if(
-      !validHelperId(
-        helperId
+      !validHelperToken(
+        helperToken
       )
     ){
 
       return jsonResponse(
         {
+
           ok:false,
-          error:"Invalid HUGS Helper reference number."
+
+          error:
+            "Invalid secure Helper session."
+
         },
-        400
-      );
-
-    }
-
-
-    if(
-      !validEmail(
-        helperEmail
-      )
-    ){
-
-      return jsonResponse(
-        {
-          ok:false,
-          error:"Invalid email address."
-        },
-        400
+        401
       );
 
     }
@@ -731,8 +882,12 @@ export default async (
 
       return jsonResponse(
         {
+
           ok:false,
-          error:"Invalid HUG Mission status."
+
+          error:
+            "Invalid HUG Mission status."
+
         },
         400
       );
@@ -741,7 +896,188 @@ export default async (
 
 
     /* ======================================
-       VERIFY HELPER
+       LOAD SECURE SESSIONS
+    ====================================== */
+
+    const sessionStore =
+      getStore(
+        SESSION_STORE_NAME
+      );
+
+
+    const sessions =
+      await readCollection(
+        sessionStore,
+        SESSIONS_KEY,
+        "sessions"
+      );
+
+
+    const suppliedHash =
+      hashToken(
+        helperToken
+      );
+
+
+    /*
+     * Find an active session for this mission
+     * whose stored token hash matches the
+     * supplied temporary Helper token.
+     */
+
+    const session =
+      sessions.find(
+        item => {
+
+          if(
+            item?.active !== true
+          ){
+
+            return false;
+
+          }
+
+
+          if(
+            String(
+              item?.mission_id || ""
+            ) !==
+            missionId
+          ){
+
+            return false;
+
+          }
+
+
+          return safeHashEqual(
+            suppliedHash,
+            String(
+              item?.helper_token_hash ||
+              ""
+            )
+          );
+
+        }
+      );
+
+
+    if(!session){
+
+      return jsonResponse(
+        {
+
+          ok:false,
+
+          error:
+            "This secure HUG Helper session is invalid or no longer active."
+
+        },
+        401
+      );
+
+    }
+
+
+    /* ======================================
+       SESSION HELPER
+    ====================================== */
+
+    const helperId =
+      String(
+        session.helper_id || ""
+      )
+      .trim()
+      .toUpperCase();
+
+
+    if(
+      !validHelperId(
+        helperId
+      )
+    ){
+
+      return jsonResponse(
+        {
+
+          ok:false,
+
+          error:
+            "This secure HUG Helper session is invalid."
+
+        },
+        401
+      );
+
+    }
+
+
+    /* ======================================
+       SESSION EXPIRATION
+    ====================================== */
+
+    const expiresAt =
+      new Date(
+        session.expires_at
+      )
+      .getTime();
+
+
+    const nowDate =
+      new Date();
+
+
+    const now =
+      nowDate.toISOString();
+
+
+    if(
+      !Number.isFinite(
+        expiresAt
+      ) ||
+      expiresAt <=
+        nowDate.getTime()
+    ){
+
+      try{
+
+        await expireSession(
+          sessionStore,
+          sessions,
+          session,
+          now,
+          missionId,
+          helperId
+        );
+
+      }
+      catch(error){
+
+        console.error(
+          "Expired HUG session cleanup error:",
+          error
+        );
+
+      }
+
+
+      return jsonResponse(
+        {
+
+          ok:false,
+
+          error:
+            "This secure HUG Helper session has expired."
+
+        },
+        401
+      );
+
+    }
+
+
+    /* ======================================
+       VERIFY HELPER IS STILL APPROVED
     ====================================== */
 
     const helperStore =
@@ -766,44 +1102,15 @@ export default async (
             item?.id || ""
           )
           .trim()
-          .toUpperCase()
-          ===
-          helperId &&
-
-          String(
-            item?.email || ""
-          )
-          .trim()
-          .toLowerCase()
-          ===
-          helperEmail
+          .toUpperCase() ===
+          helperId
       );
 
-
-    if(!helper){
-
-      return jsonResponse(
-        {
-
-          ok:false,
-
-          error:
-            "We could not verify this HUGS Helper registration."
-
-        },
-        403
-      );
-
-    }
-
-
-    /* ======================================
-       HELPER MUST STILL BE APPROVED
-    ====================================== */
 
     if(
+      !helper ||
       helper.status !==
-      "Approved"
+        "Approved"
     ){
 
       return jsonResponse(
@@ -812,7 +1119,7 @@ export default async (
           ok:false,
 
           error:
-            "This HUGS Helper is not currently approved for missions."
+            "This HUGS Helper is no longer approved for active missions."
 
         },
         403
@@ -853,8 +1160,12 @@ export default async (
 
       return jsonResponse(
         {
+
           ok:false,
-          error:"HUG Mission not found."
+
+          error:
+            "HUG Mission not found."
+
         },
         404
       );
@@ -872,8 +1183,7 @@ export default async (
         ""
       )
       .trim()
-      .toUpperCase()
-      !==
+      .toUpperCase() !==
       helperId
     ){
 
@@ -893,7 +1203,7 @@ export default async (
 
 
     /* ======================================
-       STATUS VALIDATION
+       STATUS FLOW VALIDATION
     ====================================== */
 
     const expectedStatus =
@@ -940,17 +1250,7 @@ export default async (
 
 
     /*
-     * Helpers cannot skip mission stages.
-     *
-     * Accepted
-     *   ↓
-     * At Pickup
-     *   ↓
-     * Items Received
-     *   ↓
-     * On the Way
-     *   ↓
-     * Delivered
+     * No skipped stages.
      */
 
     if(
@@ -975,13 +1275,8 @@ export default async (
 
 
     /* ======================================
-       UPDATE STATUS
+       UPDATE MISSION
     ====================================== */
-
-    const now =
-      new Date()
-        .toISOString();
-
 
     const previousStatus =
       mission.status;
@@ -1076,7 +1371,7 @@ export default async (
 
 
     /* ======================================
-       SAVE FINAL MISSION STATUS
+       SAVE STATUS FIRST
     ====================================== */
 
     await saveMissions(
@@ -1086,7 +1381,7 @@ export default async (
 
 
     /* ======================================
-       DELIVERY PRIVACY SHUTDOWN
+       DELIVERED PRIVACY SHUTDOWN
     ====================================== */
 
     let privacyShutdown = {
@@ -1116,14 +1411,12 @@ export default async (
       catch(cleanupError){
 
         /*
-         * The mission has already been saved
-         * as Delivered.
+         * Delivered has already been saved.
          *
-         * get-hug-live-tracking.mjs also
-         * treats Delivered as a hard privacy
-         * boundary and returns no coordinates,
-         * even if cleanup encounters a temporary
-         * storage error.
+         * Recipient tracking and Helper routing
+         * must independently reject Delivered
+         * missions even if Blob cleanup briefly
+         * fails.
          */
 
         console.error(
