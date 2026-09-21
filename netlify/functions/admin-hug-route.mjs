@@ -1,10 +1,35 @@
 import { getStore } from "@netlify/blobs";
+import crypto from "node:crypto";
+
+/*
+ * HUGSLinks
+ * Secure Admin Private HUG Route
+ *
+ * FILE:
+ * netlify/functions/admin-hug-route.mjs
+ *
+ * PURPOSE
+ * -------
+ * Allows authenticated HUGS Admin to create
+ * or update the private pickup/destination
+ * coordinates for an assigned active mission.
+ *
+ * PRIVACY
+ * -------
+ * Private route information is stored separately
+ * from the public HUG Mission collection.
+ *
+ * get-hug-route.mjs controls when an assigned
+ * Helper may see pickup/destination information.
+ */
+
 
 const MISSION_STORE_NAME =
   "hugs-help-missions";
 
 const ROUTE_STORE_NAME =
   "hugs-help-private-routes";
+
 
 const MISSIONS_KEY =
   "missions";
@@ -13,14 +38,41 @@ const ROUTES_KEY =
   "routes";
 
 
+const ACTIVE_ROUTE_STATUSES =
+  new Set([
+    "Accepted",
+    "At Pickup",
+    "Items Received",
+    "On the Way"
+  ]);
+
+
 const headers = {
+
   "Content-Type":
     "application/json; charset=utf-8",
 
   "Cache-Control":
-    "no-store, no-cache, must-revalidate"
+    "no-store, no-cache, must-revalidate",
+
+  "Pragma":
+    "no-cache",
+
+  "Expires":
+    "0",
+
+  "X-Content-Type-Options":
+    "nosniff",
+
+  "Referrer-Policy":
+    "no-referrer"
+
 };
 
+
+/* ==========================================
+   RESPONSE
+========================================== */
 
 function jsonResponse(
   body,
@@ -34,8 +86,13 @@ function jsonResponse(
       headers
     }
   );
+
 }
 
+
+/* ==========================================
+   CLEAN TEXT
+========================================== */
 
 function cleanText(
   value,
@@ -45,8 +102,11 @@ function cleanText(
   if(
     typeof value !== "string"
   ){
+
     return "";
+
   }
+
 
   return value
     .trim()
@@ -58,6 +118,198 @@ function cleanText(
       0,
       max
     );
+
+}
+
+
+/* ==========================================
+   MISSION ID
+========================================== */
+
+function validMissionId(
+  missionId
+){
+
+  return /^HUG-\d{4}-[A-Za-z0-9-]{4,40}$/
+    .test(missionId);
+
+}
+
+
+/* ==========================================
+   ADMIN TOKEN SECURITY
+========================================== */
+
+function safeTokenEqual(
+  suppliedToken,
+  configuredToken
+){
+
+  if(
+    typeof suppliedToken !== "string" ||
+    typeof configuredToken !== "string" ||
+    !suppliedToken ||
+    !configuredToken
+  ){
+
+    return false;
+
+  }
+
+
+  const supplied =
+    Buffer.from(
+      suppliedToken,
+      "utf8"
+    );
+
+
+  const configured =
+    Buffer.from(
+      configuredToken,
+      "utf8"
+    );
+
+
+  if(
+    supplied.length !==
+    configured.length
+  ){
+
+    return false;
+
+  }
+
+
+  return crypto.timingSafeEqual(
+    supplied,
+    configured
+  );
+
+}
+
+
+/* ==========================================
+   ADMIN AUTH
+========================================== */
+
+function authorizedAdmin(
+  request
+){
+
+  const configuredToken =
+    process.env.HUGS_ADMIN_TOKEN;
+
+
+  if(!configuredToken){
+
+    return {
+      configured:false,
+      authorized:false
+    };
+
+  }
+
+
+  const authorization =
+    request.headers.get(
+      "authorization"
+    ) || "";
+
+
+  const prefix =
+    "Bearer ";
+
+
+  if(
+    !authorization.startsWith(
+      prefix
+    )
+  ){
+
+    return {
+      configured:true,
+      authorized:false
+    };
+
+  }
+
+
+  const suppliedToken =
+    authorization
+      .slice(
+        prefix.length
+      )
+      .trim();
+
+
+  return {
+
+    configured:true,
+
+    authorized:
+      safeTokenEqual(
+        suppliedToken,
+        configuredToken
+      )
+
+  };
+
+}
+
+
+/* ==========================================
+   COORDINATES
+========================================== */
+
+function parseCoordinate(
+  value
+){
+
+  /*
+   * Prevent:
+   *
+   * Number("")    -> 0
+   * Number(null)  -> 0
+   *
+   * from silently creating a coordinate.
+   */
+
+  if(
+    value === null ||
+    value === undefined
+  ){
+
+    return null;
+
+  }
+
+
+  if(
+    typeof value === "string" &&
+    !value.trim()
+  ){
+
+    return null;
+
+  }
+
+
+  const number =
+    Number(value);
+
+
+  if(
+    !Number.isFinite(number)
+  ){
+
+    return null;
+
+  }
+
+
+  return number;
+
 }
 
 
@@ -68,13 +320,17 @@ function validCoordinate(
 ){
 
   return (
-    typeof value === "number" &&
     Number.isFinite(value) &&
     value >= min &&
     value <= max
   );
+
 }
 
+
+/* ==========================================
+   READ COLLECTION
+========================================== */
 
 async function readCollection(
   store,
@@ -91,29 +347,49 @@ async function readCollection(
       }
     );
 
+
   if(!stored){
+
     return [];
+
   }
+
 
   if(
     Array.isArray(
       stored[property]
     )
   ){
+
     return stored[property];
+
   }
+
 
   if(
     Array.isArray(stored)
   ){
+
     return stored;
+
   }
 
+
   return [];
+
 }
 
 
+/* ==========================================
+   MAIN
+========================================== */
+
 export default async request => {
+
+
+  /* ======================================
+     POST ONLY
+  ====================================== */
 
   if(
     request.method !== "POST"
@@ -126,22 +402,31 @@ export default async request => {
       },
       405
     );
+
   }
 
 
   try{
 
-    /* ADMIN AUTH */
 
-    const configuredToken =
-      process.env.HUGS_ADMIN_TOKEN;
+    /* ======================================
+       ADMIN AUTHENTICATION
+    ====================================== */
+
+    const admin =
+      authorizedAdmin(
+        request
+      );
 
 
-    if(!configuredToken){
+    if(
+      !admin.configured
+    ){
 
       console.error(
         "HUGS_ADMIN_TOKEN is not configured."
       );
+
 
       return jsonResponse(
         {
@@ -150,18 +435,12 @@ export default async request => {
         },
         500
       );
+
     }
 
 
-    const auth =
-      request.headers.get(
-        "authorization"
-      ) || "";
-
-
     if(
-      auth !==
-      `Bearer ${configuredToken}`
+      !admin.authorized
     ){
 
       return jsonResponse(
@@ -171,10 +450,16 @@ export default async request => {
         },
         401
       );
+
     }
 
 
+    /* ======================================
+       REQUEST BODY
+    ====================================== */
+
     let body;
+
 
     try{
 
@@ -191,8 +476,13 @@ export default async request => {
         },
         400
       );
+
     }
 
+
+    /* ======================================
+       INPUT
+    ====================================== */
 
     const missionId =
       cleanText(
@@ -216,30 +506,36 @@ export default async request => {
 
 
     const pickupLatitude =
-      Number(
+      parseCoordinate(
         body?.pickup_latitude
       );
 
 
     const pickupLongitude =
-      Number(
+      parseCoordinate(
         body?.pickup_longitude
       );
 
 
     const destinationLatitude =
-      Number(
+      parseCoordinate(
         body?.destination_latitude
       );
 
 
     const destinationLongitude =
-      Number(
+      parseCoordinate(
         body?.destination_longitude
       );
 
 
-    if(!missionId){
+    /* ======================================
+       MISSION VALIDATION
+    ====================================== */
+
+    if(
+      !missionId
+    ){
 
       return jsonResponse(
         {
@@ -248,8 +544,30 @@ export default async request => {
         },
         400
       );
+
     }
 
+
+    if(
+      !validMissionId(
+        missionId
+      )
+    ){
+
+      return jsonResponse(
+        {
+          ok:false,
+          error:"Invalid HUG Mission number."
+        },
+        400
+      );
+
+    }
+
+
+    /* ======================================
+       COORDINATE VALIDATION
+    ====================================== */
 
     if(
       !validCoordinate(
@@ -277,14 +595,19 @@ export default async request => {
       return jsonResponse(
         {
           ok:false,
-          error:"Valid pickup and destination coordinates are required."
+
+          error:
+            "Valid pickup and destination coordinates are required."
         },
         400
       );
+
     }
 
 
-    /* VERIFY MISSION */
+    /* ======================================
+       VERIFY MISSION
+    ====================================== */
 
     const missionStore =
       getStore(
@@ -303,7 +626,9 @@ export default async request => {
     const mission =
       missions.find(
         item =>
-          item.id ===
+          String(
+            item?.id || ""
+          ) ===
           missionId
       );
 
@@ -317,26 +642,88 @@ export default async request => {
         },
         404
       );
+
     }
 
 
+    /* ======================================
+       ASSIGNED HELPER REQUIRED
+    ====================================== */
+
+    const assignedHelperId =
+      cleanText(
+        mission.assigned_helper_id,
+        80
+      );
+
+
     if(
-      !mission.assigned_helper_id
+      !assignedHelperId
     ){
 
       return jsonResponse(
         {
+
           ok:false,
 
           error:
             "A Helper must be assigned before a private route is created."
+
         },
         409
       );
+
     }
 
 
-    /* ROUTE */
+    /* ======================================
+       ACTIVE MISSION REQUIRED
+    ====================================== */
+
+    if(
+      !ACTIVE_ROUTE_STATUSES.has(
+        mission.status
+      )
+    ){
+
+      if(
+        mission.status ===
+        "Delivered"
+      ){
+
+        return jsonResponse(
+          {
+
+            ok:false,
+
+            error:
+              "This HUG Mission has already been delivered. Its private route can no longer be changed."
+
+          },
+          409
+        );
+
+      }
+
+
+      return jsonResponse(
+        {
+
+          ok:false,
+
+          error:
+            "Private routing is not available for this mission status."
+
+        },
+        409
+      );
+
+    }
+
+
+    /* ======================================
+       PRIVATE ROUTE STORE
+    ====================================== */
 
     const routeStore =
       getStore(
@@ -357,12 +744,17 @@ export default async request => {
         .toISOString();
 
 
+    /* ======================================
+       ROUTE RECORD
+    ====================================== */
+
     const route = {
 
       mission_id:
         missionId,
 
       pickup:{
+
         label:
           pickupLabel ||
           "HUG Pickup",
@@ -372,9 +764,11 @@ export default async request => {
 
         longitude:
           pickupLongitude
+
       },
 
       destination:{
+
         label:
           destinationLabel ||
           "HUG Destination",
@@ -384,6 +778,7 @@ export default async request => {
 
         longitude:
           destinationLongitude
+
       },
 
       created_at:
@@ -391,13 +786,20 @@ export default async request => {
 
       updated_at:
         now
+
     };
 
+
+    /* ======================================
+       CREATE OR REPLACE
+    ====================================== */
 
     const existingIndex =
       routes.findIndex(
         item =>
-          item.mission_id ===
+          String(
+            item?.mission_id || ""
+          ) ===
           missionId
       );
 
@@ -416,36 +818,65 @@ export default async request => {
       route.created_at =
         routes[
           existingIndex
-        ].created_at || now;
+        ]?.created_at ||
+        now;
 
 
       routes[
         existingIndex
       ] =
         route;
+
     }
 
+
+    /* ======================================
+       SAVE PRIVATE ROUTES
+    ====================================== */
 
     await routeStore.setJSON(
       ROUTES_KEY,
       {
+
         updated_at:
           now,
 
         routes
+
       }
     );
 
 
+    /* ======================================
+       RESPONSE
+    ====================================== */
+
     return jsonResponse(
       {
+
         ok:true,
 
         mission_id:
           missionId,
 
+        mission_status:
+          mission.status,
+
+        helper_assigned:
+          true,
+
+        updated_at:
+          now,
+
         message:
-          "Private HUG route saved."
+          existingIndex === -1
+
+            ?
+            "Private HUG route created."
+
+            :
+            "Private HUG route updated."
+
       }
     );
 
@@ -453,18 +884,25 @@ export default async request => {
   }
   catch(error){
 
+
     console.error(
-      "HUG route admin error:",
+      "Secure HUG route admin error:",
       error
     );
 
 
     return jsonResponse(
       {
+
         ok:false,
-        error:"Private HUG route could not be saved."
+
+        error:
+          "Private HUG route could not be saved."
+
       },
       500
     );
+
   }
+
 };
