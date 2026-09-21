@@ -1,6 +1,8 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
+
 <meta charset="UTF-8">
 
 <meta
@@ -8,7 +10,15 @@
   content="width=device-width,initial-scale=1,viewport-fit=cover"
 >
 
-<meta name="robots" content="noindex,nofollow,noarchive">
+<meta
+  name="robots"
+  content="noindex,nofollow,noarchive"
+>
+
+<meta
+  name="referrer"
+  content="no-referrer"
+>
 
 <title>Track Your HUG | HUGSLinks</title>
 
@@ -18,6 +28,7 @@
 >
 
 <style>
+
 :root{
   --navy:#06162f;
   --blue:#1267ff;
@@ -27,22 +38,43 @@
   --text:#14213d;
   --muted:#68758b;
   --red:#b42318;
+  --border:#dce4ef;
 }
 
-*{box-sizing:border-box}
+*{
+  box-sizing:border-box;
+}
 
 body{
   margin:0;
   background:var(--light);
   color:var(--text);
-  font-family:system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+  font-family:
+    system-ui,
+    -apple-system,
+    BlinkMacSystemFont,
+    "Segoe UI",
+    sans-serif;
+}
+
+button,
+input{
+  font:inherit;
 }
 
 header{
-  padding:28px 18px;
+  padding:
+    calc(28px + env(safe-area-inset-top))
+    18px
+    28px;
   text-align:center;
   color:white;
-  background:linear-gradient(135deg,var(--navy),#0c459f);
+  background:
+    linear-gradient(
+      135deg,
+      var(--navy),
+      #0c459f
+    );
 }
 
 header h1{
@@ -64,7 +96,8 @@ header p{
   padding:20px;
   background:white;
   border-radius:20px;
-  box-shadow:0 12px 35px rgba(6,22,47,.1);
+  box-shadow:
+    0 12px 35px rgba(6,22,47,.1);
 }
 
 .access{
@@ -76,17 +109,37 @@ header p{
   flex:1;
   min-width:0;
   padding:13px;
-  border:1px solid #dce4ef;
+  border:
+    1px solid var(--border);
   border-radius:12px;
+  background:white;
+  color:var(--text);
 }
 
-.access button{
+.access button,
+.action-button{
   border:0;
   border-radius:12px;
   padding:12px 18px;
   background:var(--blue);
   color:white;
   font-weight:900;
+  cursor:pointer;
+}
+
+.secondary-button{
+  border:0;
+  border-radius:12px;
+  padding:12px 18px;
+  background:var(--navy);
+  color:white;
+  font-weight:900;
+  cursor:pointer;
+}
+
+button:disabled{
+  opacity:.55;
+  cursor:not-allowed;
 }
 
 #trackingContent{
@@ -112,6 +165,7 @@ header p{
   height:460px;
   border-radius:20px;
   overflow:hidden;
+  background:#e9eef5;
 }
 
 .live{
@@ -123,6 +177,7 @@ header p{
 }
 
 .dot{
+  flex:0 0 auto;
   width:11px;
   height:11px;
   border-radius:50%;
@@ -131,7 +186,9 @@ header p{
 
 .dot.on{
   background:var(--green);
-  box-shadow:0 0 0 6px rgba(18,132,82,.12);
+  box-shadow:
+    0 0 0 6px
+    rgba(18,132,82,.12);
 }
 
 .helper-pin{
@@ -144,7 +201,8 @@ header p{
   border-radius:50%;
   background:var(--blue);
   font-size:27px;
-  box-shadow:0 5px 16px rgba(0,0,0,.3);
+  box-shadow:
+    0 5px 16px rgba(0,0,0,.3);
 }
 
 .notice{
@@ -153,11 +211,45 @@ header p{
 }
 
 .error{
+  min-height:1.4em;
   color:var(--red);
   font-weight:800;
 }
 
+.completed-card{
+  display:none;
+  border:
+    1px solid #bde7cf;
+  background:#f0fbf5;
+}
+
+.completed-card h2{
+  margin-top:0;
+  color:var(--green);
+}
+
+.actions{
+  display:flex;
+  gap:10px;
+  flex-wrap:wrap;
+  margin-top:18px;
+}
+
+.security-note{
+  margin-top:14px;
+  padding:13px 14px;
+  border-left:
+    4px solid var(--blue);
+  border-radius:
+    0 12px 12px 0;
+  background:#eef5ff;
+  color:#315780;
+  line-height:1.55;
+  font-size:.92rem;
+}
+
 @media(max-width:600px){
+
   #map{
     height:390px;
   }
@@ -165,34 +257,56 @@ header p{
   .access{
     flex-direction:column;
   }
+
+  .access button,
+  .actions button{
+    width:100%;
+  }
+
 }
+
 </style>
+
 </head>
+
 
 <body>
 
+
 <header>
-<h1>Track Your HUG</h1>
+
+<h1>
+  Track Your HUG
+</h1>
 
 <p>
-Follow an active HUG Mission safely.
+  Follow an active HUG Mission safely.
 </p>
+
 </header>
 
 
 <main class="shell">
+
+
+<!-- ======================================
+     ACCESS
+======================================= -->
 
 <section
   class="card"
   id="accessCard"
 >
 
-<h2>Protected HUG Tracking</h2>
+<h2>
+  Protected HUG Tracking
+</h2>
 
 <p>
-Enter the private tracking code provided for
-this HUG Mission.
+  Enter the private tracking code provided
+  for this HUG Mission.
 </p>
+
 
 <div class="access">
 
@@ -200,6 +314,8 @@ this HUG Mission.
   id="trackingToken"
   type="password"
   autocomplete="off"
+  autocapitalize="off"
+  spellcheck="false"
   placeholder="Private tracking code"
 >
 
@@ -207,37 +323,60 @@ this HUG Mission.
   id="trackButton"
   type="button"
 >
-Track HUG
+  Track HUG
 </button>
 
 </div>
 
+
+<div class="security-note">
+
+  Your tracking code is used only in this
+  page's memory while tracking is active.
+
+  It is not stored in browser storage and
+  is not added to the page address.
+
+</div>
+
+
 <p
   id="errorMessage"
   class="error"
+  aria-live="polite"
 ></p>
 
 </section>
 
 
-<section id="trackingContent">
+<!-- ======================================
+     TRACKING
+======================================= -->
+
+<section
+  id="trackingContent"
+>
 
 <div class="card">
 
 <div
   id="missionNumber"
-  style="font-size:.8rem;font-weight:900;color:#1267ff"
+  style="
+    font-size:.8rem;
+    font-weight:900;
+    color:#1267ff;
+  "
 ></div>
 
 <h2 id="missionType">
-HUG Mission
+  HUG Mission
 </h2>
 
 <span
   id="missionStatus"
   class="status"
 >
-Accepted
+  Accepted
 </span>
 
 <p
@@ -248,7 +387,10 @@ Accepted
 </div>
 
 
-<div class="card">
+<div
+  class="card"
+  id="mapCard"
+>
 
 <div id="map"></div>
 
@@ -259,8 +401,11 @@ Accepted
   class="dot"
 ></span>
 
-<span id="liveText">
-Waiting for Helper location…
+<span
+  id="liveText"
+  aria-live="polite"
+>
+  Waiting for Helper location…
 </span>
 
 </div>
@@ -268,20 +413,68 @@ Waiting for Helper location…
 </div>
 
 
-<div class="card notice">
+<div
+  class="card completed-card"
+  id="completedCard"
+>
 
-<strong>HUGS Location Privacy</strong>
+<h2>
+  HUG Delivered ❤️
+</h2>
 
-<p>
-This page only displays location information
-while the Helper is actively sharing during the
-mission. Completed missions do not expose the
-Helper's previous route.
+<p class="notice">
+
+  This mission is complete.
+
+  Live Helper location sharing has ended,
+  and previous Helper coordinates are not
+  shown after delivery.
+
 </p>
 
 </div>
 
+
+<div class="card notice">
+
+<strong>
+  HUGS Location Privacy
+</strong>
+
+<p>
+
+  This page only displays current,
+  privacy-limited location information while
+  the Helper is actively sharing during an
+  active mission.
+
+</p>
+
+<p>
+
+  Completed missions do not expose the
+  Helper's previous route or historical
+  coordinates.
+
+</p>
+
+
+<div class="actions">
+
+<button
+  class="secondary-button"
+  id="closeTrackingButton"
+  type="button"
+>
+  Close Tracking
+</button>
+
+</div>
+
+</div>
+
 </section>
+
 
 </main>
 
@@ -293,12 +486,34 @@ Helper's previous route.
 
 <script>
 
+/* ==========================================
+   CONFIGURATION
+========================================== */
+
 const API =
   "/.netlify/functions/get-hug-live-tracking";
 
+const POLL_INTERVAL_MS =
+  10000;
+
+
+/* ==========================================
+   PRIVATE STATE
+========================================== */
+
+/*
+ * Memory only.
+ *
+ * The private recipient token is never placed
+ * into:
+ * - localStorage
+ * - sessionStorage
+ * - cookies
+ * - the URL
+ */
 
 let token =
-  null;
+  "";
 
 let map =
   null;
@@ -312,12 +527,91 @@ let pollingTimer =
 let firstLocation =
   true;
 
+let trackingActive =
+  false;
+
+let refreshInProgress =
+  false;
+
+
+/* ==========================================
+   ELEMENTS
+========================================== */
+
+const accessCard =
+  document.getElementById(
+    "accessCard"
+  );
+
+const trackingContent =
+  document.getElementById(
+    "trackingContent"
+  );
+
+const trackingTokenInput =
+  document.getElementById(
+    "trackingToken"
+  );
 
 const trackButton =
   document.getElementById(
     "trackButton"
   );
 
+const closeTrackingButton =
+  document.getElementById(
+    "closeTrackingButton"
+  );
+
+const errorMessage =
+  document.getElementById(
+    "errorMessage"
+  );
+
+const missionNumber =
+  document.getElementById(
+    "missionNumber"
+  );
+
+const missionType =
+  document.getElementById(
+    "missionType"
+  );
+
+const missionStatus =
+  document.getElementById(
+    "missionStatus"
+  );
+
+const missionArea =
+  document.getElementById(
+    "missionArea"
+  );
+
+const liveDot =
+  document.getElementById(
+    "liveDot"
+  );
+
+const liveText =
+  document.getElementById(
+    "liveText"
+  );
+
+const mapCard =
+  document.getElementById(
+    "mapCard"
+  );
+
+const completedCard =
+  document.getElementById(
+    "completedCard"
+  );
+
+
+/* ==========================================
+   EVENTS
+========================================== */
 
 trackButton.addEventListener(
   "click",
@@ -325,29 +619,77 @@ trackButton.addEventListener(
 );
 
 
-async function postJSON(
-  body
-){
+closeTrackingButton.addEventListener(
+  "click",
+  closeTracking
+);
+
+
+trackingTokenInput.addEventListener(
+  "keydown",
+  event => {
+
+    if(
+      event.key === "Enter"
+    ){
+
+      beginTracking();
+
+    }
+
+  }
+);
+
+
+/* ==========================================
+   REQUEST
+========================================== */
+
+async function postJSON(body){
 
   const response =
     await fetch(
       API,
       {
+
         method:"POST",
 
         headers:{
+
           "Content-Type":
             "application/json"
+
         },
+
+        cache:"no-store",
+
+        credentials:"omit",
+
+        referrerPolicy:"no-referrer",
 
         body:
           JSON.stringify(body)
+
       }
     );
 
 
-  const result =
-    await response.json();
+  let result;
+
+
+  try{
+
+    result =
+      await response.json();
+
+  }
+  catch{
+
+    throw new Error(
+      "HUG tracking returned an invalid response."
+    );
+
+  }
 
 
   if(
@@ -364,28 +706,68 @@ async function postJSON(
 
 
   return result;
+
 }
 
 
+/* ==========================================
+   BEGIN TRACKING
+========================================== */
+
 async function beginTracking(){
 
-  token =
-    document
-      .getElementById(
-        "trackingToken"
-      )
+  if(
+    trackingActive
+  ){
+    return;
+  }
+
+
+  clearError();
+
+
+  const enteredToken =
+    trackingTokenInput
       .value
       .trim();
 
 
-  if(!token){
+  if(!enteredToken){
 
     showError(
       "Enter the private HUG tracking code."
     );
 
     return;
+
   }
+
+
+  if(
+    !/^[a-fA-F0-9]{64}$/
+      .test(enteredToken)
+  ){
+
+    showError(
+      "The private HUG tracking code is not valid."
+    );
+
+    return;
+
+  }
+
+
+  /*
+   * Move the credential into JS memory
+   * and immediately clear the visible input.
+   */
+
+  token =
+    enteredToken;
+
+
+  trackingTokenInput.value =
+    "";
 
 
   trackButton.disabled =
@@ -401,39 +783,46 @@ async function beginTracking(){
       await loadTracking();
 
 
-    document
-      .getElementById(
-        "accessCard"
-      )
-      .style
-      .display =
-        "none";
+    trackingActive =
+      true;
 
 
-    document
-      .getElementById(
-        "trackingContent"
-      )
-      .style
-      .display =
-        "block";
+    accessCard.style.display =
+      "none";
+
+
+    trackingContent.style.display =
+      "block";
 
 
     initializeMap();
+
 
     renderTracking(
       result
     );
 
 
-    pollingTimer =
-      setInterval(
-        refreshTracking,
-        10000
-      );
+    /*
+     * Do not start polling if the very first
+     * response says the mission is already
+     * delivered.
+     */
+
+    if(
+      result.mission?.status !==
+      "Delivered"
+    ){
+
+      startPolling();
+
+    }
 
   }
   catch(error){
+
+    clearPrivateToken();
+
 
     showError(
       error.message
@@ -447,31 +836,64 @@ async function beginTracking(){
       "Track HUG";
 
   }
+
 }
 
+
+/* ==========================================
+   LOAD
+========================================== */
 
 async function loadTracking(){
 
+  if(!token){
+
+    throw new Error(
+      "Tracking access is no longer available."
+    );
+
+  }
+
+
   return await postJSON(
     {
+
       tracking_token:
         token
+
     }
   );
+
 }
 
 
+/* ==========================================
+   MAP
+========================================== */
+
 function initializeMap(){
+
+  if(map){
+    return;
+  }
+
 
   map =
     L.map(
       "map",
       {
-        zoomControl:true
+
+        zoomControl:true,
+
+        attributionControl:true
+
       }
     )
     .setView(
-      [40.7128,-74.0060],
+      [
+        40.7128,
+        -74.0060
+      ],
       11
     );
 
@@ -479,10 +901,12 @@ function initializeMap(){
   L.tileLayer(
     "https://tile.openstreetmap.org/{z}/{x}/{y}.png",
     {
+
       maxZoom:19,
 
       attribution:
         "&copy; OpenStreetMap contributors"
+
     }
   )
   .addTo(map);
@@ -490,14 +914,73 @@ function initializeMap(){
 
   setTimeout(
     () => {
-      map.invalidateSize();
+
+      if(map){
+
+        map.invalidateSize();
+
+      }
+
     },
     100
   );
+
 }
 
 
+/* ==========================================
+   POLLING
+========================================== */
+
+function startPolling(){
+
+  stopPolling();
+
+
+  pollingTimer =
+    setInterval(
+      refreshTracking,
+      POLL_INTERVAL_MS
+    );
+
+}
+
+
+function stopPolling(){
+
+  if(pollingTimer){
+
+    clearInterval(
+      pollingTimer
+    );
+
+
+    pollingTimer =
+      null;
+
+  }
+
+}
+
+
+/* ==========================================
+   REFRESH
+========================================== */
+
 async function refreshTracking(){
+
+  if(
+    !trackingActive ||
+    !token ||
+    refreshInProgress
+  ){
+    return;
+  }
+
+
+  refreshInProgress =
+    true;
+
 
   try{
 
@@ -510,70 +993,98 @@ async function refreshTracking(){
     );
 
 
-    if(
-      result.mission.status ===
-      "Delivered"
-    ){
-
-      clearInterval(
-        pollingTimer
-      );
-
-      pollingTimer =
-        null;
-    }
-
   }
   catch(error){
 
-    document
-      .getElementById(
-        "liveText"
+    liveDot.classList.remove(
+      "on"
+    );
+
+
+    liveText.textContent =
+      "Tracking connection interrupted. Trying again…";
+
+
+    /*
+     * Invalid / expired access should not be
+     * retried indefinitely.
+     */
+
+    const message =
+      String(
+        error.message || ""
       )
-      .textContent =
-        "Tracking connection interrupted.";
+      .toLowerCase();
+
+
+    if(
+      message.includes("expired") ||
+      message.includes("invalid") ||
+      message.includes("no longer active") ||
+      message.includes("no longer valid")
+    ){
+
+      stopPolling();
+
+      clearPrivateToken();
+
+      trackingActive =
+        false;
+
+
+      liveText.textContent =
+        "Private tracking access has ended.";
+
+    }
 
   }
+  finally{
+
+    refreshInProgress =
+      false;
+
+  }
+
 }
 
 
-function renderTracking(
-  result
-){
+/* ==========================================
+   RENDER
+========================================== */
+
+function renderTracking(result){
 
   const mission =
-    result.mission;
+    result?.mission;
 
 
-  document
-    .getElementById(
-      "missionNumber"
-    )
-    .textContent =
-      mission.id;
+  if(
+    !mission ||
+    !mission.id
+  ){
+
+    throw new Error(
+      "HUG Mission information is unavailable."
+    );
+
+  }
 
 
-  document
-    .getElementById(
-      "missionType"
-    )
-    .textContent =
-      mission.type ||
-      "HUG Mission";
+  missionNumber.textContent =
+    mission.id;
 
 
-  const status =
-    document
-      .getElementById(
-        "missionStatus"
-      );
+  missionType.textContent =
+    mission.type ||
+    "HUG Mission";
 
 
-  status.textContent =
-    mission.status;
+  missionStatus.textContent =
+    mission.status ||
+    "Active";
 
 
-  status.className =
+  missionStatus.className =
     mission.status ===
     "Delivered"
 
@@ -582,98 +1093,127 @@ function renderTracking(
       : "status";
 
 
-  document
-    .getElementById(
-      "missionArea"
-    )
-    .textContent =
-      [
-        mission.area,
-        mission.city
-      ]
-      .filter(Boolean)
-      .join(", ");
-
-
-  const dot =
-    document.getElementById(
-      "liveDot"
-    );
-
-
-  const text =
-    document.getElementById(
-      "liveText"
-    );
+  missionArea.textContent =
+    [
+      mission.area,
+      mission.city
+    ]
+    .filter(Boolean)
+    .join(", ");
 
 
   if(
-    result.live &&
+    mission.status ===
+    "Delivered"
+  ){
+
+    handleDelivered();
+
+    return;
+
+  }
+
+
+  completedCard.style.display =
+    "none";
+
+
+  mapCard.style.display =
+    "block";
+
+
+  if(
+    result.live === true &&
     result.location
   ){
 
-    dot.classList.add(
-      "on"
-    );
+    const latitude =
+      Number(
+        result.location.latitude
+      );
 
 
-    text.textContent =
-      "HUGS Helper location updated " +
-      new Date(
-        result.location.updated_at
-      )
-      .toLocaleTimeString();
-
-
-    updateHelperMarker(
-      result.location
-    );
-
-  }
-  else{
-
-    dot.classList.remove(
-      "on"
-    );
+    const longitude =
+      Number(
+        result.location.longitude
+      );
 
 
     if(
-      mission.status ===
-      "Delivered"
+      Number.isFinite(latitude) &&
+      Number.isFinite(longitude)
     ){
 
-      text.textContent =
-        "HUG Delivered ❤️";
-
-    }
-    else{
-
-      text.textContent =
-        "Waiting for the Helper to share a live location.";
-
-    }
-
-
-    if(helperMarker){
-
-      map.removeLayer(
-        helperMarker
+      liveDot.classList.add(
+        "on"
       );
 
-      helperMarker =
-        null;
+
+      const updated =
+        formatLocationTime(
+          result.location.updated_at
+        );
+
+
+      liveText.textContent =
+        updated
+          ?
+          "HUGS Helper location updated " +
+          updated
+          :
+          "HUGS Helper location is live.";
+
+
+      updateHelperMarker(
+        latitude,
+        longitude
+      );
+
+
+      return;
+
     }
+
   }
+
+
+  /*
+   * No fresh location is available.
+   * Remove any previously displayed marker
+   * so stale coordinates never stay visible.
+   */
+
+  removeHelperMarker();
+
+
+  liveDot.classList.remove(
+    "on"
+  );
+
+
+  liveText.textContent =
+    "Waiting for the Helper to share a current live location.";
+
 }
 
 
+/* ==========================================
+   HELPER MARKER
+========================================== */
+
 function updateHelperMarker(
-  location
+  latitude,
+  longitude
 ){
 
+  if(!map){
+    return;
+  }
+
+
   const position = [
-    location.latitude,
-    location.longitude
+    latitude,
+    longitude
   ];
 
 
@@ -682,16 +1222,18 @@ function updateHelperMarker(
     const icon =
       L.divIcon(
         {
+
           className:"",
 
           html:
-            '<div class="helper-pin">🐻</div>',
+            '<div class="helper-pin" aria-label="HUGS Helper">🐻</div>',
 
           iconSize:
             [54,54],
 
           iconAnchor:
             [27,27]
+
         }
       );
 
@@ -706,19 +1248,16 @@ function updateHelperMarker(
       .addTo(map);
 
 
-    helperMarker
-      .bindPopup(
-        "<strong>HUGS Helper</strong><br>Helping deliver this HUG."
-      );
-
+    helperMarker.bindPopup(
+      "<strong>HUGS Helper</strong><br>Helping deliver this HUG."
+    );
 
   }
   else{
 
-    helperMarker
-      .setLatLng(
-        position
-      );
+    helperMarker.setLatLng(
+      position
+    );
 
   }
 
@@ -729,6 +1268,7 @@ function updateHelperMarker(
       position,
       15
     );
+
 
     firstLocation =
       false;
@@ -741,33 +1281,265 @@ function updateHelperMarker(
     );
 
   }
+
 }
 
 
-function showError(
-  text
-){
+/* ==========================================
+   REMOVE LOCATION
+========================================== */
 
-  document
-    .getElementById(
-      "errorMessage"
+function removeHelperMarker(){
+
+  if(
+    map &&
+    helperMarker
+  ){
+
+    map.removeLayer(
+      helperMarker
+    );
+
+
+    helperMarker =
+      null;
+
+  }
+
+}
+
+
+/* ==========================================
+   DELIVERED
+========================================== */
+
+function handleDelivered(){
+
+  /*
+   * Delivery is a hard privacy boundary.
+   *
+   * Immediately:
+   * - stop polling
+   * - remove Helper coordinates
+   * - remove plaintext tracking credential
+   * - hide the live map
+   */
+
+  stopPolling();
+
+  removeHelperMarker();
+
+  clearPrivateToken();
+
+
+  trackingActive =
+    false;
+
+
+  liveDot.classList.remove(
+    "on"
+  );
+
+
+  liveText.textContent =
+    "HUG Delivered ❤️";
+
+
+  mapCard.style.display =
+    "none";
+
+
+  completedCard.style.display =
+    "block";
+
+}
+
+
+/* ==========================================
+   CLOSE TRACKING
+========================================== */
+
+function closeTracking(){
+
+  stopPolling();
+
+  removeHelperMarker();
+
+  clearPrivateToken();
+
+
+  trackingActive =
+    false;
+
+  refreshInProgress =
+    false;
+
+  firstLocation =
+    true;
+
+
+  missionNumber.textContent =
+    "";
+
+  missionType.textContent =
+    "HUG Mission";
+
+  missionStatus.textContent =
+    "Accepted";
+
+  missionStatus.className =
+    "status";
+
+  missionArea.textContent =
+    "";
+
+
+  liveDot.classList.remove(
+    "on"
+  );
+
+
+  liveText.textContent =
+    "Waiting for Helper location…";
+
+
+  completedCard.style.display =
+    "none";
+
+  mapCard.style.display =
+    "block";
+
+
+  trackingContent.style.display =
+    "none";
+
+  accessCard.style.display =
+    "block";
+
+
+  trackButton.disabled =
+    false;
+
+  trackButton.textContent =
+    "Track HUG";
+
+
+  trackingTokenInput.value =
+    "";
+
+
+  clearError();
+
+
+  /*
+   * Destroy the Leaflet map so the next
+   * tracking session starts clean.
+   */
+
+  if(map){
+
+    map.remove();
+
+    map =
+      null;
+
+  }
+
+}
+
+
+/* ==========================================
+   PRIVATE TOKEN
+========================================== */
+
+function clearPrivateToken(){
+
+  token =
+    "";
+
+
+  trackingTokenInput.value =
+    "";
+
+}
+
+
+/* ==========================================
+   DATE
+========================================== */
+
+function formatLocationTime(value){
+
+  if(!value){
+    return "";
+  }
+
+
+  const date =
+    new Date(value);
+
+
+  if(
+    Number.isNaN(
+      date.getTime()
     )
-    .textContent =
-      text;
+  ){
+    return "";
+  }
+
+
+  return date
+    .toLocaleTimeString(
+      [],
+      {
+        hour:"numeric",
+        minute:"2-digit"
+      }
+    );
+
 }
 
+
+/* ==========================================
+   ERROR
+========================================== */
+
+function showError(text){
+
+  errorMessage.textContent =
+    text;
+
+}
+
+
+function clearError(){
+
+  errorMessage.textContent =
+    "";
+
+}
+
+
+/* ==========================================
+   PAGE EXIT
+========================================== */
 
 window.addEventListener(
   "pagehide",
   () => {
 
-    if(pollingTimer){
+    stopPolling();
 
-      clearInterval(
-        pollingTimer
-      );
+    removeHelperMarker();
 
-    }
+    clearPrivateToken();
+
+
+    trackingActive =
+      false;
+
+    refreshInProgress =
+      false;
 
   }
 );
@@ -775,4 +1547,5 @@ window.addEventListener(
 </script>
 
 </body>
+
 </html>
