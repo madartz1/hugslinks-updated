@@ -1823,21 +1823,52 @@
 
       try{
 
+        const payload =
+          Object.fromEntries(
+            formData.entries()
+          );
+
+        payload.help_types =
+          formData.getAll(
+            "help_types"
+          );
+
+        payload.transportation =
+          formData.getAll(
+            "transportation"
+          );
+
+        payload.skills_experience =
+          formData.get(
+            "helper_notes"
+          ) || "";
+
+        payload.helper_consent =
+          formData.has("helper_consent")
+            ? "Yes"
+            : "";
+
         const response =
           await fetch(
-            window.location.pathname,
+            "/.netlify/functions/submit-hugs-helper",
             {
               method:"POST",
 
               headers:{
                 "Content-Type":
-                  "application/x-www-form-urlencoded"
+                  "application/json"
               },
 
+              cache:"no-store",
+
+              credentials:"omit",
+
+              referrerPolicy:"no-referrer",
+
               body:
-                new URLSearchParams(
-                  formData
-                ).toString()
+                JSON.stringify(
+                  payload
+                )
             }
           );
 
