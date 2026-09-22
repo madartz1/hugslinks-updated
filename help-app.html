@@ -13,7 +13,7 @@
 
   <meta
     name="description"
-    content="Call on HUGS when you need help, become a HUGS Helper, or Sponsor a HUG. HUGSLinks connects people, resources and community support."
+    content="Call on HUGS when you need practical help, become a HUGS Helper, support a HUG Mission or track an approved request."
   >
 
   <link rel="stylesheet" href="styles.css">
@@ -45,6 +45,7 @@
 
     body{
       margin:0;
+
       background:
         linear-gradient(
           180deg,
@@ -158,6 +159,10 @@
       margin-top:30px;
     }
 
+    /* ========================================
+       BUTTONS
+    ======================================== */
+
     .help-button{
       display:inline-flex;
 
@@ -177,6 +182,19 @@
       font-weight:900;
 
       cursor:pointer;
+
+      transition:
+        transform .18s ease,
+        box-shadow .18s ease;
+    }
+
+    .help-button:hover{
+      transform:translateY(-2px);
+    }
+
+    .help-button:focus-visible{
+      outline:3px solid var(--help-sky);
+      outline-offset:3px;
     }
 
     .help-button.gold{
@@ -549,7 +567,7 @@
     }
 
     /* ========================================
-       HUGS HELPERS
+       HELPERS
     ======================================== */
 
     .helper-section{
@@ -585,8 +603,7 @@
           #103d6c
         );
 
-      border-color:
-        transparent;
+      border-color:transparent;
     }
 
     .helper-panel .eyebrow{
@@ -654,6 +671,53 @@
     }
 
     /* ========================================
+       TRACKING
+    ======================================== */
+
+    .tracking-section{
+      margin-top:68px;
+
+      padding:36px;
+
+      border-radius:29px;
+
+      border:
+        1px solid
+        var(--help-line);
+
+      background:white;
+
+      text-align:center;
+    }
+
+    .tracking-section .eyebrow{
+      color:var(--help-blue);
+    }
+
+    .tracking-section h2{
+      margin:0;
+
+      color:var(--help-navy);
+
+      font-size:
+        clamp(
+          30px,
+          5vw,
+          44px
+        );
+    }
+
+    .tracking-section p{
+      max-width:700px;
+
+      margin:15px auto 24px;
+
+      color:var(--help-text);
+
+      line-height:1.7;
+    }
+
+    /* ========================================
        HUG DELIVERED
     ======================================== */
 
@@ -697,8 +761,7 @@
     .delivered-section p{
       max-width:730px;
 
-      margin:
-        0 auto;
+      margin:0 auto;
 
       color:#e8fff6;
 
@@ -757,16 +820,11 @@
     @media(max-width:620px){
 
       .help-page{
-        width:
-          min(
-            100% - 22px,
-            1140px
-          );
+        width:min(100% - 22px,1140px);
       }
 
       .help-hero{
-        padding:
-          45px 22px;
+        padding:45px 22px;
       }
 
       .help-paths,
@@ -776,9 +834,9 @@
 
       .mission-flow,
       .helper-panel,
+      .tracking-section,
       .delivered-section{
-        padding:
-          28px 21px;
+        padding:28px 21px;
       }
 
     }
@@ -833,33 +891,19 @@
 
     <div class="navlinks">
 
-      <a href="index.html">
-        Home
-      </a>
+      <a href="index.html">Home</a>
 
-      <a href="shop.html">
-        Shop
-      </a>
+      <a href="shop.html">Shop</a>
 
-      <a href="hugs-cards.html">
-        HUGS Cards
-      </a>
+      <a href="hugs-cards.html">HUGS Cards</a>
 
-      <a href="art-community.html">
-        Art
-      </a>
+      <a href="art-community.html">Art</a>
 
-      <a href="food-support.html">
-        Food
-      </a>
+      <a href="food-support.html">Food</a>
 
-      <a href="housing-help.html">
-        Housing
-      </a>
+      <a href="housing-help.html">Housing</a>
 
-      <a href="business-services.html">
-        Business
-      </a>
+      <a href="business-services.html">Business</a>
 
       <a
         href="help-app.html"
@@ -868,17 +912,11 @@
         Help App
       </a>
 
-      <a href="resources.html">
-        Resources
-      </a>
+      <a href="resources.html">Resources</a>
 
-      <a href="about.html">
-        About
-      </a>
+      <a href="about.html">About</a>
 
-      <a href="contact.html">
-        Contact
-      </a>
+      <a href="contact.html">Contact</a>
 
     </div>
 
@@ -911,9 +949,10 @@
 
     <p>
 
-      HUGS Help is being built to connect people who need
-      practical assistance with people, businesses and
-      community members willing to help.
+      HUGS Help connects people who need practical
+      assistance with approved Helpers, community
+      resources, participating businesses and people
+      willing to support a HUG Mission.
 
       <strong>
         Ask for a HUG. Give a HUG. Sponsor a HUG.
@@ -926,7 +965,7 @@
 
       <a
         class="help-button gold"
-        href="#need-help"
+        href="hug-request.html"
       >
         I Need Help
       </a>
@@ -934,7 +973,7 @@
 
       <a
         class="help-button white"
-        href="#give-help"
+        href="hugs-helper.html"
       >
         I Want to Help
       </a>
@@ -964,13 +1003,15 @@
 
   <p>
 
-    HUGS Help is designed around a simple idea:
+    HUGS Help is built around a simple idea:
     people should have an easier way to ask for practical
     assistance, find useful resources and participate in
     helping someone else.
 
-    HUGSLinks will organize that connection through
-    <strong>HUG Requests, HUGS Helpers and sponsored HUG Missions.</strong>
+    HUGSLinks organizes that connection through
+    <strong>
+      HUG Requests, HUGS Helpers and HUG Missions.
+    </strong>
 
   </p>
 
@@ -1003,15 +1044,16 @@
 
     <p>
 
-      Request practical assistance such as food pickup,
-      essential shopping, supplies or help finding
-      housing and community resources.
+      Submit a HUG Request for practical assistance,
+      including food support, essential items,
+      approved pickup or delivery help, or assistance
+      finding useful community resources.
 
     </p>
 
     <a
       class="help-button gold"
-      href="contact.html"
+      href="hug-request.html"
     >
       Request a HUG
     </a>
@@ -1038,17 +1080,17 @@
 
     <p>
 
-      Help with an approved community request by
-      contributing time, transportation, pickup,
-      delivery, skills or other practical support.
+      Apply to help with approved community missions
+      through transportation, pickup, delivery,
+      practical skills or other forms of support.
 
     </p>
 
     <a
       class="help-button blue"
-      href="contact.html"
+      href="hugs-helper.html"
     >
-      Join as a Helper
+      Become a Helper
     </a>
 
   </article>
@@ -1070,9 +1112,9 @@
 
     <p>
 
-      Can't make a delivery or help in person?
-      Support the work financially and help HUGSLinks
-      develop community-centered projects and missions.
+      You don't have to make a delivery to help.
+      Support HUGSLinks and help strengthen
+      community-centered projects and HUG Missions.
 
     </p>
 
@@ -1102,14 +1144,14 @@
     </div>
 
     <h2>
-      What could you call on HUGS for?
+      What can you call on HUGS for?
     </h2>
 
     <p>
 
-      HUGS Help will begin with practical,
-      community-level needs where connection and
-      coordination can make a meaningful difference.
+      HUGS Help focuses on practical community needs
+      where connection, information and coordinated
+      assistance can make a meaningful difference.
 
     </p>
 
@@ -1124,12 +1166,13 @@
       <span>🥗</span>
 
       <strong>
-        Food Pickup
+        Food Support
       </strong>
 
       <p>
-        Coordinate pickup of available food,
-        prepared meals or approved food support.
+        Request or locate available food,
+        prepared meals and participating
+        community food resources.
       </p>
 
     </article>
@@ -1144,8 +1187,8 @@
       </strong>
 
       <p>
-        Help obtaining basic groceries or essential
-        household items when appropriate.
+        Request assistance obtaining basic groceries
+        or essential household items when available.
       </p>
 
     </article>
@@ -1160,8 +1203,8 @@
       </strong>
 
       <p>
-        Connect available supplies with people or
-        community projects that can use them.
+        Connect available supplies with people
+        or approved community projects that can use them.
       </p>
 
     </article>
@@ -1176,7 +1219,7 @@
       </strong>
 
       <p>
-        Help move approved contributions from
+        Coordinate approved contributions from
         participating businesses to their destination.
       </p>
 
@@ -1192,7 +1235,7 @@
       </strong>
 
       <p>
-        Connect to HUGSLinks housing information,
+        Connect with HUGSLinks housing information,
         official resources and navigation tools.
       </p>
 
@@ -1208,8 +1251,8 @@
       </strong>
 
       <p>
-        Find government, community and support
-        resources in one easier starting place.
+        Find government, nonprofit, community and
+        support resources from one easier starting point.
       </p>
 
     </article>
@@ -1264,17 +1307,16 @@
 
 
   <h2>
-    From a request to a delivered HUG.
+    From request to HUG Delivered.
   </h2>
 
 
   <p>
 
-    The first HUGS Help system will use a managed process.
-    Requests can be reviewed before they become available
-    HUG Missions. That helps HUGSLinks grow the service
-    responsibly before adding more advanced dispatch
-    technology.
+    HUGS Help uses a managed mission process.
+    Requests can be reviewed before becoming available
+    HUG Missions, helping protect recipients and Helpers
+    while the community network grows.
 
   </p>
 
@@ -1327,7 +1369,7 @@
       </strong>
 
       <span>
-        An approved mission becomes available to a Helper.
+        An approved mission can be matched with an approved Helper.
       </span>
 
     </div>
@@ -1344,7 +1386,8 @@
       </strong>
 
       <span>
-        The Helper completes the approved assistance.
+        The Helper completes the approved pickup,
+        delivery or assistance.
       </span>
 
     </div>
@@ -1361,7 +1404,7 @@
       </strong>
 
       <span>
-        The completed mission becomes a HUG Delivered.
+        The completed mission becomes HUG Delivered.
       </span>
 
     </div>
@@ -1391,10 +1434,10 @@
 
     <p>
 
-      HUGS Helpers are the people who turn connection
-      into action. As the program develops, Helpers will
-      be able to participate in approved missions that
-      match what they are able and willing to do.
+      HUGS Helpers turn connection into action.
+      Approved Helpers can participate in available
+      HUG Missions that match what they are able and
+      willing to do.
 
     </p>
 
@@ -1422,7 +1465,7 @@
 
     <a
       class="help-button blue"
-      href="contact.html"
+      href="hugs-helper.html"
     >
       Become a HUGS Helper
     </a>
@@ -1442,9 +1485,9 @@
 
     <p>
 
-      Sponsors can support HUGSLinks and, as the mission
-      system develops, help fund clearly identified
-      community projects and approved HUG Missions.
+      Sponsors can support HUGSLinks and help
+      strengthen community projects and approved
+      HUG Missions as the network grows.
 
     </p>
 
@@ -1452,7 +1495,7 @@
     <div class="helper-list">
 
       <div class="helper-item">
-        Support HUGS development
+        Support HUGS Help development
       </div>
 
       <div class="helper-item">
@@ -1464,7 +1507,7 @@
       </div>
 
       <div class="helper-item">
-        Future mission-specific sponsorship
+        Support future mission-specific assistance
       </div>
 
     </div>
@@ -1479,6 +1522,39 @@
 
   </article>
 
+
+</section>
+
+
+<!-- ========================================
+     TRACK A HUG
+======================================== -->
+
+<section class="tracking-section">
+
+  <div class="eyebrow">
+    Active HUG
+  </div>
+
+  <h2>
+    Already have a HUG in progress?
+  </h2>
+
+  <p>
+
+    Approved recipients can use their private tracking
+    access to follow the status of an active HUG Mission.
+    Private mission information is only made available
+    through authorized access.
+
+  </p>
+
+  <a
+    class="help-button outline"
+    href="hug-tracking.html"
+  >
+    Track My HUG
+  </a>
 
 </section>
 
@@ -1501,11 +1577,14 @@
 
     The goal isn't simply to collect requests.
     It is to create a visible path from
-    <strong>need → connection → action → impact.</strong>
 
-    As HUGS Help grows, completed missions can help
-    show the community what was accomplished while
-    protecting private personal information.
+    <strong>
+      need → connection → action → impact.
+    </strong>
+
+    Completed missions can help show what the
+    community accomplished while protecting
+    private personal information.
 
   </p>
 
@@ -1513,23 +1592,25 @@
 
 
 <!-- ========================================
-     SAFETY / PHASE ONE
+     SAFETY
 ======================================== -->
 
 <div class="safety-note">
 
   <strong>
-    HUGS Help is being developed in phases.
+    HUGS Help is a community-support service and is
+    not an emergency service.
   </strong>
 
-  During the initial phase, requests and Helper
-  participation may require manual review before a
-  connection is made. Do not submit passwords,
-  Social Security numbers, banking information or
-  other highly sensitive information through general
-  contact forms. HUGS Help is not an emergency service.
-  For an immediate emergency, contact the appropriate
-  local emergency service.
+  Requests and Helper participation may require review
+  and approval before a connection or mission is made.
+
+  Do not submit passwords, Social Security numbers,
+  banking credentials or other unnecessary highly
+  sensitive information.
+
+  If you are experiencing an immediate emergency,
+  contact the appropriate local emergency service.
 
 </div>
 
