@@ -576,63 +576,203 @@
 
     .success-panel{
       display:none;
-
       margin-top:28px;
+    }
 
-      padding:35px;
-
-      text-align:center;
-
-      border-radius:28px;
-
-      background:
-        linear-gradient(
-          145deg,
-          #126a53,
-          #27855f
-        );
-
+    .success-hero{
+      position:relative;
+      overflow:hidden;
+      min-height:620px;
+      padding:42px;
+      border-radius:32px;
       color:white;
+      background:
+        linear-gradient(90deg,rgba(3,39,67,.96),rgba(3,58,76,.72)),
+        radial-gradient(circle at 80% 30%,#27855f 0,#064660 48%,#052c4c 100%);
+      box-shadow:0 20px 50px rgba(4,42,72,.18);
+    }
+
+    .success-heart{
+      color:#55c9ff;
+      font-size:62px;
+      line-height:1;
+    }
+
+    .success-copy{
+      position:relative;
+      z-index:2;
+      max-width:520px;
     }
 
     .success-panel h2{
-      margin:
-        10px 0;
-
+      margin:22px 0 14px;
       color:white;
-
-      font-size:36px;
+      font-size:46px;
+      line-height:1.08;
     }
 
     .success-panel p{
-      max-width:620px;
-
-      margin:
-        0 auto;
-
-      color:#e9fff6;
-
-      line-height:1.7;
+      margin:0;
+      color:#eaf8ff;
+      font-size:18px;
+      line-height:1.65;
     }
 
-    .success-icon{
-      font-size:45px;
+    .success-bear{
+      position:absolute;
+      right:32px;
+      bottom:0;
+      width:43%;
+      max-width:390px;
+      min-width:250px;
+      text-align:center;
+    }
+
+    .success-bear .bear-face{
+      font-size:150px;
+      filter:drop-shadow(0 12px 16px rgba(0,0,0,.25));
+    }
+
+    .thank-card{
+      margin:-16px auto 22px;
+      width:190px;
+      padding:22px 14px;
+      transform:rotate(-3deg);
+      border-radius:10px;
+      background:white;
+      color:#082e59;
+      box-shadow:0 10px 25px rgba(0,0,0,.22);
+      font-size:27px;
+      font-weight:900;
+      line-height:1.15;
+    }
+
+    .thank-card span{
+      display:block;
+      margin-top:7px;
+      color:#1585d8;
+      font-size:21px;
+    }
+
+    .request-number-card{
+      position:relative;
+      z-index:3;
+      max-width:590px;
+      margin-top:30px;
+      padding:20px 22px;
+      border:2px solid #61cbff;
+      border-radius:22px;
+      background:#f1fbff;
+      color:#082e59;
+      box-shadow:0 12px 25px rgba(0,0,0,.15);
+    }
+
+    .request-number-label{
+      font-size:12px;
+      font-weight:900;
+      letter-spacing:.18em;
+      text-transform:uppercase;
+    }
+
+    .request-number-row{
+      display:flex;
+      align-items:center;
+      gap:12px;
+      margin-top:6px;
     }
 
     .request-number{
-      display:inline-block;
+      flex:1;
+      overflow-wrap:anywhere;
+      color:#0877dc;
+      font-size:27px;
+      font-weight:950;
+    }
 
-      margin-top:18px;
+    .copy-request{
+      min-width:44px;
+      min-height:44px;
+      border:1px solid #b7dcf0;
+      border-radius:12px;
+      background:white;
+      color:#082e59;
+      font-size:19px;
+      cursor:pointer;
+    }
 
-      padding:
-        10px 15px;
+    .save-number{
+      margin-top:5px !important;
+      color:#405a70 !important;
+      font-size:13px !important;
+    }
 
+    .next-steps{
+      padding:30px 8px 8px;
+      text-align:center;
+    }
+
+    .next-steps h3{
+      color:#082e59;
+      font-size:16px;
+      letter-spacing:.18em;
+      text-transform:uppercase;
+    }
+
+    .steps-grid{
+      display:grid;
+      grid-template-columns:repeat(4,1fr);
+      gap:16px;
+      margin-top:22px;
+    }
+
+    .step-icon{
+      display:grid;
+      place-items:center;
+      width:62px;
+      height:62px;
+      margin:0 auto 10px;
+      border-radius:50%;
+      background:#0877a9;
+      color:white;
+      font-size:27px;
+    }
+
+    .step strong{
+      display:block;
+      color:#082e59;
+      font-size:14px;
+      letter-spacing:.06em;
+      text-transform:uppercase;
+    }
+
+    .step p{
+      margin-top:7px;
+      color:#52697d;
+      font-size:13px;
+      line-height:1.45;
+    }
+
+    .success-tagline{
+      margin:24px 0 !important;
+      color:#082e59 !important;
+      text-align:center;
+      font-size:27px !important;
+      font-weight:800;
+      font-style:italic;
+    }
+
+    .return-home{
+      display:flex;
+      justify-content:center;
+      max-width:560px;
+      margin:0 auto;
+      padding:16px 24px;
+      border:2px solid #67cfff;
       border-radius:999px;
-
-      background:
-        rgba(255,255,255,.14);
-
+      color:#082e59;
+      background:#eefaff;
       font-weight:900;
+      text-decoration:none;
     }
 
     /* =====================================
@@ -655,6 +795,31 @@
       .type-grid,
       .urgency-grid{
         grid-template-columns:1fr;
+      }
+
+
+      .success-hero{
+        min-height:auto;
+        padding:30px 22px 320px;
+      }
+
+      .success-panel h2{
+        font-size:36px;
+      }
+
+      .success-bear{
+        right:50%;
+        bottom:8px;
+        width:270px;
+        transform:translateX(50%);
+      }
+
+      .success-bear .bear-face{
+        font-size:125px;
+      }
+
+      .steps-grid{
+        grid-template-columns:1fr 1fr;
       }
 
     }
@@ -1510,28 +1675,94 @@
   id="successPanel"
   aria-live="polite"
 >
+  <div class="success-hero">
+    <div class="success-copy">
+      <div class="success-heart">♡</div>
 
-  <div class="success-icon">
-    ❤️
+      <h2>
+        Your HUG Request<br>
+        Has Been Received
+      </h2>
+
+      <p>
+        We see you. We appreciate you. Your request has
+        been submitted and is now under review by our
+        HUGS team. Please save your request number below.
+      </p>
+
+      <div class="request-number-card">
+        <div class="request-number-label">
+          Your HUG Request Number
+        </div>
+
+        <div class="request-number-row">
+          <div
+            class="request-number"
+            id="requestNumber"
+          ></div>
+
+          <button
+            class="copy-request"
+            id="copyRequestNumber"
+            type="button"
+            aria-label="Copy HUG Request number"
+          >
+            ⧉
+          </button>
+        </div>
+
+        <p class="save-number">
+          Please save this number for your records.
+        </p>
+      </div>
+    </div>
+
+    <div class="success-bear" aria-hidden="true">
+      <div class="bear-face">🧸</div>
+      <div class="thank-card">
+        HUGSLinks
+        <span>Thank You ♡</span>
+      </div>
+    </div>
   </div>
 
-  <h2>
-    HUG Request Received
-  </h2>
+  <div class="next-steps">
+    <h3>What Happens Next?</h3>
 
-  <p>
+    <div class="steps-grid">
+      <div class="step">
+        <div class="step-icon">✉</div>
+        <strong>1. Review</strong>
+        <p>We'll review your request.</p>
+      </div>
 
-    Thank you. Your request has been submitted for
-    review. Keep your HUG Request number for reference.
+      <div class="step">
+        <div class="step-icon">👥</div>
+        <strong>2. Match</strong>
+        <p>We'll connect you with appropriate help when available.</p>
+      </div>
 
-  </p>
+      <div class="step">
+        <div class="step-icon">🔔</div>
+        <strong>3. Updates</strong>
+        <p>You'll receive status updates as your request progresses.</p>
+      </div>
 
-  <div
-    class="request-number"
-    id="requestNumber"
-  >
+      <div class="step">
+        <div class="step-icon">♥</div>
+        <strong>4. Community</strong>
+        <p>Together we build a kinder, stronger community.</p>
+      </div>
+    </div>
+
+    <p class="success-tagline">
+      Help Under Good Service. ♡
+    </p>
+
+    <a class="return-home" href="index.html">
+      Return to Home ⌂
+    </a>
   </div>
-
 </section>
 
 
@@ -1570,6 +1801,42 @@
     document.getElementById(
       "requestNumber"
     );
+
+  const copyRequestNumber =
+    document.getElementById(
+      "copyRequestNumber"
+    );
+
+  copyRequestNumber.addEventListener(
+    "click",
+    async function(){
+      const value =
+        requestNumber.textContent.trim();
+
+      if(!value){
+        return;
+      }
+
+      try{
+        await navigator.clipboard.writeText(
+          value
+        );
+
+        copyRequestNumber.textContent =
+          "✓";
+
+        setTimeout(
+          () => {
+            copyRequestNumber.textContent =
+              "⧉";
+          },
+          1600
+        );
+      }catch(error){
+        /* Copy is optional; request remains visible. */
+      }
+    }
+  );
 
 
   function createRequestNumber(){
@@ -1678,9 +1945,17 @@
           );
 
 
-        if(!response.ok){
+        const result =
+          await response.json();
+
+        if(
+          !response.ok ||
+          !result.ok ||
+          !result.request_id
+        ){
 
           throw new Error(
+            result.error ||
             "Submission failed."
           );
 
@@ -1688,7 +1963,7 @@
 
 
         requestNumber.textContent =
-          hugId;
+          result.request_id;
 
 
         hugRequestForm.style.display =
