@@ -1739,24 +1739,6 @@
     );
 
 
-  function createHelperNumber(){
-
-    const year =
-      new Date().getFullYear();
-
-    const random =
-      Math.floor(
-        100000 +
-        Math.random() * 900000
-      );
-
-    return "HELPER-" +
-      year +
-      "-" +
-      random;
-  }
-
-
   helperForm.addEventListener(
     "submit",
     async function(event){
@@ -1805,20 +1787,10 @@
         "Submitting Registration...";
 
 
-      const helperId =
-        createHelperNumber();
-
-
       const formData =
         new FormData(
           helperForm
         );
-
-
-      formData.append(
-        "helper_id",
-        helperId
-      );
 
 
       try{
@@ -1873,9 +1845,17 @@
           );
 
 
-        if(!response.ok){
+        const result =
+          await response.json();
+
+        if(
+          !response.ok ||
+          !result.ok ||
+          !result.helper_id
+        ){
 
           throw new Error(
+            result.error ||
             "Submission failed."
           );
 
@@ -1883,7 +1863,7 @@
 
 
         helperNumber.textContent =
-          helperId;
+          result.helper_id;
 
 
         helperForm.style.display =
