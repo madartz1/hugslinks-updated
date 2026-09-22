@@ -3098,6 +3098,32 @@ function matchCard(match){
 }
 
 
+function prepareAssignedMission(
+  missionId
+){
+
+  if(!missionId){
+    return;
+  }
+
+  const routeMissionId =
+    document.getElementById(
+      "routeMissionId"
+    );
+
+  if(routeMissionId){
+    routeMissionId.value =
+      missionId;
+  }
+
+  if(trackingMissionId){
+    trackingMissionId.value =
+      missionId;
+  }
+
+}
+
+
 async function approveMatch(matchId){
 
   if(
@@ -3111,22 +3137,42 @@ async function approveMatch(matchId){
 
   try{
 
-    await adminFetch(
-      API,
-      {
-        method:"POST",
+    const result =
+      await adminFetch(
+        API,
+        {
+          method:"POST",
 
-        body:
-          JSON.stringify({
-            action:"approve-match",
-            match_id:matchId
-          })
-      }
+          body:
+            JSON.stringify({
+              action:"approve-match",
+              match_id:matchId
+            })
+        }
+      );
+
+
+    const missionId =
+      String(
+        result.mission_id || ""
+      )
+      .trim()
+      .toUpperCase();
+
+
+    prepareAssignedMission(
+      missionId
     );
 
 
     showMessage(
-      "Helper assigned. Mission is now Accepted."
+      missionId
+        ?
+        "Helper assigned to " +
+        missionId +
+        ". The Mission number is ready in Private Route and Recipient Tracking."
+        :
+        "Helper assigned. Mission is now Accepted."
     );
 
 
