@@ -332,7 +332,23 @@ button:disabled{
 }
 
 .helper-pin{
-  background:var(--blue);
+  width:76px;
+  height:76px;
+  border:0;
+  border-radius:0;
+  background:transparent;
+  box-shadow:none;
+  overflow:visible;
+}
+
+.helper-pin img{
+  display:block;
+  width:76px;
+  height:76px;
+  object-fit:contain;
+  filter:drop-shadow(0 5px 8px rgba(0,0,0,.28));
+  pointer-events:none;
+  user-select:none;
 }
 
 .target-pin{
@@ -1828,13 +1844,13 @@ function updateHelperMapMarker(
           className:"",
 
           html:
-            '<div class="helper-pin">🐻</div>',
+            '<div class="helper-pin"><img src="assets/hugslinks-helper-vehicle.PNG" alt="HUGSLinks Helper vehicle"></div>',
 
           iconSize:
-            [50,50],
+            [76,76],
 
           iconAnchor:
-            [25,25]
+            [38,62]
         }
       );
 
