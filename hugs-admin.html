@@ -767,7 +767,7 @@
         HUG Requests
       </button>
 
-      <button class="tab-button" data-tab="support" type="button">Support</button>\n\n      <button class="tab-button" data-tab="artists" type="button">Artists</button>
+      <button class="tab-button" data-tab="support" type="button">Support</button>\n\n      <button class="tab-button" data-tab="artists" type="button">Artists</button>\n      <button class="tab-button" data-tab="gallery" type="button">Art Gallery</button>
 
       <button
         class="tab-button"
@@ -1364,7 +1364,7 @@ let helperRecords = [];
 
 let foodOfferRecords = [];
 
-let artistRecords = [];\n\nlet supportRecords = [];
+let artistRecords = [];\nlet galleryRecords = [];\n\nlet supportRecords = [];
 
 let matchRecords = [];
 
@@ -4272,6 +4272,9 @@ window.addEventListener(
   }
 );
 
+
+async function loadGallery(){if(!galleryList)return;try{const d=await adminFetch(GALLERY_API);galleryRecords=d.works||[];galleryList.innerHTML=galleryRecords.length?'':'<div class="record-card">No managed artwork yet.</div>';galleryRecords.forEach(w=>{const card=document.createElement('article');card.className='record-card';const h=document.createElement('h3'),p=document.createElement('p'),b=document.createElement('button');h.textContent=w.title+' — '+w.artist_name;p.textContent=(w.collection||'Unassigned')+(w.published?' · Published':' · Draft');b.className='secondary-button';b.type='button';b.textContent='Edit / Replace';b.onclick=()=>{document.getElementById('galleryId').value=w.id||'';document.getElementById('galleryTitle').value=w.title||'';document.getElementById('galleryArtist').value=w.artist_name||'';document.getElementById('galleryCollection').value=w.collection||'Black Gold Series';document.getElementById('galleryImage').value=w.image_url||'';document.getElementById('galleryMedium').value=w.medium||'';document.getElementById('galleryDescription').value=w.description||'';document.getElementById('galleryPublished').checked=!!w.published;window.scrollTo({top:0,behavior:'smooth'})};card.append(h,p,b);galleryList.append(card)})}catch(e){galleryList.innerHTML='<div class="record-card">'+escapeHTML(e.message)+'</div>'}}
+document.getElementById('gallerySave')?.addEventListener('click',async()=>{const btn=document.getElementById('gallerySave');btn.disabled=true;try{await adminFetch(GALLERY_API,{method:'POST',body:JSON.stringify({action:'save',id:document.getElementById('galleryId').value,title:document.getElementById('galleryTitle').value,artist_name:document.getElementById('galleryArtist').value,collection:document.getElementById('galleryCollection').value,image_url:document.getElementById('galleryImage').value,medium:document.getElementById('galleryMedium').value,description:document.getElementById('galleryDescription').value,published:document.getElementById('galleryPublished').checked})});showMessage('Artwork saved to the live gallery feed.');await loadGallery()}catch(e){showMessage(e.message,'error')}finally{btn.disabled=false}});
 </script>
 
 </body>
