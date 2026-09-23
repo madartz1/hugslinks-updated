@@ -756,6 +756,8 @@
         HUG Requests
       </button>
 
+      <button class="tab-button" data-tab="artists" type="button">Artists</button>
+
       <button
         class="tab-button"
         data-tab="food"
@@ -809,6 +811,9 @@
 
     </section>
 
+
+    <!-- ARTISTS -->
+    <section class="admin-section" id="artistsSection"><div class="record-grid" id="artistList"><div class="loading">Loading artist submissions...</div></div></section>
 
     <!-- FOOD PARTNERS -->
     <section class="admin-section" id="foodSection">
@@ -1336,6 +1341,9 @@ const TRACKING_ACCESS_API =
 const FOOD_API =
   "/.netlify/functions/admin-food-partners";
 
+const ARTIST_API =
+  "/.netlify/functions/admin-artists";
+
 
 let adminToken = "";
 
@@ -1344,6 +1352,8 @@ let requestRecords = [];
 let helperRecords = [];
 
 let foodOfferRecords = [];
+
+let artistRecords = [];
 
 let matchRecords = [];
 
@@ -1393,6 +1403,9 @@ const helperList =
 
 const foodOfferList =
   document.getElementById("foodOfferList");
+
+const artistList =
+  document.getElementById("artistList");
 
 const matchList =
   document.getElementById("matchList");
@@ -1650,6 +1663,8 @@ loginButton.addEventListener(
 
       await loadFoodOffers();
 
+      await loadArtists();
+
       await loadMatches();
 
 
@@ -1727,6 +1742,8 @@ function lockAdmin(){
 
   foodOfferRecords = [];
 
+  artistRecords = [];
+
   matchRecords = [];
 
   issuedTrackingToken = "";
@@ -1737,6 +1754,8 @@ function lockAdmin(){
   helperList.innerHTML = "";
 
   if(foodOfferList){ foodOfferList.innerHTML = ""; }
+
+  if(artistList){ artistList.innerHTML = ""; }
 
   matchList.innerHTML = "";
 
@@ -1809,6 +1828,31 @@ async function loadRequests(){
 
 }
 
+
+async function loadArtists(){
+ if(!artistList)return;
+ artistList.innerHTML='<div class="loading">Loading artist submissions...</div>';
+ const result=await adminFetch(ARTIST_API);
+ artistRecords=Array.isArray(result.artists)?result.artists:[];
+ renderArtists();
+}
+function renderArtists(){
+ if(!artistList)return;
+ if(!artistRecords.length){artistList.innerHTML='<article class="record-card"><h3>No Artist Submissions Yet</h3><p>New HUGSLinks artist introductions will appear here.</p></article>';return}
+ artistList.innerHTML=artistRecords.map(artistCard).join("");
+}
+function artistCard(a){
+ const id=safeId(a.id),status=a.status||"Pending Review",links=(a.artwork_links||"");
+ return `<article class="record-card"><div class="record-top"><div><div class="record-id">${escapeHTML(a.id)}</div><h3>${escapeHTML(a.artist_name||a.full_name||"Artist")}</h3></div><span class="status-badge">${escapeHTML(status)}</span></div>
+ <div class="record-details"><div class="detail"><strong>Name</strong>${escapeHTML(a.full_name||"")}</div><div class="detail"><strong>Email</strong>${escapeHTML(a.email||"")}</div><div class="detail"><strong>Location</strong>${escapeHTML([a.city,a.region].filter(Boolean).join(", "))}</div><div class="detail"><strong>Medium</strong>${escapeHTML(a.primary_medium||"")}</div><div class="detail"><strong>Experience</strong>${escapeHTML(a.experience_level||"")}</div><div class="detail"><strong>Interests</strong>${escapeHTML(Array.isArray(a.interests)?a.interests.join(", "):"")}</div></div>
+ <div class="private-box"><div class="privacy-warning">PRIVATE ARTIST SUBMISSION</div><strong>Artist statement:</strong><br>${escapeHTML(a.artist_statement||"")}<br><br><strong>Portfolio:</strong> ${escapeHTML(a.portfolio_url||"")}<br>${a.social_url?"<strong>Social:</strong> "+escapeHTML(a.social_url)+"<br>":""}${links?"<strong>Work links:</strong><br>"+escapeHTML(links)+"<br>":""}${a.notes?"<br><strong>Notes:</strong> "+escapeHTML(a.notes):""}</div>
+ <div class="mission-builder"><label>Private Admin Note</label><textarea id="artist-note-${id}" placeholder="Optional internal review note.">${escapeHTML(a.admin_note||"")}</textarea><div class="record-actions"><button class="approve-button" type="button" onclick="artistAction('approve-artist','${id}')">Approve Artist</button><button class="hold-button" type="button" onclick="artistAction('hold-artist','${id}')">Place on Hold</button><button class="decline-button" type="button" onclick="artistAction('decline-artist','${id}')">Decline</button></div></div></article>`;
+}
+async function artistAction(action,id){
+ const note=document.getElementById("artist-note-"+id)?.value||"";
+ if(!confirm("Update this artist submission?"))return;
+ try{await adminFetch(ARTIST_API,{method:"POST",body:JSON.stringify({action,artist_id:id,admin_note:note})});showMessage("Artist submission updated.");await loadArtists()}catch(error){showMessage(error.message,"error")}
+}
 
 async function loadFoodOffers(){
   if(!foodOfferList){ return; }
