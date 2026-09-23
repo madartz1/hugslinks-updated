@@ -24,3 +24,12 @@ Deploy after setting these variables. Verify sender domain with Resend. Never pa
 The current email-code login is a standalone voting account. Existing HUGS members are not automatically linked until a real shared member identity provider is configured. Do not advertise unified member login yet.
 Votes are stored under one deterministic key per verified email per artwork, and displayed scores are derived from stored votes rather than a mutable counter. This avoids lost counter updates, but Netlify Blobs alone does not provide an atomic create-if-absent guarantee. For a prize competition or high-volume public vote, migrate vote writes to a transactional database with a UNIQUE(artwork_id, member_id) constraint before launch.
 Email-code delivery and production sign-in cannot be tested while Netlify is locked.
+
+## Transactional voting configuration (required)
+1. Provision a private Neon Postgres database (or compatible Neon serverless connection).
+2. Run database/art-voting.sql once against that database.
+3. Set HUGS_VOTING_DATABASE_URL in Netlify environment variables. Never commit or send its value in chat.
+4. Set HUGS_VOTER_SESSION_SECRET (random secret at least 32 bytes), RESEND_API_KEY, and HUGS_VOTER_FROM_EMAIL (verified sender).
+5. Unlock Netlify only when ready for the planned single deployment, then test the full login, one-vote constraint, entry cap, closing and winner publishing flows.
+
+Competition and regular ratings now use Postgres INSERT ... ON CONFLICT DO NOTHING, backed by unique primary keys. This prevents simultaneous duplicate votes. No database or environment variables have been provisioned automatically; production testing is still pending.
