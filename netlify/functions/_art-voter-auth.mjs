@@ -1,0 +1,7 @@
+import { getStore } from "@netlify/blobs";
+const enc=new TextEncoder(),json=(b,s=200,h={})=>new Response(JSON.stringify(b),{status:s,headers:{"Content-Type":"application/json","Cache-Control":"no-store",...h}});
+const digest=async s=>Array.from(new Uint8Array(await crypto.subtle.digest("SHA-256",enc.encode(s)))).map(x=>x.toString(16).padStart(2,"0")).join("");
+const sign=async s=>{const k=await crypto.subtle.importKey("raw",enc.encode(process.env.HUGS_VOTER_SESSION_SECRET||""),{name:"HMAC",hash:"SHA-256"},false,["sign"]);return Array.from(new Uint8Array(await crypto.subtle.sign("HMAC",k,enc.encode(s)))).map(x=>x.toString(16).padStart(2,"0")).join("")};
+const token=async email=>{const payload=btoa(JSON.stringify({email,exp:Date.now()+30*86400000})).replaceAll("+","-").replaceAll("/","_").replaceAll("=","");return payload+"."+await sign(payload)};
+const session=async req=>{try{const cookie=(req.headers.get("cookie")||"").split(";").map(x=>x.trim()).find(x=>x.startsWith("hugs_voter="))?.slice(11)||"";const [payload,mac]=cookie.split(".");if(!payload||!mac||await sign(payload)!==mac)return null;const obj=JSON.parse(atob(payload.replaceAll("-","+").replaceAll("_","/")));return obj.exp>Date.now()?obj.email:null}catch{return null}};
+export {getStore,json,digest,token,session};
