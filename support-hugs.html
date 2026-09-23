@@ -1086,7 +1086,7 @@
         About
       </a>
 
-      <a href="contact.html">
+      <a href="https://buy.stripe.com/6oUcN4fpq5Mk7Gv5os8ww06">
         Contact
       </a>
 
@@ -1383,11 +1383,11 @@
       <a
         class="support-button gold"
         id="support-payment-button"
-        href="contact.html"
+        href="https://buy.stripe.com/6oUcN4fpq5Mk7Gv5os8ww06"
         target="_blank"
         rel="noopener noreferrer"
       >
-        Contact HUGSLinks to Support
+        Choose Your Support Amount
       </a>
 
 
@@ -2011,25 +2011,7 @@
         .getAttribute("href");
 
 
-    if (
-      !href ||
-      href.includes(
-        "contact.html"
-      )
-    ) {
-
-      supportPaymentButton
-        .addEventListener(
-          "click",
-          function(event){
-
-            event.preventDefault();
-
-            alert(
-              "Direct HUGS support checkout is being connected. Please return shortly or purchase a HUGS Card to support the mission today."
-            );
-
-          }
+    if (!href) { event.preventDefault(); }
         );
 
     }
