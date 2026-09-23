@@ -60,11 +60,34 @@ if(partnerForm){
   const button=partnerForm.querySelector('button[type="submit"]');
   button.disabled=true;button.textContent="Submitting…";
   try{
-   const data=new URLSearchParams(new FormData(partnerForm));
-   const response=await fetch("/",{method:"POST",headers:{"Content-Type":"application/x-www-form-urlencoded"},body:data.toString()});
-   if(!response.ok) throw new Error("Submission failed");
-   partnerForm.reset();success.style.display="block";success.scrollIntoView({behavior:"smooth",block:"center"});
-  }catch(err){alert("We could not submit your offer right now. Please try again.");}
+   const fd=new FormData(partnerForm);
+   const payload={
+    bot_field:fd.get("bot-field")||"",
+    business_name:fd.get("business_name")||"",
+    contact_name:fd.get("contact_name")||"",
+    email:fd.get("email")||"",
+    phone:fd.get("phone")||"",
+    pickup_address:fd.get("pickup_address")||"",
+    borough:fd.get("borough")||"",
+    donation_type:fd.get("donation_type")||"",
+    attributes:fd.getAll("attributes"),
+    food_description:fd.get("food_description")||"",
+    quantity:fd.get("quantity")||"",
+    prepared_at:fd.get("prepared_at")||"",
+    pickup_date:fd.get("pickup_date")||"",
+    pickup_start:fd.get("pickup_start")||"",
+    pickup_end:fd.get("pickup_end")||"",
+    frequency:fd.get("frequency")||"",
+    handling_notes:fd.get("handling_notes")||"",
+    partner_confirmation:fd.get("partner_confirmation")||""
+   };
+   const response=await fetch("/.netlify/functions/submit-food-partner",{method:"POST",headers:{"Content-Type":"application/json"},cache:"no-store",credentials:"omit",referrerPolicy:"no-referrer",body:JSON.stringify(payload)});
+   const result=await response.json();
+   if(!response.ok||result.ok!==true||!result.offer_id) throw new Error(result.error||"Submission failed");
+   partnerForm.reset();
+   success.innerHTML="<strong>Thank you for offering a HUG.</strong><br>Your donation offer number is <strong>"+result.offer_id+"</strong>. Save this number for reference. HUGSLinks will review the offer before confirming a pickup.";
+   success.style.display="block";success.scrollIntoView({behavior:"smooth",block:"center"});
+  }catch(err){alert(err.message||"We could not submit your offer right now. Please try again.");}
   finally{button.disabled=false;button.textContent="Submit Donation Offer";}
  });
 }
