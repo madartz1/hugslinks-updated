@@ -826,7 +826,8 @@
     <!-- SUPPORT -->\n    <section class="admin-section" id="supportSection"><div class="record-grid" id="supportList"><div class="loading">Loading support requests...</div></div></section>\n\n    <!-- ARTISTS -->
     <section class="admin-section" id="artistsSection"><div class="record-grid" id="artistList"><div class="loading">Loading artist submissions...</div></div></section>
 
-    <!-- FOOD PARTNERS -->
+    <section class="admin-section" id="gallerySection"><div class="record-card"><h3>Manage Art Gallery</h3><p>Add or replace artwork directly from your phone. Only published records appear publicly.</p><div class="field"><label>Artwork ID (leave blank for new)</label><input id="galleryId" readonly placeholder="New artwork"></div><div class="field"><label>Title</label><input id="galleryTitle"></div><div class="field"><label>Artist</label><input id="galleryArtist"></div><div class="field"><label>Collection</label><select id="galleryCollection"><option>Black Gold Series</option><option>Luxe Collection</option></select></div><div class="field"><label>Choose image (JPEG, PNG or WebP, up to 8 MB)</label><input id="galleryUpload" type="file" accept="image/jpeg,image/png,image/webp"><img id="galleryPreview" alt="Artwork preview" style="display:none;max-width:100%;max-height:320px;object-fit:contain;border-radius:12px;margin:12px 0"><button class="secondary-button" id="galleryUploadButton" type="button">Upload Selected Image</button><p id="galleryUploadStatus" role="status" aria-live="polite"></p></div><div class="field"><label>Image URL (automatically filled after upload)</label><input id="galleryImage" type="text"></div><div class="field"><label>Medium</label><input id="galleryMedium"></div><div class="field"><label>Description</label><textarea id="galleryDescription"></textarea></div><label><input id="galleryPublished" type="checkbox" checked> Publish publicly</label><p><button class="primary-button" id="gallerySave" type="button">Save / Replace Artwork</button> <button class="secondary-button" id="galleryNew" type="button">New Artwork</button></p></div><div class="record-grid" id="galleryList" style="margin-top:20px"></div></section>
+<!-- FOOD PARTNERS -->
     <section class="admin-section" id="foodSection">
       <div class="record-grid" id="foodOfferList">
         <div class="loading">Loading food partner offers...</div>
@@ -1356,6 +1357,7 @@ const ARTIST_API =
   "/.netlify/functions/admin-artists";
 
 
+const GALLERY_API="/.netlify/functions/admin-art-gallery";
 let adminToken = "";
 
 let requestRecords = [];
@@ -1675,6 +1677,7 @@ loginButton.addEventListener(
       await loadFoodOffers();
 
       await loadArtists();
+       await loadGallery();
 
       await loadMatches();
 
@@ -4275,6 +4278,26 @@ window.addEventListener(
 
 async function loadGallery(){if(!galleryList)return;try{const d=await adminFetch(GALLERY_API);galleryRecords=d.works||[];galleryList.innerHTML=galleryRecords.length?'':'<div class="record-card">No managed artwork yet.</div>';galleryRecords.forEach(w=>{const card=document.createElement('article');card.className='record-card';const h=document.createElement('h3'),p=document.createElement('p'),b=document.createElement('button');h.textContent=w.title+' — '+w.artist_name;p.textContent=(w.collection||'Unassigned')+(w.published?' · Published':' · Draft');b.className='secondary-button';b.type='button';b.textContent='Edit / Replace';b.onclick=()=>{document.getElementById('galleryId').value=w.id||'';document.getElementById('galleryTitle').value=w.title||'';document.getElementById('galleryArtist').value=w.artist_name||'';document.getElementById('galleryCollection').value=w.collection||'Black Gold Series';document.getElementById('galleryImage').value=w.image_url||'';document.getElementById('galleryMedium').value=w.medium||'';document.getElementById('galleryDescription').value=w.description||'';document.getElementById('galleryPublished').checked=!!w.published;window.scrollTo({top:0,behavior:'smooth'})};card.append(h,p,b);galleryList.append(card)})}catch(e){galleryList.innerHTML='<div class="record-card">'+escapeHTML(e.message)+'</div>'}}
 document.getElementById('gallerySave')?.addEventListener('click',async()=>{const btn=document.getElementById('gallerySave');btn.disabled=true;try{await adminFetch(GALLERY_API,{method:'POST',body:JSON.stringify({action:'save',id:document.getElementById('galleryId').value,title:document.getElementById('galleryTitle').value,artist_name:document.getElementById('galleryArtist').value,collection:document.getElementById('galleryCollection').value,image_url:document.getElementById('galleryImage').value,medium:document.getElementById('galleryMedium').value,description:document.getElementById('galleryDescription').value,published:document.getElementById('galleryPublished').checked})});showMessage('Artwork saved to the live gallery feed.');await loadGallery()}catch(e){showMessage(e.message,'error')}finally{btn.disabled=false}});
+
+let galleryRecords=[];
+const g=id=>document.getElementById(id);
+let galleryPreviewURL=null;
+g('galleryUpload')?.addEventListener('change',()=>{
+ const f=g('galleryUpload').files?.[0];if(galleryPreviewURL)URL.revokeObjectURL(galleryPreviewURL);
+ g('galleryPreview').style.display='none';g('galleryUploadStatus').textContent='';
+ if(!f)return;
+ if(!['image/jpeg','image/png','image/webp'].includes(f.type)||f.size>8*1024*1024){g('galleryUploadStatus').textContent='Choose JPEG, PNG or WebP up to 8 MB.';g('galleryUpload').value='';return}
+ galleryPreviewURL=URL.createObjectURL(f);g('galleryPreview').src=galleryPreviewURL;g('galleryPreview').style.display='block';
+});
+g('galleryUploadButton')?.addEventListener('click',async()=>{
+ const f=g('galleryUpload').files?.[0];if(!f){g('galleryUploadStatus').textContent='Select an image first.';return}
+ const btn=g('galleryUploadButton');btn.disabled=true;g('galleryUploadStatus').textContent='Uploading…';
+ try{const fd=new FormData();fd.append('artwork',f);const response=await fetch('/.netlify/functions/upload-art-image',{method:'POST',headers:{Authorization:'Bearer '+adminToken},body:fd,cache:'no-store'});const d=await response.json();if(!response.ok||!d.ok)throw Error(d.error||'Upload failed');g('galleryImage').value=d.image_url;g('galleryUploadStatus').textContent='Uploaded. Click Save / Replace Artwork to publish.';g('galleryUpload').value=''}catch(e){g('galleryUploadStatus').textContent=e.message}finally{btn.disabled=false}
+});
+function galleryReset(){for(const id of ['galleryId','galleryTitle','galleryArtist','galleryImage','galleryMedium','galleryDescription'])g(id).value='';g('galleryPublished').checked=true;g('galleryUpload').value='';g('galleryPreview').style.display='none';g('galleryUploadStatus').textContent=''}
+g('galleryNew')?.addEventListener('click',galleryReset);
+async function loadGallery(){const el=g('galleryList');if(!el)return;try{const d=await adminFetch(GALLERY_API);galleryRecords=d.works||[];el.replaceChildren();if(!galleryRecords.length){el.textContent='No managed artwork yet.';return}for(const w of galleryRecords){const card=document.createElement('article'),h=document.createElement('h3'),p=document.createElement('p'),btn=document.createElement('button');card.className='record-card';h.textContent=w.title+' — '+w.artist_name;p.textContent=w.collection+(w.published?' · Published':' · Draft');btn.className='secondary-button';btn.textContent='Edit / Replace';btn.onclick=()=>{g('galleryId').value=w.id;g('galleryTitle').value=w.title;g('galleryArtist').value=w.artist_name;g('galleryImage').value=w.image_url;g('galleryMedium').value=w.medium||'';g('galleryDescription').value=w.description||'';g('galleryCollection').value=w.collection;g('galleryPublished').checked=!!w.published;g('galleryUploadStatus').textContent='Choose a new image to replace this artwork, or edit the details.';g('galleryPreview').style.display='none';};card.append(h,p,btn);el.append(card)}}catch(e){el.textContent=e.message}}
+g('gallerySave')?.addEventListener('click',async()=>{const btn=g('gallerySave');btn.disabled=true;try{await adminFetch(GALLERY_API,{method:'POST',body:JSON.stringify({action:'save',id:g('galleryId').value,title:g('galleryTitle').value,artist_name:g('galleryArtist').value,collection:g('galleryCollection').value,image_url:g('galleryImage').value,medium:g('galleryMedium').value,description:g('galleryDescription').value,published:g('galleryPublished').checked})});showMessage('Artwork saved.');galleryReset();await loadGallery()}catch(e){showMessage(e.message,'error')}finally{btn.disabled=false}});
 </script>
 
 </body>
