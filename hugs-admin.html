@@ -758,6 +758,14 @@
 
       <button
         class="tab-button"
+        data-tab="food"
+        type="button"
+      >
+        Food Partners
+      </button>
+
+      <button
+        class="tab-button"
         data-tab="helpers"
         type="button"
       >
@@ -801,6 +809,13 @@
 
     </section>
 
+
+    <!-- FOOD PARTNERS -->
+    <section class="admin-section" id="foodSection">
+      <div class="record-grid" id="foodOfferList">
+        <div class="loading">Loading food partner offers...</div>
+      </div>
+    </section>
 
     <!-- HELPERS -->
 
@@ -1318,12 +1333,17 @@ const ROUTE_API =
 const TRACKING_ACCESS_API =
   "/.netlify/functions/admin-issue-hug-tracking";
 
+const FOOD_API =
+  "/.netlify/functions/admin-food-partners";
+
 
 let adminToken = "";
 
 let requestRecords = [];
 
 let helperRecords = [];
+
+let foodOfferRecords = [];
 
 let matchRecords = [];
 
@@ -1370,6 +1390,9 @@ const requestList =
 
 const helperList =
   document.getElementById("helperList");
+
+const foodOfferList =
+  document.getElementById("foodOfferList");
 
 const matchList =
   document.getElementById("matchList");
@@ -1625,6 +1648,8 @@ loginButton.addEventListener(
 
       await loadHelpers();
 
+      await loadFoodOffers();
+
       await loadMatches();
 
 
@@ -1700,6 +1725,8 @@ function lockAdmin(){
 
   helperRecords = [];
 
+  foodOfferRecords = [];
+
   matchRecords = [];
 
   issuedTrackingToken = "";
@@ -1708,6 +1735,8 @@ function lockAdmin(){
   requestList.innerHTML = "";
 
   helperList.innerHTML = "";
+
+  if(foodOfferList){ foodOfferList.innerHTML = ""; }
 
   matchList.innerHTML = "";
 
@@ -1780,6 +1809,67 @@ async function loadRequests(){
 
 }
 
+
+async function loadFoodOffers(){
+  if(!foodOfferList){ return; }
+  foodOfferList.innerHTML='<div class="loading">Loading food partner offers...</div>';
+  const result=await adminFetch(FOOD_API);
+  foodOfferRecords=Array.isArray(result.offers)?result.offers:[];
+  renderFoodOffers();
+}
+
+function renderFoodOffers(){
+  if(!foodOfferList){ return; }
+  if(foodOfferRecords.length===0){
+    foodOfferList.innerHTML='<article class="record-card"><h3>No Food Partner Offers Yet</h3><p>New restaurant and food-service donation offers will appear here.</p></article>';
+    return;
+  }
+  foodOfferList.innerHTML=foodOfferRecords.map(foodOfferCard).join("");
+}
+
+function foodOfferCard(offer){
+  const id=safeId(offer.id), status=offer.status||"Pending Review";
+  const attrs=Array.isArray(offer.attributes)?offer.attributes.join(", "):"";
+  const pending=status==="Pending Review";
+  return `
+  <article class="record-card">
+    <div class="record-top"><div><div class="record-id">${escapeHTML(offer.id)}</div><h3>${escapeHTML(offer.business_name||"Food Partner")}</h3></div><span class="status-badge">${escapeHTML(status)}</span></div>
+    <div class="record-details">
+      <div class="detail"><strong>Contact</strong>${escapeHTML(offer.contact_name||"")}</div>
+      <div class="detail"><strong>Email</strong>${escapeHTML(offer.email||"")}</div>
+      <div class="detail"><strong>Phone</strong>${escapeHTML(offer.phone||"")}</div>
+      <div class="detail"><strong>Pickup Area</strong>${escapeHTML(offer.borough||"")}</div>
+      <div class="detail"><strong>Offer</strong>${escapeHTML(offer.donation_type||"")}</div>
+      <div class="detail"><strong>Quantity</strong>${escapeHTML(offer.quantity||"")}</div>
+      <div class="detail"><strong>Pickup Window</strong>${escapeHTML((offer.pickup_date||"")+" "+(offer.pickup_start||"")+"–"+(offer.pickup_end||""))}</div>
+      <div class="detail"><strong>Frequency</strong>${escapeHTML(offer.frequency||"")}</div>
+    </div>
+    <div class="private-box"><div class="privacy-warning">PRIVATE FOOD PARTNER PICKUP INFORMATION</div><strong>Address:</strong> ${escapeHTML(offer.pickup_address||"")}<br><strong>Food:</strong> ${escapeHTML(offer.food_description||"")}<br>${attrs?"<strong>Handling:</strong> "+escapeHTML(attrs)+"<br>":""}${offer.handling_notes?"<strong>Notes:</strong> "+escapeHTML(offer.handling_notes):""}</div>
+    ${pending?`<div class="mission-builder"><h4>Create Safe Food Pickup Mission</h4><p>Write only the general information an approved Helper needs. Never put the exact pickup address, donor contact information, or private handling notes on the public mission board.</p>
+      <div class="field"><label>Public Area</label><input id="food-area-${id}" value="${escapeHTML(offer.borough||"")}"></div>
+      <div class="field"><label>Public Timing</label><input id="food-timing-${id}" value="${escapeHTML((offer.pickup_date||"")+" "+(offer.pickup_start||"")+"-"+(offer.pickup_end||""))}"></div>
+      <div class="field"><label>Public Mission Summary</label><textarea id="food-summary-${id}" placeholder="Example: Pick up packaged prepared meals from an approved Queens food partner for a community food-support mission."></textarea></div>
+      <div class="record-actions"><button class="approve-button" type="button" onclick="approveFoodOffer('${id}')">Approve & Create Food Mission</button><button class="hold-button" type="button" onclick="foodOfferAction('hold-offer','${id}')">Place on Hold</button><button class="decline-button" type="button" onclick="foodOfferAction('decline-offer','${id}')">Decline</button></div>
+    </div>`:(offer.mission_id?`<div class="mission-builder"><strong>Mission: ${escapeHTML(offer.mission_id)}</strong></div>`:"")}
+  </article>`;
+}
+
+async function approveFoodOffer(id){
+ const summary=document.getElementById("food-summary-"+id)?.value.trim()||"";
+ if(!summary){showMessage("Write a safe public food mission summary before approving.","error");return}
+ if(!confirm("Approve this food offer and create an available HUG Mission?")) return;
+ try{
+  const result=await adminFetch(FOOD_API,{method:"POST",body:JSON.stringify({action:"approve-offer",offer_id:id,type:"Food Partner Pickup",area:document.getElementById("food-area-"+id)?.value||"",timing:document.getElementById("food-timing-"+id)?.value||"",summary})});
+  showMessage("Food mission "+result.mission.id+" created.");
+  await loadFoodOffers();
+ }catch(error){showMessage(error.message,"error")}
+}
+
+async function foodOfferAction(action,id){
+ const label=action==="hold-offer"?"place this food offer on hold":"decline this food offer";
+ if(!confirm("Are you sure you want to "+label+"?")) return;
+ try{await adminFetch(FOOD_API,{method:"POST",body:JSON.stringify({action,offer_id:id})});showMessage("Food partner offer updated.");await loadFoodOffers()}catch(error){showMessage(error.message,"error")}
+}
 
 async function loadHelpers(){
 
