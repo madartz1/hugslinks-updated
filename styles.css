@@ -85,7 +85,7 @@ img{
 
 /* =========================================
    HUGSLINKS WORDMARK
-   STATIONARY BORDER + MOVING LIGHT CURRENT
+   PREMIUM CONNECTION CURRENT
 ========================================= */
 
 @property --hugs-border-angle{
@@ -96,176 +96,103 @@ img{
 
 .brand{
   --hugs-border-angle:0deg;
-
   position:relative;
   isolation:isolate;
-
   display:inline-flex;
   align-items:center;
   justify-content:center;
-
   width:max-content;
-
-  padding:7px 13px;
-
+  padding:7px 14px;
   border-radius:999px;
-
   font-weight:900;
   font-size:1.35rem;
-  letter-spacing:.04em;
-
+  letter-spacing:.035em;
   color:var(--navy);
-
-  border:
-    1px solid
-    rgba(47,158,231,.20);
-
-  background:
-    rgba(255,255,255,.72);
-
-  text-shadow:
-    0 0 12px
-    rgba(47,158,231,.12);
-
+  border:1px solid rgba(47,158,231,.16);
+  background:rgba(255,255,255,.82);
+  text-shadow:0 0 10px rgba(47,158,231,.08);
   box-shadow:
-    inset 0 0 8px
-    rgba(114,207,255,.04);
-
+    inset 0 0 7px rgba(114,207,255,.035),
+    0 2px 10px rgba(6,22,47,.035);
   transition:
     color .25s ease,
     text-shadow .25s ease,
-    box-shadow .25s ease;
+    box-shadow .25s ease,
+    transform .25s ease;
 }
 
-
-/* Moving pulse only */
-
+/* Thin traveling connection signal with a restrained tail. */
 .brand::before{
   content:"";
-
   position:absolute;
-
-  inset:-4px;
-
+  inset:-3px;
   border-radius:inherit;
-
-  padding:2px;
-
+  padding:1.5px;
   pointer-events:none;
-
   background:
     conic-gradient(
       from var(--hugs-border-angle),
-
       transparent 0deg,
-      transparent 282deg,
-
-      rgba(47,158,231,.04) 295deg,
-
-      rgba(47,158,231,.22) 305deg,
-
-      var(--hugs-electric-deep) 316deg,
-
-      var(--hugs-electric) 325deg,
-
-      #dff8ff 332deg,
-
-      #ffffff 337deg,
-
-      #ffffff 341deg,
-
-      var(--hugs-electric) 347deg,
-
-      rgba(47,158,231,.42) 353deg,
-
-      transparent 359deg,
+      transparent 300deg,
+      rgba(47,158,231,.03) 307deg,
+      rgba(47,158,231,.10) 316deg,
+      rgba(47,158,231,.30) 324deg,
+      var(--hugs-electric-deep) 331deg,
+      var(--hugs-electric) 337deg,
+      #dff8ff 341deg,
+      #ffffff 344deg,
+      #ffffff 347deg,
+      var(--hugs-electric) 350deg,
+      rgba(47,158,231,.34) 355deg,
       transparent 360deg
     );
-
   -webkit-mask:
-    linear-gradient(#000 0 0)
-      content-box,
+    linear-gradient(#000 0 0) content-box,
     linear-gradient(#000 0 0);
-
   -webkit-mask-composite:xor;
-
   mask-composite:exclude;
-
   filter:
-    drop-shadow(
-      0 0 2px
-      rgba(255,255,255,.95)
-    )
-    drop-shadow(
-      0 0 5px
-      rgba(114,207,255,.95)
-    )
-    drop-shadow(
-      0 0 10px
-      rgba(47,158,231,.55)
-    );
-
+    drop-shadow(0 0 2px rgba(255,255,255,.75))
+    drop-shadow(0 0 4px rgba(114,207,255,.58))
+    drop-shadow(0 0 7px rgba(47,158,231,.24));
   animation:
-    hugs-border-current
-    3.4s
-    linear
-    infinite;
+    hugs-border-current 4.8s linear infinite;
 }
 
-
-/* Stationary soft circuit outline */
-
+/* Quiet permanent circuit edge keeps the button defined between passes. */
 .brand::after{
   content:"";
-
   position:absolute;
-
   inset:-1px;
-
   border-radius:inherit;
-
   pointer-events:none;
-
-  border:
-    1px solid
-    rgba(114,207,255,.18);
-
+  border:1px solid rgba(114,207,255,.13);
   box-shadow:
-    inset 0 0 6px
-    rgba(114,207,255,.07),
-    0 0 8px
-    rgba(47,158,231,.07);
+    inset 0 0 5px rgba(114,207,255,.045),
+    0 0 6px rgba(47,158,231,.045);
 }
-
-
-/* Only the gradient angle changes */
 
 @keyframes hugs-border-current{
-
-  from{
-    --hugs-border-angle:0deg;
-  }
-
-  to{
-    --hugs-border-angle:360deg;
-  }
-
+  from{--hugs-border-angle:0deg}
+  to{--hugs-border-angle:360deg}
 }
-
 
 .brand:hover,
 .brand:focus-visible{
   color:var(--navy);
-
+  transform:translateY(-1px);
   text-shadow:
-    0 0 5px
-    rgba(114,207,255,.45),
-    0 0 14px
-    rgba(47,158,231,.25);
-
+    0 0 4px rgba(114,207,255,.30),
+    0 0 10px rgba(47,158,231,.16);
   box-shadow:
-    0 0 14px
-    rgba(114,207,255,.12);
+    inset 0 0 8px rgba(114,207,255,.05),
+    0 4px 14px rgba(6,22,47,.07),
+    0 0 10px rgba(114,207,255,.07);
+}
+
+.brand:focus-visible{
+  outline:2px solid rgba(18,103,255,.42);
+  outline-offset:5px;
 }
 
 
