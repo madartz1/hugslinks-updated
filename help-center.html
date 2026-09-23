@@ -1,0 +1,32 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>HUGS Help Center | HUGSLinks</title>
+<meta name="description" content="Answers about HUG requests, helpers, mission tracking, food support, artists, orders, privacy and HUGSLinks support.">
+<link rel="stylesheet" href="styles.css">
+<style>
+.hc{max-width:980px;margin:auto;padding:48px 20px 90px}.hc-hero{padding:42px;border-radius:28px;background:linear-gradient(135deg,#071f3b,#1267ff);color:#fff;box-shadow:0 20px 55px rgba(7,31,59,.16)}.hc-hero h1{color:#fff;margin:6px 0 12px;font-size:clamp(2.2rem,7vw,4.6rem);letter-spacing:-.04em}.hc-hero p{max-width:700px;color:#e8f5ff;font-size:1.08rem}.hc-search{width:100%;margin-top:20px;padding:15px 17px;border:0;border-radius:14px;font:inherit}.hc-grid{display:grid;gap:12px;margin-top:28px}.hc details{background:#fff;border:1px solid #dce8f2;border-radius:16px;padding:0 18px;box-shadow:0 6px 20px rgba(7,31,59,.04)}.hc summary{cursor:pointer;padding:18px 0;font-weight:900;color:#071f3b}.hc details p{margin:0 0 18px;color:#51677b;line-height:1.65}.hc-actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:22px}.hc-actions a{padding:11px 15px;border-radius:999px;background:#fff;color:#071f3b;font-weight:900}.hc-note{margin-top:28px;padding:18px;border-radius:16px;background:#eef7ff;color:#071f3b}.hc-empty{display:none;padding:24px;text-align:center;color:#51677b}
+</style>
+</head><body>
+<header class="topbar"><nav class="nav"><a class="brand" href="index.html">Hugslinks</a><div class="seal"><img src="assets/HUGS_Header_Logo_Transparent.png" alt="HUGS logo" class="header-logo"></div><button class="menu">Menu</button><div class="navlinks"><a href="index.html">Home</a><a href="shop.html">Shop</a><a href="hugs-cards.html">HUGS Cards</a><a href="art-community.html">Art</a><a href="food-support.html">Food</a><a href="housing-help.html">Housing</a><a href="help-app.html">Help App</a><a href="help-center.html">Help Center</a><a href="resources.html">Resources</a><a href="about.html">About</a><a href="contact.html">Contact</a></div></nav></header>
+<main class="hc"><section class="hc-hero"><small>HUGSLINKS SUPPORT</small><h1>How can we help?</h1><p>Find quick answers or open HUGS Live Help for personal assistance.</p><input class="hc-search" type="search" placeholder="Search HUG requests, tracking, food, orders…" aria-label="Search help center"><div class="hc-actions"><a href="hug-request.html">Request a HUG</a><a href="hug-tracking.html">Track a HUG</a><a href="hugs-helper.html">Become a Helper</a></div></section>
+<section class="hc-grid" aria-label="Frequently asked questions">
+<details><summary>What is HUGSLinks?</summary><p>HUGSLinks means Help Under Good Service. It connects community help, creative projects, practical resources and ways for people and businesses to participate in the HUGS mission.</p></details>
+<details><summary>How do I request a HUG?</summary><p>Use the Request a HUG page to submit what you need. A request is reviewed before it can become an available HUG Mission.</p></details>
+<details><summary>How do I become a HUGS Helper?</summary><p>Complete the HUGS Helper form. Approved helpers can participate in available missions and follow the secure mission journey.</p></details>
+<details><summary>How do I track my HUG?</summary><p>Use the secure tracking link or tracking information issued for your request. Public mission listings do not expose a recipient's private destination.</p></details>
+<details><summary>When can a helper see the delivery destination?</summary><p>The destination remains protected during the early mission stages. It becomes available through the secure mission flow after the pickup has been received and the mission advances to delivery.</p></details>
+<details><summary>How does food support work?</summary><p>HUGSLinks connects food-support needs with participating food-service businesses and community support. Food partners can offer eligible food or other support for coordination through HUGSLinks.</p></details>
+<details><summary>How can a business become a Food Partner?</summary><p>Open the Food Partner page and submit an offer. HUGSLinks reviews submissions before an approved pickup is made available as a mission.</p></details>
+<details><summary>How can artists participate?</summary><p>Visit the Artist Community and Artist Submission pages. Submissions are reviewed before artists or work are published through HUGSLinks.</p></details>
+<details><summary>Where can I get help with a HUGS Card or order?</summary><p>Open “Need a HUG?” and choose Order Help. Include your order or reference number when you have one, but never send a full payment-card number.</p></details>
+<details><summary>How can I support the HUGSLinks mission?</summary><p>Visit the Support HUGSLinks page. Support is separate from purchasing HUGS Cards, art or merchandise.</p></details>
+<details><summary>What information should I never send in chat?</summary><p>Do not send passwords, admin credentials, full payment-card numbers, medical documents or exact private recipient addresses through support chat.</p></details>
+<details><summary>Is HUGS Live Help always staffed?</summary><p>The widget will say when live support is online. When a person is not available, you can leave a support message and receive a HUGS support reference for follow-up.</p></details>
+<details><summary>What if this is an emergency?</summary><p>HUGSLinks is not an emergency-response service. If someone is in immediate danger, contact 911 or the appropriate local emergency service.</p></details>
+</section><div class="hc-empty">No matching answers. Open <strong>Need a HUG?</strong> and send us your question.</div>
+<div class="hc-note"><strong>Still need help?</strong> Use the “Need a HUG?” button on this page to reach HUGS Live Help.</div></main>
+<script src="live-help-config.js"></script><script src="script.js"></script>
+<script>const q=document.querySelector('.hc-search'),items=[...document.querySelectorAll('.hc-grid details')],empty=document.querySelector('.hc-empty');q.addEventListener('input',()=>{const v=q.value.trim().toLowerCase();let n=0;items.forEach(x=>{const show=!v||x.textContent.toLowerCase().includes(v);x.style.display=show?'':'none';if(show)n++});empty.style.display=n?'none':'block'});</script>
+</body></html>
