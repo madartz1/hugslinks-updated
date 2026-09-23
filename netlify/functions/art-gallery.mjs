@@ -1,0 +1,4 @@
+import { getStore } from "@netlify/blobs";
+const STORE="hugs-art-gallery",KEY="gallery",headers={"Content-Type":"application/json; charset=utf-8","Cache-Control":"no-store"};
+const json=(b,s=200)=>new Response(JSON.stringify(b),{status:s,headers});
+export default async request=>{if(request.method!=="GET")return json({ok:false,error:"Method not allowed."},405);try{const s=getStore(STORE),x=await s.get(KEY,{type:"json",consistency:"strong"});const works=Array.isArray(x?.works)?x.works.filter(w=>w&&w.published===true).map(({id,title,artist_name,collection,image_url,description,medium,year,room_images,featured})=>({id,title,artist_name,collection,image_url,description,medium,year,room_images:Array.isArray(room_images)?room_images:[],featured:!!featured})):[];return json({ok:true,works})}catch(e){return json({ok:false,error:"Gallery unavailable."},500)}};
