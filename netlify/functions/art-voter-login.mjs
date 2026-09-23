@@ -6,7 +6,7 @@ if(request.method==="GET"){const email=await session(request);return json({ok:tr
 if(request.method!=="POST")return json({ok:false,error:"Method not allowed"},405);
 let b;try{b=await request.json()}catch{return json({ok:false,error:"Invalid request"},400)}
 const action=b.action;
-if(action==="logout")return json({ok:true},{status:200}, {"Set-Cookie":"hugs_voter=; HttpOnly; Secure; SameSite=Lax; Path=/; Max-Age=0"});
+if(action==="logout")return json({ok:true},200,{"Set-Cookie":"hugs_voter=; HttpOnly; Secure; SameSite=Lax; Path=/; Max-Age=0"});
 const email=String(b.email||"").trim().toLowerCase();
 if(!emailOK(email)||email.length>254)return json({ok:false,error:"Enter a valid email"},400);
 const store=getStore("hugs-voter-codes"),key=await digest(email);
