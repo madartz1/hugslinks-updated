@@ -756,7 +756,7 @@
         HUG Requests
       </button>
 
-      <button class="tab-button" data-tab="artists" type="button">Artists</button>
+      <button class="tab-button" data-tab="support" type="button">Support</button>\n\n      <button class="tab-button" data-tab="artists" type="button">Artists</button>
 
       <button
         class="tab-button"
@@ -812,7 +812,7 @@
     </section>
 
 
-    <!-- ARTISTS -->
+    <!-- SUPPORT -->\n    <section class="admin-section" id="supportSection"><div class="record-grid" id="supportList"><div class="loading">Loading support requests...</div></div></section>\n\n    <!-- ARTISTS -->
     <section class="admin-section" id="artistsSection"><div class="record-grid" id="artistList"><div class="loading">Loading artist submissions...</div></div></section>
 
     <!-- FOOD PARTNERS -->
@@ -1353,7 +1353,7 @@ let helperRecords = [];
 
 let foodOfferRecords = [];
 
-let artistRecords = [];
+let artistRecords = [];\n\nlet supportRecords = [];
 
 let matchRecords = [];
 
@@ -1755,7 +1755,7 @@ function lockAdmin(){
 
   if(foodOfferList){ foodOfferList.innerHTML = ""; }
 
-  if(artistList){ artistList.innerHTML = ""; }
+  if(artistList){ artistList.innerHTML = ""; }\n\n  if(supportList){ supportList.innerHTML = ""; }
 
   matchList.innerHTML = "";
 
@@ -1829,6 +1829,16 @@ async function loadRequests(){
 }
 
 
+async function loadSupport(){
+ if(!supportList)return;
+ supportList.innerHTML='<div class="loading">Loading support requests...</div>';
+ const result=await adminFetch(SUPPORT_API);supportRecords=Array.isArray(result.threads)?result.threads:[];renderSupport();
+}
+function renderSupport(){
+ if(!supportList)return;if(!supportRecords.length){supportList.innerHTML='<article class="record-card"><h3>No Support Requests</h3><p>New HUGS Live Help messages will appear here.</p></article>';return}
+ supportList.innerHTML=supportRecords.map(x=>{const id=safeId(x.id);return `<article class="record-card"><div class="record-top"><div><div class="record-id">${escapeHTML(x.id)}</div><h3>${escapeHTML(x.category||"Support")}</h3></div><span class="status-badge">${escapeHTML(x.status||"New")}</span></div><div class="record-details"><div class="detail"><strong>Name</strong>${escapeHTML(x.name||"")}</div><div class="detail"><strong>Email</strong>${escapeHTML(x.email||"")}</div><div class="detail"><strong>Reference</strong>${escapeHTML(x.reference||"None")}</div><div class="detail"><strong>Page</strong>${escapeHTML(x.page||"")}</div></div><div class="private-box"><div class="privacy-warning">PRIVATE SUPPORT MESSAGE</div>${escapeHTML(x.message||"")}</div><div class="mission-builder"><label>Private Admin Note</label><textarea id="support-note-${id}">${escapeHTML(x.admin_note||"")}</textarea><div class="record-actions"><button class="approve-button" onclick="supportAction('Open','${id}')">Open</button><button class="hold-button" onclick="supportAction('Waiting on Customer','${id}')">Waiting on Customer</button><button class="approve-button" onclick="supportAction('Resolved','${id}')">Resolved</button></div></div></article>`}).join("");
+}
+async function supportAction(status,id){const note=document.getElementById("support-note-"+id)?.value||"";try{await adminFetch(SUPPORT_API,{method:"POST",body:JSON.stringify({support_id:id,status,admin_note:note})});showMessage("Support request updated.");await loadSupport()}catch(e){showMessage(e.message,"error")}}
 async function loadArtists(){
  if(!artistList)return;
  artistList.innerHTML='<div class="loading">Loading artist submissions...</div>';
