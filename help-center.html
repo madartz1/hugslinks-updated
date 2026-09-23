@@ -28,5 +28,5 @@
 </section><div class="hc-empty">No matching answers. Open <strong>Need a HUG?</strong> and send us your question.</div>
 <div class="hc-note"><strong>Still need help?</strong> Use the “Need a HUG?” button on this page to reach HUGS Live Help.</div></main>
 <script src="live-help-config.js"></script><script src="script.js"></script>
-<script>const q=document.querySelector('.hc-search'),items=[...document.querySelectorAll('.hc-grid details')],empty=document.querySelector('.hc-empty');q.addEventListener('input',()=>{const v=q.value.trim().toLowerCase();let n=0;items.forEach(x=>{const show=!v||x.textContent.toLowerCase().includes(v);x.style.display=show?'':'none';if(show)n++});empty.style.display=n?'none':'block'});</script>
+<script>const q=document.querySelector('.hc-search');const initial=new URLSearchParams(location.search).get('q')||'';q.value=initial;const items=[...document.querySelectorAll('.hc-grid details')],empty=document.querySelector('.hc-empty');const filter=()=>{const v=q.value.trim().toLowerCase();let n=0;items.forEach(x=>{const show=!v||x.textContent.toLowerCase().includes(v);x.style.display=show?'':'none';if(show)n++});empty.style.display=n?'none':'block'};q.addEventListener('input',filter);filter();</script>
 </body></html>
