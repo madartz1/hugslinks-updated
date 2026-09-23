@@ -575,6 +575,15 @@
 
     }
 
+  
+    .admin-lockup{width:74px;height:74px;margin:0 auto 16px;display:grid;place-items:center;border-radius:22px;background:linear-gradient(145deg,#071f3b,#1267ff);box-shadow:0 14px 34px rgba(7,31,59,.18)}
+    .admin-lockup img{width:54px;height:54px;object-fit:contain}
+    .login-card{text-align:center;border:1px solid rgba(18,103,255,.1)}
+    .login-card .field{text-align:left}
+    .admin-private-label{display:inline-flex;align-items:center;gap:7px;margin-bottom:10px;color:#1267ff;font-size:.78rem;font-weight:900;letter-spacing:.08em;text-transform:uppercase}
+    .token-wrap{position:relative}.token-wrap input{padding-right:76px}.token-toggle{position:absolute;right:7px;top:7px;border:0;background:#eef7ff;color:#071f3b;border-radius:9px;padding:7px 9px;font-weight:800;cursor:pointer}
+    .login-card .primary-button{width:100%;min-height:48px}
+    .admin-security-copy{font-size:.88rem;color:var(--muted);line-height:1.55;margin:14px 0 0}
   </style>
 </head>
 
@@ -627,7 +636,9 @@
     id="loginCard"
   >
 
-    <h2>Admin Access</h2>
+    <div class="admin-lockup"><img src="assets/HUGS_Header_Logo_Transparent.png" alt=""></div>
+    <div class="admin-private-label">🔒 Private Owner Access</div>
+    <h2>HUGS Admin Sign In</h2>
 
     <p>
       Enter your HUGS Admin Token.
