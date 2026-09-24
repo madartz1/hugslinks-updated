@@ -7,6 +7,7 @@
   <meta name="description" content="HUGSLinks premium community support and creative empowerment ecosystem.">
   <link rel="stylesheet" href="styles.css">
   <style>
+    .home-language-switch{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin:18px 0 4px}.home-language-switch>span{font-weight:900;color:#071f3b}.home-lang-btn{appearance:none;border:1px solid #c9ddea;background:#fff;color:#071f3b;border-radius:999px;padding:10px 16px;min-height:44px;font:inherit;font-weight:900;cursor:pointer;box-shadow:0 6px 16px rgba(7,31,59,.12);transition:transform .18s ease,box-shadow .18s ease,background .18s ease}.home-lang-btn:hover,.home-lang-btn:focus-visible{transform:translateY(-1px);box-shadow:0 8px 20px rgba(7,31,59,.16)}.home-lang-btn.active{background:#071f3b;color:#fff;border-color:#071f3b}.home-lang-btn:focus-visible{outline:3px solid #72cfff;outline-offset:2px}
     .hugs-navigator{padding-top:10px}
     .navigator-shell{background:linear-gradient(145deg,#061b34,#0b3157);color:#fff;border-radius:28px;padding:clamp(24px,5vw,48px);overflow:hidden;position:relative}
     .navigator-shell:after{content:"♡";position:absolute;right:-20px;top:-65px;font-size:210px;line-height:1;color:rgba(104,190,255,.08);pointer-events:none}
@@ -64,6 +65,8 @@
         <div class="eyebrow">Premium help network</div>
         <h1>Art, support, and community systems built with care.</h1>
         <p>HUGSLinks connects creative products, community support, business services, and practical resources into one clean premium ecosystem.</p>
+
+        <div class="home-language-switch" data-no-translate aria-label="Choose HUGSLinks language"><span>🌐 Language:</span><button type="button" class="home-lang-btn active" data-home-lang="en">English</button><button type="button" class="home-lang-btn" data-home-lang="es">Español</button></div>
 
         <div class="actions">
           <a class="btn primary hug-envelope-cta" href="hugs-cards.html"><img src="assets/get-a-hug-envelope.png" alt="" />Send a HUG</a>
@@ -191,5 +194,9 @@
 </footer>
 
   <script src="live-help-config.js"></script><script src="script.js"></script>
+
+  <script>
+  (()=>{const buttons=[...document.querySelectorAll('[data-home-lang]')];if(!buttons.length)return;const sync=()=>{const lang=document.documentElement.dataset.hugsLanguage||document.documentElement.lang||'en';buttons.forEach(b=>{const on=b.dataset.homeLang===lang;b.classList.toggle('active',on);b.setAttribute('aria-pressed',String(on))})};buttons.forEach(b=>b.addEventListener('click',()=>{const select=document.getElementById('hugs-language-select');if(select){select.value=b.dataset.homeLang;select.dispatchEvent(new Event('change',{bubbles:true}))}sync()}));document.addEventListener('hugs-language-change',sync);sync()})();
+  </script>
 </body>
 </html>
