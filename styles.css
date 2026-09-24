@@ -133,17 +133,16 @@ img{
     conic-gradient(
       from var(--hugs-border-angle),
       transparent 0deg,
-      transparent 300deg,
-      rgba(47,158,231,.03) 307deg,
-      rgba(47,158,231,.10) 316deg,
-      rgba(47,158,231,.30) 324deg,
-      var(--hugs-electric-deep) 331deg,
-      var(--hugs-electric) 337deg,
-      #dff8ff 341deg,
-      #ffffff 344deg,
-      #ffffff 347deg,
-      var(--hugs-electric) 350deg,
-      rgba(47,158,231,.34) 355deg,
+      transparent 310deg,
+      rgba(47,158,231,.04) 316deg,
+      rgba(47,158,231,.12) 324deg,
+      rgba(47,158,231,.32) 332deg,
+      var(--hugs-electric-deep) 339deg,
+      var(--hugs-electric) 344deg,
+      #e8fbff 348deg,
+      #ffffff 351deg,
+      #e8fbff 354deg,
+      var(--hugs-electric) 357deg,
       transparent 360deg
     );
   -webkit-mask:
@@ -152,9 +151,8 @@ img{
   -webkit-mask-composite:xor;
   mask-composite:exclude;
   filter:
-    drop-shadow(0 0 2px rgba(255,255,255,.75))
-    drop-shadow(0 0 4px rgba(114,207,255,.58))
-    drop-shadow(0 0 7px rgba(47,158,231,.24));
+    drop-shadow(0 0 3px rgba(232,251,255,.82))
+    drop-shadow(0 0 6px rgba(114,207,255,.52));
   animation:
     hugs-border-current 4.8s linear infinite;
 }
@@ -252,12 +250,16 @@ header .seal,
 .navlinks a{
   padding:9px 10px;
   border-radius:999px;
+  box-shadow:0 4px 10px rgba(7,31,59,.10),0 1px 3px rgba(7,31,59,.08);
+  transition:background .2s ease,color .2s ease,box-shadow .2s ease,transform .2s ease;
 }
 
 .navlinks a:hover,
 .navlinks a.active{
   background:#eef7ff;
   color:var(--navy);
+  box-shadow:0 6px 14px rgba(7,31,59,.14),0 2px 5px rgba(47,158,231,.12);
+  transform:translateY(-1px);
 }
 
 .menu{
@@ -267,6 +269,7 @@ header .seal,
   border-radius:14px;
   padding:10px 12px;
   font-weight:800;
+  box-shadow:0 5px 12px rgba(7,31,59,.12),0 1px 3px rgba(7,31,59,.08);
 }
 
 
