@@ -4,7 +4,7 @@ The gallery is at /art-voting.html. Netlify remains locked until the site owner 
 
 ## Required Netlify environment variables
 - HUGS_VOTER_SESSION_SECRET: generate a new random secret of at least 32 bytes; never commit it.
-- RESEND_API_KEY: valid server-side Resend API key.
+- HUGS_VOTER_RESEND_API_KEY: valid server-side Resend API key.
 - HUGS_VOTER_FROM_EMAIL: verified sender address at the configured Resend domain, e.g. a dedicated HUGSLinks sign-in mailbox.
 
 Deploy after setting these variables. Verify sender domain with Resend. Never paste keys in GitHub or the public HTML.
@@ -29,7 +29,7 @@ Email-code delivery and production sign-in cannot be tested while Netlify is loc
 1. Provision a private Neon Postgres database (or compatible Neon serverless connection).
 2. Run database/art-voting.sql once against that database.
 3. Set HUGS_VOTING_DATABASE_URL in Netlify environment variables. Never commit or send its value in chat.
-4. Set HUGS_VOTER_SESSION_SECRET (random secret at least 32 bytes), RESEND_API_KEY, and HUGS_VOTER_FROM_EMAIL (verified sender).
+4. Set HUGS_VOTER_SESSION_SECRET (random secret at least 32 bytes), HUGS_VOTER_RESEND_API_KEY, and HUGS_VOTER_FROM_EMAIL (verified sender).
 5. Unlock Netlify only when ready for the planned single deployment, then test the full login, one-vote constraint, entry cap, closing and winner publishing flows.
 
 Competition and regular ratings now use Postgres INSERT ... ON CONFLICT DO NOTHING, backed by unique primary keys. This prevents simultaneous duplicate votes. No database or environment variables have been provisioned automatically; production testing is still pending.
