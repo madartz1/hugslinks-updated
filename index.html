@@ -6,6 +6,28 @@
   <title>HUGSLinks | Premium Community Support</title>
   <meta name="description" content="HUGSLinks premium community support and creative empowerment ecosystem.">
   <link rel="stylesheet" href="styles.css">
+  <style>
+    .hugs-navigator{padding-top:10px}
+    .navigator-shell{background:linear-gradient(145deg,#061b34,#0b3157);color:#fff;border-radius:28px;padding:clamp(24px,5vw,48px);overflow:hidden;position:relative}
+    .navigator-shell:after{content:"♡";position:absolute;right:-20px;top:-65px;font-size:210px;line-height:1;color:rgba(104,190,255,.08);pointer-events:none}
+    .navigator-intro{position:relative;z-index:1;max-width:720px}
+    .navigator-intro h2{color:#fff;margin:.55rem 0}
+    .navigator-intro .lead{color:#d9e9f6}
+    .navigator-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;margin-top:26px;position:relative;z-index:1}
+    .navigator-choice{min-width:0;display:grid;grid-template-columns:46px 1fr 24px;align-items:center;gap:12px;min-height:82px;padding:14px 16px;border:1px solid rgba(255,255,255,.16);border-radius:18px;background:rgba(255,255,255,.08);color:#fff;text-decoration:none;transition:transform .18s ease,background .18s ease,border-color .18s ease}
+    .navigator-choice:hover,.navigator-choice:focus-visible{background:rgba(255,255,255,.15);border-color:rgba(117,202,255,.7);transform:translateY(-2px)}
+    .navigator-choice:focus-visible{outline:3px solid #79caff;outline-offset:3px}
+    .navigator-icon{display:grid;place-items:center;width:46px;height:46px;border-radius:14px;background:rgba(255,255,255,.1);font-size:24px}
+    .navigator-choice strong,.navigator-choice small{display:block}
+    .navigator-choice strong{font-size:1rem;line-height:1.25}
+    .navigator-choice small{margin-top:4px;color:#c9deee;font-size:.82rem;line-height:1.3}
+    .navigator-arrow{font-size:1.25rem;color:#80ccff}
+    .navigator-support{grid-column:1/-1;background:rgba(74,169,238,.14)}
+    .navigator-footer{position:relative;z-index:1;display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin-top:22px;color:#d9e9f6}
+    .navigator-footer a{color:#8fd3ff;font-weight:800}
+    @media(max-width:720px){.navigator-grid{grid-template-columns:1fr}.navigator-support{grid-column:auto}.navigator-shell{border-radius:22px}.navigator-choice{min-height:78px}}
+    @media(prefers-reduced-motion:reduce){.navigator-choice{transition:none}.navigator-choice:hover{transform:none}}
+  </style>
 </head>
 
 <body>
@@ -53,6 +75,31 @@
       <a class="hero-card" href="help-app.html" aria-label="Open HUGS Help App">
         <img src="assets/help-app.jpeg" alt="HUGS Help App">
       </a>
+    </section>
+
+    <section class="section hugs-navigator" id="hugs-navigator">
+      <div class="navigator-shell">
+        <div class="navigator-intro">
+          <span class="badge">HUGS Navigator</span>
+          <h2>How can HUGS help today?</h2>
+          <p class="lead">Choose what you need—or how you want to help—and we’ll take you directly to the right HUGSLinks path.</p>
+        </div>
+
+        <div class="navigator-grid" aria-label="HUGS Navigator choices">
+          <a class="navigator-choice" href="food-support.html"><span class="navigator-icon" aria-hidden="true">🍎</span><span><strong>I need food</strong><small>Food support and local resources</small></span><span class="navigator-arrow" aria-hidden="true">→</span></a>
+          <a class="navigator-choice" href="housing-help.html"><span class="navigator-icon" aria-hidden="true">🏠</span><span><strong>I need housing help</strong><small>Housing navigation and advocacy</small></span><span class="navigator-arrow" aria-hidden="true">→</span></a>
+          <a class="navigator-choice" href="resources.html#winter-advisory"><span class="navigator-icon" aria-hidden="true">🧥</span><span><strong>I need clothing / winter help</strong><small>Coats, cold-weather and emergency resources</small></span><span class="navigator-arrow" aria-hidden="true">→</span></a>
+          <a class="navigator-choice" href="resources.html#nyc-government-help"><span class="navigator-icon" aria-hidden="true">💳</span><span><strong>I need benefits</strong><small>Government assistance and HRA pathways</small></span><span class="navigator-arrow" aria-hidden="true">→</span></a>
+          <a class="navigator-choice" href="help-app.html#give-help"><span class="navigator-icon" aria-hidden="true">🤝</span><span><strong>I want to help someone</strong><small>Volunteer, become a helper or support a HUG</small></span><span class="navigator-arrow" aria-hidden="true">→</span></a>
+          <a class="navigator-choice" href="artist-submit.html"><span class="navigator-icon" aria-hidden="true">🎨</span><span><strong>I’m an artist</strong><small>Submit work and join the art community</small></span><span class="navigator-arrow" aria-hidden="true">→</span></a>
+          <a class="navigator-choice navigator-support" href="support-hugs.html"><span class="navigator-icon" aria-hidden="true">💙</span><span><strong>I want to support HUGS</strong><small>Help the mission grow and reach more people</small></span><span class="navigator-arrow" aria-hidden="true">→</span></a>
+        </div>
+
+        <div class="navigator-footer">
+          <span>Not sure where to start?</span>
+          <a href="help-center.html">Open the HUGS Help Center →</a>
+        </div>
+      </div>
     </section>
 
     <section class="section">
