@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>In-Person HUG | HUGSLinks</title>
+<meta name="description" content="Accept an in-person HUG payment and deliver the digital HUG.">
+<link rel="stylesheet" href="styles.css">
+<style>
+:root{--navy:#071f3b;--blue:#2f9ee7;--sky:#72cfff;--gold:#f2b84b;--cream:#f7f3ec}
+*{box-sizing:border-box}body{margin:0;font-family:Arial,Helvetica,sans-serif;background:linear-gradient(180deg,#fff,var(--cream));color:#23374d}
+.wrap{max-width:760px;margin:auto;padding:28px 16px 80px}.back{color:var(--navy);font-weight:800;text-decoration:none}
+.hero{text-align:center;padding:34px 10px 18px}.hero img{width:110px;max-height:90px;object-fit:contain}.eyebrow{font-size:12px;font-weight:900;letter-spacing:.15em;text-transform:uppercase;color:var(--blue)}
+h1{font-size:clamp(38px,9vw,62px);line-height:1;margin:10px 0;color:var(--navy)}.price{font-size:32px;font-weight:900;color:var(--blue)}
+.card{background:#fff;border:1px solid #dce8f2;border-radius:26px;padding:24px;margin-top:20px;box-shadow:0 18px 45px rgba(7,31,59,.11)}
+.card h2{margin-top:0;color:var(--navy)}.methods{display:grid;grid-template-columns:1fr 1fr;gap:12px}.method{border:2px solid #dce8f2;border-radius:18px;padding:18px;text-align:center;font-weight:900}
+.note{font-size:14px;line-height:1.55;color:#60758a}.confirm{display:flex;gap:10px;align-items:flex-start;margin:20px 0;padding:15px;border-radius:16px;background:#f3f8fc}
+.confirm input{width:22px;height:22px}.button{display:flex;justify-content:center;align-items:center;width:100%;border:0;border-radius:999px;padding:16px 18px;font-weight:900;text-decoration:none;cursor:pointer}
+.gold{background:linear-gradient(135deg,var(--gold),#f7d779);color:#17212c}.navy{background:var(--navy);color:#fff;margin-top:11px}.disabled{opacity:.42;pointer-events:none}
+.success{display:none;text-align:center}.success.show{display:block}.success .bubble{font-size:54px}
+@media(max-width:560px){.methods{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<main class="wrap">
+<a class="back" href="hugs-cards.html">← Back to HUGS Cards</a>
+<section class="hero">
+<img src="assets/HUGS_Header_Logo_Transparent.png" alt="HUGSLinks logo">
+<div class="eyebrow">In-Person HUG</div>
+<h1>Give a Hug.<br>Get a Hug.</h1>
+<div class="price">$6.99</div>
+<p>Accept the contactless payment on the HUGSLinks seller's phone, then deliver the digital HUG immediately.</p>
+</section>
+<section class="card" id="checkout">
+<h2>1. Accept payment</h2>
+<div class="methods">
+<div class="method">💳 Stripe<br>Tap to Pay</div>
+<div class="method">💵 Cash App Business<br>Tap to Pay</div>
+</div>
+<p class="note">Complete the payment in the official payment app. HUGSLinks does not collect or store card numbers on this page.</p>
+<label class="confirm"><input id="paid" type="checkbox"><span><strong>I confirmed the $6.99 payment was approved.</strong><br><small>Only the seller should check this after seeing the approved payment.</small></span></label>
+<button class="button gold disabled" id="deliver" type="button" disabled>Deliver This HUG</button>
+</section>
+<section class="card success" id="success">
+<div class="bubble">💙</div><h2>Your HUG is ready.</h2>
+<p>Send the buyer their HUG now by text, AirDrop, email or another sharing option.</p>
+<button class="button gold" id="share" type="button">Share the HUG</button>
+<a class="button navy" href="nyc-ride-hugs-card.html">Open the HUG</a>
+<p class="note" id="copy-note"></p>
+</section>
+</main>
+<script>
+const paid=document.getElementById('paid'),deliver=document.getElementById('deliver'),checkout=document.getElementById('checkout'),success=document.getElementById('success'),share=document.getElementById('share'),note=document.getElementById('copy-note');
+const hugUrl=new URL('nyc-ride-hugs-card.html',window.location.href).href;
+paid.addEventListener('change',()=>{deliver.disabled=!paid.checked;deliver.classList.toggle('disabled',!paid.checked)});
+deliver.addEventListener('click',()=>{checkout.style.display='none';success.classList.add('show');window.scrollTo({top:0,behavior:'smooth'})});
+share.addEventListener('click',async()=>{const data={title:'A HUG from HUGSLinks',text:'Someone sent you a HUG 💙 Give a Hug. Get a Hug.',url:hugUrl};try{if(navigator.share){await navigator.share(data)}else{await navigator.clipboard.writeText(hugUrl);note.textContent='HUG link copied — paste it into a text or email.'}}catch(e){if(e.name!=='AbortError')note.textContent='Open the HUG below, then use your browser Share button.'}});
+</script>
+</body>
+</html>
