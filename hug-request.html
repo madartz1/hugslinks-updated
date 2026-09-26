@@ -365,6 +365,14 @@
         #9ecfed;
     }
 
+    .type-option[data-page] label::after{
+      content:"→";
+      margin-left:auto;
+      color:var(--blue);
+      font-size:22px;
+      font-weight:900;
+    }
+
     .type-option input:checked + label{
       color:var(--navy);
 
@@ -1032,7 +1040,7 @@
     <div class="type-grid">
 
 
-      <div class="type-option">
+      <div class="type-option" data-page="food-support.html">
 
         <input
           type="radio"
@@ -1129,7 +1137,7 @@
       </div>
 
 
-      <div class="type-option">
+      <div class="type-option" data-page="food-support.html">
 
         <input
           type="radio"
@@ -1162,7 +1170,7 @@
       </div>
 
 
-      <div class="type-option">
+      <div class="type-option" data-page="housing-help.html">
 
         <input
           type="radio"
@@ -1195,7 +1203,7 @@
       </div>
 
 
-      <div class="type-option">
+      <div class="type-option" data-page="resources.html">
 
         <input
           type="radio"
@@ -1228,7 +1236,7 @@
       </div>
 
 
-      <div class="type-option">
+      <div class="type-option" data-page="art-community.html">
 
         <input
           type="radio"
@@ -1260,7 +1268,7 @@
       </div>
 
 
-      <div class="type-option">
+      <div class="type-option" data-page="contact.html">
 
         <input
           type="radio"
@@ -1786,6 +1794,16 @@
 
 
 <script>
+
+  document.querySelectorAll(".type-option[data-page]").forEach(
+    function(option){
+      option.addEventListener("click", function(event){
+        event.preventDefault();
+        window.location.href = option.dataset.page;
+      });
+    }
+  );
+
 
   const hugRequestForm =
     document.getElementById(
