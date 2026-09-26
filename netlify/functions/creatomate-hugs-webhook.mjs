@@ -139,7 +139,7 @@ export default async (req) => {
       await resend.emails.send(
         {
           from:
-            "HUGSLinks <hugs@hugslinks.com>",
+            process.env.HUGS_MEMBER_FROM_EMAIL,
 
           to:
             order.customer_email,
