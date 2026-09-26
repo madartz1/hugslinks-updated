@@ -18,6 +18,14 @@ function memberNumber(number) {
   return String(number).padStart(3, "0");
 }
 
+function normalizeEmail(email = "") {
+  return String(email).trim().toLowerCase();
+}
+
+function emailKey(email = "") {
+  return encodeURIComponent(normalizeEmail(email));
+}
+
 function escapeHtml(value = "") {
   return String(value)
     .replaceAll("&", "&amp;")
@@ -342,37 +350,63 @@ export default async (req) => {
     }
 
     /*
-     * IMPORTANT:
-     * Only the HUGS 333 Payment Link can create
-     * a founding membership.
+     * A HUGS 333 membership can come from either:
+     * 1) the dedicated HUGS 333 Payment Link, or
+     * 2) a paid personalized HUG order created by the existing
+     *    HUGS card checkout flow.
+     *
+     * This deliberately does NOT accept every Stripe payment.
      */
     const paymentLinkId =
       typeof session.payment_link === "string"
         ? session.payment_link
         : session.payment_link?.id;
 
+    const orderId = session.client_reference_id || null;
+
+    let qualifyingPurchase = null;
+
     if (
-      !paymentLinkId ||
-      paymentLinkId !== process.env.HUGS_MEMBER_PAYMENT_LINK_ID
+      paymentLinkId &&
+      paymentLinkId === process.env.HUGS_MEMBER_PAYMENT_LINK_ID
     ) {
-      console.log(
-        "Checkout ignored — not HUGS 333 Payment Link:",
-        paymentLinkId
-      );
+      qualifyingPurchase = "hugs-333-card";
+    } else if (orderId) {
+      const hugsOrders = getStore({
+        name: "hugs-orders",
+        consistency: "strong",
+      });
+
+      const personalizedOrder = await hugsOrders.get(orderId, {
+        type: "json",
+        consistency: "strong",
+      });
+
+      if (personalizedOrder) {
+        qualifyingPurchase = "personalized-hug-card";
+      }
+    }
+
+    if (!qualifyingPurchase) {
+      console.log("Checkout ignored — not a qualifying HUGS 333 purchase", {
+        payment_link_id: paymentLinkId,
+        order_id: orderId,
+      });
 
       return json({
         received: true,
         ignored: true,
-        reason: "not_hugs_333_payment_link",
+        reason: "not_qualifying_hugs_333_purchase",
       });
     }
 
     /*
      * Determine purchaser information.
      */
-    const email =
+    const email = normalizeEmail(
       session.customer_details?.email ||
-      session.customer_email;
+      session.customer_email
+    );
 
     if (!email) {
       throw new Error(
@@ -396,6 +430,46 @@ export default async (req) => {
       name: "hugs-333-payments",
       consistency: "strong",
     });
+
+    const memberEmails = getStore({
+      name: "hugs-333-member-emails",
+      consistency: "strong",
+    });
+
+    /*
+     * A customer receives one permanent HUGS 333 number.
+     * Check the normalized purchaser email before consuming
+     * another numbered slot.
+     */
+    const existingMembership = await memberEmails.get(
+      emailKey(email),
+      {
+        type: "json",
+        consistency: "strong",
+      }
+    );
+
+    if (existingMembership?.member_number) {
+      await payments.setJSON(session.id, {
+        stripe_session_id: session.id,
+        stripe_event_id: event.id,
+        email,
+        name,
+        payment_link_id: paymentLinkId,
+        order_id: orderId,
+        qualifying_purchase: qualifyingPurchase,
+        member_number: existingMembership.member_number,
+        payment_status: session.payment_status,
+        status: "existing-member-purchase",
+        created_at: new Date().toISOString(),
+      });
+
+      return json({
+        received: true,
+        existing_member: true,
+        member_number: existingMembership.member_number,
+      });
+    }
 
     /*
      * Duplicate-payment protection.
@@ -483,6 +557,8 @@ export default async (req) => {
           stripe_session_id: session.id,
           stripe_event_id: event.id,
           payment_link_id: paymentLinkId,
+          order_id: orderId,
+          qualifying_purchase: qualifyingPurchase,
           payment_status: session.payment_status,
           amount_total: session.amount_total,
           currency: session.currency,
@@ -533,6 +609,51 @@ export default async (req) => {
     }
 
     /*
+     * Permanently map this purchaser email to the assigned number.
+     * onlyIfNew prevents a concurrent second purchase by the same
+     * email from replacing an existing membership identity.
+     */
+    const emailReservation = await memberEmails.setJSON(
+      emailKey(email),
+      {
+        email,
+        member_number: assignedNumber,
+        created_at: new Date().toISOString(),
+      },
+      {
+        onlyIfNew: true,
+      }
+    );
+
+    if (!emailReservation.modified) {
+      const existing = await memberEmails.get(emailKey(email), {
+        type: "json",
+        consistency: "strong",
+      });
+
+      if (
+        existing?.member_number &&
+        existing.member_number !== assignedNumber
+      ) {
+        const justReserved = await members.get(
+          `member-${assignedNumber}`,
+          { type: "json", consistency: "strong" }
+        );
+
+        if (justReserved) {
+          justReserved.status = "duplicate-email-reservation";
+          justReserved.replaced_by_member_number = existing.member_number;
+          await members.setJSON(
+            `member-${assignedNumber}`,
+            justReserved
+          );
+        }
+
+        assignedNumber = existing.member_number;
+      }
+    }
+
+    /*
      * Save the assigned number against the payment.
      */
     await payments.setJSON(
@@ -543,6 +664,8 @@ export default async (req) => {
         email,
         name,
         payment_link_id: paymentLinkId,
+        order_id: orderId,
+        qualifying_purchase: qualifyingPurchase,
         member_number: assignedNumber,
         payment_status: session.payment_status,
         status: "member-created",
