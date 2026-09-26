@@ -1,6 +1,7 @@
 import Stripe from "stripe";
 import { getStore } from "@netlify/blobs";
 import crypto from "node:crypto";
+import { Resend } from "resend";
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY || "");
 const MAX_MEMBERS = 333;
@@ -53,5 +54,23 @@ export default async (request) => {
   await store.setJSON("member:" + String(number).padStart(3,"0"), member);
   await store.setJSON("token:" + token, member);
   await store.setJSON(receiptKey, { number, token });
+
+  const email = member.email;
+  if (email && process.env.RESEND_API_KEY) {
+    try {
+      const resend = new Resend(process.env.RESEND_API_KEY);
+      const base = (process.env.URL || "https://hugslinks.com").replace(/\/$/, "");
+      const vaultUrl = base + "/member-vault.html?token=" + encodeURIComponent(token);
+      await resend.emails.send({
+        from: process.env.HUGS_MEMBER_FROM_EMAIL || "HUGSLinks <members@hugslinks.com>",
+        to: email,
+        subject: "ACCESS GRANTED — HUGS Original " + member.displayNumber,
+        html: "<div style=\"font-family:Arial,sans-serif;color:#071f3b\"><h1>Welcome to the HUGS Original 333.</h1><p>Your founding member number is <strong>" + member.displayNumber + "</strong>.</p><p>Your HUG purchase unlocked your personal digital member card and Members Vault access.</p><p><a href=\"" + vaultUrl + "\" style=\"display:inline-block;padding:14px 22px;border-radius:999px;background:#071f3b;color:white;text-decoration:none;font-weight:700\">ACCESS GRANTED</a></p><p>Give a Hug. Get a Hug.</p></div>"
+      });
+    } catch (error) {
+      console.error("Member email delivery failed", error);
+    }
+  }
+
   return new Response("ok");
 };
