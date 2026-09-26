@@ -213,6 +213,9 @@ img{
   height:58px;
   width:auto;
   display:block;
+  filter:
+    drop-shadow(0 5px 5px rgba(7,31,59,.28))
+    drop-shadow(0 0 8px rgba(47,158,231,.18));
 }
 
 
@@ -269,7 +272,10 @@ header .seal,
   border-radius:14px;
   padding:10px 12px;
   font-weight:800;
-  box-shadow:0 5px 12px rgba(7,31,59,.12),0 1px 3px rgba(7,31,59,.08);
+  box-shadow:
+    0 8px 18px rgba(7,31,59,.20),
+    0 3px 6px rgba(7,31,59,.13),
+    0 0 10px rgba(47,158,231,.10);
 }
 
 
@@ -1208,7 +1214,7 @@ textarea{
   .seal{grid-column:1 / 3;grid-row:1;width:52px;height:48px}
   .header-logo{height:48px}
   .brand{grid-row:2;font-size:1.12rem;padding:7px 13px}
-  .menu{grid-row:2;min-width:72px;color:var(--navy);border-color:rgba(18,103,255,.18);box-shadow:0 4px 14px rgba(6,22,47,.06)}
+  .menu{grid-row:2;min-width:72px;color:var(--navy);border-color:rgba(18,103,255,.24);box-shadow:0 9px 20px rgba(7,31,59,.20),0 3px 6px rgba(7,31,59,.13),0 0 10px rgba(47,158,231,.10)}
   .navlinks{
     position:absolute;
     top:100%;
@@ -1242,4 +1248,14 @@ textarea{
     line-height:1.15;
   }
   .navlinks a:hover,.navlinks a.active{background:#eef7ff;color:var(--navy)}
+}
+
+
+/* HUGS header depth — launch polish */
+.topbar .brand{
+  box-shadow:
+    inset 0 0 7px rgba(114,207,255,.08),
+    0 9px 20px rgba(7,31,59,.20),
+    0 3px 6px rgba(7,31,59,.13),
+    0 0 12px rgba(47,158,231,.12);
 }
