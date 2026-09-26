@@ -8,7 +8,7 @@ const MAX_MEMBERS = 333;
 
 export default async (request) => {
   if (request.method !== "POST") return new Response("Method Not Allowed", { status: 405 });
-  const webhookSecret = process.env.STRIPE_WEBHOOK_SECRET;
+  const webhookSecret = process.env.HUGS_333_STRIPE_WEBHOOK_SECRET;
   const qualifyingLink = process.env.HUGS_MEMBER_PAYMENT_LINK_ID;
   if (!webhookSecret || !qualifyingLink || !process.env.STRIPE_SECRET_KEY) {
     return new Response("Membership system not activated", { status: 503 });
