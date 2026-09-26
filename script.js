@@ -111,3 +111,51 @@ const path=location.pathname.split('/').pop()||'index.html';document.querySelect
  panel.querySelectorAll('.hh-option').forEach(b=>b.onclick=()=>{category=b.dataset.cat;if(tawkReady&&tawkStatus==='online'&&window.Tawk_API){try{window.Tawk_API.setAttributes&&window.Tawk_API.setAttributes({help_category:category,website_page:location.pathname},()=>{});window.Tawk_API.addTags&&window.Tawk_API.addTags([category.replace(/[^a-z0-9]+/gi,'-').toLowerCase()]);window.Tawk_API.showWidget&&window.Tawk_API.showWidget();window.Tawk_API.maximize&&window.Tawk_API.maximize();panel.classList.remove('open');return}catch(e){}}title.textContent=category;options.style.display='none';form.style.display='block'});
  form.addEventListener('submit',async e=>{e.preventDefault();const btn=form.querySelector('.hh-send'),fd=new FormData(form);btn.disabled=true;btn.textContent='Sending…';try{const res=await fetch('/.netlify/functions/submit-support',{method:'POST',headers:{'Content-Type':'application/json'},cache:'no-store',credentials:'omit',referrerPolicy:'no-referrer',body:JSON.stringify({category,name:fd.get('name'),email:fd.get('email'),reference:fd.get('reference'),message:fd.get('message'),bot_field:fd.get('bot_field'),page:location.pathname})});const data=await res.json();if(!res.ok||!data.ok)throw new Error(data.error||'Message could not be sent.');form.reset();form.style.display='none';result.innerHTML='<div style="padding:14px;border-radius:14px;background:#eef7ff;color:#071f3b;border:1px solid #b9dcff"><strong>Message received.</strong><br>Your support reference is <strong>'+data.support_id+'</strong>. Save it for follow-up.</div>'}catch(err){result.textContent=err.message}finally{btn.disabled=false;btn.textContent='Send to HUGSLinks'}});
 })();
+
+/* HUGSLinks English / Spanish language control */
+(()=>{
+ const STORAGE_KEY='hugsLanguage';
+ const dictionary={
+  'Language:':'Idioma:','English':'English','Español':'Español',
+  'Need a HUG?':'¿Necesitas un HUG?','Sound off':'Sonido apagado','Sound on':'Sonido activado',
+  'HUGS Live Help':'Ayuda en vivo de HUGS','How can we help you today?':'¿Cómo podemos ayudarte hoy?',
+  'Message support available':'Soporte por mensaje disponible','FAQs':'Preguntas frecuentes','Track a HUG':'Rastrear un HUG',
+  'Help with an order':'Ayuda con un pedido','Check my HUG request':'Revisar mi solicitud de HUG',
+  'Food donation / pickup help':'Ayuda con donación / recogida de alimentos','Artist submission help':'Ayuda con envío de artista',
+  'Donation or payment help':'Ayuda con donación o pago','Help finding something':'Ayuda para encontrar algo',
+  'Talk to HUGSLinks':'Hablar con HUGSLinks','Name *':'Nombre *','Email *':'Correo electrónico *',
+  'Reference number':'Número de referencia','How can we help? *':'¿Cómo podemos ayudarte? *',
+  'Send to HUGSLinks':'Enviar a HUGSLinks','Back':'Volver'
+ };
+ const originals=new WeakMap();
+ function translateText(root,lang){
+  const walker=document.createTreeWalker(root,NodeFilter.SHOW_TEXT);
+  const nodes=[];while(walker.nextNode())nodes.push(walker.currentNode);
+  nodes.forEach(n=>{
+   const p=n.parentElement;if(!p||p.closest('[data-no-translate],script,style,noscript'))return;
+   if(!originals.has(n))originals.set(n,n.nodeValue);
+   const original=originals.get(n);
+   if(lang==='en'){n.nodeValue=original;return}
+   const lead=original.match(/^\s*/)?.[0]||'',trail=original.match(/\s*$/)?.[0]||'',key=original.trim();
+   if(dictionary[key])n.nodeValue=lead+dictionary[key]+trail;
+  });
+  document.querySelectorAll('input[placeholder],textarea[placeholder]').forEach(el=>{
+   if(!el.dataset.hugsOriginalPlaceholder)el.dataset.hugsOriginalPlaceholder=el.placeholder;
+   if(lang==='en')el.placeholder=el.dataset.hugsOriginalPlaceholder;
+  });
+ }
+ function apply(lang){
+  lang=lang==='es'?'es':'en';localStorage.setItem(STORAGE_KEY,lang);
+  document.documentElement.lang=lang;document.documentElement.dataset.hugsLanguage=lang;
+  translateText(document.body,lang);
+  document.querySelectorAll('[data-home-lang]').forEach(b=>{const on=b.dataset.homeLang===lang;b.classList.toggle('active',on);b.setAttribute('aria-pressed',String(on))});
+  document.dispatchEvent(new CustomEvent('hugs-language-change',{detail:{language:lang}}));
+ }
+ function ensureSelector(){
+  let select=document.getElementById('hugs-language-select');
+  if(!select){select=document.createElement('select');select.id='hugs-language-select';select.hidden=true;select.innerHTML='<option value="en">English</option><option value="es">Español</option>';document.body.appendChild(select)}
+  select.addEventListener('change',()=>apply(select.value));return select;
+ }
+ const select=ensureSelector();const saved=localStorage.getItem(STORAGE_KEY)==='es'?'es':'en';select.value=saved;apply(saved);
+ document.addEventListener('click',e=>{const b=e.target.closest('[data-home-lang]');if(!b)return;select.value=b.dataset.homeLang;apply(select.value)});
+})();
