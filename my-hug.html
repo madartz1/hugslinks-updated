@@ -1,0 +1,43 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>My HUG | HUGSLinks</title>
+<meta name="description" content="Securely access your purchased HUGS NYC Ride card and HUGS 333 membership.">
+<style>
+:root{--navy:#071b38;--blue:#13aaf5;--light:#eaf8ff;--ink:#10233f}
+*{box-sizing:border-box}body{margin:0;font-family:Arial,Helvetica,sans-serif;background:radial-gradient(circle at top,#12345e 0,#071b38 44%,#031024 100%);color:#fff;min-height:100vh}
+main{max-width:680px;margin:auto;padding:36px 18px 60px}.brand{text-align:center;margin-bottom:24px}.heart{font-size:48px;color:#4cc7ff}.eyebrow{letter-spacing:3px;font-size:12px;color:#8ddcff;font-weight:800}.brand h1{font-size:42px;margin:8px 0}.brand p{color:#c6d9ec;line-height:1.6}
+.card{background:#fff;color:var(--ink);border-radius:22px;padding:26px;box-shadow:0 20px 55px #0008}.badge{display:inline-block;background:#e7f7ff;color:#075c91;border-radius:999px;padding:8px 12px;font-size:12px;font-weight:800;letter-spacing:1px}
+label{display:block;font-weight:800;margin:18px 0 7px}input{width:100%;padding:15px;border:1px solid #cad7e5;border-radius:12px;font-size:16px}button{width:100%;margin-top:18px;border:0;border-radius:12px;padding:15px;background:linear-gradient(135deg,#0d8ed3,#21c1ff);color:#fff;font-size:16px;font-weight:900;cursor:pointer}
+button:disabled{opacity:.55}.note{font-size:13px;color:#64748b;line-height:1.5;margin-top:13px}.status{display:none;margin-top:18px;padding:14px;border-radius:12px;background:#f1f7fb;line-height:1.5}.result{display:none;margin-top:20px}.member{border:1px solid #d9e6f2;border-radius:16px;padding:18px;background:#f8fbfe}.number{font-size:36px;font-weight:900;color:#087fbd}.download{display:block;text-align:center;text-decoration:none;margin-top:14px;border-radius:12px;padding:14px;background:#071b38;color:white;font-weight:900}
+footer{text-align:center;color:#90abc5;font-size:12px;margin-top:24px}
+</style></head>
+<body><main>
+<section class="brand"><div class="heart">♥</div><div class="eyebrow">HELP UNDER GOOD SERVICE</div><h1>My HUG</h1><p>Scan. Verify. Stay connected. Access your purchased HUGS NYC Ride card and your HUGS 333 founding-member record.</p></section>
+<section class="card"><span class="badge">HUGS MEMBER ACCESS</span>
+<form id="accessForm">
+<label for="email">Purchase email</label><input id="email" name="email" type="email" autocomplete="email" required placeholder="you@example.com">
+<label for="order">HUG order number</label><input id="order" name="order" autocomplete="off" required placeholder="Your HUG order number">
+<button id="submit" type="submit">View My HUG</button>
+<p class="note">For your privacy, your purchase email and HUG order number must match our paid-order record. The QR on the keychain never contains your private information.</p>
+</form>
+<div id="status" class="status" role="status"></div>
+<div id="result" class="result">
+<div id="memberBox" class="member" style="display:none"><div class="eyebrow" style="color:#497da8">HUGS 333 FOUNDING MEMBER</div><div id="memberNumber" class="number"></div><div id="memberName"></div></div>
+<a id="download" class="download" href="#" style="display:none">Download My HUGS NYC Ride Card</a>
+</div></section>
+<footer>HUGSLinks • Give a Hug. Get a Hug. • The Chain Effect™</footer>
+</main>
+<script>
+const form=document.getElementById('accessForm'),statusBox=document.getElementById('status'),result=document.getElementById('result'),btn=document.getElementById('submit'),memberBox=document.getElementById('memberBox'),download=document.getElementById('download');
+function status(msg,bad=false){statusBox.style.display='block';statusBox.textContent=msg;statusBox.style.color=bad?'#9b1c1c':'#244f79'}
+form.addEventListener('submit',async e=>{e.preventDefault();result.style.display='none';memberBox.style.display='none';download.style.display='none';btn.disabled=true;status('Verifying your HUG…');
+try{const body={email:document.getElementById('email').value.trim(),order_id:document.getElementById('order').value.trim()};
+const r=await fetch('/.netlify/functions/my-hug-access',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(body)});const d=await r.json();
+if(!r.ok)throw new Error(d.error||'Unable to verify this HUG.');
+result.style.display='block';status('Verified. Welcome back to HUGSLinks.');
+if(d.member?.member_number){memberBox.style.display='block';document.getElementById('memberNumber').textContent='#'+d.member.member_number;document.getElementById('memberName').textContent=d.member.name||''}
+if(d.download_url){download.href=d.download_url;download.style.display='block'}
+}catch(err){status(err.message,true)}finally{btn.disabled=false}});
+</script></body></html>
