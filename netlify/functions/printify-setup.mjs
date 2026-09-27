@@ -53,7 +53,7 @@ export async function handler() {
       let products = [];
       try {
         const productResponse = await printify(
-          `/shops/${encodeURIComponent(shop.id)}/products.json?limit=100`,
+          `/shops/${encodeURIComponent(shop.id)}/products.json?limit=50`,
           token
         );
 
@@ -62,11 +62,13 @@ export async function handler() {
           : (productResponse && Array.isArray(productResponse.data) ? productResponse.data : []);
 
         products = items.map((product) => ({
+          product_id: product.id,
           id: product.id,
           title: product.title,
           visible: product.visible,
           variants: Array.isArray(product.variants)
             ? product.variants.map((variant) => ({
+                variant_id: variant.id,
                 id: variant.id,
                 title: variant.title,
                 sku: variant.sku,
@@ -101,6 +103,7 @@ export async function handler() {
       body: JSON.stringify({
         ok: true,
         token_exposed: false,
+        note: "Use product_id for the product and variant_id for the exact enabled variant when configuring fulfillment.",
         shops: results
       }, null, 2)
     };
