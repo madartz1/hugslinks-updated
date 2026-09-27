@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>HUGS Food Navigator NYC | Find Free & Healthy Food</title>
+<title>HUGS Food Navigator | Find Free & Healthy Food</title>
 <meta name="description" content="Use the HUGSLinks Food Navigator to find NYC free food, food pantries, hot meals, community fridges, farmers markets, EBT-friendly fresh food and trusted food resources.">
 <link rel="stylesheet" href="styles.css">
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIINfQ3C3K8jMZIK1PZx/2SQQ9Qp6h2xwL8=" crossorigin="">
@@ -28,16 +28,16 @@ h1{font-size:clamp(42px,8vw,76px);line-height:.96;letter-spacing:-.05em;margin:1
 <body>
 <header class="topbar"><nav class="nav"><a class="brand" href="index.html">Hugslinks</a><div class="seal"><img src="assets/HUGS_Header_Logo_Transparent.png" alt="HUGS logo" class="header-logo"></div><button class="menu" type="button" aria-expanded="false" aria-label="Open navigation menu">Menu</button><div class="navlinks"><a href="index.html">Home</a><a href="shop.html">Shop</a><a href="hugs-cards.html">HUGS Cards</a><a href="art-community.html">Art</a><a href="food-support.html" class="active">Food</a><a href="housing-help.html">Housing</a><a href="business-services.html">Business</a><a href="help-app.html">Help App</a><a href="help-center.html">Help Center</a><a href="resources.html">Resources</a><a href="about.html">About</a><a href="contact.html">Contact</a></div></nav></header>
 <main class="wrap">
-<section class="hero"><div class="eyebrow">HUGSLinks • NYC Food Navigator</div><h1>Find food near you.</h1><p class="lead">Search one HUGS page for free-food help, trusted pantry and meal locators, community fridges, fresh-food markets, EBT-friendly options and healthier food choices across New York City.</p></section>
+<section class="hero"><div class="eyebrow">HUGSLinks • Food Navigator</div><h1>Find food near you.</h1><p class="lead">Search HUGSLinks for free food, healthy options, community resources, discounts, EBT-friendly food and HUGS-approved businesses across New York City.</p></section>
 
 <div class="searchbar"><input id="searchInput" type="search" placeholder="Search borough, market name or address…" aria-label="Search food resources"><button id="searchBtn" type="button">Search Map</button></div>
-<div class="location-actions"><button class="pill" id="nearMe" type="button">◎ Use My Location</button><button class="pill active" data-filter="all" type="button">All Map Results</button><button class="pill" data-filter="farmers-market" type="button">Fresh Food</button><button class="pill" data-filter="ebt" type="button">EBT</button><button class="pill" data-filter="year-round" type="button">Year-Round</button></div>
+<div class="location-actions"><button class="pill" id="nearMe" type="button">◎ Use My Location</button><button class="pill active" data-filter="all" type="button">All</button><button class="pill" data-filter="hugs-partner" type="button">HUGS Partners</button><button class="pill" data-filter="free-food" type="button">Free Food</button><button class="pill" data-filter="discounts" type="button">Discounts</button><button class="pill" data-filter="vegan" type="button">Vegan</button><button class="pill" data-filter="vegetarian" type="button">Vegetarian</button><button class="pill" data-filter="pescatarian" type="button">Pescatarian</button><button class="pill" data-filter="ebt" type="button">EBT</button><button class="pill" data-filter="farmers-market" type="button">Fresh Food</button></div>
 <p class="status" id="status">Loading current NYC food data…</p>
 
 <section class="layout">
 <div id="map" aria-label="HUGS Food Navigator map"></div>
 <aside class="side">
-<div class="card"><h2>Need free food today?</h2><p>Pantry and meal hours can change quickly. HUGS connects you to current official and nonprofit locators rather than storing old hours.</p><a class="link" href="https://finder.nyc.gov/foodhelp/locations" target="_blank" rel="noopener">Open NYC Food Help →</a></div>
+<div class="card"><h2>HUGS Food Network</h2><p>This map combines official data with HUGS-approved businesses and community resources. HUGS listings can include places not found on city websites.</p><a class="link" href="food-partners.html">Become a HUGS Food Partner →</a></div>
 <div class="card"><h3>What this HUGS map updates automatically</h3><p>Fresh-food market locations, borough, address, operation days/hours, EBT acceptance and year-round status are refreshed from NYC Open Data.</p><div><span class="tag">NYC Open Data</span><span class="tag">Auto refresh</span><span class="tag">Fresh food</span></div></div>
 <div class="card"><h3>Diet-friendly food</h3><p>Use fresh-food markers for produce and EBT-friendly shopping, then use the trusted resource links below for free meals and groceries. Vegetarian availability is explicitly listed by some providers; vegan and pescatarian availability should be confirmed with each location.</p></div>
 </aside>
@@ -52,7 +52,7 @@ h1{font-size:clamp(42px,8vw,76px);line-height:.96;letter-spacing:-.05em;margin:1
 </div>
 </section>
 
-<section style="margin-top:34px"><h2>Trusted NYC food resources</h2><div id="resourceGrid" class="resource-grid"><div class="resource"><strong>Loading resources…</strong></div></div></section>
+<section style="margin-top:34px"><h2>HUGS Food Network listings</h2><div id="hugsDirectory" class="resource-grid"><div class="resource"><strong>Loading HUGS listings…</strong></div></div></section><section style="margin-top:34px"><h2>Trusted food resources</h2><div id="resourceGrid" class="resource-grid"><div class="resource"><strong>Loading resources…</strong></div></div></section>
 <div class="disclaimer"><strong>Before traveling:</strong> Food availability, hours, eligibility and inventory can change. Call or check the provider's current listing when possible. For immediate NYC food-location help, call 311.</div>
 <p style="margin-top:24px"><a class="link" href="food-support.html">← Back to HUGSLinks Food Support</a></p>
 </main>
@@ -60,19 +60,44 @@ h1{font-size:clamp(42px,8vw,76px);line-height:.96;letter-spacing:-.05em;margin:1
 <script>
 const map=L.map("map",{scrollWheelZoom:false}).setView([40.7128,-74.0060],11);
 L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",{maxZoom:19,attribution:'&copy; OpenStreetMap contributors'}).addTo(map);
-const markers=L.layerGroup().addTo(map);let allMarkets=[],currentFilter="all";
+const markers=L.layerGroup().addTo(map);let allMarkets=[],hugsListings=[],currentFilter="all";
 const esc=s=>String(s??"").replace(/[&<>"']/g,m=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"}[m]));
-function popup(m){return '<strong>'+esc(m.name)+'</strong><br>'+esc(m.address)+(m.borough?'<br>'+esc(m.borough):'')+(m.days?'<br><b>Days:</b> '+esc(m.days):'')+(m.hours?'<br><b>Hours:</b> '+esc(m.hours):'')+'<br><b>EBT:</b> '+(m.accepts_ebt?'Yes':'Check location')+'<br><b>Year-round:</b> '+(m.year_round?'Yes':'Seasonal / check dates')+'<br><small>Source: '+esc(m.source)+'</small>'}
-function filtered(){const q=document.getElementById("searchInput").value.trim().toLowerCase();return allMarkets.filter(m=>{const text=[m.name,m.address,m.borough].join(" ").toLowerCase();const qOk=!q||text.includes(q);const fOk=currentFilter==="all"||currentFilter==="farmers-market"||(currentFilter==="ebt"&&m.accepts_ebt)||(currentFilter==="year-round"&&m.year_round);return qOk&&fOk})}
-function render(){markers.clearLayers();const rows=filtered();const bounds=[];rows.forEach(m=>{const marker=L.marker([m.latitude,m.longitude]).bindPopup(popup(m));markers.addLayer(marker);bounds.push([m.latitude,m.longitude])});if(bounds.length&&document.getElementById("searchInput").value.trim())map.fitBounds(bounds,{padding:[35,35],maxZoom:14});document.getElementById("status").innerHTML='<strong>'+rows.length+'</strong> fresh-food market'+(rows.length===1?'':'s')+' shown on the HUGS map.'}
+function popup(m){
+ return '<strong>'+esc(m.name)+'</strong>'+(m.partner_status?'<br><b>'+esc(m.partner_status)+'</b>':'')+'<br>'+esc(m.address||"")+(m.borough?'<br>'+esc(m.borough):'')+(m.category?'<br>'+esc(m.category):'')+(m.hours?'<br><b>Hours:</b> '+esc(m.hours):'')+(m.dietary?.length?'<br><b>Diet:</b> '+esc(m.dietary.join(", ")):'')+(m.features?.length?'<br><b>Features:</b> '+esc(m.features.join(", ")):'')+(m.website?'<br><a href="'+esc(m.website)+'" target="_blank" rel="noopener">Website</a>':'')+'<br><small>Source: '+esc(m.source_label||m.source||"HUGS Food Network")+'</small>'
+}
+function allMapItems(){
+ const markets=allMarkets.map(m=>({...m,source_label:"Official Data",features:[m.accepts_ebt?"SNAP / EBT":"",m.year_round?"Year-Round":""].filter(Boolean),dietary:["Fresh Produce"]}));
+ const hugs=hugsListings.filter(x=>Number.isFinite(Number(x.latitude))&&Number.isFinite(Number(x.longitude))).map(x=>({...x,latitude:Number(x.latitude),longitude:Number(x.longitude),source:x.source_label||"HUGS Verified"}));
+ return [...hugs,...markets];
+}
+function filtered(){
+ const q=document.getElementById("searchInput").value.trim().toLowerCase();
+ return allMapItems().filter(m=>{
+  const text=[m.name,m.address,m.borough,m.category,m.description,...(m.features||[]),...(m.dietary||[])].join(" ").toLowerCase();
+  const qOk=!q||text.includes(q);
+  const feats=(m.features||[]).map(x=>String(x).toLowerCase()),diet=(m.dietary||[]).map(x=>String(x).toLowerCase());
+  const fOk=currentFilter==="all"||
+   (currentFilter==="hugs-partner"&&String(m.partner_status||"").toLowerCase().includes("partner"))||
+   (currentFilter==="free-food"&&feats.some(x=>x.includes("free")))||
+   (currentFilter==="discounts"&&feats.some(x=>x.includes("discount")))||
+   (currentFilter==="vegan"&&diet.includes("vegan"))||
+   (currentFilter==="vegetarian"&&diet.includes("vegetarian"))||
+   (currentFilter==="pescatarian"&&diet.includes("pescatarian"))||
+   (currentFilter==="ebt"&&(m.accepts_ebt||feats.some(x=>x.includes("ebt"))))||
+   (currentFilter==="farmers-market"&&m.type==="farmers-market");
+  return qOk&&fOk;
+ })
+}
+function render(){markers.clearLayers();const rows=filtered();const bounds=[];rows.forEach(m=>{const marker=L.marker([m.latitude,m.longitude]).bindPopup(popup(m));markers.addLayer(marker);bounds.push([m.latitude,m.longitude])});if(bounds.length&&document.getElementById("searchInput").value.trim())map.fitBounds(bounds,{padding:[35,35],maxZoom:14});document.getElementById("status").innerHTML='<strong>'+rows.length+'</strong> food resource'+(rows.length===1?'':'s')+' shown on the HUGS map.'}
 document.querySelectorAll("[data-filter]").forEach(b=>b.addEventListener("click",()=>{document.querySelectorAll("[data-filter]").forEach(x=>x.classList.remove("active"));b.classList.add("active");currentFilter=b.dataset.filter;render()}));
 document.getElementById("searchBtn").addEventListener("click",render);document.getElementById("searchInput").addEventListener("keydown",e=>{if(e.key==="Enter")render()});
 document.getElementById("nearMe").addEventListener("click",()=>{if(!navigator.geolocation){alert("Location is not available in this browser.");return}navigator.geolocation.getCurrentPosition(pos=>{const here=[pos.coords.latitude,pos.coords.longitude];L.circleMarker(here,{radius:9}).addTo(map).bindPopup("You are here").openPopup();map.setView(here,14)},()=>alert("We could not access your location. You can still search by borough, market name or address."),{enableHighAccuracy:true,timeout:10000})});
 async function load(){
  try{
-  const r=await fetch("/.netlify/functions/food-resources",{cache:"no-store"});const data=await r.json();if(!r.ok||!data.ok)throw new Error("Food resource feed unavailable");
-  allMarkets=data.markets||[];render();
-  const stamp=new Date(data.generated_at).toLocaleString();document.getElementById("status").innerHTML='<strong>'+allMarkets.length+'</strong> live NYC fresh-food locations loaded • refreshed '+esc(stamp);
+  const [r,dr]=await Promise.all([fetch("/.netlify/functions/food-resources",{cache:"no-store"}),fetch("/.netlify/functions/food-directory",{cache:"no-store"})]);const data=await r.json();const dir=await dr.json();if(!r.ok||!data.ok)throw new Error("Food resource feed unavailable");
+  allMarkets=data.markets||[];hugsListings=dir.ok?(dir.listings||[]):[];render();
+  const stamp=new Date(data.generated_at).toLocaleString();document.getElementById("status").innerHTML='<strong>'+(allMarkets.length+hugsListings.length)+'</strong> HUGS + trusted resources loaded • refreshed '+esc(stamp);
+  document.getElementById("hugsDirectory").innerHTML=hugsListings.length?hugsListings.map(x=>'<article class="resource"><h3>'+esc(x.name)+'</h3><p>'+esc(x.description||x.category||"Food resource")+'</p><p><span class="tag">'+esc(x.source_label||"HUGS Verified")+'</span>'+(x.partner_status?' <span class="tag">'+esc(x.partner_status)+'</span>':'')+'</p><p>'+esc([x.address,x.borough].filter(Boolean).join(", "))+'</p>'+(x.website?'<a href="'+esc(x.website)+'" target="_blank" rel="noopener">View details →</a>':'')+'</article>').join(""):'<article class="resource"><h3>HUGS network growing</h3><p>Approved businesses and community resources will appear here as HUGS verifies and publishes them.</p><a href="food-partners.html">Join the HUGS Food Network →</a></article>';
   document.getElementById("resourceGrid").innerHTML=(data.trusted_locators||[]).map(x=>'<article class="resource"><h3>'+esc(x.name)+'</h3><p>'+esc(x.description)+'</p><p><span class="tag">'+esc(x.source)+'</span></p><a href="'+esc(x.url)+'" target="_blank" rel="noopener">Open current locator →</a></article>').join("");
  }catch(e){document.getElementById("status").textContent="Live NYC market data is temporarily unavailable. The trusted resource links below can still be used.";document.getElementById("resourceGrid").innerHTML='<article class="resource"><h3>NYC Food Help</h3><p>Use the official NYC food locator for free pantries and community kitchens.</p><a href="https://finder.nyc.gov/foodhelp/locations" target="_blank" rel="noopener">Open NYC Food Help →</a></article><article class="resource"><h3>Food Bank For NYC</h3><p>Find free groceries, hot meals and mobile pantry support.</p><a href="https://www.foodbanknyc.org/find-food/" target="_blank" rel="noopener">Open Food Bank locator →</a></article><article class="resource"><h3>City Harvest</h3><p>Find current free food distributions and community fridges.</p><a href="https://www.cityharvest.org/food-map/" target="_blank" rel="noopener">Open City Harvest map →</a></article>'}
 }

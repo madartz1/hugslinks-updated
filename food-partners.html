@@ -1,37 +1,58 @@
 <!doctype html>
 <html lang="en">
 <head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
-<title>HUGSLinks B2B Food Partnership Inquiry</title>
-<meta name="description" content="Restaurants, grocers, caterers, markets and community organizations can contact HUGSLinks about food-support partnerships. Operational donation and pickup coordination is handled privately by HUGSLinks administration.">
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Join the HUGS Food Network | HUGSLinks</title>
+<meta name="description" content="Businesses and community organizations can inquire about joining the HUGS Food Network.">
 <link rel="stylesheet" href="styles.css">
 <style>
 :root{--navy:#071f3b;--blue:#2f9ee7;--line:#dce8f2;--muted:#60758a}
-.wrap{max-width:900px;margin:auto;padding:46px 20px 86px}.hero{padding:18px 0 30px}.eyebrow{font-size:.76rem;font-weight:900;letter-spacing:.16em;text-transform:uppercase;color:var(--blue)}h1{font-size:clamp(2.7rem,7vw,5rem);line-height:.96;letter-spacing:-.05em;color:var(--navy);margin:12px 0 16px}.lead{font-size:1.1rem;line-height:1.75;color:var(--muted);max-width:760px}.panel{background:#fff;border:1px solid var(--line);border-radius:26px;padding:clamp(22px,4vw,36px);box-shadow:0 18px 48px rgba(7,31,59,.08)}.grid{display:grid;grid-template-columns:1fr 1fr;gap:16px}.field{display:flex;flex-direction:column;gap:7px}.full{grid-column:1/-1}.field label{font-weight:900;color:var(--navy)}.field input,.field select,.field textarea{font:inherit;border:1px solid #cfdde8;border-radius:14px;padding:13px 14px}.field textarea{min-height:120px}.notice{margin:20px 0;padding:16px;border-radius:16px;background:#eef6ff;color:#173b60;line-height:1.55}.fine{color:var(--muted);font-size:.9rem;line-height:1.5}@media(max-width:700px){.grid{grid-template-columns:1fr}.full{grid-column:auto}}
+.wrap{max-width:920px;margin:auto;padding:46px 20px 86px}.hero{padding:18px 0 30px}.eyebrow{font-size:.76rem;font-weight:900;letter-spacing:.16em;text-transform:uppercase;color:var(--blue)}
+h1{font-size:clamp(2.7rem,7vw,5rem);line-height:.96;letter-spacing:-.05em;color:var(--navy);margin:12px 0 16px}.lead{font-size:1.1rem;line-height:1.75;color:var(--muted);max-width:780px}
+.panel{background:#fff;border:1px solid var(--line);border-radius:26px;padding:clamp(22px,4vw,36px);box-shadow:0 18px 48px rgba(7,31,59,.08)}.grid{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.field{display:flex;flex-direction:column;gap:7px}.full{grid-column:1/-1}.field label{font-weight:900;color:var(--navy)}.field input,.field select,.field textarea{font:inherit;border:1px solid #cfdde8;border-radius:14px;padding:13px 14px}.field textarea{min-height:120px}
+.checks{display:flex;flex-wrap:wrap;gap:8px}.checks label{border:1px solid var(--line);border-radius:999px;padding:9px 12px;background:#f8fbfd;font-weight:700}
+.notice{margin:20px 0;padding:16px;border-radius:16px;background:#eef6ff;color:#173b60;line-height:1.55}.fine{color:var(--muted);font-size:.9rem;line-height:1.5}.success{display:none;margin-top:16px;padding:15px;border-radius:14px;background:#eaf8f0;color:#17633f;font-weight:800}.error{display:none;margin-top:16px;padding:15px;border-radius:14px;background:#fff0ee;color:#9d2a22;font-weight:800}
+@media(max-width:700px){.grid{grid-template-columns:1fr}.full{grid-column:auto}}
 </style>
 </head>
 <body>
 <header class="topbar"><nav class="nav"><a class="brand" href="index.html">Hugslinks</a><div class="seal"><img src="assets/HUGS_Header_Logo_Transparent.png" alt="HUGS logo" class="header-logo"></div><button class="menu" type="button">Menu</button><div class="navlinks"><a href="index.html">Home</a><a href="shop.html">Shop</a><a href="art-community.html">Art</a><a href="food-support.html" class="active">Food</a><a href="business-services.html">Business</a><a href="help-app.html">Help App</a><a href="resources.html">Resources</a><a href="contact.html">Contact</a></div></nav></header>
 <main class="wrap">
-<section class="hero"><div class="eyebrow">HUGSLinks • B2B Food Partnerships</div><h1>Start a food partnership conversation.</h1><p class="lead">Restaurants, grocers, caterers, markets, food-service businesses and community organizations can contact HUGSLinks about supporting food access in New York City. Public submissions are inquiries only. Donation quantities, pickup locations, timing and operational coordination are handled privately by HUGSLinks administration after review.</p></section>
+<section class="hero"><div class="eyebrow">HUGS Food Network • B2B</div><h1>Help people find better food options.</h1><p class="lead">Restaurants, grocers, bakeries, markets, caterers, food programs and community organizations can introduce their business to HUGSLinks. This is an inquiry only. If approved, HUGS may publish your public business information in the HUGS Food Navigator. Donation, pickup and operational details stay private.</p></section>
 <section class="panel">
-<h2>Business inquiry</h2>
-<p class="fine">Tell us who you are and what kind of partnership you want to discuss. Do not enter pickup instructions, private recipient details or time-sensitive food handling information here.</p>
-<form action="contact.html" method="get">
+<h2>Business / organization inquiry</h2>
+<p class="fine">Tell HUGS about your public food offering and what kind of partnership you are interested in.</p>
+<form id="foodNetworkForm">
 <div class="grid">
-<div class="field"><label for="business">Business / Organization</label><input id="business" name="business" autocomplete="organization" required></div>
-<div class="field"><label for="name">Contact Name</label><input id="name" name="name" autocomplete="name" required></div>
-<div class="field"><label for="email">Business Email</label><input id="email" name="email" type="email" autocomplete="email" required></div>
-<div class="field"><label for="interest">Partnership Interest</label><select id="interest" name="interest"><option>Food-support partnership</option><option>Recurring business partnership</option><option>Community event support</option><option>Funding / sponsorship</option><option>Other B2B food inquiry</option></select></div>
-<div class="field full"><label for="message">Brief inquiry</label><textarea id="message" name="message" placeholder="Example: We operate a grocery store in Queens and would like to discuss becoming a HUGS food-support partner." required></textarea></div>
+<div class="field"><label>Business / Organization</label><input id="business" required autocomplete="organization"></div>
+<div class="field"><label>Contact Name</label><input id="name" required autocomplete="name"></div>
+<div class="field"><label>Business Email</label><input id="email" required type="email" autocomplete="email"></div>
+<div class="field"><label>Phone</label><input id="phone" autocomplete="tel"></div>
+<div class="field"><label>Borough</label><select id="borough"><option value="">Select</option><option>Bronx</option><option>Brooklyn</option><option>Manhattan</option><option>Queens</option><option>Staten Island</option></select></div>
+<div class="field"><label>Public Business Address</label><input id="address" autocomplete="street-address"></div>
+<div class="field full"><label>Website / Public Page</label><input id="website" type="url" placeholder="https://"></div>
+<div class="field full"><label>What can people find here?</label><div class="checks" id="interests"><label><input type="checkbox" value="Free Food"> Free Food</label><label><input type="checkbox" value="Discounts"> Discounts</label><label><input type="checkbox" value="Low-Cost Meals"> Low-Cost Meals</label><label><input type="checkbox" value="SNAP / EBT"> SNAP / EBT</label><label><input type="checkbox" value="Community Support"> Community Support</label><label><input type="checkbox" value="HUGS Partnership"> HUGS Partnership</label></div></div>
+<div class="field full"><label>Dietary options</label><div class="checks" id="dietary"><label><input type="checkbox" value="Vegetarian"> Vegetarian</label><label><input type="checkbox" value="Vegan"> Vegan</label><label><input type="checkbox" value="Pescatarian"> Pescatarian</label><label><input type="checkbox" value="Fresh Produce"> Fresh Produce</label><label><input type="checkbox" value="Healthy Options"> Healthy Options</label></div></div>
+<div class="field full"><label>Brief inquiry</label><textarea id="message" required placeholder="Tell HUGS what your business offers and how you would like to help or participate."></textarea></div>
+<input id="bot" style="display:none" tabindex="-1" autocomplete="off">
 </div>
-<div class="notice"><strong>Private coordination:</strong> If HUGSLinks decides to move forward, donation and pickup details will be handled through the private administrative workflow—not on the public resource map.</div>
-<button class="btn primary" type="submit">Continue to HUGS B2B Contact</button>
+<div class="notice"><strong>Privacy:</strong> Do not submit pickup instructions, recipient information, donation quantities or time-sensitive food handling details here. HUGS handles those privately after contact.</div>
+<button class="btn primary" id="submitBtn" type="submit">Send HUGS Food Network Inquiry</button>
+<div id="success" class="success"></div><div id="error" class="error"></div>
 </form>
 </section>
-<p style="margin-top:24px"><a class="btn light" href="find-food.html">Find Food Instead</a></p>
+<p style="margin-top:24px"><a class="btn light" href="find-food.html">Open HUGS Food Navigator</a></p>
 </main>
-<footer class="footer"><div class="footer-inner"><div><h2>HUGS — Help Under Good Service</h2><p class="notice">Connecting community needs with responsible business support.</p></div><div><h3>Food</h3><a href="food-support.html">Food Support</a><a href="find-food.html">Find Food</a></div><div><h3>Business</h3><a href="business-services.html">Business Services</a><a href="contact.html">Contact HUGSLinks</a></div></div></footer>
-<script src="live-help-config.js"></script><script src="script.js"></script>
+<script>
+const values=id=>[...document.querySelectorAll("#"+id+" input:checked")].map(x=>x.value);
+document.getElementById("foodNetworkForm").addEventListener("submit",async e=>{
+ e.preventDefault();const btn=document.getElementById("submitBtn"),ok=document.getElementById("success"),err=document.getElementById("error");ok.style.display=err.style.display="none";btn.disabled=true;btn.textContent="Sending...";
+ try{
+  const body={business_name:business.value,contact_name:name.value,email:email.value,phone:phone.value,borough:borough.value,public_address:address.value,website:website.value,message:message.value,bot_field:bot.value,interests:values("interests"),dietary:values("dietary")};
+  const r=await fetch("/.netlify/functions/submit-food-business-inquiry",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify(body)});const d=await r.json();if(!r.ok||!d.ok)throw new Error(d.error||"Unable to submit.");
+  ok.textContent="Thank you. Your HUGS Food Network inquiry was received: "+d.inquiry_id;ok.style.display="block";e.target.reset();
+ }catch(x){err.textContent=x.message;err.style.display="block"}finally{btn.disabled=false;btn.textContent="Send HUGS Food Network Inquiry"}
+});
+</script><script src="live-help-config.js"></script><script src="script.js"></script>
 </body></html>
