@@ -9,7 +9,7 @@ function json(data, status = 200) {
 }
 
 export default async (req) => {
-  if (req.method !== "POST") return json({ error: "Method not allowed" }, 405);
+  if (req.method !== "GET" && req.method !== "POST") return json({ error: "Method not allowed" }, 405);
   const token = process.env.PRINTIFY_API_TOKEN;
   if (!token) return json({ error: "Printify is not configured" }, 503);
 
