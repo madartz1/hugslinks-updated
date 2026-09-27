@@ -1,0 +1,67 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>My First HUG | HUGSLinks</title>
+<meta name="robots" content="noindex,nofollow">
+<link rel="stylesheet" href="styles.css">
+<style>
+:root{--navy:#0b2f59;--blue:#74b9f4;--cream:#f8f5ee;--gold:#f2b84b;--muted:#61758a}
+*{box-sizing:border-box}body{margin:0;background:linear-gradient(180deg,#eef8ff,var(--cream));font-family:Arial,Helvetica,sans-serif;color:var(--navy)}
+.wrap{max-width:760px;margin:auto;padding:28px 18px 70px;text-align:center}.logo{width:96px;max-width:28vw}.eyebrow{letter-spacing:3px;font-weight:900;font-size:12px;color:#497da8}
+h1{font-size:clamp(38px,9vw,68px);margin:12px 0 8px;line-height:1}.lead{color:var(--muted);font-size:18px;line-height:1.6}
+.panel{margin:28px auto;background:#fff;border:1px solid #dce8f2;border-radius:28px;padding:26px;box-shadow:0 18px 45px rgba(11,47,89,.12)}
+.loading{padding:34px 10px}.error{display:none;color:#8b2431}.member{display:none}
+.card{position:relative;overflow:hidden;margin:18px auto;max-width:500px;aspect-ratio:1.586/1;border-radius:25px;padding:28px;text-align:left;color:#fff;background:radial-gradient(circle at 78% 18%,rgba(116,185,244,.95),transparent 28%),linear-gradient(135deg,#071d38,#0b2f59 62%,#164f82);box-shadow:0 20px 50px rgba(11,47,89,.25)}
+.card:after{content:"";position:absolute;width:240px;height:240px;border:2px solid rgba(255,255,255,.12);border-radius:50%;right:-85px;bottom:-105px}
+.card-top{font-size:12px;letter-spacing:2.4px;font-weight:900;color:#bfe3ff}.card h2{font-size:clamp(28px,7vw,44px);margin:14px 0 4px}.card .name{font-size:18px;font-weight:800}.number{position:absolute;left:28px;bottom:48px;font-family:monospace;font-size:clamp(16px,4.8vw,23px);font-weight:900;letter-spacing:1px}.date{position:absolute;left:28px;bottom:25px;font-size:11px;color:#c8dff1}.heart{position:absolute;right:28px;bottom:27px;font-size:42px;color:#74b9f4}
+.actions{display:flex;gap:12px;justify-content:center;flex-wrap:wrap;margin-top:18px}.btn{border:0;border-radius:999px;padding:14px 20px;font-weight:900;font-size:15px;cursor:pointer;text-decoration:none}.primary{background:var(--gold);color:#17212c}.secondary{background:var(--navy);color:#fff}.note{font-size:13px;line-height:1.5;color:var(--muted);margin-top:20px}
+@media print{body{background:#fff}.topbar,.intro,.actions,.note{display:none!important}.panel{box-shadow:none;border:0;margin:0;padding:0}.card{print-color-adjust:exact;-webkit-print-color-adjust:exact;margin:0}}
+</style>
+</head>
+<body>
+<header class="topbar"><nav class="nav"><a class="brand" href="index.html">Hugslinks</a><div class="seal"><img src="assets/HUGS_Header_Logo_Transparent.png" alt="HUGS logo"></div></nav></header>
+<main class="wrap">
+<section class="intro"><img class="logo" src="assets/HUGS_Header_Logo_Transparent.png" alt="HUGS"><p class="eyebrow">HELP UNDER GOOD SERVICE</p><h1>My First HUG</h1><p class="lead">Your Square Keychain purchase opens your first HUGS member experience. We verify the completed Stripe checkout before displaying your card.</p></section>
+<section class="panel">
+<div id="loading" class="loading"><strong>Verifying your HUGS purchase…</strong></div>
+<div id="error" class="error"><h2>We couldn't open your card yet.</h2><p id="errorText">Your payment may still be processing.</p><p class="note">Your access email is your backup. It contains your HUGS Access Number for returning to the member experience.</p></div>
+<div id="member" class="member">
+<p>Welcome, <strong id="welcomeName">HUGS Member</strong>.</p>
+<div id="hugCard" class="card">
+<div class="card-top">HUGSLINKS • MY FIRST HUG</div>
+<h2>RISE NYC</h2>
+<div class="name" id="cardName">HUGS Member</div>
+<div class="number" id="cardNumber">HUG-RISE-XXXXXXXX</div>
+<div class="date" id="cardDate"></div>
+<div class="heart">♥</div>
+</div>
+<div class="actions"><button class="btn primary" id="saveCard" type="button">Save / Download My HUG Card</button><a class="btn secondary" href="nyc-ride-hugs-card.html">Explore RISE NYC HUG</a></div>
+<p class="note">Your HUGS Access Number belongs to this purchase. Keep it with the email used at checkout. Your physical keychain fulfillment is handled separately from this digital credential.</p>
+</div>
+</section>
+</main>
+<script>
+const loading=document.getElementById("loading"),errorBox=document.getElementById("error"),member=document.getElementById("member"),errorText=document.getElementById("errorText");
+const params=new URLSearchParams(location.search);const sessionId=params.get("session_id");
+async function verify(){
+ if(!sessionId){showError("This page needs the secure checkout return link from Stripe.");return;}
+ try{
+  const r=await fetch("/.netlify/functions/verify-keychain-session",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({session_id:sessionId})});
+  const data=await r.json();
+  if(!r.ok||!data.ok){showError(data.error||"We could not verify this purchase.");return;}
+  const name=(data.name||"HUGS Member").trim();
+  document.getElementById("welcomeName").textContent=name;
+  document.getElementById("cardName").textContent=name;
+  document.getElementById("cardNumber").textContent=data.access_number;
+  document.getElementById("cardDate").textContent="MEMBER SINCE "+new Date(data.purchased_at).toLocaleDateString(undefined,{year:"numeric",month:"short",day:"numeric"}).toUpperCase();
+  loading.style.display="none";member.style.display="block";
+ }catch(e){showError("We could not verify the purchase right now. Please use the access email sent after checkout.");}
+}
+function showError(msg){loading.style.display="none";errorText.textContent=msg;errorBox.style.display="block";}
+document.getElementById("saveCard").addEventListener("click",()=>window.print());
+verify();
+</script>
+</body>
+</html>
