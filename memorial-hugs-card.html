@@ -313,41 +313,17 @@
           <li>Perfect for loved ones, family, and friends</li>
         </ul>
 
-        <!-- WATCH PREVIEW -->
-        <button
-          class="preview-button"
-          type="button"
-          id="previewButton"
-          onclick="togglePreview()"
-        >
-          ▶ Watch Preview
-        </button>
-
-        <!-- PREVIEW VIDEO -->
-        <div class="preview-box" id="previewBox">
-          <video
-            id="previewVideo"
-            controls
-            playsinline
-            preload="metadata"
-            poster="assets/memorial-hugs-card-cover.PNG"
-          >
-            <source
-              src="assets/memorial-hugs-preview.mp4"
-              type="video/mp4"
-            />
-            Your browser does not support video playback.
-          </video>
-        </div>
-
-        <!-- STRIPE PURCHASE BUTTON -->
         <a
-          href="YOUR_MEMORIAL_STRIPE_LINK_HERE"
+          href="contact.html?type=memorial-hug"
           class="buy-button"
           id="buyButton"
         >
-          Send This Memorial HUG — $6.99
+          Request a Memorial HUG
         </a>
+
+        <div class="small-note">
+          Memorial HUG requests are reviewed through HUGSLinks before purchase so the tribute details can be confirmed.
+        </div>
 
         <div class="delivery-info">
           <div>
@@ -372,9 +348,7 @@
         </div>
 
         <div class="small-note">
-          Replace the purchase link with your live Stripe memorial product link.
-          If your preview video is not ready yet, you can still leave the page
-          published and upload <strong>memorial-hugs-preview.mp4</strong> later.
+          HUGSLinks will confirm the tribute details and next steps before any memorial HUG purchase.
         </div>
 
       </div>
@@ -399,27 +373,7 @@
 
   <script src="script.js"></script>
 
-  <script>
-    function togglePreview() {
-      const box = document.getElementById("previewBox");
-      const video = document.getElementById("previewVideo");
-      const button = document.getElementById("previewButton");
 
-      if (box.style.display === "block") {
-        box.style.display = "none";
-        video.pause();
-        button.textContent = "▶ Watch Preview";
-      } else {
-        box.style.display = "block";
-        button.textContent = "Hide Preview";
-        video.load();
-        box.scrollIntoView({
-          behavior: "smooth",
-          block: "center"
-        });
-      }
-    }
-  </script>
 
 </body>
 </html>
