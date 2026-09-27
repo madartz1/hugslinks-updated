@@ -66,6 +66,7 @@ const routeAddress=x=>[x.address,x.borough,"New York"].filter(Boolean).join(", "
 const appleDirections=x=>"https://maps.apple.com/?daddr="+encodeURIComponent(routeAddress(x));
 const googleDirections=x=>"https://www.google.com/maps/dir/?api=1&destination="+encodeURIComponent(routeAddress(x));
 const telHref=phone=>"tel:"+String(phone||"").replace(/[^+\d]/g,"");
+const hasCoord=v=>v!==null&&v!==undefined&&String(v).trim()!==""&&Number.isFinite(Number(v));
 function popup(m){
  const actions=[];
  if(m.address){actions.push('<a href="'+esc(appleDirections(m))+'" target="_blank" rel="noopener">Apple Maps</a>');actions.push('<a href="'+esc(googleDirections(m))+'" target="_blank" rel="noopener">Google Maps</a>')}
@@ -75,7 +76,7 @@ function popup(m){
 }
 function allMapItems(){
  const markets=allMarkets.map(m=>({...m,source_label:"Official Data",features:[m.accepts_ebt?"SNAP / EBT":"",m.year_round?"Year-Round":""].filter(Boolean),dietary:["Fresh Produce"]}));
- const hugs=hugsListings.filter(x=>Number.isFinite(Number(x.latitude))&&Number.isFinite(Number(x.longitude))).map(x=>({...x,latitude:Number(x.latitude),longitude:Number(x.longitude),source:x.source_label||"HUGS Verified"}));
+ const hugs=hugsListings.filter(x=>hasCoord(x.latitude)&&hasCoord(x.longitude)).map(x=>({...x,latitude:Number(x.latitude),longitude:Number(x.longitude),source:x.source_label||"HUGS Verified"}));
  return [...hugs,...markets];
 }
 function filtered(){

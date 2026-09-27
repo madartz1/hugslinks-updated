@@ -34,17 +34,58 @@ function merged(stored){
  for(const item of stored||[]) if(item?.id) map.set(item.id,{...(map.get(item.id)||{}),...item});
  return [...map.values()];
 }
+
+const hasCoord=v=>v!==null&&v!==undefined&&v!==""&&Number.isFinite(Number(v));
+const exactStreetAddress=v=>/^\s*\d+[\w-]*\s+/.test(String(v||""));
+const inNYC=(lat,lng)=>lat>=40.49&&lat<=40.92&&lng>=-74.27&&lng<=-73.68;
+
+async function geocodeAddress(address){
+ const url=new URL("https://geocoding.geo.census.gov/geocoder/locations/onelineaddress");
+ url.searchParams.set("address",address);
+ url.searchParams.set("benchmark","Public_AR_Current");
+ url.searchParams.set("format","json");
+ const response=await fetch(url,{signal:AbortSignal.timeout(4000),headers:{"User-Agent":"HUGSLinks-Food-Navigator/1.0"}});
+ if(!response.ok) return null;
+ const data=await response.json();
+ const match=data?.result?.addressMatches?.[0];
+ const lat=Number(match?.coordinates?.y),lng=Number(match?.coordinates?.x);
+ if(!Number.isFinite(lat)||!Number.isFinite(lng)||!inNYC(lat,lng)) return null;
+ return {latitude:lat,longitude:lng,geocoded_at:new Date().toISOString(),geocode_source:"US Census Geocoder"};
+}
+
+async function fillMissingCoordinates(listings,store){
+ const candidates=listings.filter(x=>x&&exactStreetAddress(x.address)&&(!hasCoord(x.latitude)||!hasCoord(x.longitude))).slice(0,10);
+ if(!candidates.length) return listings;
+ const results=await Promise.allSettled(candidates.map(x=>geocodeAddress(x.address)));
+ let changed=false;
+ results.forEach((result,index)=>{
+  if(result.status!=="fulfilled"||!result.value) return;
+  const target=candidates[index];
+  target.latitude=result.value.latitude;
+  target.longitude=result.value.longitude;
+  target.geocoded_at=result.value.geocoded_at;
+  target.geocode_source=result.value.geocode_source;
+  changed=true;
+ });
+ if(changed){
+  const storedOnly=listings.filter(x=>!String(x.id||"").startsWith("HFD-SEED-")||hasCoord(x.latitude)||hasCoord(x.longitude));
+  await store.setJSON(KEY,{updated_at:new Date().toISOString(),listings:storedOnly});
+ }
+ return listings;
+}
+
 export default async request=>{
  if(request.method!=="GET") return json({ok:false,error:"Method not allowed."},405);
  try{
   const store=getStore(STORE);
   const x=await store.get(KEY,{type:"json",consistency:"strong"});
   const stored=Array.isArray(x?.listings)?x.listings:Array.isArray(x)?x:[];
-  const listings=merged(stored).filter(x=>x&&x.published===true&&x.status!=="Inactive").map(x=>({
+  const combined=await fillMissingCoordinates(merged(stored),store);
+  const listings=combined.filter(x=>x&&x.published===true&&x.status!=="Inactive").map(x=>({
    id:x.id,name:x.name,category:x.category||"Food Resource",description:x.description||"",
    address:x.address||"",borough:x.borough||"",phone:x.phone||"",website:x.website||"",
-   latitude:Number.isFinite(Number(x.latitude))?Number(x.latitude):null,
-   longitude:Number.isFinite(Number(x.longitude))?Number(x.longitude):null,
+   latitude:hasCoord(x.latitude)?Number(x.latitude):null,
+   longitude:hasCoord(x.longitude)?Number(x.longitude):null,
    dietary:Array.isArray(x.dietary)?x.dietary:[],features:Array.isArray(x.features)?x.features:[],
    price_level:x.price_level||"",hours:x.hours||"",source_label:x.source_label||"HUGS Verified",
    last_verified:x.last_verified||x.updated_at||x.created_at||null,partner_status:x.partner_status||"Resource"
