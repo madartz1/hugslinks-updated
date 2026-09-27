@@ -67,7 +67,11 @@ const appleDirections=x=>"https://maps.apple.com/?daddr="+encodeURIComponent(rou
 const googleDirections=x=>"https://www.google.com/maps/dir/?api=1&destination="+encodeURIComponent(routeAddress(x));
 const telHref=phone=>"tel:"+String(phone||"").replace(/[^+\d]/g,"");
 function popup(m){
- return '<strong>'+esc(m.name)+'</strong>'+(m.partner_status?'<br><b>'+esc(m.partner_status)+'</b>':'')+'<br>'+esc(m.address||"")+(m.borough?'<br>'+esc(m.borough):'')+(m.category?'<br>'+esc(m.category):'')+(m.hours?'<br><b>Hours:</b> '+esc(m.hours):'')+(m.dietary?.length?'<br><b>Diet:</b> '+esc(m.dietary.join(", ")):'')+(m.features?.length?'<br><b>Features:</b> '+esc(m.features.join(", ")):'')+(m.website?'<br><a href="'+esc(m.website)+'" target="_blank" rel="noopener">Website</a>':'')+'<br><small>Source: '+esc(m.source_label||m.source||"HUGS Food Network")+'</small>'
+ const actions=[];
+ if(m.address){actions.push('<a href="'+esc(appleDirections(m))+'" target="_blank" rel="noopener">Apple Maps</a>');actions.push('<a href="'+esc(googleDirections(m))+'" target="_blank" rel="noopener">Google Maps</a>')}
+ if(m.phone)actions.push('<a href="'+esc(telHref(m.phone))+'">Call</a>');
+ if(m.website)actions.push('<a href="'+esc(m.website)+'" target="_blank" rel="noopener">Website</a>');
+ return '<strong>'+esc(m.name)+'</strong>'+(m.partner_status?'<br><b>'+esc(m.partner_status)+'</b>':'')+'<br>'+esc(m.address||"")+(m.borough?'<br>'+esc(m.borough):'')+(m.category?'<br>'+esc(m.category):'')+(m.hours?'<br><b>Hours:</b> '+esc(m.hours):'')+(m.dietary?.length?'<br><b>Diet:</b> '+esc(m.dietary.join(", ")):'')+(m.features?.length?'<br><b>Features:</b> '+esc(m.features.join(", ")):'')+(actions.length?'<div class="map-actions">'+actions.join("")+'</div>':'')+'<br><small>Source: '+esc(m.source_label||m.source||"HUGS Food Network")+'</small>'
 }
 function allMapItems(){
  const markets=allMarkets.map(m=>({...m,source_label:"Official Data",features:[m.accepts_ebt?"SNAP / EBT":"",m.year_round?"Year-Round":""].filter(Boolean),dietary:["Fresh Produce"]}));
@@ -101,7 +105,16 @@ async function load(){
   const [r,dr]=await Promise.all([fetch("/.netlify/functions/food-resources",{cache:"no-store"}),fetch("/.netlify/functions/food-directory",{cache:"no-store"})]);const data=await r.json();const dir=await dr.json();if(!r.ok||!data.ok)throw new Error("Food resource feed unavailable");
   allMarkets=data.markets||[];hugsListings=dir.ok?(dir.listings||[]):[];render();
   const stamp=new Date(data.generated_at).toLocaleString();document.getElementById("status").innerHTML='<strong>'+(allMarkets.length+hugsListings.length)+'</strong> HUGS + trusted resources loaded • refreshed '+esc(stamp);
-  document.getElementById("hugsDirectory").innerHTML=hugsListings.length?hugsListings.map(x=>'<article class="resource"><h3>'+esc(x.name)+'</h3><p>'+esc(x.description||x.category||"Food resource")+'</p><p><span class="tag">'+esc(x.source_label||"HUGS Verified")+'</span>'+(x.partner_status?' <span class="tag">'+esc(x.partner_status)+'</span>':'')+'</p><p>'+esc([x.address,x.borough].filter(Boolean).join(", "))+'</p>'+(x.website?'<a href="'+esc(x.website)+'" target="_blank" rel="noopener">View details →</a>':'')+'</article>').join(""):'<article class="resource"><h3>HUGS network growing</h3><p>Approved businesses and community resources will appear here as HUGS verifies and publishes them.</p><a href="food-partners.html">Join the HUGS Food Network →</a></article>';
+  document.getElementById("hugsDirectory").innerHTML=hugsListings.length?hugsListings.map(x=>{
+   const actions=[];
+   if(x.address){
+    actions.push('<a class="primary-dir" href="'+esc(appleDirections(x))+'" target="_blank" rel="noopener">📍 Get Directions</a>');
+    actions.push('<a href="'+esc(googleDirections(x))+'" target="_blank" rel="noopener">Google Maps</a>');
+   }
+   if(x.phone) actions.push('<a href="'+esc(telHref(x.phone))+'">📞 Call</a>');
+   if(x.website) actions.push('<a href="'+esc(x.website)+'" target="_blank" rel="noopener">🌐 Website</a>');
+   return '<article class="resource"><h3>'+esc(x.name)+'</h3><p>'+esc(x.description||x.category||"Food resource")+'</p><p><span class="tag">'+esc(x.source_label||"HUGS Verified")+'</span>'+(x.partner_status?' <span class="tag">'+esc(x.partner_status)+'</span>':'')+'</p><p>'+esc([x.address,x.borough].filter(Boolean).join(", "))+'</p>'+(x.hours?'<p><strong>Hours:</strong> '+esc(x.hours)+'</p>':'')+'<div class="resource-actions">'+actions.join("")+'</div></article>';
+  }).join(""):'<article class="resource"><h3>HUGS network growing</h3><p>Approved businesses and community resources will appear here as HUGS verifies and publishes them.</p><a href="food-partners.html">Join the HUGS Food Network →</a></article>';
   document.getElementById("resourceGrid").innerHTML=(data.trusted_locators||[]).map(x=>'<article class="resource"><h3>'+esc(x.name)+'</h3><p>'+esc(x.description)+'</p><p><span class="tag">'+esc(x.source)+'</span></p><a href="'+esc(x.url)+'" target="_blank" rel="noopener">Open current locator →</a></article>').join("");
  }catch(e){document.getElementById("status").textContent="Live NYC market data is temporarily unavailable. The trusted resource links below can still be used.";document.getElementById("resourceGrid").innerHTML='<article class="resource"><h3>NYC Food Help</h3><p>Use the official NYC food locator for free pantries and community kitchens.</p><a href="https://finder.nyc.gov/foodhelp/locations" target="_blank" rel="noopener">Open NYC Food Help →</a></article><article class="resource"><h3>Food Bank For NYC</h3><p>Find free groceries, hot meals and mobile pantry support.</p><a href="https://www.foodbanknyc.org/find-food/" target="_blank" rel="noopener">Open Food Bank locator →</a></article><article class="resource"><h3>City Harvest</h3><p>Find current free food distributions and community fridges.</p><a href="https://www.cityharvest.org/food-map/" target="_blank" rel="noopener">Open City Harvest map →</a></article>'}
 }
