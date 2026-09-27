@@ -1,60 +1,16 @@
 const FARMERS_DATASET = "8vwk-6iz2";
 
 const trustedLocators = [
-  {
-    id: "food-help-nyc",
-    type: "free-food",
-    name: "NYC Food Help",
-    description: "Official NYC locator for free food pantries and community kitchens.",
-    url: "https://finder.nyc.gov/foodhelp/locations",
-    source: "NYC HRA / DSS",
-    live: true
-  },
-  {
-    id: "food-bank-nyc",
-    type: "free-food",
-    name: "Food Bank For NYC",
-    description: "Search free groceries, hot meals, mobile pantries and SNAP support across NYC.",
-    url: "https://www.foodbanknyc.org/find-food/",
-    source: "Food Bank For New York City",
-    live: true
-  },
-  {
-    id: "city-harvest",
-    type: "free-food",
-    name: "City Harvest Food Map",
-    description: "Current free food distributions, pantries, soup kitchens, community fridges and Mobile Markets.",
-    url: "https://www.cityharvest.org/food-map/",
-    source: "City Harvest",
-    live: true
-  },
-  {
-    id: "fridge-finder",
-    type: "community-fridge",
-    name: "Fridge Finder",
-    description: "Find community fridges and current status information.",
-    url: "https://www.fridgefinder.app/",
-    source: "Fridge Finder",
-    live: true
-  },
-  {
-    id: "plentiful",
-    type: "reservation",
-    name: "Plentiful",
-    description: "Find participating food pantries and reserve pickup times where available.",
-    url: "https://plentifulapp.com/",
-    source: "Plentiful",
-    live: true
-  },
-  {
-    id: "access-nyc-food",
-    type: "benefits",
-    name: "ACCESS NYC Food Assistance",
-    description: "Official NYC guidance for Community Food Connection and other food-benefit programs.",
-    url: "https://access.nyc.gov/programs/emergency-food-assistance/",
-    source: "ACCESS NYC",
-    live: true
-  }
+  { id:"food-help-nyc", type:"free-food", name:"NYC Food Help", description:"Official NYC locator for free food pantries and community kitchens.", url:"https://finder.nyc.gov/foodhelp/locations", source:"NYC HRA / DSS", live:true },
+  { id:"food-bank-nyc", type:"free-food", name:"Food Bank For NYC", description:"Search free groceries, hot meals, mobile pantries and SNAP support across NYC.", url:"https://www.foodbanknyc.org/find-food/", source:"Food Bank For New York City", live:true },
+  { id:"city-harvest", type:"free-food", name:"City Harvest Food Map", description:"Current free food distributions, pantries, soup kitchens, community fridges and Mobile Markets.", url:"https://www.cityharvest.org/food-map/", source:"City Harvest", live:true },
+  { id:"fridge-finder", type:"community-fridge", name:"Fridge Finder", description:"Find community fridges and current status information.", url:"https://www.fridgefinder.app/", source:"Fridge Finder", live:true },
+  { id:"plentiful", type:"reservation", name:"Plentiful", description:"Find participating food pantries and reserve pickup times where available.", url:"https://plentifulapp.com/", source:"Plentiful", live:true },
+  { id:"access-nyc-food", type:"benefits", name:"ACCESS NYC Food Assistance", description:"Official NYC guidance for Community Food Connection and other food-benefit programs.", url:"https://access.nyc.gov/programs/emergency-food-assistance/", source:"ACCESS NYC", live:true },
+  { id:"snap", type:"benefits", name:"SNAP / EBT", description:"Apply for monthly grocery benefits and review current NYC SNAP guidance.", url:"https://access.nyc.gov/programs/supplemental-nutrition-assistance-program-snap/", source:"ACCESS NYC / HRA", live:true },
+  { id:"health-bucks", type:"discount", name:"Health Bucks", description:"SNAP shoppers can earn produce incentives at participating NYC farmers markets and farm stands.", url:"https://www.nyc.gov/site/doh/health/health-topics/health-bucks.page", source:"NYC Health", live:true },
+  { id:"good-stuff", type:"discount", name:"Get the Good Stuff", description:"SNAP shoppers can earn matching dollars for eligible fruits, vegetables and beans at participating NYC supermarkets.", url:"https://www.nyc.gov/site/doh/health/health-topics/free-produce-snap.page", source:"NYC Health", live:true },
+  { id:"nutrition-security", type:"healthy-food", name:"NYC Nutrition Security Programs", description:"Explore Health Bucks, Get the Good Stuff, Groceries to Go and Green Carts.", url:"https://www.nyc.gov/site/foodpolicy/programs/nutrition-security.page", source:"NYC Mayor's Office of Food Policy", live:true }
 ];
 
 function json(data, status = 200, maxAge = 1800) {
@@ -90,15 +46,12 @@ function normalizeMarket(row) {
 export default async () => {
   const currentYear = new Date().getFullYear();
   const sourceUrl = `https://data.cityofnewyork.us/resource/${FARMERS_DATASET}.json?$limit=500&$where=year=${currentYear}`;
-
   let markets = [];
   let liveStatus = "fallback";
   let liveError = null;
 
   try {
-    const res = await fetch(sourceUrl, {
-      headers: { "User-Agent": "HUGSLinks-Food-Navigator/1.0" }
-    });
+    const res = await fetch(sourceUrl, { headers: { "User-Agent": "HUGSLinks-Food-Navigator/1.0" } });
     if (!res.ok) throw new Error(`NYC Open Data responded ${res.status}`);
     const rows = await res.json();
     markets = rows.map(normalizeMarket).filter(Boolean);
