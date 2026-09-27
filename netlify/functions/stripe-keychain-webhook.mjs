@@ -4,6 +4,10 @@ import crypto from "node:crypto";
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY || "");
 
+const PRINTIFY_SHOP_ID = "29095637";
+const PRINTIFY_KEYCHAIN_PRODUCT_ID = "6ab83eeaa0d25cd82a0c9f20";
+const PRINTIFY_KEYCHAIN_VARIANT_ID = 148390;
+
 function json(data, status = 200) {
   return new Response(JSON.stringify(data), {
     status,
@@ -25,6 +29,56 @@ function escapeHtml(value = "") {
 function accessNumber(sessionId) {
   const digest = crypto.createHash("sha256").update(sessionId).digest("hex").slice(0, 8).toUpperCase();
   return `HUG-RISE-${digest}`;
+}
+
+function shippingAddress(session) {
+  const details = session.collected_information?.shipping_details || session.shipping_details || session.customer_details;
+  const address = details?.address;
+  if (!address?.line1 || !address?.city || !address?.postal_code || !address?.country) return null;
+  const parts = String(details?.name || session.customer_details?.name || "HUGS Customer").trim().split(/\s+/);
+  return {
+    first_name: parts.shift() || "HUGS",
+    last_name: parts.join(" ") || "Customer",
+    email: normalizeEmail(session.customer_details?.email || session.customer_email),
+    phone: session.customer_details?.phone || "",
+    country: address.country,
+    region: address.state || "",
+    address1: address.line1,
+    address2: address.line2 || "",
+    city: address.city,
+    zip: address.postal_code
+  };
+}
+
+async function createPrintifyOrderOnHold({ session, accessNumber }) {
+  if (!process.env.PRINTIFY_API_TOKEN) throw new Error("Missing PRINTIFY_API_TOKEN");
+  const address = shippingAddress(session);
+  if (!address) throw new Error("Stripe Checkout did not collect a complete shipping address");
+
+  const response = await fetch(`https://api.printify.com/v1/shops/${PRINTIFY_SHOP_ID}/orders.json`, {
+    method: "POST",
+    headers: {
+      Authorization: `Bearer ${process.env.PRINTIFY_API_TOKEN}`,
+      "Content-Type": "application/json;charset=utf-8",
+      "User-Agent": "HUGSLinks/1.0"
+    },
+    body: JSON.stringify({
+      external_id: session.id,
+      label: accessNumber,
+      line_items: [{
+        product_id: PRINTIFY_KEYCHAIN_PRODUCT_ID,
+        variant_id: PRINTIFY_KEYCHAIN_VARIANT_ID,
+        quantity: 1,
+        external_id: `${session.id}-keychain`
+      }],
+      shipping_method: 1,
+      send_shipping_notification: false,
+      address_to: address
+    })
+  });
+  const data = await response.json().catch(() => ({}));
+  if (!response.ok) throw new Error(`Printify order failed: ${response.status} ${JSON.stringify(data)}`);
+  return data;
 }
 
 async function sendAccessEmail({ email, name, number, sessionId }) {
@@ -118,6 +172,9 @@ export default async (req) => {
     currency: session.currency,
     payment_status: session.payment_status,
     fulfillment_status: "awaiting-printify",
+    printify_shop_id: PRINTIFY_SHOP_ID,
+    printify_product_id: PRINTIFY_KEYCHAIN_PRODUCT_ID,
+    printify_variant_id: PRINTIFY_KEYCHAIN_VARIANT_ID,
     access_status: "active",
     created_at: new Date().toISOString()
   };
@@ -130,6 +187,28 @@ export default async (req) => {
 
   await store.setJSON(`access:${number}`, record);
   await store.setJSON(`email:${encodeURIComponent(email)}:${number}`, record);
+
+  /*
+   * Safety gate: only create the Printify order when explicitly enabled.
+   * IMPORTANT: Printify shop Order approval must be MANUAL before setting
+   * HUGS_PRINTIFY_CREATE_ORDERS=true. Printify documents that auto-approval
+   * can otherwise send newly created orders to production automatically.
+   */
+  if (process.env.HUGS_PRINTIFY_CREATE_ORDERS === "true") {
+    try {
+      const printifyOrder = await createPrintifyOrderOnHold({ session, accessNumber: number });
+      record.printify_order_id = printifyOrder.id || null;
+      record.printify_app_order_id = printifyOrder.app_order_id || null;
+      record.fulfillment_status = "printify-on-hold";
+      record.printify_created_at = new Date().toISOString();
+    } catch (error) {
+      console.error("Printify keychain order creation failed:", error);
+      record.fulfillment_status = "printify-create-failed";
+      record.printify_error_at = new Date().toISOString();
+    }
+  } else {
+    record.fulfillment_status = "printify-safety-hold";
+  }
 
   try {
     await sendAccessEmail({ email, name, number, sessionId: session.id });
