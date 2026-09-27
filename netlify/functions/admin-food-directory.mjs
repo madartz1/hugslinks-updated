@@ -65,7 +65,7 @@ export default async request=>{
    const id=clean(body?.listing_id,90)||makeId();
    let item=listings.find(x=>x.id===id);
    if(!item){item={id,created_at:now};listings.push(item)}
-   const lat=Number(body?.latitude),lng=Number(body?.longitude);
+   const latRaw=clean(body?.latitude,40),lngRaw=clean(body?.longitude,40);const lat=latRaw===""?null:Number(latRaw),lng=lngRaw===""?null:Number(lngRaw);
    Object.assign(item,{
     name:clean(body?.name,180),
     category:clean(body?.category,120)||"Food Resource",
@@ -74,8 +74,8 @@ export default async request=>{
     borough:clean(body?.borough,80),
     phone:clean(body?.phone,70),
     website:clean(body?.website,350),
-    latitude:Number.isFinite(lat)?lat:null,
-    longitude:Number.isFinite(lng)?lng:null,
+    latitude:lat!==null&&Number.isFinite(lat)?lat:null,
+    longitude:lng!==null&&Number.isFinite(lng)?lng:null,
     dietary:list(body?.dietary),
     features:list(body?.features),
     price_level:clean(body?.price_level,80),
