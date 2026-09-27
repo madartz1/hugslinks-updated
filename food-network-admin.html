@@ -1,0 +1,66 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="robots" content="noindex,nofollow,noarchive">
+<title>HUGS Food Network Admin</title><link rel="stylesheet" href="styles.css">
+<style>
+:root{--navy:#071f3b;--blue:#1267ff;--line:#dce8f2;--muted:#60758a;--green:#177247;--red:#a62f26}
+body{margin:0;background:#f5f8fb;color:var(--navy)}.wrap{max-width:1180px;margin:auto;padding:34px 18px 80px}.hero{padding:32px 0}.hero h1{font-size:clamp(2.5rem,6vw,4.8rem);margin:0 0 10px}.lead{color:var(--muted);max-width:800px;line-height:1.6}
+.card{background:#fff;border:1px solid var(--line);border-radius:22px;padding:22px;margin-bottom:18px;box-shadow:0 10px 30px rgba(7,31,59,.06)}.grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:13px}.full{grid-column:1/-1}.field{display:flex;flex-direction:column;gap:6px}.field input,.field textarea,.field select{font:inherit;padding:12px;border:1px solid #cad8e5;border-radius:12px}.field textarea{min-height:100px}
+.actions{display:flex;gap:9px;flex-wrap:wrap;margin-top:14px}.btn2{border:0;border-radius:12px;padding:11px 14px;font-weight:900;cursor:pointer;background:var(--navy);color:#fff}.alt{background:#eef5ff;color:#17466f}.danger{background:#fff0ee;color:var(--red)}.status{display:inline-block;padding:6px 10px;border-radius:999px;background:#eef5ff;font-size:.78rem;font-weight:900}.private{background:#fff8e8;border-left:4px solid #d9ad45;padding:14px;border-radius:0 12px 12px 0;line-height:1.55}.list{display:grid;gap:14px}.hidden{display:none}.note{color:var(--muted);font-size:.9rem;line-height:1.5}
+@media(max-width:720px){.grid{grid-template-columns:1fr}.full{grid-column:auto}}
+</style></head><body>
+<main class="wrap">
+<section class="hero"><div class="status">PRIVATE ADMIN</div><h1>HUGS Food Network</h1><p class="lead">Review B2B inquiries, maintain the HUGS-owned food directory, and control which businesses and community resources appear publicly in the HUGS Food Navigator.</p></section>
+<section class="card" id="loginCard"><h2>Admin Sign In</h2><div class="field"><label>HUGS Admin Token</label><input id="token" type="password" autocomplete="off"></div><div class="actions"><button class="btn2" id="login" type="button">Open Food Network Admin</button><a class="btn2 alt" href="hugs-admin.html">Back to HUGS Admin</a></div></section>
+<div id="dashboard" class="hidden">
+<section class="card"><div class="actions"><button class="btn2" id="refresh" type="button">Refresh</button><button class="btn2 alt" id="newListing" type="button">New Listing</button><button class="btn2 danger" id="lock" type="button">Lock</button></div></section>
+<section class="card"><h2>Business Inquiries</h2><div id="inquiryList" class="list"></div></section>
+<section class="card"><h2>HUGS Directory Listing</h2><p class="note">Only published listings appear on the public map. Private notes and B2B status never appear publicly.</p>
+<div class="grid">
+<div class="field"><label>Listing ID</label><input id="listingId" readonly placeholder="New listing"></div>
+<div class="field"><label>Name</label><input id="listingName"></div>
+<div class="field"><label>Category</label><select id="listingCategory"><option>Food Resource</option><option>Restaurant</option><option>Grocery / Market</option><option>Bakery</option><option>Community Organization</option><option>Food Pantry</option><option>Community Fridge</option><option>Farmers Market</option></select></div>
+<div class="field"><label>Borough</label><input id="listingBorough"></div>
+<div class="field full"><label>Public Address</label><input id="listingAddress"></div>
+<div class="field"><label>Latitude</label><input id="listingLat" inputmode="decimal"></div>
+<div class="field"><label>Longitude</label><input id="listingLng" inputmode="decimal"></div>
+<div class="field"><label>Phone</label><input id="listingPhone"></div>
+<div class="field"><label>Website</label><input id="listingWebsite" type="url"></div>
+<div class="field full"><label>Description</label><textarea id="listingDescription"></textarea></div>
+<div class="field"><label>Dietary options (comma separated)</label><input id="listingDietary" placeholder="Vegan, Vegetarian"></div>
+<div class="field"><label>Features (comma separated)</label><input id="listingFeatures" placeholder="Free Food, Discounts, SNAP / EBT"></div>
+<div class="field"><label>Price / Access</label><input id="listingPrice" placeholder="Free, Low-cost, $$"></div>
+<div class="field"><label>Hours</label><input id="listingHours"></div>
+<div class="field"><label>Public Source Label</label><input id="listingSource" value="HUGS Verified"></div>
+<div class="field"><label>Partner Status</label><select id="listingPartner"><option>Resource</option><option>HUGS Partner</option><option>Community Partner</option><option>Official Resource</option></select></div>
+<div class="field"><label>Last Verified</label><input id="listingVerified" type="date"></div>
+<div class="field"><label>Status</label><select id="listingStatus"><option>Active</option><option>Inactive</option></select></div>
+<div class="field full"><label>Private Internal Note</label><textarea id="listingInternal"></textarea></div>
+<div class="field full"><label><input id="listingPublished" type="checkbox"> Publish publicly in HUGS Food Navigator</label></div>
+</div>
+<div class="actions"><button class="btn2" id="saveListing" type="button">Save Listing</button><button class="btn2 danger" id="deleteListing" type="button">Delete Listing</button></div>
+</section>
+<section class="card"><h2>Current HUGS Listings</h2><div id="listingList" class="list"></div></section>
+</div></main>
+<script>
+const API="/.netlify/functions/admin-food-directory";let adminToken="",inquiries=[],listings=[],linkedInquiry="";
+const esc=v=>String(v??"").replace(/[&<>"']/g,m=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"}[m]));
+const list=v=>String(v||"").split(",").map(x=>x.trim()).filter(Boolean);
+async function call(body){
+ const r=await fetch(API,{method:body?"POST":"GET",headers:{Authorization:"Bearer "+adminToken,...(body?{"Content-Type":"application/json"}:{})},body:body?JSON.stringify(body):undefined});
+ const d=await r.json();if(!r.ok||!d.ok)throw new Error(d.error||"Admin request failed.");return d;
+}
+async function load(){const d=await call();inquiries=d.inquiries||[];listings=d.listings||[];render()}
+function render(){
+ inquiryList.innerHTML=inquiries.length?inquiries.map(q=>'<article class="card"><div><strong>'+esc(q.business_name)+'</strong> <span class="status">'+esc(q.status)+'</span></div><p>'+esc(q.message)+'</p><div class="private"><b>Private contact:</b> '+esc(q.contact_name)+' · '+esc(q.email)+' · '+esc(q.phone||"")+'<br>'+esc([q.public_address,q.borough].filter(Boolean).join(", "))+(q.website?'<br>'+esc(q.website):'')+'</div><div class="actions"><button class="btn2" onclick="fromInquiry(\''+esc(q.id)+'\')">Create Directory Listing</button><button class="btn2 alt" onclick="qAction(\'mark-contacted\',\''+esc(q.id)+'\')">Contacted</button><button class="btn2 alt" onclick="qAction(\'mark-interested\',\''+esc(q.id)+'\')">Interested</button><button class="btn2 danger" onclick="qAction(\'decline-inquiry\',\''+esc(q.id)+'\')">Decline</button></div></article>').join(""):'<p>No B2B inquiries yet.</p>';
+ listingList.innerHTML=listings.length?listings.map(x=>'<article class="card"><div><strong>'+esc(x.name)+'</strong> <span class="status">'+esc(x.partner_status||"Resource")+'</span> '+(x.published?'<span class="status">Published</span>':'')+'</div><p>'+esc(x.description||"")+'</p><p>'+esc([x.address,x.borough].filter(Boolean).join(", "))+'</p><div class="actions"><button class="btn2 alt" onclick="editListing(\''+esc(x.id)+'\')">Edit</button></div></article>').join(""):'<p>No HUGS listings yet.</p>';
+}
+async function qAction(action,id){try{await call({action,inquiry_id:id,admin_note:""});await load()}catch(e){alert(e.message)}}
+function clearForm(){linkedInquiry="";for(const id of ["listingId","listingName","listingBorough","listingAddress","listingLat","listingLng","listingPhone","listingWebsite","listingDescription","listingDietary","listingFeatures","listingPrice","listingHours","listingInternal"])document.getElementById(id).value="";listingSource.value="HUGS Verified";listingPartner.value="Resource";listingStatus.value="Active";listingPublished.checked=false;listingVerified.value=new Date().toISOString().slice(0,10)}
+function fromInquiry(id){clearForm();const q=inquiries.find(x=>x.id===id);if(!q)return;linkedInquiry=id;listingName.value=q.business_name||"";listingBorough.value=q.borough||"";listingAddress.value=q.public_address||"";listingPhone.value=q.phone||"";listingWebsite.value=q.website||"";listingDescription.value=q.message||"";listingDietary.value=(q.dietary||[]).join(", ");listingFeatures.value=(q.interests||[]).join(", ");listingPartner.value="HUGS Partner";window.scrollTo({top:document.getElementById("listingId").getBoundingClientRect().top+scrollY-30,behavior:"smooth"})}
+function editListing(id){clearForm();const x=listings.find(y=>y.id===id);if(!x)return;listingId.value=x.id||"";listingName.value=x.name||"";listingCategory.value=x.category||"Food Resource";listingBorough.value=x.borough||"";listingAddress.value=x.address||"";listingLat.value=x.latitude??"";listingLng.value=x.longitude??"";listingPhone.value=x.phone||"";listingWebsite.value=x.website||"";listingDescription.value=x.description||"";listingDietary.value=(x.dietary||[]).join(", ");listingFeatures.value=(x.features||[]).join(", ");listingPrice.value=x.price_level||"";listingHours.value=x.hours||"";listingSource.value=x.source_label||"HUGS Verified";listingPartner.value=x.partner_status||"Resource";listingVerified.value=(x.last_verified||"").slice(0,10);listingStatus.value=x.status||"Active";listingInternal.value=x.internal_note||"";listingPublished.checked=!!x.published}
+login.onclick=async()=>{adminToken=token.value.trim();if(!adminToken)return;try{await load();loginCard.classList.add("hidden");dashboard.classList.remove("hidden");token.value=""}catch(e){adminToken="";alert(e.message)}};
+refresh.onclick=()=>load().catch(e=>alert(e.message));newListing.onclick=clearForm;lock.onclick=()=>{adminToken="";dashboard.classList.add("hidden");loginCard.classList.remove("hidden")};
+saveListing.onclick=async()=>{try{await call({action:"save-listing",inquiry_id:linkedInquiry,listing_id:listingId.value,name:listingName.value,category:listingCategory.value,borough:listingBorough.value,address:listingAddress.value,latitude:listingLat.value,longitude:listingLng.value,phone:listingPhone.value,website:listingWebsite.value,description:listingDescription.value,dietary:list(listingDietary.value),features:list(listingFeatures.value),price_level:listingPrice.value,hours:listingHours.value,source_label:listingSource.value,partner_status:listingPartner.value,last_verified:listingVerified.value,status:listingStatus.value,internal_note:listingInternal.value,published:listingPublished.checked});clearForm();await load();alert("HUGS listing saved.")}catch(e){alert(e.message)}};
+deleteListing.onclick=async()=>{if(!listingId.value||!confirm("Delete this HUGS directory listing?"))return;try{await call({action:"delete-listing",listing_id:listingId.value});clearForm();await load()}catch(e){alert(e.message)}};
+clearForm();
+</script></body></html>
