@@ -1,9 +1,121 @@
 import { getStore } from "@netlify/blobs";
-const STORE="hugs-artists",KEY="artists",headers={"Content-Type":"application/json; charset=utf-8","Cache-Control":"no-store, no-cache, must-revalidate"};
-const json=(b,s=200)=>new Response(JSON.stringify(b),{status:s,headers});
-const clean=(v,n=500)=>typeof v==="string"?v.trim().replace(/[\u0000-\u001F\u007F]/g,"").slice(0,n):"";
-const emailOK=v=>/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v);
-const urlOK=v=>{try{const u=new URL(v);return u.protocol==="https:"||u.protocol==="http:"}catch{return false}};
-const makeId=()=>"ARTIST-"+new Date().getFullYear()+"-"+crypto.randomUUID().replaceAll("-","").slice(0,8).toUpperCase();
-async function read(s){const x=await s.get(KEY,{type:"json",consistency:"strong"});return Array.isArray(x?.artists)?x.artists:Array.isArray(x)?x:[]}
-export default async request=>{if(request.method!=="POST")return json({ok:false,error:"Method not allowed."},405);try{let b;try{b=await request.json()}catch{return json({ok:false,error:"Invalid submission."},400)}if(clean(b?.bot_field,100))return json({ok:true,message:"Received."});const artist=clean(b?.artist_name,140),name=clean(b?.full_name,160),email=clean(b?.email,254).toLowerCase(),phone=clean(b?.phone,60),city=clean(b?.city,120),region=clean(b?.region,120),medium=clean(b?.primary_medium,120),portfolio=clean(b?.portfolio_url,600),social=clean(b?.social_url,600),experience=clean(b?.experience_level,120),statement=clean(b?.artist_statement,2400),works=clean(b?.artwork_links,2400),notes=clean(b?.notes,1600),interests=Array.isArray(b?.interests)?b.interests.map(x=>clean(x,100)).filter(Boolean).slice(0,12):[],confirmed=b?.confirmation==="yes"||b?.confirmation===true;if(!artist||!name||!email||!city||!medium||!portfolio||!statement)return json({ok:false,error:"Please complete all required artist fields."},400);if(!emailOK(email))return json({ok:false,error:"Please enter a valid email."},400);if(!urlOK(portfolio)||(social&&!urlOK(social)))return json({ok:false,error:"Please enter valid portfolio and social links."},400);if(!confirmed)return json({ok:false,error:"Artist confirmation is required."},400);const now=new Date().toISOString(),record={id:makeId(),status:"Pending Review",created_at:now,reviewed_at:null,artist_name:artist,full_name:name,email,phone,city,region,primary_medium:medium,portfolio_url:portfolio,social_url:social,experience_level:experience,artist_statement:statement,artwork_links:works,interests,notes,confirmation:true};const store=getStore(STORE),records=await read(store);records.push(record);await store.setJSON(KEY,{updated_at:now,artists:records});return json({ok:true,artist_id:record.id,status:record.status},201)}catch(e){console.error("Artist submission error:",e);return json({ok:false,error:"We could not submit your artist introduction right now."},500)}};
+
+const STORE = "hugs-artists";
+const KEY = "artists";
+const IMAGE_STORE = "hugs-art-images";
+const MAX_IMAGE_BYTES = 4 * 1024 * 1024;
+const IMAGE_TYPES = new Set(["image/jpeg", "image/png", "image/webp"]);
+const headers = {
+  "Content-Type": "application/json; charset=utf-8",
+  "Cache-Control": "no-store, no-cache, must-revalidate",
+  "X-Content-Type-Options": "nosniff"
+};
+
+const json = (body, status = 200) => new Response(JSON.stringify(body), { status, headers });
+const clean = (value, max = 500) => typeof value === "string"
+  ? value.trim().replace(/[\u0000-\u001F\u007F]/g, "").slice(0, max)
+  : "";
+const emailOK = value => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value);
+const urlOK = value => {
+  try {
+    const url = new URL(value);
+    return url.protocol === "https:" || url.protocol === "http:";
+  } catch {
+    return false;
+  }
+};
+const makeId = () => "ARTIST-" + new Date().getFullYear() + "-" + crypto.randomUUID().replaceAll("-", "").slice(0, 8).toUpperCase();
+
+async function read(store) {
+  const value = await store.get(KEY, { type: "json", consistency: "strong" });
+  return Array.isArray(value?.artists) ? value.artists : Array.isArray(value) ? value : [];
+}
+
+function validImageSignature(bytes, type) {
+  if (type === "image/jpeg") return bytes[0] === 255 && bytes[1] === 216 && bytes[2] === 255;
+  if (type === "image/png") return bytes[0] === 137 && bytes[1] === 80 && bytes[2] === 78 && bytes[3] === 71 && bytes[4] === 13 && bytes[5] === 10 && bytes[6] === 26 && bytes[7] === 10;
+  if (type === "image/webp") return String.fromCharCode(...bytes.slice(0, 4)) === "RIFF" && String.fromCharCode(...bytes.slice(8, 12)) === "WEBP";
+  return false;
+}
+
+export default async request => {
+  if (request.method !== "POST") return json({ ok: false, error: "Method not allowed." }, 405);
+
+  try {
+    let form;
+    try {
+      form = await request.formData();
+    } catch {
+      return json({ ok: false, error: "Invalid artist submission." }, 400);
+    }
+
+    if (clean(form.get("bot_field"), 100)) return json({ ok: true, message: "Received." });
+
+    const artist = clean(form.get("artist_name"), 140);
+    const name = clean(form.get("full_name"), 160);
+    const email = clean(form.get("email"), 254).toLowerCase();
+    const phone = clean(form.get("phone"), 60);
+    const city = clean(form.get("city"), 120);
+    const region = clean(form.get("region"), 120);
+    const medium = clean(form.get("primary_medium"), 120);
+    const portfolio = clean(form.get("portfolio_url"), 600);
+    const social = clean(form.get("social_url"), 600);
+    const experience = clean(form.get("experience_level"), 120);
+    const statement = clean(form.get("artist_statement"), 2400);
+    const works = clean(form.get("artwork_links"), 2400);
+    const artworkTitle = clean(form.get("artwork_title"), 120);
+    const artworkYear = clean(form.get("artwork_year"), 4);
+    const notes = clean(form.get("notes"), 1600);
+    const interests = form.getAll("interests").map(value => clean(value, 100)).filter(Boolean).slice(0, 12);
+    const confirmed = form.get("confirmation") === "yes" || form.get("confirmation") === "true";
+    const file = form.get("artwork");
+
+    if (!artist || !name || !email || !city || !medium || !statement || !artworkTitle) {
+      return json({ ok: false, error: "Please complete all required artist and artwork fields." }, 400);
+    }
+    if (!emailOK(email)) return json({ ok: false, error: "Please enter a valid email." }, 400);
+    if ((portfolio && !urlOK(portfolio)) || (social && !urlOK(social))) {
+      return json({ ok: false, error: "Please enter valid portfolio and social links." }, 400);
+    }
+    if (artworkYear && !/^\d{4}$/.test(artworkYear)) {
+      return json({ ok: false, error: "Enter the artwork year as four digits." }, 400);
+    }
+    if (!confirmed) return json({ ok: false, error: "Artist confirmation is required." }, 400);
+    if (!file || typeof file.arrayBuffer !== "function") {
+      return json({ ok: false, error: "Choose an artwork image." }, 400);
+    }
+    if (!IMAGE_TYPES.has(file.type)) return json({ ok: false, error: "Use a JPEG, PNG or WebP image." }, 415);
+    if (!file.size || file.size > MAX_IMAGE_BYTES) {
+      return json({ ok: false, error: "Artwork images must be 4 MB or smaller." }, 413);
+    }
+
+    const imageBuffer = await file.arrayBuffer();
+    const imageBytes = new Uint8Array(imageBuffer);
+    if (!validImageSignature(imageBytes, file.type)) {
+      return json({ ok: false, error: "The selected file is not a valid artwork image." }, 415);
+    }
+
+    const imageId = crypto.randomUUID();
+    const imageURL = "/.netlify/functions/art-image?id=" + encodeURIComponent(imageId);
+    const now = new Date().toISOString();
+    const record = {
+      id: makeId(), status: "Pending Review", created_at: now, reviewed_at: null,
+      artist_name: artist, full_name: name, email, phone, city, region,
+      primary_medium: medium, portfolio_url: portfolio, social_url: social,
+      experience_level: experience, artist_statement: statement, artwork_links: works,
+      artwork_title: artworkTitle, artwork_year: artworkYear,
+      artwork_image_id: imageId, artwork_image_url: imageURL,
+      interests, notes, confirmation: true
+    };
+
+    await getStore(IMAGE_STORE).set("image-" + imageId, imageBuffer, { metadata: { mime: file.type } });
+    const store = getStore(STORE);
+    const records = await read(store);
+    records.push(record);
+    await store.setJSON(KEY, { updated_at: now, artists: records });
+    return json({ ok: true, artist_id: record.id, status: record.status }, 201);
+  } catch (error) {
+    console.error("Artist submission error:", error);
+    return json({ ok: false, error: "We could not submit your artist introduction right now." }, 500);
+  }
+};
