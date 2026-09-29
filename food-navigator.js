@@ -83,7 +83,16 @@
         showCoverageOnHover: false,
         spiderfyOnMaxZoom: true,
         removeOutsideVisibleBounds: true,
-        maxClusterRadius: 48
+        maxClusterRadius: 48,
+        iconCreateFunction(cluster) {
+          const count = cluster.getChildCount();
+          const size = count < 10 ? 'small' : count < 50 ? 'medium' : 'large';
+          return L.divIcon({
+            html: '<span class="cluster-badge" aria-hidden="true"><span class="cluster-bag">' + markerSvg('bag') + '</span><b>' + count + '</b></span>',
+            className: 'hugs-cluster hugs-cluster-' + size,
+            iconSize: [46, 46]
+          });
+        }
       })
     : L.layerGroup();
   markerLayer.addTo(map);
@@ -215,24 +224,36 @@
   function markerKind(item) {
     if (item.source_kind === 'hugs') return 'hugs';
     if (item.source_kind === 'market' || normalize(item.type).includes('farmers market')) return 'market';
-    return 'official';
+    const foodType = normalize([item.category, item.type, ...(item.features || [])].join(' '));
+    if (/hot meal|community kitchen|soup kitchen|prepared meal/.test(foodType)) return 'meal';
+    return 'pantry';
+  }
+
+  function markerSvg(name) {
+    const icons = {
+      bag: '<svg viewBox="0 0 24 24" focusable="false"><path d="M5.5 8.5h13l-1 11h-11l-1-11Z"/><path d="M8.5 9V7a3.5 3.5 0 0 1 7 0v2"/></svg>',
+      meal: '<svg viewBox="0 0 24 24" focusable="false"><path d="M4 11h16a8 8 0 0 1-16 0Z"/><path d="M3 11h18M8 7c0-1 1-1 1-2s-1-1-1-2M13 7c0-1 1-1 1-2s-1-1-1-2"/></svg>',
+      leaf: '<svg viewBox="0 0 24 24" focusable="false"><path d="M19.5 4.5C12 4.5 6 8 6 14.5c0 3 2 5 5 5 6.5 0 8.5-7 8.5-15Z"/><path d="M4.5 20c3-5 6-8 11-11"/></svg>',
+      hugs: '<svg viewBox="0 0 24 24" focusable="false"><path d="M4.5 10 12 4l7.5 6v9.5h-15V10Z"/><path d="M12 17.5s-4-2.3-4-5a2.2 2.2 0 0 1 4-1.4 2.2 2.2 0 0 1 4 1.4c0 2.7-4 5-4 5Z"/></svg>'
+    };
+    return icons[name] || icons.bag;
   }
 
   function markerIcon(item) {
     const kind = markerKind(item);
-    const letter = kind === 'hugs' ? 'H' : kind === 'market' ? 'F' : '+';
+    const symbol = kind === 'hugs' ? 'hugs' : kind === 'market' ? 'leaf' : kind === 'meal' ? 'meal' : 'bag';
     return L.divIcon({
       className: 'hugs-marker',
-      html: '<span class="marker-dot ' + kind + '" aria-hidden="true">' + letter + '</span>',
-      iconSize: [32, 32],
-      iconAnchor: [16, 16],
-      popupAnchor: [0, -16]
+      html: '<span class="resource-pin ' + kind + '" aria-hidden="true"><span class="resource-pin-symbol">' + markerSvg(symbol) + '</span></span>',
+      iconSize: [40, 48],
+      iconAnchor: [20, 46],
+      popupAnchor: [0, -43]
     });
   }
 
   function typeClass(item) {
     const kind = markerKind(item);
-    return kind === 'hugs' ? 'hugs' : kind === 'market' ? 'market' : '';
+    return kind === 'pantry' ? '' : kind;
   }
 
   function typeLabel(item) {
@@ -443,7 +464,7 @@
     el.suggestions.innerHTML = choices.map(item => {
       const location = [item.category, item.borough, item.zip].filter(Boolean).join(' • ');
       return '<button class="suggestion" type="button" role="option" data-suggestion-id="' + esc(item.id) + '">' +
-        '<span class="suggestion-mark">' + (markerKind(item) === 'hugs' ? 'H' : '⌖') + '</span>' +
+        '<span class="suggestion-mark ' + markerKind(item) + '">' + markerSvg(markerKind(item) === 'market' ? 'leaf' : markerKind(item) === 'hugs' ? 'hugs' : markerKind(item) === 'meal' ? 'meal' : 'bag') + '</span>' +
         '<span><strong>' + esc(item.name) + '</strong><small>' + esc(location || item.address) + '</small></span></button>';
     }).join('');
     el.suggestions.hidden = false;

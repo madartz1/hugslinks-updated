@@ -72,10 +72,12 @@ button,a{-webkit-tap-highlight-color:transparent}
 .map-location-control.locating{opacity:.72;cursor:wait}
 .map-legend{position:absolute;z-index:700;left:14px;bottom:14px;display:flex;gap:10px;flex-wrap:wrap;background:rgba(255,255,255,.95);border:1px solid rgba(215,229,239,.95);border-radius:999px;padding:8px 12px;box-shadow:0 6px 20px rgba(7,31,59,.12);font-size:.75rem;font-weight:800;color:#365168;backdrop-filter:blur(10px)}
 .map-legend span{display:flex;align-items:center;gap:5px}
-.legend-dot{display:inline-block;width:10px;height:10px;border-radius:50%}
-.legend-dot.official{background:var(--food-orange)}
-.legend-dot.hugs{background:var(--food-blue)}
-.legend-dot.market{background:var(--food-green)}
+.legend-symbol{display:grid;place-items:center;width:18px;height:18px;border-radius:6px;color:#fff;font-size:.68rem;font-style:normal;line-height:1}
+.legend-symbol.pantry{background:var(--food-orange)}
+.legend-symbol.meal{background:#b95076}
+.legend-symbol.hugs{background:var(--food-blue)}
+.legend-symbol.market{background:var(--food-green)}
+.legend-symbol svg{width:13px;height:13px;fill:none;stroke:currentColor;stroke-width:2.1;stroke-linecap:round;stroke-linejoin:round}
 
 .list-panel{display:flex;min-width:0;max-height:680px;flex-direction:column;border-left:1px solid var(--food-line);background:#f9fbfc}
 .list-heading{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:16px 17px;background:#fff;border-bottom:1px solid var(--food-line);font-size:.92rem}
@@ -92,6 +94,7 @@ button,a{-webkit-tap-highlight-color:transparent}
 .type-badge{display:inline-flex;align-items:center;max-width:75%;border-radius:999px;padding:5px 8px;background:#fff2e5;color:#9a4d08;font-size:.67rem;font-weight:900;text-transform:uppercase;letter-spacing:.035em}
 .type-badge.hugs{background:#eaf5ff;color:#0c5c9e}
 .type-badge.market{background:#e8f7ef;color:#116844}
+.type-badge.meal{background:#faeaf0;color:#963a5c}
 .distance{color:var(--food-muted);font-size:.72rem;font-weight:800}
 .result-title{border:0;background:none;padding:0;color:var(--food-navy);font-size:1.02rem;line-height:1.24;font-weight:900;text-align:left;cursor:pointer}
 .result-title:hover{text-decoration:underline}
@@ -112,13 +115,23 @@ button,a{-webkit-tap-highlight-color:transparent}
 .selected-card .selected-source a{color:#0c65b4}
 
 .hugs-marker{background:transparent;border:0}
-.marker-dot{display:grid;place-items:center;width:32px;height:32px;border:3px solid #fff;border-radius:50%;box-shadow:0 4px 12px rgba(7,31,59,.36);color:#fff;font-size:.73rem;font-weight:900}
-.marker-dot.official{background:var(--food-orange)}
-.marker-dot.hugs{background:var(--food-blue)}
-.marker-dot.market{background:var(--food-green)}
-.marker-dot.user{background:#7e4be8}
-.marker-cluster-small div,.marker-cluster-medium div,.marker-cluster-large div{background:var(--food-navy);color:#fff;font-weight:900}
-.marker-cluster-small,.marker-cluster-medium,.marker-cluster-large{background:rgba(98,199,255,.58)}
+.resource-pin{position:relative;display:grid;place-items:center;width:38px;height:38px;border:3px solid #fff;border-radius:50% 50% 50% 8px;background:var(--food-orange);box-shadow:0 5px 14px rgba(7,31,59,.38);color:#fff;transform:rotate(-45deg)}
+.resource-pin::after{content:"";position:absolute;inset:5px;border:1px solid rgba(255,255,255,.24);border-radius:50%}
+.resource-pin-symbol{position:relative;z-index:1;display:grid;place-items:center;width:23px;height:23px;transform:rotate(45deg)}
+.resource-pin-symbol svg{width:22px;height:22px;fill:none;stroke:currentColor;stroke-width:1.9;stroke-linecap:round;stroke-linejoin:round}
+.resource-pin.pantry{background:var(--food-orange)}
+.resource-pin.meal{background:#b95076}
+.resource-pin.hugs{background:var(--food-blue)}
+.resource-pin.market{background:var(--food-green)}
+.marker-dot.user{display:grid;place-items:center;width:38px;height:38px;border:3px solid #fff;border-radius:50%;background:#7e4be8;box-shadow:0 5px 14px rgba(7,31,59,.38);color:#fff;font-size:.65rem;font-weight:900}
+.hugs-cluster{background:transparent;border:0}
+.cluster-badge{position:relative;display:grid;place-items:center;width:44px;height:44px;border:3px solid #fff;border-radius:50%;background:var(--food-navy);box-shadow:0 5px 15px rgba(7,31,59,.35);color:#fff}
+.cluster-badge b{position:relative;z-index:2;font-size:.78rem;line-height:1}
+.cluster-bag{position:absolute;left:5px;bottom:5px;display:grid;place-items:center;width:17px;height:17px;border-radius:5px;background:var(--food-orange);color:#fff}
+.cluster-bag svg{width:12px;height:12px;fill:none;stroke:currentColor;stroke-width:2.2;stroke-linecap:round;stroke-linejoin:round}
+.hugs-cluster-medium .cluster-badge{width:46px;height:46px;background:#103c66}
+.hugs-cluster-large .cluster-badge{width:48px;height:48px;background:#082746}
+.suggestion-mark svg{width:16px;height:16px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
 .leaflet-popup-content-wrapper{border-radius:16px;box-shadow:0 12px 36px rgba(7,31,59,.2)}
 .leaflet-popup-content{margin:14px 16px;min-width:210px;color:var(--food-ink);line-height:1.38}
 .popup-type{display:inline-block;margin-bottom:5px;color:#9a4d08;font-size:.68rem;font-weight:900;text-transform:uppercase}
