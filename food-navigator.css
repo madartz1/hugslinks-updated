@@ -60,6 +60,10 @@ button,a{-webkit-tap-highlight-color:transparent}
 .map-panel{position:relative;width:100%;min-width:0;overflow:hidden;background:#dcecf4}
 #map{position:relative;display:block;height:680px;width:100%;max-width:none;min-width:0;background:#dcecf4;z-index:1}
 .leaflet-container{width:100%!important;max-width:none!important;font:inherit}
+.leaflet-pane,.leaflet-tile,.leaflet-marker-icon,.leaflet-marker-shadow,.leaflet-tile-container,.leaflet-pane>svg,.leaflet-pane>canvas,.leaflet-zoom-box,.leaflet-image-layer,.leaflet-layer{position:absolute;left:0;top:0}
+.leaflet-container{overflow:hidden;-webkit-tap-highlight-color:transparent}
+.leaflet-tile{visibility:hidden}
+.leaflet-tile-loaded{visibility:inherit}
 .leaflet-container .leaflet-tile,.leaflet-container img.leaflet-image-layer,.leaflet-container .leaflet-marker-icon,.leaflet-container .leaflet-marker-shadow{max-width:none!important;max-height:none!important}
 .map-live-badge{position:absolute;z-index:710;top:14px;left:58px;display:inline-flex;align-items:center;gap:7px;min-height:34px;padding:7px 11px;border:1px solid rgba(215,229,239,.95);border-radius:999px;background:rgba(255,255,255,.96);box-shadow:0 6px 20px rgba(7,31,59,.12);color:#31536b;font-size:.72rem;font-weight:900;backdrop-filter:blur(10px)}
 .map-live-badge span{width:8px;height:8px;border-radius:50%;background:var(--food-green);box-shadow:0 0 0 4px rgba(21,132,91,.13)}
