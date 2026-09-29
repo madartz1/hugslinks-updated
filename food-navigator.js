@@ -480,7 +480,6 @@
     return [
       { name:'NYC Food Help', description:'Official NYC map of free food pantries and community kitchens.', source:'NYC HRA / DSS', url:'https://finder.nyc.gov/foodhelp/locations' },
       { name:'Food Bank For NYC', description:'Find free groceries, prepared meals and SNAP support.', source:'Food Bank For New York City', url:'https://www.foodbanknyc.org/find-food/' },
-      { name:'City Harvest Food Map', description:'Find current food distributions and community fridges.', source:'City Harvest', url:'https://www.cityharvest.org/food-map/' }
     ];
   }
 

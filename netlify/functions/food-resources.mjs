@@ -5,7 +5,6 @@ const FOOD_HELP_PAGE = "https://finder.nyc.gov/foodhelp/locations";
 const trustedLocators = [
   { id:"food-help-nyc", type:"free-food", name:"NYC Food Help", description:"Official NYC locator for free food pantries and community kitchens.", url:FOOD_HELP_PAGE, source:"NYC HRA / DSS", live:true },
   { id:"food-bank-nyc", type:"free-food", name:"Food Bank For NYC", description:"Search free groceries, hot meals, mobile pantries and SNAP support across NYC.", url:"https://www.foodbanknyc.org/find-food/", source:"Food Bank For New York City", live:true },
-  { id:"city-harvest", type:"free-food", name:"City Harvest Food Map", description:"Current free food distributions, pantries, soup kitchens, community fridges and Mobile Markets.", url:"https://www.cityharvest.org/food-map/", source:"City Harvest", live:true },
   { id:"fridge-finder", type:"community-fridge", name:"Fridge Finder", description:"Find community fridges and current status information.", url:"https://www.fridgefinder.app/", source:"Fridge Finder", live:true },
   { id:"plentiful", type:"reservation", name:"Plentiful", description:"Find participating food pantries and reserve pickup times where available.", url:"https://plentifulapp.com/", source:"Plentiful", live:true },
   { id:"access-nyc-food", type:"benefits", name:"ACCESS NYC Food Assistance", description:"Official NYC guidance for Community Food Connection and other food-benefit programs.", url:"https://access.nyc.gov/programs/emergency-food-assistance/", source:"ACCESS NYC / HRA", live:true },
