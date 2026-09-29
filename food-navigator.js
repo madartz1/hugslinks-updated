@@ -88,7 +88,7 @@
           const count = cluster.getChildCount();
           const size = count < 10 ? 'small' : count < 50 ? 'medium' : 'large';
           return L.divIcon({
-            html: '<span class="cluster-badge" aria-hidden="true"><span class="cluster-bag">' + markerSvg('bag') + '</span><b>' + count + '</b></span>',
+            html: '<span class="cluster-badge" aria-label="' + count + ' food locations"><span class="cluster-bag" aria-hidden="true">' + markerSvg('bag') + '</span><b aria-hidden="true">' + count + '</b></span>',
             className: 'hugs-cluster hugs-cluster-' + size,
             iconSize: [46, 46]
           });
