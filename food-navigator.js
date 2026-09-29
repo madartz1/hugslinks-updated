@@ -12,6 +12,7 @@
     nearMe: document.getElementById('nearMe'),
     status: document.getElementById('status'),
     sourceStatus: document.getElementById('sourceStatus'),
+    liveBadge: document.getElementById('mapLiveBadge'),
     list: document.getElementById('resultsList'),
     listCount: document.getElementById('listCount'),
     listContext: document.getElementById('listContext'),
@@ -22,6 +23,7 @@
   };
 
   const NYC_CENTER = [40.7128, -74.0060];
+  const NYC_BOUNDS = [[40.49, -74.27], [40.93, -73.68]];
   const PAGE_SIZE = 60;
   let allItems = [];
   let currentRows = [];
@@ -67,7 +69,8 @@
   const map = L.map('map', {
     scrollWheelZoom: false,
     zoomControl: true,
-    preferCanvas: true
+    preferCanvas: true,
+    zoomSnap: .25
   }).setView(NYC_CENTER, 10);
 
   L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
@@ -310,6 +313,11 @@
     map.closePopup();
   }
 
+  function setLocationLabel(label) {
+    el.nearMe.innerHTML = '◎ <span>' + esc(label) + '</span>';
+    el.nearMe.setAttribute('aria-label', label);
+  }
+
   function setView(view) {
     const next = view === 'list' ? 'list' : 'map';
     el.grid.dataset.view = next;
@@ -318,7 +326,17 @@
       tab.classList.toggle('active', active);
       tab.setAttribute('aria-selected', String(active));
     });
-    if (next === 'map') window.setTimeout(() => map.invalidateSize(), 80);
+    if (next === 'map') refreshMapSize();
+  }
+
+  function refreshMapSize(fitInitial) {
+    window.requestAnimationFrame(() => {
+      map.invalidateSize({ pan:false, debounceMoveend:true });
+      window.requestAnimationFrame(() => {
+        map.invalidateSize({ pan:false, debounceMoveend:true });
+        if (fitInitial) map.fitBounds(NYC_BOUNDS, { padding:[12, 12], maxZoom:11 });
+      });
+    });
   }
 
   function fitMapToRows(rows) {
@@ -486,6 +504,9 @@
     if (markets.length) sourceParts.push(markets.length + ' fresh-food');
     if (hugsListings.length) sourceParts.push(hugsListings.length + ' HUGS');
     el.sourceStatus.textContent = sourceParts.join(' + ') + (checkedLabel ? ' • checked ' + checkedLabel : '');
+    el.liveBadge.classList.remove('loading');
+    el.liveBadge.innerHTML = '<span></span> Live NYC food data';
+    refreshMapSize(true);
 
     if (officialResult.status === 'rejected' || hugsResult.status === 'rejected' || officialData.live_status === 'partial') {
       el.sourceStatus.textContent += ' • some sources temporarily unavailable';
@@ -557,7 +578,7 @@
     activeFilter = 'all';
     userLocation = null;
     el.nearMe.classList.remove('locating');
-    el.nearMe.textContent = '◎ Use My Location';
+    setLocationLabel('Use My Location');
     if (userMarker) {
       map.removeLayer(userMarker);
       userMarker = null;
@@ -573,7 +594,7 @@
       return;
     }
     el.nearMe.classList.add('locating');
-    el.nearMe.textContent = 'Finding you…';
+    setLocationLabel('Finding you…');
     navigator.geolocation.getCurrentPosition(position => {
       userLocation = { latitude:position.coords.latitude, longitude:position.coords.longitude };
       if (userMarker) map.removeLayer(userMarker);
@@ -587,22 +608,32 @@
         title:'Your location'
       }).addTo(map).bindPopup('Your approximate location');
       el.nearMe.classList.remove('locating');
-      el.nearMe.textContent = '◎ Location On';
+      setLocationLabel('Location On');
       render({ fitMap:false });
       setView('map');
       map.setView([userLocation.latitude, userLocation.longitude], 13);
       userMarker.openPopup();
     }, () => {
       el.nearMe.classList.remove('locating');
-      el.nearMe.textContent = '◎ Use My Location';
+      setLocationLabel('Use My Location');
       window.alert('We could not access your location. You can still search by pantry name, borough, ZIP code or address.');
     }, { enableHighAccuracy:true, timeout:10000, maximumAge:300000 });
   });
+
+  if (typeof ResizeObserver === 'function') {
+    const mapResizeObserver = new ResizeObserver(() => refreshMapSize(false));
+    mapResizeObserver.observe(document.querySelector('.map-panel'));
+  }
+  window.addEventListener('orientationchange', () => window.setTimeout(() => refreshMapSize(false), 180));
+  window.addEventListener('resize', () => refreshMapSize(false), { passive:true });
+  if (document.fonts && document.fonts.ready) document.fonts.ready.then(() => refreshMapSize(false));
 
   load().catch(error => {
     console.error('HUGS Food Navigator:', error);
     el.status.textContent = 'Live food data is temporarily unavailable. Use the trusted links below or call 311.';
     el.sourceStatus.textContent = '';
+    el.liveBadge.classList.remove('loading');
+    el.liveBadge.innerHTML = '<span></span> Map unavailable';
     el.list.innerHTML = '<div class="empty-results"><strong>The live map could not load.</strong><span>Please try again shortly.</span></div>';
     renderTrusted([]);
   });

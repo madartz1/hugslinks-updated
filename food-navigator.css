@@ -12,6 +12,7 @@
 }
 
 *{box-sizing:border-box}
+html,body{max-width:100%;overflow-x:hidden}
 body{margin:0;background:linear-gradient(180deg,#fff 0,#f8fbfd 55%,var(--food-cream) 100%);color:var(--food-navy);font-family:Arial,Helvetica,sans-serif}
 button,input{font:inherit}
 button,a{-webkit-tap-highlight-color:transparent}
@@ -23,7 +24,7 @@ button,a{-webkit-tap-highlight-color:transparent}
 .food-hero h1{font-size:clamp(2.9rem,7vw,5.4rem);line-height:.95;letter-spacing:-.055em;margin:10px 0 15px}
 .food-hero p{max-width:900px;margin:0;color:var(--food-muted);font-size:1.08rem;line-height:1.68}
 
-.navigator{background:#fff;border:1px solid var(--food-line);border-radius:28px;box-shadow:0 22px 58px rgba(7,31,59,.11);overflow:hidden}
+.navigator{isolation:isolate;background:#fff;border:1px solid var(--food-line);border-radius:28px;box-shadow:0 22px 58px rgba(7,31,59,.11);overflow:hidden}
 .mobile-view-switch{display:none}
 .search-area{padding:18px 20px 12px;background:#fff}
 .food-search{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:10px}
@@ -47,9 +48,6 @@ button,a{-webkit-tap-highlight-color:transparent}
 .filter-pill{flex:0 0 auto;min-height:42px;border:1px solid var(--food-line);border-radius:999px;padding:9px 15px;background:#fff;color:var(--food-navy);font-weight:850;cursor:pointer;white-space:nowrap}
 .filter-pill:hover{border-color:#8fc6eb;background:#f7fbfe}
 .filter-pill.active{background:var(--food-navy);border-color:var(--food-navy);color:#fff}
-.location-pill{border-color:#a8d8f7;background:#eef8ff;color:#0e5e9e}
-.location-pill.locating{opacity:.68;cursor:wait}
-
 .navigator-status{display:flex;align-items:center;justify-content:space-between;gap:14px;padding:10px 21px 14px;border-bottom:1px solid var(--food-line);color:var(--food-muted);font-size:.87rem}
 .navigator-status p{margin:0}
 .navigator-status #status{font-weight:700;color:#35526d}
@@ -59,9 +57,16 @@ button,a{-webkit-tap-highlight-color:transparent}
 @keyframes foodPulse{50%{opacity:.28;transform:scale(.74)}}
 
 .locator-grid{display:grid;grid-template-columns:minmax(0,1.55fr) minmax(350px,.7fr);min-height:680px;background:#fff}
-.map-panel{position:relative;min-width:0;background:#e9f3f8}
-#map{height:680px;width:100%;background:#dcecf4;z-index:1}
-.map-legend{position:absolute;z-index:700;left:14px;top:14px;display:flex;gap:10px;flex-wrap:wrap;background:rgba(255,255,255,.95);border:1px solid rgba(215,229,239,.95);border-radius:999px;padding:8px 12px;box-shadow:0 6px 20px rgba(7,31,59,.12);font-size:.75rem;font-weight:800;color:#365168}
+.map-panel{position:relative;width:100%;min-width:0;overflow:hidden;background:#dcecf4}
+#map{position:relative;display:block;height:680px;width:100%;max-width:none;min-width:0;background:#dcecf4;z-index:1}
+.leaflet-container{width:100%!important;max-width:none!important;font:inherit}
+.leaflet-container .leaflet-tile,.leaflet-container img.leaflet-image-layer,.leaflet-container .leaflet-marker-icon,.leaflet-container .leaflet-marker-shadow{max-width:none!important;max-height:none!important}
+.map-live-badge{position:absolute;z-index:710;top:14px;left:58px;display:inline-flex;align-items:center;gap:7px;min-height:34px;padding:7px 11px;border:1px solid rgba(215,229,239,.95);border-radius:999px;background:rgba(255,255,255,.96);box-shadow:0 6px 20px rgba(7,31,59,.12);color:#31536b;font-size:.72rem;font-weight:900;backdrop-filter:blur(10px)}
+.map-live-badge span{width:8px;height:8px;border-radius:50%;background:var(--food-green);box-shadow:0 0 0 4px rgba(21,132,91,.13)}
+.map-live-badge.loading span{background:var(--food-blue);animation:foodPulse 1.15s infinite}
+.map-location-control{position:absolute;z-index:710;top:14px;right:14px;display:inline-flex;align-items:center;gap:6px;min-height:40px;border:1px solid #9ed2f3;border-radius:999px;padding:8px 12px;background:rgba(255,255,255,.97);color:#0e5e9e;font-weight:900;box-shadow:0 7px 22px rgba(7,31,59,.15);cursor:pointer;backdrop-filter:blur(10px)}
+.map-location-control.locating{opacity:.72;cursor:wait}
+.map-legend{position:absolute;z-index:700;left:14px;bottom:14px;display:flex;gap:10px;flex-wrap:wrap;background:rgba(255,255,255,.95);border:1px solid rgba(215,229,239,.95);border-radius:999px;padding:8px 12px;box-shadow:0 6px 20px rgba(7,31,59,.12);font-size:.75rem;font-weight:800;color:#365168;backdrop-filter:blur(10px)}
 .map-legend span{display:flex;align-items:center;gap:5px}
 .legend-dot{display:inline-block;width:10px;height:10px;border-radius:50%}
 .legend-dot.official{background:var(--food-orange)}
@@ -158,25 +163,34 @@ button,a{-webkit-tap-highlight-color:transparent}
   .food-wrap{padding:20px 12px 74px}
   .food-hero{padding:20px 3px 22px}
   .food-hero h1{font-size:clamp(2.7rem,12vw,4.4rem)}
-  .navigator{border-radius:22px}
+  .navigator{width:calc(100% + 24px);margin-left:-12px;margin-right:-12px;border-left:0;border-right:0;border-radius:0;box-shadow:0 14px 38px rgba(7,31,59,.09)}
   .mobile-view-switch{display:grid;grid-template-columns:1fr 1fr;background:#fff;border-bottom:1px solid var(--food-line)}
   .view-tab{position:relative;min-height:54px;border:0;background:#fff;color:#263b4f;font-weight:900;cursor:pointer}
   .view-tab.active{color:var(--food-green)}
   .view-tab.active:after{content:"";position:absolute;height:4px;left:0;right:0;bottom:0;background:var(--food-green)}
-  .search-area{padding:14px 13px 8px}
-  .navigator-status{align-items:flex-start;flex-direction:column;padding:10px 15px 13px}
+  .search-area{padding:13px 12px 7px}
+  .filter-row{margin:0 -12px;padding:10px 12px 8px;scrollbar-width:none;-webkit-overflow-scrolling:touch;mask-image:linear-gradient(to right,transparent 0,#000 12px,#000 calc(100% - 28px),transparent 100%)}
+  .filter-row::-webkit-scrollbar{display:none}
+  .navigator-status{align-items:flex-start;flex-direction:column;gap:4px;padding:9px 14px 11px}
   .navigator-status #sourceStatus{text-align:left}
   .locator-grid{display:block;min-height:0}
   .locator-grid[data-view="map"] .list-panel{display:none}
   .locator-grid[data-view="list"] .map-panel{display:none}
-  .map-panel{padding-bottom:0}
-  #map{height:min(62vh,560px);min-height:430px}
+  .map-panel{width:100%;min-height:clamp(500px,68svh,680px);padding-bottom:0}
+  #map{width:100%!important;height:clamp(500px,68svh,680px);min-height:500px}
   .list-panel{max-height:none;min-height:540px;border-left:0}
   .results-list{max-height:68vh;min-height:470px}
-  .selected-card{position:relative;left:auto;right:auto;bottom:auto;max-width:none;margin:0;border-width:1px 0 0;border-radius:0;box-shadow:none;backdrop-filter:none}
-  .map-legend{top:10px;left:10px;right:10px;width:max-content;max-width:calc(100% - 20px);border-radius:13px}
+  .selected-card{position:absolute;left:8px;right:8px;bottom:8px;max-width:none;max-height:48%;overflow:auto;margin:0;padding:17px 46px 17px 17px;border:1px solid var(--food-line);border-radius:20px;box-shadow:0 16px 42px rgba(7,31,59,.25);backdrop-filter:blur(12px)}
+  .map-live-badge{top:12px;left:56px;min-height:32px;padding:6px 9px;font-size:.68rem}
+  .map-location-control{top:12px;right:10px;width:42px;height:42px;justify-content:center;padding:0;font-size:1rem}
+  .map-location-control span{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap}
+  .map-legend{left:10px;right:auto;bottom:10px;width:max-content;max-width:calc(100% - 20px);border-radius:13px}
   .food-info-grid{grid-template-columns:1fr}
   .section-heading{align-items:flex-start;flex-direction:column;gap:8px}
+  .food-map-page .hugs-help-launcher{right:10px!important;bottom:66px!important;width:46px;height:46px;padding:0!important;font-size:0;display:grid;place-items:center}
+  .food-map-page .hugs-help-launcher:before{content:"♡";font-size:1.3rem}
+  .food-map-page .hugs-sound-toggle{right:10px;bottom:12px;width:46px;height:46px;justify-content:center;padding:0}
+  .food-map-page .hugs-sound-toggle .sound-label{display:none}
 }
 
 @media(max-width:620px){
@@ -190,7 +204,7 @@ button,a{-webkit-tap-highlight-color:transparent}
   .callout-actions a{white-space:normal;text-align:center}
   .trusted-grid{grid-template-columns:1fr}
   .section-heading h2{font-size:2rem}
-  .map-legend{font-size:.68rem;gap:7px}
+  .map-legend{font-size:.68rem;gap:7px;padding:7px 9px}
 }
 
 @media(prefers-reduced-motion:reduce){

@@ -11,7 +11,7 @@
   <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.5.3/dist/MarkerCluster.Default.css">
   <link rel="stylesheet" href="food-navigator.css">
 </head>
-<body>
+<body class="food-map-page">
   <header class="topbar">
     <nav class="nav">
       <a class="brand" href="index.html">Hugslinks</a>
@@ -51,7 +51,6 @@
         <p class="search-help">Try “Queens,” “11369,” “kosher,” “Astoria Food Pantry,” or the name of a helpful food business.</p>
 
         <div class="filter-row" aria-label="Filter food resources">
-          <button class="filter-pill location-pill" id="nearMe" type="button">◎ Use My Location</button>
           <button class="filter-pill active" data-filter="all" type="button">All</button>
           <button class="filter-pill" data-filter="food-pantry" type="button">Food Pantries</button>
           <button class="filter-pill" data-filter="hot-meals" type="button">Hot Meals</button>
@@ -73,6 +72,8 @@
       <div class="locator-grid" id="locatorGrid" data-view="map">
         <section class="map-panel" aria-label="Food resource map">
           <div id="map"></div>
+          <div class="map-live-badge loading" id="mapLiveBadge" aria-live="polite"><span></span> Loading live data…</div>
+          <button class="map-location-control" id="nearMe" type="button" aria-label="Use my location">◎ <span>Use My Location</span></button>
           <div class="map-legend" aria-label="Map marker legend">
             <span><i class="legend-dot official"></i> Free food</span>
             <span><i class="legend-dot hugs"></i> HUGS</span>
