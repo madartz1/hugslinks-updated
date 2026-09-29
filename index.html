@@ -6,6 +6,7 @@
   <title>HUGSLinks | Premium Community Support</title>
   <meta name="description" content="HUGSLinks premium community support and creative empowerment ecosystem.">
   <link rel="stylesheet" href="styles.css">
+  <link rel="stylesheet" href="nyc-updates.css">
   <style>
     .home-language-switch{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin:18px 0 4px}.home-language-switch>span{font-weight:900;color:#071f3b}.home-lang-btn{appearance:none;border:1px solid #c9ddea;background:#fff;color:#071f3b;border-radius:999px;padding:10px 16px;min-height:44px;font:inherit;font-weight:900;cursor:pointer;box-shadow:0 6px 16px rgba(7,31,59,.12);transition:transform .18s ease,box-shadow .18s ease,background .18s ease}.home-lang-btn:hover,.home-lang-btn:focus-visible{transform:translateY(-1px);box-shadow:0 8px 20px rgba(7,31,59,.16)}.home-lang-btn.active{background:#071f3b;color:#fff;border-color:#071f3b}.home-lang-btn:focus-visible{outline:3px solid #72cfff;outline-offset:2px}
     .hugs-navigator{padding-top:10px}
@@ -53,6 +54,7 @@
         <a href="help-app.html">Help App</a>
         <a href="help-center.html">Help Center</a>
         <a href="resources.html">Resources</a>
+        <a href="nyc-updates.html">NYC Updates</a>
         <a href="about.html">About</a>
         <a href="contact.html">Contact</a>
       </div>
@@ -101,6 +103,30 @@
         <div class="navigator-footer">
           <span>Not sure where to start?</span>
           <a href="help-center.html">Open the HUGS Help Center →</a>
+        </div>
+      </div>
+    </section>
+
+    <section class="section nycu-home" id="latest-nyc-updates" aria-labelledby="latest-nyc-updates-title">
+      <div class="nycu-home-shell">
+        <div class="nycu-home-head">
+          <div>
+            <span class="badge">HUGS NYC Updates</span>
+            <h2 id="latest-nyc-updates-title">Know what is happening across NYC.</h2>
+            <p>Current public alerts, City Council developments, programs, and selected local headlines—connected to their original sources.</p>
+          </div>
+          <div class="nycu-home-live"><span class="nycu-live-dot" aria-hidden="true"></span><span id="nycu-home-status" role="status" aria-live="polite">Connecting to live sources…</span></div>
+        </div>
+
+        <div class="nycu-home-feed" id="nycu-home-feed">
+          <div class="nycu-home-skeleton" aria-hidden="true"></div>
+          <div class="nycu-home-skeleton" aria-hidden="true"></div>
+          <div class="nycu-home-skeleton" aria-hidden="true"></div>
+        </div>
+
+        <div class="nycu-home-actions">
+          <small>Headlines and summaries link directly to the issuing agency or publisher.</small>
+          <a class="nycu-home-button" href="nyc-updates.html">Open HUGS NYC Updates <span aria-hidden="true">→</span></a>
         </div>
       </div>
     </section>
@@ -194,6 +220,7 @@
 </footer>
 
   <script src="live-help-config.js"></script><script src="script.js"></script>
+  <script src="nyc-updates.js"></script>
 
   <script>
   (()=>{const buttons=[...document.querySelectorAll('[data-home-lang]')];if(!buttons.length)return;const sync=()=>{const lang=document.documentElement.dataset.hugsLanguage||document.documentElement.lang||'en';buttons.forEach(b=>{const on=b.dataset.homeLang===lang;b.classList.toggle('active',on);b.setAttribute('aria-pressed',String(on))})};buttons.forEach(b=>b.addEventListener('click',()=>{const select=document.getElementById('hugs-language-select');if(select){select.value=b.dataset.homeLang;select.dispatchEvent(new Event('change',{bubbles:true}))}sync()}));document.addEventListener('hugs-language-change',sync);sync()})();

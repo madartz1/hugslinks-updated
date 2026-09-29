@@ -1,2 +1,4 @@
 /member  /member.html  200
 /food-partner.html  /food-partners.html  301
+/nyc-updates  /nyc-updates.html  200
+/api/nyc-updates  /.netlify/functions/nyc-updates  200

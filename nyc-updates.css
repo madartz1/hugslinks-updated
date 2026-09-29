@@ -1,0 +1,550 @@
+:root{
+  --nycu-navy:#061b34;
+  --nycu-navy-2:#0b3157;
+  --nycu-blue:#2f9ee7;
+  --nycu-sky:#72cfff;
+  --nycu-ice:#edf8ff;
+  --nycu-green:#28b57a;
+  --nycu-gold:#f2d889;
+  --nycu-ink:#10233a;
+  --nycu-muted:#5b6e82;
+  --nycu-line:#d7e6ef;
+}
+
+.nycu-page{
+  background:
+    radial-gradient(circle at 88% 4%,rgba(114,207,255,.17),transparent 24rem),
+    linear-gradient(180deg,#fff 0,#f3f9fc 48%,#f8f4ed 100%);
+}
+
+.nycu-hero{
+  max-width:1180px;
+  margin:auto;
+  padding:42px 20px 20px;
+}
+
+.nycu-hero-shell{
+  position:relative;
+  isolation:isolate;
+  overflow:hidden;
+  min-height:420px;
+  display:grid;
+  grid-template-columns:minmax(0,1.2fr) minmax(280px,.8fr);
+  gap:28px;
+  align-items:center;
+  padding:clamp(30px,6vw,68px);
+  border:1px solid rgba(114,207,255,.25);
+  border-radius:34px;
+  color:#fff;
+  background:
+    radial-gradient(circle at 82% 18%,rgba(67,172,242,.32),transparent 27%),
+    linear-gradient(145deg,#04162b 0%,#082948 55%,#0c3963 100%);
+  box-shadow:0 28px 80px rgba(5,27,52,.2);
+}
+
+.nycu-hero-shell::before{
+  content:"";
+  position:absolute;
+  inset:0;
+  z-index:-2;
+  opacity:.24;
+  background-image:
+    linear-gradient(rgba(114,207,255,.15) 1px,transparent 1px),
+    linear-gradient(90deg,rgba(114,207,255,.15) 1px,transparent 1px);
+  background-size:34px 34px;
+  mask-image:linear-gradient(90deg,transparent 30%,#000 76%);
+}
+
+.nycu-hero-copy{position:relative;z-index:1}
+
+.nycu-kicker{
+  display:flex;
+  align-items:center;
+  gap:10px;
+  margin-bottom:14px;
+  color:#bce6ff;
+  font-size:.78rem;
+  font-weight:900;
+  letter-spacing:.15em;
+  text-transform:uppercase;
+}
+
+.nycu-live-dot{
+  width:10px;
+  height:10px;
+  border-radius:50%;
+  background:#5ee0a7;
+  box-shadow:0 0 0 5px rgba(94,224,167,.12),0 0 18px rgba(94,224,167,.75);
+  animation:nycu-pulse 2.2s ease-in-out infinite;
+}
+
+@keyframes nycu-pulse{
+  0%,100%{transform:scale(.9);opacity:.75}
+  50%{transform:scale(1.1);opacity:1}
+}
+
+.nycu-hero h1{
+  max-width:760px;
+  margin:0;
+  color:#fff;
+  font-size:clamp(2.75rem,7vw,6.2rem);
+  line-height:.9;
+  letter-spacing:-.065em;
+}
+
+.nycu-hero h1 span{color:var(--nycu-sky)}
+
+.nycu-hero-copy>p{
+  max-width:690px;
+  margin:22px 0 0;
+  color:#d8ebf8;
+  font-size:clamp(1rem,2vw,1.16rem);
+  line-height:1.7;
+}
+
+.nycu-status-line{
+  display:flex;
+  align-items:center;
+  gap:9px;
+  min-height:26px;
+  margin-top:20px;
+  color:#bcd7e9;
+  font-size:.85rem;
+  font-weight:800;
+}
+
+.nycu-status-line[data-state="partial"]{color:#ffe9a6}
+.nycu-status-line[data-state="error"]{color:#ffc2bd}
+
+.nycu-signal{
+  position:relative;
+  min-height:250px;
+  display:grid;
+  place-items:center;
+}
+
+.nycu-signal-ring{
+  position:absolute;
+  width:min(20vw,220px);
+  aspect-ratio:1;
+  border:1px solid rgba(114,207,255,.28);
+  border-radius:50%;
+  box-shadow:0 0 0 28px rgba(114,207,255,.035),0 0 0 58px rgba(114,207,255,.025);
+}
+
+.nycu-signal-card{
+  position:relative;
+  width:min(100%,260px);
+  padding:26px;
+  border:1px solid rgba(255,255,255,.2);
+  border-radius:26px;
+  background:rgba(255,255,255,.1);
+  box-shadow:0 18px 50px rgba(1,12,26,.3);
+  backdrop-filter:blur(12px);
+}
+
+.nycu-signal-card strong{display:block;font-size:1.15rem}
+.nycu-signal-card small{display:block;margin-top:7px;color:#c7dfef;line-height:1.45}
+
+.nycu-signal-icon{
+  display:grid;
+  place-items:center;
+  width:58px;
+  height:58px;
+  margin-bottom:18px;
+  border-radius:18px;
+  color:#061b34;
+  background:linear-gradient(135deg,#fff,var(--nycu-sky));
+  font-size:28px;
+  box-shadow:0 8px 24px rgba(0,0,0,.18);
+}
+
+.nycu-quicklinks{
+  max-width:1180px;
+  margin:0 auto;
+  padding:0 20px 20px;
+  display:grid;
+  grid-template-columns:repeat(4,minmax(0,1fr));
+  gap:12px;
+}
+
+.nycu-quicklink{
+  display:grid;
+  grid-template-columns:42px 1fr auto;
+  align-items:center;
+  gap:10px;
+  min-width:0;
+  padding:14px;
+  border:1px solid var(--nycu-line);
+  border-radius:18px;
+  background:rgba(255,255,255,.9);
+  color:var(--nycu-navy);
+  box-shadow:0 10px 30px rgba(7,31,59,.06);
+  transition:transform .18s ease,border-color .18s ease,box-shadow .18s ease;
+}
+
+.nycu-quicklink:hover,.nycu-quicklink:focus-visible{
+  transform:translateY(-2px);
+  border-color:#86caf4;
+  box-shadow:0 14px 32px rgba(7,31,59,.1);
+}
+
+.nycu-quicklink:focus-visible{outline:3px solid var(--nycu-sky);outline-offset:3px}
+.nycu-quicklink-icon{display:grid;place-items:center;width:42px;height:42px;border-radius:13px;background:var(--nycu-ice);font-size:21px}
+.nycu-quicklink strong,.nycu-quicklink small{display:block;overflow:hidden;text-overflow:ellipsis}
+.nycu-quicklink small{margin-top:2px;color:var(--nycu-muted);font-size:.74rem;white-space:nowrap}
+.nycu-quicklink-arrow{color:var(--nycu-blue);font-weight:900}
+
+.nycu-dashboard{
+  max-width:1180px;
+  margin:auto;
+  padding:20px 20px 64px;
+}
+
+.nycu-dashboard-head{
+  display:flex;
+  justify-content:space-between;
+  gap:18px;
+  align-items:end;
+  margin-bottom:20px;
+}
+
+.nycu-dashboard-head h2{margin:0;color:var(--nycu-navy);font-size:clamp(1.8rem,4vw,3rem);line-height:1;letter-spacing:-.04em}
+.nycu-dashboard-head p{max-width:680px;margin:10px 0 0;color:var(--nycu-muted)}
+
+.nycu-refresh{
+  appearance:none;
+  min-height:44px;
+  padding:10px 15px;
+  border:1px solid var(--nycu-line);
+  border-radius:999px;
+  background:#fff;
+  color:var(--nycu-navy);
+  font:inherit;
+  font-weight:900;
+  cursor:pointer;
+  box-shadow:0 7px 20px rgba(7,31,59,.07);
+}
+
+.nycu-refresh:disabled{opacity:.58;cursor:wait}
+.nycu-refresh:focus-visible{outline:3px solid var(--nycu-sky);outline-offset:3px}
+
+.nycu-toolbar{
+  position:sticky;
+  top:86px;
+  z-index:20;
+  padding:14px;
+  border:1px solid var(--nycu-line);
+  border-radius:24px;
+  background:rgba(255,255,255,.94);
+  box-shadow:0 14px 40px rgba(7,31,59,.09);
+  backdrop-filter:blur(18px);
+}
+
+.nycu-search-row{
+  display:grid;
+  grid-template-columns:minmax(260px,1fr) minmax(170px,.28fr) minmax(170px,.28fr);
+  gap:10px;
+}
+
+.nycu-search-wrap{position:relative}
+.nycu-search-icon{position:absolute;left:15px;top:50%;transform:translateY(-50%);font-size:18px;pointer-events:none}
+
+.nycu-search,.nycu-select{
+  width:100%;
+  min-height:50px;
+  border:1px solid #cbdce7;
+  border-radius:15px;
+  background:#fff;
+  color:var(--nycu-ink);
+  font:inherit;
+}
+
+.nycu-search{padding:12px 15px 12px 46px}
+.nycu-select{padding:11px 38px 11px 13px;font-weight:800}
+.nycu-search:focus,.nycu-select:focus{outline:3px solid rgba(114,207,255,.48);border-color:#54b2ed}
+
+.nycu-type-tabs{
+  display:flex;
+  gap:8px;
+  overflow-x:auto;
+  padding:12px 1px 1px;
+  scrollbar-width:thin;
+}
+
+.nycu-filter{
+  flex:0 0 auto;
+  appearance:none;
+  min-height:40px;
+  padding:9px 14px;
+  border:1px solid var(--nycu-line);
+  border-radius:999px;
+  background:#f8fbfd;
+  color:var(--nycu-navy);
+  font:inherit;
+  font-size:.86rem;
+  font-weight:900;
+  cursor:pointer;
+}
+
+.nycu-filter[aria-pressed="true"]{border-color:var(--nycu-navy);background:var(--nycu-navy);color:#fff}
+.nycu-filter:focus-visible{outline:3px solid var(--nycu-sky);outline-offset:2px}
+
+.nycu-results-meta{
+  display:flex;
+  justify-content:space-between;
+  gap:16px;
+  align-items:center;
+  min-height:48px;
+  padding:13px 2px 8px;
+  color:var(--nycu-muted);
+  font-size:.86rem;
+}
+
+.nycu-results-meta strong{color:var(--nycu-navy)}
+
+.nycu-source-health{
+  display:flex;
+  align-items:center;
+  gap:7px;
+  text-align:right;
+}
+
+.nycu-source-health i{width:8px;height:8px;border-radius:50%;background:var(--nycu-green);box-shadow:0 0 0 4px rgba(40,181,122,.1)}
+.nycu-source-health.partial i{background:#e4aa25;box-shadow:0 0 0 4px rgba(228,170,37,.12)}
+
+.nycu-feed{
+  display:grid;
+  grid-template-columns:repeat(3,minmax(0,1fr));
+  gap:16px;
+}
+
+.nycu-card{
+  position:relative;
+  min-width:0;
+  display:flex;
+  flex-direction:column;
+  min-height:290px;
+  padding:20px;
+  border:1px solid var(--nycu-line);
+  border-top:4px solid var(--nycu-blue);
+  border-radius:22px;
+  background:#fff;
+  box-shadow:0 12px 34px rgba(7,31,59,.065);
+  transition:transform .18s ease,box-shadow .18s ease,border-color .18s ease;
+}
+
+.nycu-card:hover{transform:translateY(-3px);box-shadow:0 18px 42px rgba(7,31,59,.11)}
+.nycu-card[data-type="alert"]{border-top-color:#e25b4f;background:linear-gradient(180deg,#fff8f7 0,#fff 27%)}
+.nycu-card[data-type="program"]{border-top-color:#31a973;background:linear-gradient(180deg,#f4fff9 0,#fff 27%)}
+.nycu-card[data-type="council"]{border-top-color:#9474d8;background:linear-gradient(180deg,#faf7ff 0,#fff 27%)}
+.nycu-card[data-type="news"]{border-top-color:#2f9ee7;background:linear-gradient(180deg,#f4faff 0,#fff 27%)}
+
+.nycu-card-top{display:flex;justify-content:space-between;gap:10px;align-items:flex-start}
+
+.nycu-type-badge{
+  display:inline-flex;
+  align-items:center;
+  gap:6px;
+  min-height:28px;
+  padding:5px 9px;
+  border-radius:999px;
+  background:#eef7ff;
+  color:#155e91;
+  font-size:.72rem;
+  font-weight:900;
+  letter-spacing:.035em;
+  text-transform:uppercase;
+}
+
+.nycu-card[data-type="alert"] .nycu-type-badge{background:#ffebe8;color:#9d3028}
+.nycu-card[data-type="program"] .nycu-type-badge{background:#e6f8ee;color:#237c54}
+.nycu-card[data-type="council"] .nycu-type-badge{background:#eee8fb;color:#6847ad}
+
+.nycu-official{
+  flex:0 0 auto;
+  color:#237c54;
+  font-size:.72rem;
+  font-weight:900;
+}
+
+.nycu-card h3{margin:16px 0 8px;color:var(--nycu-navy);font-size:1.14rem;line-height:1.28;letter-spacing:-.02em}
+.nycu-card-summary{margin:0;color:#526477;font-size:.9rem;line-height:1.6}
+
+.nycu-tags{display:flex;flex-wrap:wrap;gap:6px;margin:14px 0 0}
+.nycu-tag{display:inline-flex;padding:4px 8px;border-radius:999px;background:#f1f5f8;color:#526477;font-size:.7rem;font-weight:800}
+
+.nycu-card-footer{
+  margin-top:auto;
+  padding-top:18px;
+  display:flex;
+  justify-content:space-between;
+  gap:10px;
+  align-items:end;
+  border-top:1px solid #edf2f5;
+}
+
+.nycu-source{min-width:0;color:#65778a;font-size:.74rem;line-height:1.35}
+.nycu-source strong{display:block;overflow:hidden;color:#354b61;text-overflow:ellipsis;white-space:nowrap}
+
+.nycu-source-link{
+  flex:0 0 auto;
+  display:inline-flex;
+  align-items:center;
+  gap:4px;
+  min-height:38px;
+  padding:8px 11px;
+  border-radius:999px;
+  background:var(--nycu-navy);
+  color:#fff;
+  font-size:.78rem;
+  font-weight:900;
+}
+
+.nycu-source-link:hover,.nycu-source-link:focus-visible{background:#114b7c}
+.nycu-source-link:focus-visible{outline:3px solid var(--nycu-sky);outline-offset:2px}
+
+.nycu-empty{
+  grid-column:1/-1;
+  padding:44px 24px;
+  border:1px dashed #bdd3e1;
+  border-radius:24px;
+  background:rgba(255,255,255,.74);
+  color:var(--nycu-muted);
+  text-align:center;
+}
+
+.nycu-empty strong{display:block;margin-bottom:5px;color:var(--nycu-navy);font-size:1.2rem}
+
+.nycu-load-wrap{display:flex;justify-content:center;padding:24px 0 0}
+.nycu-load-more{min-width:180px;min-height:48px;border:1px solid var(--nycu-line);border-radius:999px;background:#fff;color:var(--nycu-navy);font:inherit;font-weight:900;cursor:pointer;box-shadow:0 8px 24px rgba(7,31,59,.07)}
+.nycu-load-more[hidden]{display:none}
+
+.nycu-notice{
+  display:grid;
+  grid-template-columns:auto 1fr;
+  gap:12px;
+  margin-top:24px;
+  padding:18px;
+  border:1px solid #c7dfed;
+  border-radius:18px;
+  background:#f2f9fd;
+  color:#41566a;
+  font-size:.84rem;
+  line-height:1.55;
+}
+
+.nycu-notice strong{color:var(--nycu-navy)}
+
+.nycu-skeleton{
+  min-height:290px;
+  border:1px solid var(--nycu-line);
+  border-radius:22px;
+  background:linear-gradient(100deg,#edf2f5 20%,#f8fbfc 38%,#edf2f5 58%);
+  background-size:200% 100%;
+  animation:nycu-shimmer 1.3s linear infinite;
+}
+
+@keyframes nycu-shimmer{to{background-position:-200% 0}}
+
+/* Compact homepage panel */
+.nycu-home{padding-top:18px;padding-bottom:18px}
+
+.nycu-home-shell{
+  position:relative;
+  overflow:hidden;
+  padding:clamp(24px,5vw,42px);
+  border:1px solid rgba(114,207,255,.28);
+  border-radius:28px;
+  background:
+    radial-gradient(circle at 95% 0,rgba(114,207,255,.22),transparent 22rem),
+    linear-gradient(145deg,#061b34,#0b3157);
+  color:#fff;
+  box-shadow:0 22px 60px rgba(7,31,59,.16);
+}
+
+.nycu-home-head{display:flex;justify-content:space-between;gap:24px;align-items:end;position:relative;z-index:1}
+.nycu-home-head h2{margin:9px 0 0!important;color:#fff!important}
+.nycu-home-head p{max-width:660px;margin:10px 0 0;color:#cce1ef}
+.nycu-home-head .badge{border-color:rgba(255,255,255,.22);background:rgba(255,255,255,.09);color:#bfe8ff}
+
+.nycu-home-live{display:inline-flex;align-items:center;gap:8px;color:#cce1ef;font-size:.8rem;font-weight:900;white-space:nowrap}
+
+.nycu-home-feed{position:relative;z-index:1;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;margin-top:24px}
+
+.nycu-home-item{
+  min-width:0;
+  display:flex;
+  flex-direction:column;
+  min-height:190px;
+  padding:17px;
+  border:1px solid rgba(255,255,255,.15);
+  border-radius:18px;
+  background:rgba(255,255,255,.08);
+  color:#fff;
+  transition:transform .18s ease,background .18s ease,border-color .18s ease;
+}
+
+.nycu-home-item:hover,.nycu-home-item:focus-visible{transform:translateY(-2px);background:rgba(255,255,255,.13);border-color:rgba(114,207,255,.6)}
+.nycu-home-item:focus-visible{outline:3px solid var(--nycu-sky);outline-offset:3px}
+.nycu-home-item-type{color:#91d5ff;font-size:.7rem;font-weight:900;letter-spacing:.08em;text-transform:uppercase}
+.nycu-home-item h3{margin:10px 0 8px;color:#fff;font-size:1rem;line-height:1.35}
+.nycu-home-item p{margin:0;color:#c8deec;font-size:.8rem;line-height:1.5}
+.nycu-home-item-meta{margin-top:auto;padding-top:13px;color:#9fc1d7;font-size:.7rem;font-weight:800}
+
+.nycu-home-actions{position:relative;z-index:1;display:flex;align-items:center;justify-content:space-between;gap:14px;margin-top:20px}
+.nycu-home-actions small{color:#a8c7db}
+.nycu-home-button{display:inline-flex;align-items:center;gap:8px;min-height:46px;padding:11px 17px;border-radius:999px;background:#fff;color:var(--nycu-navy);font-weight:900}
+
+.nycu-home-skeleton{min-height:190px;border-radius:18px;background:linear-gradient(100deg,rgba(255,255,255,.06) 20%,rgba(255,255,255,.15) 38%,rgba(255,255,255,.06) 58%);background-size:200% 100%;animation:nycu-shimmer 1.3s linear infinite}
+
+@media(max-width:980px){
+  .nycu-hero-shell{grid-template-columns:1fr;min-height:0}
+  .nycu-signal{min-height:180px;justify-items:start}
+  .nycu-signal-ring{left:42px;width:150px}
+  .nycu-quicklinks{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .nycu-feed{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .nycu-toolbar{top:76px}
+}
+
+@media(max-width:760px){
+  .nycu-hero{padding-top:22px}
+  .nycu-hero-shell{padding:28px;border-radius:24px}
+  .nycu-hero h1{font-size:clamp(2.65rem,15vw,4.2rem)}
+  .nycu-signal{display:none}
+  .nycu-search-row{grid-template-columns:1fr 1fr}
+  .nycu-search-wrap{grid-column:1/-1}
+  .nycu-feed,.nycu-home-feed{grid-template-columns:1fr}
+  .nycu-dashboard-head,.nycu-home-head{align-items:flex-start;flex-direction:column}
+  .nycu-home-live{white-space:normal}
+  .nycu-home-actions{align-items:flex-start;flex-direction:column}
+  .nycu-home-item{min-height:165px}
+}
+
+@media(max-width:560px){
+  .nycu-hero,.nycu-quicklinks,.nycu-dashboard{padding-left:14px;padding-right:14px}
+  .nycu-hero-shell{padding:24px 20px}
+  .nycu-quicklinks{grid-template-columns:1fr}
+  .nycu-search-row{grid-template-columns:1fr}
+  .nycu-search-wrap{grid-column:auto}
+  .nycu-toolbar{position:relative;top:auto;border-radius:19px}
+  .nycu-results-meta{align-items:flex-start;flex-direction:column}
+  .nycu-source-health{text-align:left}
+  .nycu-card{min-height:270px}
+  .nycu-card-footer{align-items:flex-start;flex-direction:column}
+  .nycu-source-link{width:100%;justify-content:center}
+  .nycu-home-shell{border-radius:22px}
+  .nycu-home-button{width:100%;justify-content:center}
+}
+
+@media(prefers-reduced-motion:reduce){
+  .nycu-live-dot,.nycu-skeleton,.nycu-home-skeleton{animation:none}
+  .nycu-card,.nycu-home-item,.nycu-quicklink{transition:none}
+  .nycu-card:hover,.nycu-home-item:hover,.nycu-quicklink:hover{transform:none}
+}
+
+@media print{
+  .topbar,.nycu-toolbar,.nycu-refresh,.nycu-load-wrap,.footer,.hugs-help-launcher,.hugs-sound-toggle{display:none!important}
+  .nycu-feed{grid-template-columns:1fr 1fr}
+  .nycu-card{break-inside:avoid;box-shadow:none}
+}
