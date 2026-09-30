@@ -54,9 +54,8 @@
 
   function safeHttpUrl(value) {
     try {
-      const url = new URL(String(value || ''), window.location.href);
-      return /^https?:$/.test(url.protocol) ? url.href : '';
-    } catch (_) {
+      const url = new URL(String(value || '').trim());
+      return /^https?:$/.test(url.protocol) ? url.href : '';    } catch (_) {
       return '';
     }
   }
