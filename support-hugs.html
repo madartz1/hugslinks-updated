@@ -504,6 +504,12 @@
 
 
     .amount-chip{
+      appearance:none;
+
+      display:inline-flex;
+      align-items:center;
+      justify-content:center;
+
       padding:8px 13px;
 
       border-radius:999px;
@@ -518,6 +524,38 @@
 
       font-size:13px;
       font-weight:900;
+
+      font-family:inherit;
+      line-height:1.2;
+      text-decoration:none;
+
+      cursor:pointer;
+
+      transition:
+        transform .18s ease,
+        border-color .18s ease,
+        background .18s ease,
+        box-shadow .18s ease;
+    }
+
+
+    .amount-chip:hover,
+    .amount-chip:focus-visible{
+      transform:translateY(-2px);
+
+      background:#ffffff;
+      border-color:var(--hugs-blue);
+
+      box-shadow:
+        0 8px 18px
+        rgba(47,158,231,.16);
+
+      outline:none;
+    }
+
+
+    .amount-form{
+      margin:0;
     }
 
 
@@ -1086,7 +1124,7 @@
         About
       </a>
 
-      <a href="https://buy.stripe.com/6oUcN4fpq5Mk7Gv5os8ww06">
+      <a href="contact.html">
         Contact
       </a>
 
@@ -1323,27 +1361,78 @@
       </p>
 
 
-      <div class="amount-suggestions">
+      <div
+        class="amount-suggestions"
+        aria-label="Choose a HUGSLinks support amount"
+      >
 
-        <span class="amount-chip">
-          $5
-        </span>
+        <form
+          class="amount-form"
+          action="/api/support-checkout"
+          method="post"
+        >
+          <input type="hidden" name="amount" value="5">
+          <button
+            class="amount-chip"
+            type="submit"
+            aria-label="Support HUGSLinks with 5 dollars"
+          >
+            $5
+          </button>
+        </form>
 
-        <span class="amount-chip">
-          $10
-        </span>
+        <form
+          class="amount-form"
+          action="/api/support-checkout"
+          method="post"
+        >
+          <input type="hidden" name="amount" value="10">
+          <button
+            class="amount-chip"
+            type="submit"
+            aria-label="Support HUGSLinks with 10 dollars"
+          >
+            $10
+          </button>
+        </form>
 
-        <span class="amount-chip">
-          $25
-        </span>
+        <form
+          class="amount-form"
+          action="/api/support-checkout"
+          method="post"
+        >
+          <input type="hidden" name="amount" value="25">
+          <button
+            class="amount-chip"
+            type="submit"
+            aria-label="Support HUGSLinks with 25 dollars"
+          >
+            $25
+          </button>
+        </form>
 
-        <span class="amount-chip">
-          $50
-        </span>
+        <form
+          class="amount-form"
+          action="/api/support-checkout"
+          method="post"
+        >
+          <input type="hidden" name="amount" value="50">
+          <button
+            class="amount-chip"
+            type="submit"
+            aria-label="Support HUGSLinks with 50 dollars"
+          >
+            $50
+          </button>
+        </form>
 
-        <span class="amount-chip">
+        <a
+          class="amount-chip"
+          href="/api/support-checkout?amount=custom"
+          aria-label="Choose your own HUGSLinks support amount"
+        >
           Your Amount
-        </span>
+        </a>
 
       </div>
 
@@ -1363,29 +1452,10 @@
       </span>
 
 
-      <!--
-      =====================================================
-      IMPORTANT:
-
-      When your new Stripe contribution/payment link
-      is ready, replace:
-
-      contact.html
-
-      with the actual Stripe Payment Link.
-
-      Example:
-      https://buy.stripe.com/xxxxxxxx
-      =====================================================
-      -->
-
-
       <a
         class="support-button gold"
         id="support-payment-button"
-        href="https://buy.stripe.com/6oUcN4fpq5Mk7Gv5os8ww06"
-        target="_blank"
-        rel="noopener noreferrer"
+        href="/api/support-checkout?amount=custom"
       >
         Choose Your Support Amount
       </a>
@@ -1401,6 +1471,20 @@
         Card and supported express-payment methods
         are handled securely through Stripe Checkout.
       </p>
+
+      <p
+        id="support-payment-status"
+        role="status"
+        aria-live="polite"
+        hidden
+        style="
+          font-size:13px;
+          margin-top:14px;
+          margin-bottom:0;
+          color:#087f5b;
+          font-weight:800;
+        "
+      ></p>
 
     </div>
 
@@ -1993,29 +2077,20 @@
 
 <script>
 
-  /*
-   * Prevent accidental navigation before
-   * the real Stripe support link is installed.
-   */
+  const supportStatus =
+    document.getElementById("support-payment-status");
 
-  const supportPaymentButton =
-    document.getElementById(
-      "support-payment-button"
-    );
+  const supportResult =
+    new URLSearchParams(window.location.search)
+      .get("support");
 
-
-  if (supportPaymentButton) {
-
-    const href =
-      supportPaymentButton
-        .getAttribute("href");
-
-
-    if (!href) { event.preventDefault(); }
-        );
-
-    }
-
+  if (
+    supportStatus &&
+    supportResult === "thank-you"
+  ) {
+    supportStatus.hidden = false;
+    supportStatus.textContent =
+      "Thank you for supporting the HUGSLinks mission.";
   }
 
 </script>
