@@ -1,4 +1,15 @@
 /member  /member.html  200
+/reviews  /reviews.html  200
+/art  /art-community.html  200
+/art-voting  /art-voting.html  200
+/submit-art  /artist-submit.html  200
+/find-food  /find-food.html  200
+/help  /help-app.html  200
+/help-center  /help-center.html  200
+/resources  /resources.html  200
+/business  /business-services.html  200
+/hugs-cards  /hugs-cards.html  200
+/support  /support-hugs.html  200
 /food-partner.html  /food-partners.html  301
 /nyc-updates  /nyc-updates.html  200
 /api/nyc-updates  /.netlify/functions/nyc-updates  200
