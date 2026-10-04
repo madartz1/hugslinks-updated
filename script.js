@@ -1,4 +1,20 @@
-document.querySelectorAll('.menu').forEach(btn=>btn.addEventListener('click',()=>document.querySelector('.navlinks').classList.toggle('open')));
+/* Keep the public HUGSLinks navigation consistent across legacy and newer pages. */
+const HUGS_PUBLIC_NAV=[
+ ['index.html','Home'],['shop.html','Shop'],['hugs-cards.html','HUGS Cards'],['art-community.html','Art'],
+ ['food-support.html','Food'],['housing-help.html','Housing'],['business-services.html','Business'],
+ ['reviews.html','HUGS Reviews'],['help-app.html','Help App'],['help-center.html','Help Center'],
+ ['resources.html','Resources'],['nyc-updates.html','NYC Updates'],['about.html','About'],['contact.html','Contact']
+];
+document.querySelectorAll('.navlinks').forEach(nav=>{
+ const existing=new Map([...nav.querySelectorAll('a')].map(a=>[a.getAttribute('href'),a]));
+ HUGS_PUBLIC_NAV.forEach(([href,label])=>{
+   if(!existing.has(href)){const a=document.createElement('a');a.href=href;a.textContent=label;nav.appendChild(a);}
+ });
+});
+document.querySelectorAll('.menu').forEach(btn=>btn.addEventListener('click',()=>{
+ const nav=btn.closest('.nav')?.querySelector('.navlinks')||document.querySelector('.navlinks');
+ if(nav){nav.classList.toggle('open');btn.setAttribute('aria-expanded',String(nav.classList.contains('open')));}
+}));
 const path=location.pathname.split('/').pop()||'index.html';document.querySelectorAll('.navlinks a').forEach(a=>{if(a.getAttribute('href')===path)a.classList.add('active')});
 
 /* Sitewide HUGS electric buttons and visitor-controlled sound */
