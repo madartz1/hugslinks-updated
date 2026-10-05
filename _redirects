@@ -14,3 +14,6 @@
 /nyc-updates  /nyc-updates.html  200
 /api/nyc-updates  /.netlify/functions/nyc-updates  200
 /api/support-checkout  /.netlify/functions/support-checkout  200
+
+/food-marketplace /restaurant-marketplace.html 200
+/restaurant-dashboard /restaurant-marketplace.html#merchant 302
