@@ -10,7 +10,7 @@ No public edit form or browser-only setting is used: the published file controls
 
 Use the permanent featured link on general postcards. Those postcards always introduce the latest feature.
 Use a card's individual page on edition-specific postcards: that QR always opens that named card.
-The delivered NYC Ride edition postcard uses the individual card link so it remains accurate after the featured card changes.
+The delivered general featured postcard uses the permanent featured link and always opens the current feature.
 
 Repeat each release:
 1. Publish the finished card page, cover and preview media.
