@@ -1,26 +1,68 @@
-<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>Contact HUGSLinks</title><meta name="description" content="HUGSLinks premium community support and creative empowerment ecosystem."><link rel="stylesheet" href="styles.css"></head><body><header class="topbar"><nav class="nav"><a class="brand" href="index.html">Hugslinks</a><div class="seal" aria-label="HUGS house heart logo"><span class="roof"></span></div><button class="menu">Menu</button><div class="navlinks"><a href="index.html">Home</a><a href="shop.html">Shop</a><a href="art-community.html">Art</a><a href="food-support.html">Food</a><a href="housing-help.html">Housing</a><a href="business-services.html">Business</a><a href="help-app.html">Help App</a><a href="help-center.html">Help Center</a>\n        <a href="resources.html">Resources</a><a href="about.html">About</a><a href="contact.html">Contact</a></div></nav></header>
-
-<main><section class="page-hero"><div><div class="eyebrow">Contact</div><h1>Request help, support, or services.</h1><p>Use this page for customer questions, partnerships, commissions, food support, housing direction, business services, and app interest.</p></div><div class="page-icon"><img src="assets/business-services.jpeg" alt="Contact icon"></div></section><section class="section split"><form class="card form" name="hugs-contact" method="POST" data-netlify="true"><input type="hidden" name="form-name" value="hugs-contact"><input class="input" name="name" placeholder="Your name" required><input class="input" type="email" name="email" placeholder="Email" required><select class="input" name="topic" id="contactTopic"><option>Shop / Purchase</option><option>Custom HUG / Commission</option><option>Memorial HUG</option><option>Art & Community</option><option>Food Support</option><option>Food Partnership</option><option>Housing Help</option><option>Business Services</option><option>HUGS Help App</option><option>Resources</option></select><textarea name="message" id="contactMessage" placeholder="How can HUGS help?" required></textarea><button class="btn primary" type="submit">Send message</button></form><div class="lux"><h2>Connect with HUGSLinks</h2><p>Send your message and choose the topic that best matches the support, service, or partnership you are looking for.</p></div></section></main>
-<footer class="footer"><div class="footer-inner"><div><h2>HUGS — Help Under Good Service</h2><p class="notice">A premium community support and creative empowerment ecosystem.</p></div><div><h3>Support</h3><a href="shop.html">Shop HUGS</a><a href="hugs-cards.html">HUGS Cards</a><a href="art-community.html">Support through art</a><a href="resources.html">Community resources</a></div><div><h3>Contact</h3><a href="contact.html">Request help or partnership</a><a href="business-services.html">Business services</a><a href="help-app.html">HUGS Help App</a></div></div>
-    <div class="admin-access" style="max-width:1200px;margin:18px auto 0;padding:14px 20px 4px;text-align:center;border-top:1px solid rgba(128,128,128,.22);font-size:.78rem;opacity:.68;">
-      <a href="hugs-admin.html" aria-label="HUGSLinks administrator access" style="color:inherit;text-decoration:none;">Admin Access</a>
-    </div>
-</footer><script>
-(function(){
- const type=new URLSearchParams(location.search).get("type");
- const topic=document.getElementById("contactTopic");
- const message=document.getElementById("contactMessage");
- const map={
-  "custom-hug":["Custom HUG / Commission","Tell us who the HUG is for, the occasion, and the idea you want to create."],
-  "memorial-hug":["Memorial HUG","Tell us who you would like to honor and the type of memorial HUG you want to create."],
-  "business-service":["Business Services","Tell us what business, website, brand, or digital service you need help with."],
-  "food-partnership":["Food Partnership","Tell us about your organization and the food-support partnership you want to discuss."]
- };
- if(type&&map[type]&&topic){
-   topic.value=map[type][0];
-   if(message) message.placeholder=map[type][1];
- }
-})();
-</script><script src="live-help-config.js"></script>
-<script src="script.js"></script>
-</body></html>
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Custom HUGS Card Design | HUGSLinks</title>
+  <meta name="description" content="Create a custom HUGS Card. Choose an illustrated, animated or storybook design and tell HUGSLinks your idea. Community help is available separately or alongside your card request.">
+  <link rel="stylesheet" href="/styles.css"><link rel="stylesheet" href="/contact-card.css">
+</head>
+<body>
+  <header class="topbar"><nav class="nav">
+    <a class="brand" href="/">HUGSLinks</a>
+    <div class="seal"><img src="/assets/HUGS_Header_Logo_Transparent.png" alt="HUGSLinks house and heart logo"></div>
+    <button class="menu" type="button" aria-expanded="false" aria-label="Open navigation menu">Menu</button>
+    <div class="navlinks"><a href="/">Home</a><a href="/hugs-cards.html">HUGS Cards</a><a href="/shop.html">Shop</a><a href="/help-app.html">Help App</a><a href="/resources.html">Resources</a><a href="/contact.html">Custom card design</a></div>
+  </nav></header>
+  <main class="cc-page">
+    <section class="cc-hero">
+      <div>
+        <p class="cc-eyebrow">Your idea. A meaningful HUG.</p>
+        <h1>A HUG designed<br>around your story.</h1>
+        <p class="cc-intro">Create a custom card for someone you love, a moment worth celebrating, or a story that deserves to be shared.</p>
+        <div class="cc-actions"><a href="#request" class="cc-button">Start your custom card</a><a href="/hugs-cards.html" class="cc-link">Explore ready-made cards →</a></div>
+        <p class="cc-note">Tell us your idea. We’ll confirm the scope, price and timing before design work begins.</p>
+      </div>
+      <a class="cc-cover" href="/featured-hug.html" aria-label="Explore the featured NYC Ride HUGS Card"><img src="/assets/nyc-ride-hugs-card-cover.jpg" alt="NYC Ride custom illustrated HUGS Bear card"><span>Explore a HUGS Card →</span></a>
+    </section>
+    <section class="cc-process" aria-label="Custom card process"><p><b>01</b><strong>Choose a format</strong><span>Illustrated, animated or storybook.</span></p><p><b>02</b><strong>Share your idea</strong><span>Occasion, message and creative details.</span></p><p><b>03</b><strong>Confirm your design</strong><span>Agree on the scope, price and timing.</span></p></section>
+    <section class="cc-request" id="request" aria-labelledby="request-title">
+      <div class="cc-request-head"><p class="cc-eyebrow">Start here</p><h2 id="request-title">What would you like to create?</h2><p>Custom card design is selected below. You can also request community help, or do both.</p></div>
+      <div class="cc-modes" role="group" aria-label="Choose your request">
+        <button type="button" data-mode="card" aria-pressed="true" aria-controls="card-details help-details"><strong>Custom card</strong><span>Design a HUGS Card</span></button>
+        <button type="button" data-mode="help" aria-pressed="false" aria-controls="card-details help-details"><strong>Community help</strong><span>Request support or guidance</span></button>
+        <button type="button" data-mode="both" aria-pressed="false" aria-controls="card-details help-details"><strong>Both</strong><span>A card request + community help</span></button>
+      </div>
+      <form class="cc-form" name="hugs-contact" method="POST" action="/contact-received.html" data-netlify="true" netlify-honeypot="bot-field">
+        <input type="hidden" name="form-name" value="hugs-contact">
+        <input type="hidden" name="topic" id="contactTopic" value="Custom HUG / Commission">
+        <input type="hidden" name="request_type" id="requestType" value="Custom card design">
+        <p hidden><label>Leave this field empty<input name="bot-field"></label></p>
+        <div class="cc-common"><div><label for="request-name">Your name <span>(required)</span></label><input id="request-name" name="name" autocomplete="name" required></div><div><label for="request-email">Email <span>(required)</span></label><input id="request-email" type="email" name="email" autocomplete="email" required></div></div>
+        <fieldset id="card-details"><legend>Your custom card</legend>
+          <p class="cc-field-note">Choose the experience you want to create.</p>
+          <div class="cc-formats">
+            <label><input type="radio" name="card_format" value="Illustrated still card" required><strong>Illustrated card</strong><span>A single original visual and message.</span></label>
+            <label><input type="radio" name="card_format" value="Animated card" required><strong>Animated card</strong><span>A visual card brought to life with movement.</span></label>
+            <label><input type="radio" name="card_format" value="Comic or storybook card" required><strong>Comic / storybook</strong><span>A story told across illustrated pages.</span></label>
+            <label><input type="radio" name="card_format" value="Guide me" required><strong>Help me choose</strong><span>Tell us your idea and we’ll discuss the format.</span></label>
+          </div>
+          <div class="cc-common"><div><label for="occasion">Occasion or theme <span>(required)</span></label><select id="occasion" name="occasion" required><option value="">Choose a theme</option><option>Love / anniversary</option><option>Birthday / celebration</option><option>Family / friendship</option><option>Healing / encouragement</option><option>Memorial / remembrance</option><option>Culture / dance / music</option><option>Holiday / comic lesson</option><option>Business / community message</option><option>Another theme</option></select></div><div><label for="recipient">Who is the card for? <span>(optional)</span></label><input id="recipient" name="recipient" placeholder="A name, group or community"></div></div>
+          <label for="contactMessage">Your design idea <span>(required)</span></label>
+          <textarea id="contactMessage" name="message" rows="5" required placeholder="Tell us the story, message, characters, colors and feeling you want your card to express."></textarea>
+          <div class="cc-common"><div><label for="needed-by">Preferred date <span>(optional)</span></label><input id="needed-by" name="preferred_date" type="date"><small>Timing is confirmed after we review your idea.</small></div><div><label for="budget">Budget <span>(optional)</span></label><input id="budget" name="budget" placeholder="Your range, or help me estimate"></div></div>
+        </fieldset>
+        <fieldset id="help-details" hidden><legend>Your community help request</legend>
+          <p class="cc-field-note">Share the type of support you need. This is separate from your card design details.</p>
+          <label for="help-type">Type of help <span>(required)</span></label><select id="help-type" name="help_type"><option value="">Choose a support category</option><option>Food Support</option><option>Housing Help</option><option>Resources</option><option>HUGS Help App</option><option>Shop / Purchase</option><option>Food Partnership</option><option>Business Services</option><option>Art & Community</option><option>Other community support</option></select>
+          <label for="help-message">What help are you looking for? <span>(required)</span></label><textarea id="help-message" name="help_message" rows="4" placeholder="Describe the support or guidance you need and your neighborhood or city."></textarea>
+          <div class="cc-help-links"><a href="/help-app.html">Open the HUGS Help App →</a><a href="/resources.html">Explore community resources →</a></div>
+        </fieldset>
+        <div class="cc-submit"><p id="request-summary" role="status" aria-live="polite">You’re sending a custom card design request.</p><button type="submit" class="cc-button" id="request-submit">Send custom card request</button><small>This sends an inquiry. Payment and design work are arranged after review.</small></div>
+      </form>
+      <noscript><p>You can submit a custom card request here. For community help, <a href="/help-app.html">open the HUGS Help App</a> or <a href="/resources.html">browse resources</a>.</p></noscript>
+    </section>
+  </main>
+  <footer class="cc-footer"><strong>Give a HUG. Get a HUG.</strong><p>HUGSLinks · Produced by Resile Corp</p><a href="/hugs-cards.html">Explore HUGS Cards</a> · <a href="/help-center.html">Help Center</a></footer>
+  <script src="/live-help-config.js"></script><script src="/script.js"></script><script src="/contact-card.js" defer></script>
+</body>
+</html>
