@@ -1,138 +1,35 @@
-import Stripe from "stripe";
+// Public Stripe Payment Link: customers choose their support amount.
+const SUPPORT_PAYMENT_LINK = "https://buy.stripe.com/cNi28qb9a2A83qf5os8ww09";
+const SUGGESTED_AMOUNTS = new Set(["5", "10", "25", "50"]);
 
-const FIXED_AMOUNTS = new Set([5, 10, 25, 50]);
-const SITE_ORIGIN = "https://hugslinks.com";
-
-function response(message, status = 200) {
-  return new Response(message, {
-    status,
-    headers: {
-      "Content-Type": "text/plain; charset=utf-8",
-      "Cache-Control": "no-store"
-    }
-  });
+function response(message, status, extraHeaders = {}) {
+  return new Response(message, { status, headers: {
+    "Content-Type": "text/plain; charset=utf-8",
+    "Cache-Control": "no-store",
+    ...extraHeaders
+  } });
 }
 
-function redirect(location) {
-  return new Response(null, {
-    status: 303,
-    headers: {
-      Location: location,
-      "Cache-Control": "no-store"
-    }
-  });
-}
-
-function validPaymentLink(value) {
-  try {
-    const url = new URL(value);
-    return url.protocol === "https:" && url.hostname === "buy.stripe.com";
-  } catch {
-    return false;
+export default async function supportCheckout(request) {
+  if (!["GET", "POST"].includes(request.method)) {
+    return response("Method not allowed.", 405, { Allow: "GET, POST" });
   }
-}
-
-async function requestedAmount(request) {
-  const url = new URL(request.url);
-
-  if (request.method === "GET") {
-    return url.searchParams.get("amount") || "custom";
-  }
-
-  if (request.method === "POST") {
-    const form = await request.formData();
-    return String(form.get("amount") || "").trim();
-  }
-
-  return null;
-}
-
-export default async (request) => {
-  if (request.method !== "GET" && request.method !== "POST") {
-    return response("Method not allowed", 405);
-  }
-
   let amount;
   try {
-    amount = await requestedAmount(request);
+    amount = request.method === "POST"
+      ? (await request.formData()).get("amount")
+      : new URL(request.url).searchParams.get("amount");
   } catch {
-    return response("Invalid support request", 400);
+    return response("Invalid support amount.", 400);
   }
-
-  if (amount === "custom") {
-    const paymentLink =
-      String(process.env.HUGS_SUPPORT_PAYMENT_LINK_URL || "").trim();
-
-    if (!validPaymentLink(paymentLink)) {
-      return response(
-        "The choose-your-amount support link is not active yet.",
-        503
-      );
-    }
-
-    return redirect(paymentLink);
+  amount = amount ?? "custom";
+  if (amount !== "custom" && !SUGGESTED_AMOUNTS.has(amount)) {
+    return response("Choose a suggested amount or your own amount.", 400);
   }
-
-  const dollars = Number(amount);
-
-  if (!FIXED_AMOUNTS.has(dollars)) {
-    return response("Choose $5, $10, $25, $50, or Your Amount.", 400);
-  }
-
-  const secretKey = String(process.env.STRIPE_SECRET_KEY || "").trim();
-
-  if (!secretKey) {
-    return response("Stripe checkout is not active yet.", 503);
-  }
-
-  const stripe = new Stripe(secretKey, {
-    apiVersion: "2026-08-26.dahlia"
-  });
-
-  try {
-    const session = await stripe.checkout.sessions.create({
-      mode: "payment",
-      submit_type: "pay",
-      integration_identifier: "hugs_support_qjrmvtxa",
-      line_items: [
-        {
-          quantity: 1,
-          price_data: {
-            currency: "usd",
-            unit_amount: dollars * 100,
-            product_data: {
-              name: "Support the HUGSLinks Mission",
-              description:
-                "One-time support for HUGSLinks projects, outreach, creative work and development."
-            }
-          }
-        }
-      ],
-      metadata: {
-        hugslinks_payment_type: "mission_support",
-        support_amount: String(dollars)
-      },
-      success_url:
-        `${SITE_ORIGIN}/support-hugs.html?support=thank-you` +
-        "&session_id={CHECKOUT_SESSION_ID}#direct-support",
-      cancel_url:
-        `${SITE_ORIGIN}/support-hugs.html#direct-support`
-    });
-
-    if (!session.url) {
-      throw new Error("Stripe did not return a Checkout URL.");
-    }
-
-    return redirect(session.url);
-  } catch (error) {
-    console.error(
-      "HUGSLinks support Checkout creation failed:",
-      error?.message || error
-    );
-
-    return response(
-      "We could not open Stripe Checkout. Please try again.",
-      502
-    );
-  }
-};
+  const checkout = new URL(SUPPORT_PAYMENT_LINK);
+  if (amount !== "custom") checkout.searchParams.set("prefilled_amount", String(Number(amount) * 100));
+  return new Response(null, { status: 303, headers: {
+    Location: checkout.toString(),
+    "Cache-Control": "no-store"
+  } });
+}

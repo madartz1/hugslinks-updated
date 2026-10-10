@@ -1350,7 +1350,8 @@
 
       <p>
 
-        Choose the amount that feels right for you.
+        Choose the amount that feels right for you, starting at $1.
+        The buttons suggest an amount you can edit in Stripe.
 
         Your contribution helps support the independent
         entrepreneurs building HUGSLinks and helps us
@@ -1366,69 +1367,17 @@
         aria-label="Choose a HUGSLinks support amount"
       >
 
-        <form
-          class="amount-form"
-          action="/api/support-checkout"
-          method="post"
-        >
-          <input type="hidden" name="amount" value="5">
-          <button
-            class="amount-chip"
-            type="submit"
-            aria-label="Support HUGSLinks with 5 dollars"
-          >
-            $5
-          </button>
-        </form>
+        <a class="amount-chip" href="https://buy.stripe.com/cNi28qb9a2A83qf5os8ww09?prefilled_amount=500" aria-label="Support HUGSLinks with 5 dollars">$5</a>
 
-        <form
-          class="amount-form"
-          action="/api/support-checkout"
-          method="post"
-        >
-          <input type="hidden" name="amount" value="10">
-          <button
-            class="amount-chip"
-            type="submit"
-            aria-label="Support HUGSLinks with 10 dollars"
-          >
-            $10
-          </button>
-        </form>
+        <a class="amount-chip" href="https://buy.stripe.com/cNi28qb9a2A83qf5os8ww09?prefilled_amount=1000" aria-label="Support HUGSLinks with 10 dollars">$10</a>
 
-        <form
-          class="amount-form"
-          action="/api/support-checkout"
-          method="post"
-        >
-          <input type="hidden" name="amount" value="25">
-          <button
-            class="amount-chip"
-            type="submit"
-            aria-label="Support HUGSLinks with 25 dollars"
-          >
-            $25
-          </button>
-        </form>
+        <a class="amount-chip" href="https://buy.stripe.com/cNi28qb9a2A83qf5os8ww09?prefilled_amount=2500" aria-label="Support HUGSLinks with 25 dollars">$25</a>
 
-        <form
-          class="amount-form"
-          action="/api/support-checkout"
-          method="post"
-        >
-          <input type="hidden" name="amount" value="50">
-          <button
-            class="amount-chip"
-            type="submit"
-            aria-label="Support HUGSLinks with 50 dollars"
-          >
-            $50
-          </button>
-        </form>
+        <a class="amount-chip" href="https://buy.stripe.com/cNi28qb9a2A83qf5os8ww09?prefilled_amount=5000" aria-label="Support HUGSLinks with 50 dollars">$50</a>
 
         <a
           class="amount-chip"
-          href="/api/support-checkout?amount=custom"
+          href="https://buy.stripe.com/cNi28qb9a2A83qf5os8ww09"
           aria-label="Choose your own HUGSLinks support amount"
         >
           Your Amount
@@ -1455,7 +1404,7 @@
       <a
         class="support-button gold"
         id="support-payment-button"
-        href="/api/support-checkout?amount=custom"
+        href="https://buy.stripe.com/cNi28qb9a2A83qf5os8ww09"
       >
         Choose Your Support Amount
       </a>
