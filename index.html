@@ -30,6 +30,7 @@
     @media(max-width:720px){.navigator-grid{grid-template-columns:1fr}.navigator-support{grid-column:auto}.navigator-shell{border-radius:22px}.navigator-choice{min-height:78px}}
     @media(prefers-reduced-motion:reduce){.navigator-choice{transition:none}.navigator-choice:hover{transform:none}}
   </style>
+  <link rel="stylesheet" href="/featured-hug.css">
 </head>
 
 <body>
@@ -82,6 +83,8 @@
         <img src="assets/help-app.jpeg" alt="HUGS Help App">
       </a>
     </section>
+
+    <section class="section" aria-label="Featured HUGS Card"><div data-featured-hug></div></section>
 
     <section class="section hugs-navigator" id="hugs-navigator">
       <div class="navigator-shell">
@@ -226,5 +229,7 @@
   <script>
   (()=>{const buttons=[...document.querySelectorAll('[data-home-lang]')];if(!buttons.length)return;const sync=()=>{const lang=document.documentElement.dataset.hugsLanguage||document.documentElement.lang||'en';buttons.forEach(b=>{const on=b.dataset.homeLang===lang;b.classList.toggle('active',on);b.setAttribute('aria-pressed',String(on))})};buttons.forEach(b=>b.addEventListener('click',()=>{const select=document.getElementById('hugs-language-select');if(select){select.value=b.dataset.homeLang;select.dispatchEvent(new Event('change',{bubbles:true}))}sync()}));document.addEventListener('hugs-language-change',sync);sync()})();
   </script>
+  <script src="/featured-hug.js" defer></script>
 </body>
 </html>
+

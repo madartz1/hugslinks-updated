@@ -1,0 +1,10 @@
+{
+  "id": "nyc-ride",
+  "title": "NYC Ride — Send a HUG",
+  "titleEs": "NYC Ride — Envía un HUG",
+  "description": "A little love. A New York moment. Discover HUGS Bear’s cinematic ride through the city, then send a HUG to someone who matters.",
+  "descriptionEs": "Un poco de amor. Un momento de Nueva York. Descubre el paseo cinematográfico de HUGS Bear por la ciudad y envía un HUG a alguien especial.",
+  "image": "/assets/nyc-ride-hugs-card-cover.jpg",
+  "imageAlt": "NYC Ride HUGS Card cover",
+  "cardUrl": "/nyc-ride-hugs-card.html"
+}
