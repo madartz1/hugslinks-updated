@@ -7,13 +7,14 @@
   <link rel="stylesheet" href="/styles.css"><link rel="stylesheet" href="/contact-card.css">
 </head>
 <body>
-  <header class="topbar"><nav class="nav">
+  <header class="topbar" data-no-translate><nav class="nav">
     <a class="brand" href="/">HUGSLinks</a>
     <div class="seal"><img src="/assets/HUGS_Header_Logo_Transparent.png" alt="HUGSLinks house and heart logo"></div>
+    <button id="contact-language" type="button" aria-label="Cambiar a español" style="margin-left:auto;border:1px solid rgba(255,255,255,.55);border-radius:999px;background:transparent;color:inherit;padding:8px 13px;font:inherit;font-size:12px;font-weight:800;cursor:pointer">Español</button>
     <button class="menu" type="button" aria-expanded="false" aria-label="Open navigation menu">Menu</button>
     <div class="navlinks"><a href="/">Home</a><a href="/hugs-cards.html">HUGS Cards</a><a href="/shop.html">Shop</a><a href="/help-app.html">Help App</a><a href="/resources.html">Resources</a><a href="/contact.html">Custom card design</a></div>
   </nav></header>
-  <main class="cc-page">
+  <main class="cc-page" data-no-translate>
 <section style="margin:24px auto;padding:24px;border:1px solid #d7e5f1;border-radius:22px;max-width:1100px;background:#edf5fa;color:#071f3b"><h2>Create Your HUGS Card</h2><p>Want to make it yourself? Upload your photos and video, add your message, and open a live preview. For a design made by an artist, continue with the request below.</p><a class="cc-button" href="/app/create-card.html">Create Your HUGS Card →</a></section>
 
     <section class="cc-hero">
@@ -48,14 +49,14 @@
             <label><input type="radio" name="card_format" value="Comic or storybook card" required><strong>Comic / storybook</strong><span>A story told across illustrated pages.</span></label>
             <label><input type="radio" name="card_format" value="Guide me" required><strong>Help me choose</strong><span>Tell us your idea and we’ll discuss the format.</span></label>
           </div>
-          <div class="cc-common"><div><label for="occasion">Occasion or theme <span>(required)</span></label><select id="occasion" name="occasion" required><option value="">Choose a theme</option><option>Love / anniversary</option><option>Birthday / celebration</option><option>Family / friendship</option><option>Healing / encouragement</option><option>Memorial / remembrance</option><option>Culture / dance / music</option><option>Holiday / comic lesson</option><option>Business / community message</option><option>Another theme</option></select></div><div><label for="recipient">Who is the card for? <span>(optional)</span></label><input id="recipient" name="recipient" placeholder="A name, group or community"></div></div>
+          <div class="cc-common"><div><label for="occasion">Occasion or theme <span>(required)</span></label><select id="occasion" name="occasion" required><option value="">Choose a theme</option><option value="Love / anniversary">Love / anniversary</option><option value="Birthday / celebration">Birthday / celebration</option><option value="Family / friendship">Family / friendship</option><option value="Healing / encouragement">Healing / encouragement</option><option value="Memorial / remembrance">Memorial / remembrance</option><option value="Culture / dance / music">Culture / dance / music</option><option value="Holiday / comic lesson">Holiday / comic lesson</option><option value="Business / community message">Business / community message</option><option value="Another theme">Another theme</option></select></div><div><label for="recipient">Who is the card for? <span>(optional)</span></label><input id="recipient" name="recipient" placeholder="A name, group or community"></div></div>
           <label for="contactMessage">Your design idea <span>(required)</span></label>
           <textarea id="contactMessage" name="message" rows="5" required placeholder="Tell us the story, message, characters, colors and feeling you want your card to express."></textarea>
           <div class="cc-common"><div><label for="needed-by">Preferred date <span>(optional)</span></label><input id="needed-by" name="preferred_date" type="date"><small>Timing is confirmed after we review your idea.</small></div><div><label for="budget">Budget <span>(optional)</span></label><input id="budget" name="budget" placeholder="Your range, or help me estimate"></div></div>
         </fieldset>
         <fieldset id="help-details" hidden><legend>Your community help request</legend>
           <p class="cc-field-note">Share the type of support you need. This is separate from your card design details.</p>
-          <label for="help-type">Type of help <span>(required)</span></label><select id="help-type" name="help_type"><option value="">Choose a support category</option><option>Food Support</option><option>Housing Help</option><option>Resources</option><option>HUGS Help App</option><option>Shop / Purchase</option><option>Food Partnership</option><option>Business Services</option><option>Art & Community</option><option>Other community support</option></select>
+          <label for="help-type">Type of help <span>(required)</span></label><select id="help-type" name="help_type"><option value="">Choose a support category</option><option value="Food Support">Food Support</option><option value="Housing Help">Housing Help</option><option value="Resources">Resources</option><option value="HUGS Help App">HUGS Help App</option><option value="Shop / Purchase">Shop / Purchase</option><option value="Food Partnership">Food Partnership</option><option value="Business Services">Business Services</option><option value="Art & Community">Art & Community</option><option value="Other community support">Other community support</option></select>
           <label for="help-message">What help are you looking for? <span>(required)</span></label><textarea id="help-message" name="help_message" rows="4" placeholder="Describe the support or guidance you need and your neighborhood or city."></textarea>
           <div class="cc-help-links"><a href="/help-app.html">Open the HUGS Help App →</a><a href="/resources.html">Explore community resources →</a></div>
         </fieldset>
@@ -64,7 +65,7 @@
       <noscript><p>You can submit a custom card request here. For community help, <a href="/help-app.html">open the HUGS Help App</a> or <a href="/resources.html">browse resources</a>.</p></noscript>
     </section>
   </main>
-  <footer class="cc-footer"><strong>Give a HUG. Get a HUG.</strong><p>HUGSLinks · Produced by Resile Corp</p><a href="/hugs-cards.html">Explore HUGS Cards</a> · <a href="/help-center.html">Help Center</a></footer>
+  <footer class="cc-footer" data-no-translate><strong>Give a HUG. Get a HUG.</strong><p>HUGSLinks · Produced by Resile Corp</p><a href="/hugs-cards.html">Explore HUGS Cards</a> · <a href="/help-center.html">Help Center</a></footer>
   <script src="/live-help-config.js"></script><script src="/script.js"></script><script src="/contact-card.js" defer></script>
 </body>
 </html>
