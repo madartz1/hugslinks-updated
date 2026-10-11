@@ -1,0 +1,4 @@
+.header-actions{display:flex;align-items:center;gap:14px}
+.lang-btn{border:1px solid #48637c;border-radius:999px;background:transparent;color:#fff;padding:8px 13px;font-size:12px;font-weight:750}
+.lang-btn:hover{border-color:#7cd6ff}
+@media(max-width:480px){.header-actions{gap:8px}.lang-btn{padding:7px 10px}.header-actions a{font-size:11px}}
