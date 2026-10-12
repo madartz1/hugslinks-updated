@@ -10,7 +10,14 @@ export const handler = async (event) => {
   if(!Object.hasOwn(plans,plan)) return json(400,{error:'Invalid subscription plan'});
   const price = process.env[plans[plan]];
   if(!price || !/^price_[A-Za-z0-9]+$/.test(price)) return json(503,{error:'Subscription plan is not configured'});
-  const origin = process.env.CONTEXT === 'deploy-preview' ? process.env.DEPLOY_PRIME_URL : (process.env.URL || process.env.DEPLOY_PRIME_URL);
+  // Use the actual requesting preview host for checkout return URLs. Netlify's
+  // URL/DEPLOY_PRIME_URL values may resolve to the production domain.
+  const requestHost = event.headers?.host || event.headers?.Host || '';
+  const previewHost = /^deploy-preview-14--hugslinks-web-build\.netlify\.app$/i;
+  const isPreviewRequest = previewHost.test(requestHost);
+  const origin = isPreviewRequest
+    ? `https://${requestHost.toLowerCase()}`
+    : (process.env.CONTEXT === 'deploy-preview' ? process.env.DEPLOY_PRIME_URL : (process.env.URL || process.env.DEPLOY_PRIME_URL));
   if(!origin || !/^https:\/\//.test(origin)) return json(503,{error:'Site URL is not configured'});
   const key = process.env.HL_STUDIO_STRIPE_SECRET_KEY;
   // Do not reject valid Stripe keys based on a locally invented character pattern.
