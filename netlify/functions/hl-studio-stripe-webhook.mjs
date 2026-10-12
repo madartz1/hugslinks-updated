@@ -4,7 +4,7 @@ const reply = (statusCode, message) => ({ statusCode, headers: {'Content-Type':'
 const allowed = new Set(['active','trialing']);
 export const handler = async (event) => {
   if(event.httpMethod !== 'POST') return reply(405,'Method not allowed');
-  if(!process.env.HL_STUDIO_STRIPE_SECRET_KEY || !process.env.HL_STUDIO_STRIPE_WEBHOOK_SECRET || !process.env.HUGS_VOTING_DATABASE_URL) return reply(503,'Webhook not configured');
+  if(!process.env.HL_STUDIO_STRIPE_SECRET_KEY || !process.env.HL_STUDIO_STRIPE_WEBHOOK_SECRET || !process.env.HL_STUDIO_DATABASE_URL) return reply(503,'Webhook not configured');
   const signature = event.headers?.['stripe-signature'] || event.headers?.['Stripe-Signature'];
   if(!signature) return reply(400,'Missing Stripe signature');
   const stripe = new Stripe(process.env.HL_STUDIO_STRIPE_SECRET_KEY);
@@ -31,7 +31,7 @@ export const handler = async (event) => {
     const priceId = subscription.items.data[0]?.price?.id || '';
     const plan = Object.entries({starter:'HL_STUDIO_PRICE_STARTER',growth:'HL_STUDIO_PRICE_GROWTH',pro:'HL_STUDIO_PRICE_PRO'}).find(([,key])=>process.env[key]===priceId)?.[0] || 'unknown';
     stage = 'database_client_initialization';
-    const sql = neon(process.env.HUGS_VOTING_DATABASE_URL);
+    const sql = neon(process.env.HL_STUDIO_DATABASE_URL);
     stage = 'database_table_creation';
     await sql`CREATE TABLE IF NOT EXISTS hl_studio_subscriptions (
       stripe_subscription_id TEXT PRIMARY KEY,
