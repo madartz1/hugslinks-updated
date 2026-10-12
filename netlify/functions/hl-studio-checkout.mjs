@@ -10,10 +10,15 @@ export const handler = async (event) => {
   if(!Object.hasOwn(plans,plan)) return json(400,{error:'Invalid subscription plan'});
   const price = process.env[plans[plan]];
   if(!price || !/^price_[A-Za-z0-9]+$/.test(price)) return json(503,{error:'Subscription plan is not configured'});
-  const origin = process.env.URL || process.env.DEPLOY_PRIME_URL;
+  const origin = process.env.CONTEXT === 'deploy-preview' ? process.env.DEPLOY_PRIME_URL : (process.env.URL || process.env.DEPLOY_PRIME_URL);
   if(!origin || !/^https:\/\//.test(origin)) return json(503,{error:'Site URL is not configured'});
+  const key = process.env.HL_STUDIO_STRIPE_SECRET_KEY;
+  if (key !== key.trim() || !/^sk_test_[A-Za-z0-9]+$/.test(key)) {
+    console.error('HL Studio checkout configuration error', { reason: 'Expected an unpadded standard Stripe test secret key', context: process.env.CONTEXT || 'unknown' });
+    return json(503, {error:'Checkout Sandbox key configuration is invalid'});
+  }
   try {
-    const stripe = new Stripe(process.env.HL_STUDIO_STRIPE_SECRET_KEY);
+    const stripe = new Stripe(key);
     const session = await stripe.checkout.sessions.create({
       mode:'subscription',line_items:[{price,quantity:1}],
       success_url:origin+'/studio/?checkout=success',
@@ -24,5 +29,8 @@ export const handler = async (event) => {
       subscription_data:{metadata:{product:'hl-studio',plan}}
     });
     return json(200,{url:session.url});
-  } catch(e) { console.error('HL Studio checkout failed',e?.type || 'unknown'); return json(502,{error:'Unable to start checkout'}); }
+  } catch(e) {
+    console.error('HL Studio checkout failed', {type:e?.type || 'unknown',code:e?.code || null,statusCode:e?.statusCode || null,requestId:e?.requestId || null,context:process.env.CONTEXT || 'unknown'});
+    return json(502,{error:'Unable to start checkout'});
+  }
 };
