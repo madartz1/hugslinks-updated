@@ -4,10 +4,10 @@ const reply = (statusCode, message) => ({ statusCode, headers: {'Content-Type':'
 const allowed = new Set(['active','trialing']);
 export const handler = async (event) => {
   if(event.httpMethod !== 'POST') return reply(405,'Method not allowed');
-  if(!process.env.STRIPE_SECRET_KEY || !process.env.HL_STUDIO_STRIPE_WEBHOOK_SECRET || !process.env.NETLIFY_DATABASE_URL) return reply(503,'Webhook not configured');
+  if(!process.env.HL_STUDIO_STRIPE_SECRET_KEY || !process.env.HL_STUDIO_STRIPE_WEBHOOK_SECRET || !process.env.NETLIFY_DATABASE_URL) return reply(503,'Webhook not configured');
   const signature = event.headers?.['stripe-signature'] || event.headers?.['Stripe-Signature'];
   if(!signature) return reply(400,'Missing Stripe signature');
-  const stripe = new Stripe(process.env.STRIPE_SECRET_KEY);
+  const stripe = new Stripe(process.env.HL_STUDIO_STRIPE_SECRET_KEY);
   let verified;
   try {
     const payload = event.isBase64Encoded ? Buffer.from(event.body||'','base64') : event.body||'';
