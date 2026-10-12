@@ -13,9 +13,11 @@ export const handler = async (event) => {
   const origin = process.env.CONTEXT === 'deploy-preview' ? process.env.DEPLOY_PRIME_URL : (process.env.URL || process.env.DEPLOY_PRIME_URL);
   if(!origin || !/^https:\/\//.test(origin)) return json(503,{error:'Site URL is not configured'});
   const key = process.env.HL_STUDIO_STRIPE_SECRET_KEY;
-  if (key !== key.trim() || !/^sk_test_[A-Za-z0-9]+$/.test(key)) {
-    console.error('HL Studio checkout configuration error', { reason: 'Expected an unpadded standard Stripe test secret key', context: process.env.CONTEXT || 'unknown' });
-    return json(503, {error:'Checkout Sandbox key configuration is invalid'});
+  // Do not reject valid Stripe keys based on a locally invented character pattern.
+  // Stripe's API is authoritative about whether a credential is valid.
+  if (key !== key.trim()) {
+    console.error('HL Studio checkout configuration error', { reason: 'Leading or trailing whitespace in Stripe key', context: process.env.CONTEXT || 'unknown' });
+    return json(503, {error:'Checkout Sandbox key contains extra whitespace'});
   }
   try {
     const stripe = new Stripe(key);
