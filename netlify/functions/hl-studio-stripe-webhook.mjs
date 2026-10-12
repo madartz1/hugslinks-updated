@@ -19,6 +19,7 @@ export const handler = async (event) => {
   if(verified.type.startsWith('customer.subscription.')) subscriptionId = verified.data.object.id;
   else subscriptionId = verified.data.object.subscription;
   if(typeof subscriptionId !== 'string' || !subscriptionId.startsWith('sub_')) return reply(200,'No subscription');
+  let stage = 'stripe_subscription_retrieval';
   try {
     // Always fetch current Stripe state: delayed or duplicate events cannot reactivate cancelled plans.
     const subscription = await stripe.subscriptions.retrieve(subscriptionId);
@@ -29,7 +30,9 @@ export const handler = async (event) => {
     }
     const priceId = subscription.items.data[0]?.price?.id || '';
     const plan = Object.entries({starter:'HL_STUDIO_PRICE_STARTER',growth:'HL_STUDIO_PRICE_GROWTH',pro:'HL_STUDIO_PRICE_PRO'}).find(([,key])=>process.env[key]===priceId)?.[0] || 'unknown';
+    stage = 'database_client_initialization';
     const sql = neon(process.env.HUGS_VOTING_DATABASE_URL);
+    stage = 'database_table_creation';
     await sql`CREATE TABLE IF NOT EXISTS hl_studio_subscriptions (
       stripe_subscription_id TEXT PRIMARY KEY,
       stripe_customer_id TEXT NOT NULL,
@@ -39,6 +42,7 @@ export const handler = async (event) => {
       updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
     )`;
     const customerId = typeof subscription.customer === 'string' ? subscription.customer : subscription.customer.id;
+    stage = 'database_subscription_upsert';
     await sql`INSERT INTO hl_studio_subscriptions (stripe_subscription_id,stripe_customer_id,plan,stripe_status,is_entitled,updated_at)
       VALUES (${subscription.id},${customerId},${plan},${subscription.status},${allowed.has(subscription.status) && plan !== 'unknown'},NOW())
       ON CONFLICT (stripe_subscription_id) DO UPDATE SET
@@ -46,7 +50,14 @@ export const handler = async (event) => {
       stripe_status=EXCLUDED.stripe_status,is_entitled=EXCLUDED.is_entitled,updated_at=NOW()`;
     return reply(200,'Verified subscription synchronized');
   } catch(error) {
-    console.error('HL Studio webhook processing error',error?.type||error?.name||'unknown');
+    // Log only a bounded stage and error classification; never log credentials,
+    // connection strings, SQL text, or raw provider error messages.
+    console.error('HL Studio webhook processing error', {
+      stage,
+      category: error?.type || error?.name || 'unknown',
+      statusCode: typeof error?.statusCode === 'number' ? error.statusCode : undefined,
+      code: typeof error?.code === 'string' && /^[a-zA-Z0-9_]{1,64}$/.test(error.code) ? error.code : undefined
+    });
     return reply(500,'Webhook processing failed');
   }
 };
