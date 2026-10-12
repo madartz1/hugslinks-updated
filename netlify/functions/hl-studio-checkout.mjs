@@ -20,7 +20,8 @@ export const handler = async (event) => {
       cancel_url:origin+'/studio/?checkout=cancel',
       allow_promotion_codes:true,
       billing_address_collection:'auto',
-      metadata:{product:'hl-studio',plan}
+      metadata:{product:'hl-studio',plan},
+      subscription_data:{metadata:{product:'hl-studio',plan}}
     });
     return json(200,{url:session.url});
   } catch(e) { console.error('HL Studio checkout failed',e?.type || 'unknown'); return json(502,{error:'Unable to start checkout'}); }
