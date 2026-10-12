@@ -3,7 +3,7 @@ import { randomBytes, createHash, timingSafeEqual } from 'node:crypto';
 const json=(statusCode,data,headers={})=>({statusCode,headers:{'Content-Type':'application/json','Cache-Control':'no-store',...headers},body:JSON.stringify(data)});
 const hash=s=>createHash('sha256').update(s).digest('hex');
 const cookie=(name,value,age)=>`${name}=${value}; HttpOnly; Secure; SameSite=Lax; Path=/; Max-Age=${age}`;
-const configured=()=>!!(process.env.HL_STUDIO_DATABASE_URL&&process.env.HL_STUDIO_AUTH_SECRET&&process.env.RESEND_API_KEY&&process.env.HL_STUDIO_EMAIL_FROM);
+const configured=()=>!!(process.env.HL_STUDIO_DATABASE_URL&&process.env.HL_STUDIO_AUTH_SECRET&&process.env.HL_STUDIO_RESEND_API_KEY&&process.env.HL_STUDIO_EMAIL_FROM);
 const generic={message:'If that email has a subscription, a sign-in link will arrive shortly.'};
 const getCookie=(header,name)=>header?.split(';').map(s=>s.trim()).find(s=>s.startsWith(name+'='))?.slice(name.length+1);
 const safeEqual=(a,b)=>{const x=Buffer.from(a||''),y=Buffer.from(b||'');return x.length===y.length&&timingSafeEqual(x,y)};
@@ -41,7 +41,7 @@ export const handler=async event=>{
     await sql`DELETE FROM hl_studio_auth_links WHERE email=${email} AND used_at IS NULL`;
     await sql`INSERT INTO hl_studio_auth_links (token_hash,email,expires_at) VALUES (${tokenHash},${email},NOW()+INTERVAL '15 minutes')`;
     const link=origin+'/studio/?login_token='+encodeURIComponent(token);
-    const result=await fetch('https://api.resend.com/emails',{method:'POST',headers:{Authorization:'Bearer '+process.env.RESEND_API_KEY,'Content-Type':'application/json'},body:JSON.stringify({from:process.env.HL_STUDIO_EMAIL_FROM,to:[email],subject:'Sign in to HL Studio',text:'Your one-time HL Studio sign-in link (expires in 15 minutes):\n'+link+'\n\nIf you did not request this, ignore this email.'})});
+    const result=await fetch('https://api.resend.com/emails',{method:'POST',headers:{Authorization:'Bearer '+process.env.HL_STUDIO_RESEND_API_KEY,'Content-Type':'application/json'},body:JSON.stringify({from:process.env.HL_STUDIO_EMAIL_FROM,to:[email],subject:'Sign in to HL Studio',text:'Your one-time HL Studio sign-in link (expires in 15 minutes):\n'+link+'\n\nIf you did not request this, ignore this email.'})});
     if(!result.ok){console.error('HL Studio auth email failed',{status:result.status});return json(502,{error:'Unable to send sign-in email'})}
    }
    return json(200,generic);
