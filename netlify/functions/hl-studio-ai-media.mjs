@@ -48,7 +48,7 @@ export const handler=async event=>{
   if(!used.length)return reply(403,{error:'Monthly '+kind+' generation limit reached ('+limit+').'});
   const id=randomUUID();
   try{
-   const input=kind==='video'?{prompt:prompt+', cinematic advertising shot, realistic, no text overlays, no watermark',video_size:body.format==='16/9'?'landscape_16_9':'portrait_16_9',fps:10,enable_safety_checker:true}:{prompt:prompt+', instrumental background music, no vocals, suitable for a short commercial',seconds_total:10,enable_safety_checker:true};
+   const input=kind==='video'?{prompt:prompt+', cinematic advertising shot, realistic, no text overlays, no watermark',video_size:body.format==='16/9'?'landscape_16_9':body.format==='1/1'?'square':'portrait_16_9',fps:10,enable_safety_checker:true}:{prompt:prompt+', instrumental background music, no vocals, suitable for a short commercial',seconds_total:10,enable_safety_checker:true};
    const prediction=await fal(models[kind],'POST',input);
    if(!validId(prediction.request_id))throw Error('Provider did not return a valid request identifier');
    await sql`INSERT INTO hl_studio_media_jobs(id,owner_email,kind,provider_request_id,provider_status) VALUES(${id}::uuid,${email},${kind},${prediction.request_id},'queued')`;
