@@ -31,3 +31,6 @@ Run `db/hl-studio-credits.sql` using a migration runner or the trusted database 
 
 ## Security / operations
 Do not expose server keys, Stripe webhooks, or database credentials in browser code. Make signed-in user ID authoritative. Rate-limit generations and webhooks; validate plan IDs and credit rates server-side. Review SQL migrations and handling of multiple active subscriptions prior to running production.
+
+## Latest backend update
+The database migration now defines transactional `hl_studio_reserve` and `hl_studio_finish` functions. The server-side ledger calls those functions. This addresses duplicate reservation and atomic settlement at the SQL design level, but the migration has not been run and concurrency tests have not yet been executed. No paid generation endpoint calls these functions yet. Authentication issuance, user registration, and verified email sign-in are still outstanding. Keep rollout disabled.
