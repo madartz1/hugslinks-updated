@@ -126,6 +126,8 @@ export const handler=async event=>{
   const customers=await stripe.customers.list({email,limit:20});
   let subscription=null;
   for(const c of customers.data){const found=await sql`SELECT plan,stripe_status FROM hl_studio_subscriptions WHERE stripe_customer_id=${c.id} AND is_entitled=TRUE ORDER BY updated_at DESC LIMIT 1`;if(found.length){subscription=found[0];break}}
-  return json(200,{authenticated:true,email,entitled:!!subscription,plan:subscription?.plan||null,status:subscription?.stripe_status||null});
+  await sql`CREATE TABLE IF NOT EXISTS hl_studio_passwords (email TEXT PRIMARY KEY,salt TEXT NOT NULL,password_hash TEXT NOT NULL,updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW())`;
+  const passwordRows=await sql`SELECT 1 FROM hl_studio_passwords WHERE email=${email} LIMIT 1`;
+  return json(200,{authenticated:true,email,entitled:!!subscription,plan:subscription?.plan||null,status:subscription?.stripe_status||null,hasPassword:passwordRows.length>0});
  }catch(e){console.error('HL Studio auth error',{category:e?.name||'unknown'});return json(500,{error:'Unable to complete sign-in'})}
 };
