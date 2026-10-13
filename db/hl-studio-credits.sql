@@ -88,3 +88,13 @@ BEGIN
  WHERE id=j.id;
  RETURN QUERY SELECT j.id, CASE WHEN p_success THEN 'completed' ELSE 'failed' END::TEXT;
 END $$;
+
+-- Verified email logins; never store plaintext login tokens.
+CREATE TABLE IF NOT EXISTS hl_studio_login_codes (
+ email TEXT PRIMARY KEY,
+ token_digest TEXT NOT NULL,
+ expires_at TIMESTAMPTZ NOT NULL,
+ attempts INTEGER NOT NULL DEFAULT 0,
+ last_sent_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+ CHECK(attempts>=0)
+);
