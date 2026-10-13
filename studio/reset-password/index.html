@@ -1,1 +1,90 @@
-<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Reset password | HL Studio</title></head><body><main><h1>HL Studio password reset</h1><form id="reset"><label>New password<input id="password" type="password" minlength="12" maxlength="128" autocomplete="new-password" required></label><label>Confirm password<input id="confirm" type="password" minlength="12" maxlength="128" autocomplete="new-password" required></label><button>Reset password</button></form><p id="status" role="status"></p><a href="/studio/">Return to Studio</a></main><script>const p=new URLSearchParams(location.search),token=p.get('token');history.replaceState({},'',location.pathname);const form=document.getElementById('reset'),status=document.getElementById('status');if(!token){form.hidden=true;status.textContent='Invalid reset link'}form.addEventListener('submit',async e=>{e.preventDefault();const password=document.getElementById('password').value;if(password!==document.getElementById('confirm').value){status.textContent='Passwords do not match';return}try{const r=await fetch('/.netlify/functions/hl-studio-auth?action=reset-password',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({token,password})});const data=await r.json();if(!r.ok)throw Error(data.error);status.textContent=data.message;form.hidden=true}catch(error){status.textContent=error.message}})</script></body></html>
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#102b45">
+<title>Reset your password | HUGSLinks Studio</title>
+<style>
+:root{font-family:Inter,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;color:#18334d;background:#eef5fa;font-synthesis:none}
+*{box-sizing:border-box}
+body{margin:0;min-height:100svh;background:radial-gradient(ellipse at 15% 0%,#dceefa 0,transparent 55%),linear-gradient(160deg,#f5f9fc,#eaf2f8);display:flex;flex-direction:column}
+header{padding:22px clamp(20px,5vw,64px);display:flex;align-items:center;justify-content:space-between;gap:12px}
+.brand{display:flex;align-items:center;gap:11px;text-decoration:none;color:#102b45;font-weight:800;letter-spacing:-.02em;font-size:19px}
+.mark{display:grid;place-items:center;width:43px;height:43px;border-radius:13px;background:#087fbc;color:white;font-size:23px;box-shadow:0 6px 15px #087fbc30}
+.toplink{color:#12658d;text-decoration:none;font-size:14px;font-weight:650}
+main{flex:1;display:grid;place-items:center;padding:24px 18px 70px}
+.card{width:100%;max-width:470px;background:white;border:1px solid #dce7f0;border-radius:23px;padding:clamp(24px,5vw,42px);box-shadow:0 24px 70px #163f6515}
+.symbol{display:grid;place-items:center;width:56px;height:56px;border-radius:17px;background:#e8f5fc;color:#0077b6;font-size:29px;margin-bottom:23px}
+.eyebrow{font-size:12px;font-weight:800;letter-spacing:.11em;color:#087fbc;text-transform:uppercase;margin:0 0 10px}
+h1{font-size:clamp(27px,6vw,34px);line-height:1.14;letter-spacing:-.045em;margin:0 0 13px;color:#102b45}
+.subtitle{color:#577084;line-height:1.55;font-size:15px;margin:0 0 28px}
+label{display:block;font-size:14px;font-weight:700;margin:0 0 9px}
+.field{position:relative;margin-bottom:20px}
+input{display:block;width:100%;height:52px;padding:0 64px 0 15px;font:inherit;font-size:16px;border:1px solid #b9cedc;border-radius:11px;background:#fff;color:#102b45;outline:none}
+input:focus{border-color:#087fbc;box-shadow:0 0 0 4px #087fbc1c}
+.reveal{position:absolute;right:11px;top:10px;border:0;background:transparent;color:#0873a5;font-weight:750;font-size:13px;padding:8px;cursor:pointer}
+.hint{font-size:12px;color:#6a8193;margin:-12px 0 22px}
+.primary{display:block;width:100%;border:0;border-radius:11px;padding:16px;background:#087fbc;color:white;font:inherit;font-weight:800;font-size:16px;cursor:pointer}
+.primary:hover{background:#086c9e}
+.primary:disabled{opacity:.6;cursor:wait}
+#status{font-size:14px;line-height:1.5;margin:17px 0 0;color:#176a94}
+#status.error{color:#b33239}
+#status.success{color:#146747}
+.footerlink{display:block;text-align:center;margin-top:26px;color:#0875a9;text-decoration:none;font-size:14px;font-weight:700}
+.note{border-top:1px solid #e5edf3;margin-top:26px;padding-top:18px;font-size:12px;color:#718496;line-height:1.6}
+footer{text-align:center;color:#698092;font-size:12px;padding:0 18px 24px}
+[hidden]{display:none!important}
+@media(max-width:480px){header{padding:16px 19px}.brand{font-size:16px}.mark{width:39px;height:39px}.card{border-radius:19px}main{padding-top:12px}.toplink{font-size:12px}}
+</style>
+</head>
+<body>
+<header>
+<a class="brand" href="/studio/"><span class="mark" aria-hidden="true">♡</span><span>HUGSLinks <strong>Studio</strong></span></a>
+<a class="toplink" href="/studio/">Back to Studio →</a>
+</header>
+<main>
+<section class="card" aria-labelledby="heading">
+<div class="symbol" aria-hidden="true">♧</div>
+<p class="eyebrow">Account security</p>
+<h1 id="heading">Create a new password</h1>
+<p class="subtitle">You're one step away from getting back to your HL Studio workspace. Choose a strong password to secure your account.</p>
+<form id="reset">
+<label for="password">New password</label>
+<div class="field"><input id="password" name="password" type="password" minlength="12" maxlength="128" autocomplete="new-password" required placeholder="Enter a new password"><button type="button" class="reveal" data-for="password" aria-label="Show new password">Show</button></div>
+<p class="hint">Use at least 12 characters.</p>
+<label for="confirm">Confirm new password</label>
+<div class="field"><input id="confirm" name="confirm" type="password" minlength="12" maxlength="128" autocomplete="new-password" required placeholder="Re-enter your password"><button type="button" class="reveal" data-for="confirm" aria-label="Show confirmation password">Show</button></div>
+<button class="primary" id="submit" type="submit">Update password →</button>
+</form>
+<p id="status" role="status" aria-live="polite"></p>
+<a class="footerlink" href="/studio/">← Return to HL Studio</a>
+<div class="note">🔒 This secure reset link is valid for 15 minutes and can be used only once. Updating your password signs out any other active sessions.</div>
+</section>
+</main>
+<footer>© HUGSLinks Studio · Produced by Resile Corp</footer>
+<script>
+(function(){
+ const params=new URLSearchParams(location.search),token=params.get('token');
+ history.replaceState({},'',location.pathname);
+ const form=document.getElementById('reset'),status=document.getElementById('status'),submit=document.getElementById('submit');
+ const say=(message,type)=>{status.textContent=message;status.className=type||''};
+ if(!token||!/^[a-f0-9]{64}$/.test(token)){form.hidden=true;say('This reset link is invalid. Return to HL Studio and request a new password reset link.','error')}
+ document.querySelectorAll('.reveal').forEach(button=>button.addEventListener('click',()=>{const input=document.getElementById(button.dataset.for),visible=input.type==='text';input.type=visible?'password':'text';button.textContent=visible?'Show':'Hide';button.setAttribute('aria-label',(visible?'Show ':'Hide ')+(button.dataset.for==='password'?'new password':'confirmation password'))}));
+ form.addEventListener('submit',async event=>{
+  event.preventDefault();
+  const password=document.getElementById('password').value,confirm=document.getElementById('confirm').value;
+  if(password!==confirm){say('The passwords do not match. Please try again.','error');return}
+  if(password.length<12||password.length>128){say('Your password must contain 12 to 128 characters.','error');return}
+  submit.disabled=true;submit.textContent='Updating your password…';say('Saving your new password securely…');
+  try{
+   const response=await fetch('/.netlify/functions/hl-studio-auth?action=reset-password',{method:'POST',credentials:'same-origin',headers:{'Content-Type':'application/json'},body:JSON.stringify({token,password})});
+   const data=await response.json();
+   if(!response.ok)throw Error(data.error||'Unable to reset password');
+   form.hidden=true;say('Your password has been updated successfully. Return to HL Studio and sign in with your new password.','success');
+  }catch(error){say(error.message||'Unable to reset password. Please try again.','error');submit.disabled=false;submit.textContent='Update password →'}
+ });
+})();
+</script>
+</body>
+</html>
