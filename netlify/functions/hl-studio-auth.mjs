@@ -14,7 +14,7 @@ const validPassword=value=>typeof value==='string'&&value.length>=12&&value.leng
 const safeEqual=(a,b)=>{const x=Buffer.from(a||''),y=Buffer.from(b||'');return x.length===y.length&&timingSafeEqual(x,y)};
 export const handler=async event=>{
  const action=(event.queryStringParameters?.action||'').toLowerCase();
- if(!['request','verify','status','logout','setup-password','password-login'].includes(action))return json(404,{error:'Not found'});
+ if(!['request','verify','status','logout','setup-password','password-login','reset-request','reset-password'].includes(action))return json(404,{error:'Not found'});
  if(!configured())return json(503,{error:'Subscriber sign-in not configured'});
  const sql=neon(process.env.HL_STUDIO_DATABASE_URL);
  const headers=event.headers||{};
@@ -25,6 +25,38 @@ export const handler=async event=>{
  const ua=headers['user-agent']||'';
  const secureToken=()=>randomBytes(32).toString('hex');
  try{
+  if(action==='reset-request'||action==='reset-password'){
+   if(event.httpMethod!=='POST')return json(405,{error:'Method not allowed'});
+   let body;try{body=JSON.parse(event.body||'{}')}catch{return json(400,{error:'Invalid request'})}
+   await sql`CREATE TABLE IF NOT EXISTS hl_studio_passwords (email TEXT PRIMARY KEY,salt TEXT NOT NULL,password_hash TEXT NOT NULL,updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW())`;
+   await sql`CREATE TABLE IF NOT EXISTS hl_studio_password_resets (token_hash TEXT PRIMARY KEY,email TEXT NOT NULL,expires_at TIMESTAMPTZ NOT NULL,used_at TIMESTAMPTZ,created_at TIMESTAMPTZ NOT NULL DEFAULT NOW())`;
+   if(action==='reset-request'){
+    const email=String(body.email||'').trim().toLowerCase();
+    if(!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)||email.length>254)return json(400,{error:'Enter a valid email address'});
+    const genericReset={message:'If this HL Studio account has a password, a reset link will be sent shortly.'};
+    const eligible=await sql`SELECT 1 FROM hl_studio_passwords WHERE email=${email} LIMIT 1`;
+    if(!eligible.length)return json(200,genericReset);
+    const recent=await sql`SELECT 1 FROM hl_studio_password_resets WHERE email=${email} AND created_at>NOW()-INTERVAL '5 minutes' LIMIT 1`;
+    if(recent.length)return json(200,genericReset);
+    const token=secureToken(),tokenHash=hash(process.env.HL_STUDIO_AUTH_SECRET+'reset:'+token);
+    await sql`DELETE FROM hl_studio_password_resets WHERE email=${email} AND used_at IS NULL`;
+    await sql`INSERT INTO hl_studio_password_resets(token_hash,email,expires_at) VALUES(${tokenHash},${email},NOW()+INTERVAL '15 minutes')`;
+    const link=origin+'/studio/reset-password/?token='+encodeURIComponent(token);
+    const response=await fetch('https://api.resend.com/emails',{method:'POST',headers:{Authorization:'Bearer '+process.env.HL_STUDIO_RESEND_API_KEY,'Content-Type':'application/json'},body:JSON.stringify({from:process.env.HL_STUDIO_EMAIL_FROM,to:[email],subject:'Reset your HL Studio password',html:'<div style="font-family:Arial,sans-serif;max-width:560px;margin:auto;padding:30px;color:#102b45"><h1>♡ HUGSLinks Studio</h1><p>We received a request to reset your HL Studio password.</p><p style="margin:30px 0"><a href="'+link+'" style="background:#087bbd;color:white;padding:15px 24px;text-decoration:none;border-radius:9px;font-weight:bold">Reset HL Studio password</a></p><p>This one-time link expires in 15 minutes. If you did not request this, ignore this email.</p><p style="font-size:13px;color:#567">HUGSLinks Studio · Produced by Resile Corp</p></div>',text:'HL Studio password reset (expires in 15 minutes):\n'+link+'\n\nIf you did not request this, ignore the message.'})});
+    if(!response.ok)console.error('HL Studio password reset email failed',{status:response.status});
+    return json(200,genericReset);
+   }
+   const token=String(body.token||''),password=body.password;
+   if(!/^[a-f0-9]{64}$/.test(token)||!validPassword(password))return json(400,{error:'Invalid reset link or password. Use 12 to 128 characters'});
+   const tokenHash=hash(process.env.HL_STUDIO_AUTH_SECRET+'reset:'+token);
+   const rows=await sql`UPDATE hl_studio_password_resets SET used_at=NOW() WHERE token_hash=${tokenHash} AND used_at IS NULL AND expires_at>NOW() RETURNING email`;
+   if(!rows.length)return json(401,{error:'Reset link is expired or already used'});
+   const email=rows[0].email,salt=randomBytes(32).toString('hex'),digest=await passwordDigest(password,salt);
+   await sql`UPDATE hl_studio_passwords SET salt=${salt},password_hash=${digest},updated_at=NOW() WHERE email=${email}`;
+   await sql`DELETE FROM hl_studio_auth_sessions WHERE email=${email}`;
+   await sql`DELETE FROM hl_studio_password_resets WHERE email=${email} AND used_at IS NULL`;
+   return json(200,{message:'Password updated. Sign in with your new password'},{'Set-Cookie':cookie('hl_studio_session','',0)});
+  }
   if(action==='setup-password'||action==='password-login'){
    if(event.httpMethod!=='POST')return json(405,{error:'Method not allowed'});
    let body;try{body=JSON.parse(event.body||'{}')}catch{return json(400,{error:'Invalid request'})}
