@@ -4,6 +4,7 @@ const json=(statusCode,data,headers={})=>({statusCode,headers:{'Content-Type':'a
 const hash=s=>createHash('sha256').update(s).digest('hex');
 const cookie=(name,value,age)=>`${name}=${value}; HttpOnly; Secure; SameSite=Lax; Path=/; Max-Age=${age}`;
 const configured=()=>!!(process.env.HL_STUDIO_DATABASE_URL&&process.env.HL_STUDIO_AUTH_SECRET&&process.env.HL_STUDIO_RESEND_API_KEY&&process.env.HL_STUDIO_EMAIL_FROM);
+const SESSION_SECONDS=30*24*60*60;
 const generic={message:'If that email has a subscription, a sign-in link will arrive shortly.'};
 const getCookie=(header,name)=>header?.split(';').map(s=>s.trim()).find(s=>s.startsWith(name+'='))?.slice(name.length+1);
 const safeEqual=(a,b)=>{const x=Buffer.from(a||''),y=Buffer.from(b||'');return x.length===y.length&&timingSafeEqual(x,y)};
@@ -27,6 +28,7 @@ export const handler=async event=>{
    if(!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)||email.length>254)return json(400,{error:'Enter a valid email'});
    await sql`CREATE TABLE IF NOT EXISTS hl_studio_auth_links (token_hash TEXT PRIMARY KEY, email TEXT NOT NULL, expires_at TIMESTAMPTZ NOT NULL, used_at TIMESTAMPTZ)`;
    await sql`CREATE TABLE IF NOT EXISTS hl_studio_auth_sessions (session_hash TEXT PRIMARY KEY, email TEXT NOT NULL, expires_at TIMESTAMPTZ NOT NULL)`;
+   await sql`ALTER TABLE hl_studio_auth_sessions ADD COLUMN IF NOT EXISTS last_activity_at TIMESTAMPTZ NOT NULL DEFAULT NOW()`;
    const rows=await sql`SELECT 1 FROM hl_studio_subscriptions WHERE stripe_customer_id IN (SELECT stripe_customer_id FROM hl_studio_subscriptions WHERE is_entitled=TRUE) LIMIT 0`;
    const stripeKey=process.env.HL_STUDIO_STRIPE_SECRET_KEY;
    if(!stripeKey)return json(503,{error:'Stripe configuration missing'});
@@ -40,8 +42,8 @@ export const handler=async event=>{
     const token=secureToken(),tokenHash=hash(process.env.HL_STUDIO_AUTH_SECRET+token);
     await sql`DELETE FROM hl_studio_auth_links WHERE email=${email} AND used_at IS NULL`;
     await sql`INSERT INTO hl_studio_auth_links (token_hash,email,expires_at) VALUES (${tokenHash},${email},NOW()+INTERVAL '15 minutes')`;
-    const link=origin+'/studio/?login_token='+encodeURIComponent(token);
-    const result=await fetch('https://api.resend.com/emails',{method:'POST',headers:{Authorization:'Bearer '+process.env.HL_STUDIO_RESEND_API_KEY,'Content-Type':'application/json'},body:JSON.stringify({from:process.env.HL_STUDIO_EMAIL_FROM,to:[email],subject:'Sign in to HL Studio',text:'Your one-time HL Studio sign-in link (expires in 15 minutes):\n'+link+'\n\nIf you did not request this, ignore this email.'})});
+    const link=origin+'/studio/sign-in/?token='+encodeURIComponent(token);
+    const result=await fetch('https://api.resend.com/emails',{method:'POST',headers:{Authorization:'Bearer '+process.env.HL_STUDIO_RESEND_API_KEY,'Content-Type':'application/json'},body:JSON.stringify({from:process.env.HL_STUDIO_EMAIL_FROM,to:[email],subject:'Your HL Studio secure sign-in link',html:'<div style="font-family:Arial,sans-serif;max-width:560px;margin:auto;padding:30px;color:#102b45"><h1 style="color:#102b45">HUGSLinks Studio</h1><p>Welcome back to HL Studio.</p><p>Use the secure button below to access your member dashboard.</p><p style="margin:30px 0"><a href="'+link+'" style="background:#087bbd;color:white;padding:15px 24px;text-decoration:none;border-radius:9px;font-weight:bold">Sign in to HL Studio</a></p><p>This link expires in 15 minutes and works once. For security, your session becomes inactive after one hour without activity.</p><p style="color:#567;font-size:13px">If you did not request this email, you can ignore it. HUGSLinks Studio · Produced by Resile Corp</p></div>',text:'HUGSLinks Studio — secure member sign-in\n\nOpen your HL Studio sign-in link (expires in 15 minutes):\n'+link+'\n\nYour session becomes inactive after one hour without activity. If you did not request this email, ignore it.'})});
     if(!result.ok){console.error('HL Studio auth email failed',{status:result.status});return json(502,{error:'Unable to send sign-in email'})}
    }
    return json(200,generic);
@@ -49,14 +51,15 @@ export const handler=async event=>{
   if(action==='verify'){
    if(event.httpMethod!=='POST')return json(405,{error:'Method not allowed'});
    let body;try{body=JSON.parse(event.body||'{}')}catch{return json(400,{error:'Invalid request'})}
+   await sql`ALTER TABLE hl_studio_auth_sessions ADD COLUMN IF NOT EXISTS last_activity_at TIMESTAMPTZ NOT NULL DEFAULT NOW()`;
    const token=String(body.token||'');
    if(!/^[a-f0-9]{64}$/.test(token))return json(401,{error:'Invalid or expired link'});
    const tokenHash=hash(process.env.HL_STUDIO_AUTH_SECRET+token);
    const rows=await sql`UPDATE hl_studio_auth_links SET used_at=NOW() WHERE token_hash=${tokenHash} AND used_at IS NULL AND expires_at>NOW() RETURNING email`;
    if(!rows.length)return json(401,{error:'Invalid or expired link'});
    const session=secureToken(),sessionHash=hash(process.env.HL_STUDIO_AUTH_SECRET+session);
-   await sql`INSERT INTO hl_studio_auth_sessions (session_hash,email,expires_at) VALUES (${sessionHash},${rows[0].email},NOW()+INTERVAL '7 days')`;
-   return json(200,{message:'Signed in'}, {'Set-Cookie':cookie('hl_studio_session',session,604800)});
+   await sql`INSERT INTO hl_studio_auth_sessions (session_hash,email,expires_at) VALUES (${sessionHash},${rows[0].email},NOW()+INTERVAL '30 days')`;
+   return json(200,{message:'Signed in'}, {'Set-Cookie':cookie('hl_studio_session',session,SESSION_SECONDS)});
   }
   const session=getCookie(headers.cookie||headers.Cookie,'hl_studio_session');
   if(action==='logout'){
@@ -67,8 +70,9 @@ export const handler=async event=>{
   if(event.httpMethod!=='GET')return json(405,{error:'Method not allowed'});
   if(!session||!/^[a-f0-9]{64}$/.test(session))return json(200,{authenticated:false});
   const sh=hash(process.env.HL_STUDIO_AUTH_SECRET+session);
-  const rows=await sql`SELECT email FROM hl_studio_auth_sessions WHERE session_hash=${sh} AND expires_at>NOW() LIMIT 1`;
-  if(!rows.length)return json(200,{authenticated:false});
+  await sql`ALTER TABLE hl_studio_auth_sessions ADD COLUMN IF NOT EXISTS last_activity_at TIMESTAMPTZ NOT NULL DEFAULT NOW()`;
+  const rows=await sql`UPDATE hl_studio_auth_sessions SET last_activity_at=NOW() WHERE session_hash=${sh} AND expires_at>NOW() AND last_activity_at>NOW()-INTERVAL '1 hour' RETURNING email`;
+  if(!rows.length)return json(200,{authenticated:false},{'Set-Cookie':cookie('hl_studio_session','',0)});
   const email=rows[0].email;
   const Stripe=(await import('stripe')).default;
   const stripe=new Stripe(process.env.HL_STUDIO_STRIPE_SECRET_KEY);
