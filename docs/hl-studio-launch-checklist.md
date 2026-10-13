@@ -34,3 +34,12 @@ Do not expose server keys, Stripe webhooks, or database credentials in browser c
 
 ## Latest backend update
 The database migration now defines transactional `hl_studio_reserve` and `hl_studio_finish` functions. The server-side ledger calls those functions. This addresses duplicate reservation and atomic settlement at the SQL design level, but the migration has not been run and concurrency tests have not yet been executed. No paid generation endpoint calls these functions yet. Authentication issuance, user registration, and verified email sign-in are still outstanding. Keep rollout disabled.
+
+## Authentication work committed (2026-10-13)
+- New `/studio/sign-in.html` asks for an email and six-digit code.
+- `hl-studio-request-code` sends codes through Resend, provided the mail sender and database are configured. Per-email throttle is 60 seconds.
+- `hl-studio-verify-code` consumes a valid code once, expires codes in 10 minutes, and blocks guesses after five attempts. Signed sessions use an HttpOnly, Secure, SameSite=Lax cookie.
+- `hl-studio-logout` clears the cookie.
+- New setting `HL_STUDIO_AUTH_ENABLED=false` MUST remain false until verification and abusive-request throttling are tested. Login code issuance additionally requires `RESEND_API_KEY`, `HL_STUDIO_FROM_EMAIL`, `HL_STUDIO_SESSION_SECRET`, and `HL_STUDIO_DATABASE_URL`.
+- Remaining before public activation: infrastructure/database migration, sender-domain verification, per-IP/device rate limiting, automated attack/CSRF tests, production login verification, Stripe subscription tests, generation path integration.
+- Publishing remains locked; these changes are only in the draft pull request. Do not merge or deploy until explicitly requested by the owner.
