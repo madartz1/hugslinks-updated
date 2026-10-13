@@ -40,3 +40,8 @@ Authenticated GET /api/member/credits returns plan, allowance, available, reserv
 
 ## Repository finding (2026-10-13)
 Default branch /studio/index.html currently shows Under Construction, and checked paths netlify/functions/hl-studio-checkout.mjs and hl-studio-stripe-webhook.mjs returned 404. Existing account/AI call plumbing must be identified before adding secure backend enforcement; inventing a balance in localStorage would not be secure.
+
+## Implementation safety gate (2026-10-13)
+The initial `_hl-studio-ledger.mjs` is **not approved as a production transaction layer**: the reservation SQL needs a concurrency/idempotency review and integration tests under parallel requests; do not connect it to an AI provider yet. The sign-in token validator is provided, but a verified account login/token-issuance flow is not yet implemented. The SQL migration has not been applied to a live database. The dashboard at `/studio/account.html` intentionally shows an unauthenticated message until identity and billing are connected. No live purchases or AI metering have been enabled.
+
+Customer-facing branding uses HUGSLinks Studio; payment processor references are for internal documentation and legal/payment disclosures only, not the product name.
