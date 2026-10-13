@@ -50,11 +50,11 @@ export const handler=async event=>{
   if(!/^[0-9a-f-]{36}$/i.test(id))return reply(400,{error:'Invalid asset'});
   const rows=await sql`SELECT blob_key,mime FROM hl_studio_assets WHERE id=${id}::uuid AND owner_email=${email} LIMIT 1`;
   if(!rows.length)return reply(404,{error:'Asset not found'});
-  const {getStore}=await import('@netlify/blobs');
-  const bytes=await getStore('hl-studio-private').get(rows[0].blob_key,{type:'arrayBuffer'});
+  let bytes;try{const {getStore}=await import('@netlify/blobs');bytes=await getStore('hl-studio-private').get(rows[0].blob_key,{type:'arrayBuffer'})}catch(error){console.error('HL Studio private media retrieval failed',{name:error?.name,code:error?.code});return reply(503,{error:'Private media storage is temporarily unavailable'})}
   if(!bytes)return reply(404,{error:'Asset unavailable'});
   return {statusCode:200,isBase64Encoded:true,headers:{'Content-Type':rows[0].mime,'Cache-Control':'private, no-store','X-Content-Type-Options':'nosniff','Content-Disposition':'attachment'},body:Buffer.from(bytes).toString('base64')};
  }
+ if(action==='ai-history'&&method==='GET'){const history=await sql`SELECT id,platform,headline,ad,cta,created_at FROM hl_studio_ai_drafts WHERE owner_email=${email} ORDER BY created_at DESC LIMIT 50`;return reply(200,{history})}
  if(method!=='POST')return reply(405,{error:'Method not allowed'});
  let body;try{body=JSON.parse(event.body||'{}')}catch{return reply(400,{error:'Invalid JSON'})}
  if(action==='upload'){
@@ -68,12 +68,10 @@ export const handler=async event=>{
   const count=await sql`SELECT COUNT(*)::int AS n FROM hl_studio_assets WHERE owner_email=${email}`;
   if(count[0].n>=limits.assets)return reply(403,{error:'Media limit reached for '+plan});
   const id=randomUUID(),key=email.replace(/[^a-z0-9]/g,'_')+'/'+id;
-  const {getStore}=await import('@netlify/blobs');
-  await getStore('hl-studio-private').set(key,bytes,{metadata:{mime}});
+  let store;try{const {getStore}=await import('@netlify/blobs');store=getStore('hl-studio-private');await store.set(key,bytes,{metadata:{mime}})}catch(error){console.error('HL Studio private media storage unavailable',{name:error?.name,code:error?.code});return reply(503,{error:'Private media storage is unavailable in this preview. Please retry after storage is configured.'})}
   await sql`INSERT INTO hl_studio_assets(id,owner_email,filename,mime,blob_key) VALUES(${id}::uuid,${email},${filename},${mime},${key})`;
   return reply(200,{message:'Media uploaded privately',id});
  }
- if(action==='ai-history'&&method==='GET'){const history=await sql`SELECT id,platform,headline,ad,cta,created_at FROM hl_studio_ai_drafts WHERE owner_email=${email} ORDER BY created_at DESC LIMIT 50`;return reply(200,{history})}
  if(action==='save-ai'){const platform=clean(body.platform,30),headline=clean(body.headline,180),ad=clean(body.ad,2000),cta=clean(body.cta,180);if(!['Instagram','Facebook','TikTok','Google Ads','Email','General'].includes(platform)||!headline||!ad||!cta)return reply(400,{error:'Invalid advertisement'});const id=randomUUID();await sql`INSERT INTO hl_studio_ai_drafts(id,owner_email,platform,headline,ad,cta) VALUES(${id}::uuid,${email},${platform},${headline},${ad},${cta})`;return reply(200,{id,message:'Advertisement saved'})}
  if(action==='generate'){
   const prompt=clean(body.prompt,1000),platform=clean(body.platform,30);
@@ -140,5 +138,5 @@ export const handler=async event=>{
   return rows.length?reply(200,{message:'Campaign deleted'}):reply(404,{error:'Project not found'});
  }
  return reply(404,{error:'Unknown action'});
- }catch(e){console.error('HL Studio merchant error',{category:e?.name||'unknown',code:e?.code||undefined});return reply(500,{error:'Unable to load merchant dashboard'})}
+ }catch(e){console.error('HL Studio merchant error',{category:e?.name||'unknown',code:e?.code||undefined,message:e?.message});const error=String(e?.message||'');const isSchema=/relation .* does not exist|column .* does not exist|permission denied|syntax error/i.test(error);return reply(500,{error:isSchema?'Studio database needs an update. Please contact support.':'Unable to complete this Studio request. Please try again.'})}
 };
