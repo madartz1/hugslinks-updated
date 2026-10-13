@@ -5,18 +5,19 @@ const HUGS_PUBLIC_NAV=[
  ['reviews.html','HUGS Reviews'],['help-app.html','Help App'],['help-center.html','Help Center'],
  ['resources.html','Resources'],['nyc-updates.html','NYC Updates'],['about.html','About'],['contact.html','Contact']
 ];
-document.querySelectorAll('.navlinks').forEach(nav=>{
- // Preserve authored navigation and append only genuinely missing destinations.
- // Update the set as links are added, preventing duplicate entries.
- const existing=new Set([...nav.querySelectorAll('a')].map(a=>new URL(a.getAttribute('href'),location.href).pathname));
- HUGS_PUBLIC_NAV.forEach(([href,label])=>{
+// Homepage navigation is fully authored in index.html. Do not append another menu.
+// Legacy pages may still need missing links added.
+if (!document.body.classList.contains('hugs-home-nav-static')) {
+ document.querySelectorAll('.navlinks').forEach(nav=>{
+  const existing=new Set([...nav.querySelectorAll('a')].map(a=>new URL(a.href).pathname));
+  HUGS_PUBLIC_NAV.forEach(([href,label])=>{
    const pathname=new URL(href,location.href).pathname;
    if(!existing.has(pathname)){
-     const a=document.createElement('a');a.href=href;a.textContent=label;nav.appendChild(a);
-     existing.add(pathname);
+    const a=document.createElement('a');a.href=href;a.textContent=label;nav.appendChild(a);existing.add(pathname);
    }
+  });
  });
-});
+}
 document.querySelectorAll('.menu').forEach(btn=>btn.addEventListener('click',()=>{
  const nav=btn.closest('.nav')?.querySelector('.navlinks')||document.querySelector('.navlinks');
  if(nav){nav.classList.toggle('open');btn.setAttribute('aria-expanded',String(nav.classList.contains('open')));}
