@@ -81,12 +81,12 @@ export const handler=async event=>{
   if(!claim.length)return reply(403,{error:'Monthly AI generation limit reached'});
   try{
    const response=await fetch('https://api.openai.com/v1/responses',{method:'POST',headers:{Authorization:'Bearer '+process.env.HL_STUDIO_OPENAI_API_KEY,'Content-Type':'application/json'},body:JSON.stringify({model:'gpt-4.1-mini',max_output_tokens:400,input:[{role:'system',content:'Write concise, truthful promotional copy for a small business. No invented claims. Output a headline, two-sentence ad, and CTA in plain text.'},{role:'user',content:prompt}]})});
-   if(!response.ok)throw Error('AI provider unavailable');
+   if(!response.ok){const code=response.status;const detail=await response.json().catch(()=>({}));const providerCode=detail?.error?.code||detail?.error?.type||'unknown';console.error('HL Studio AI provider request failed',{status:code,providerCode});const category=code===401||code===403?'AI provider authentication failed':code===429?'AI provider quota or rate limit reached':code===400||code===404?'AI model or request configuration needs attention':'AI provider unavailable';throw Error(category);}
    const result=await response.json();
    const output=(result.output||[]).flatMap(x=>x.content||[]).filter(x=>x.type==='output_text').map(x=>x.text).join('\n').slice(0,2000);
    if(!output)throw Error('No generated text');
    return reply(200,{output,used:claim[0].used,limit:limits.ai});
-  }catch(e){await sql`UPDATE hl_studio_ai_usage SET used=GREATEST(0,used-1) WHERE owner_email=${email} AND month=${month}`;return reply(502,{error:'AI generation temporarily unavailable'})}
+  }catch(e){console.error('HL Studio AI generation failed',{reason:e.message});await sql`UPDATE hl_studio_ai_usage SET used=GREATEST(0,used-1) WHERE owner_email=${email} AND month=${month}`;return reply(502,{error:['AI provider authentication failed','AI provider quota or rate limit reached','AI model or request configuration needs attention'].includes(e.message)?e.message:'AI generation temporarily unavailable'})}
  }
  if(action==='publish'){
   if(!limits.publish)return reply(403,{error:'Publishing requires Growth or Pro'});
