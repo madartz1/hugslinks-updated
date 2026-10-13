@@ -1,0 +1,26 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="robots" content="noindex,nofollow"><title>My HUGSLinks Studio | Credits</title><style>
+*{box-sizing:border-box}body{margin:0;background:#081725;color:#edf7ff;font:16px/1.55 system-ui,-apple-system,sans-serif}main{max-width:1000px;margin:auto;padding:28px 20px 70px}a{color:#8dd8ff}.brand{font-size:23px;font-weight:900;text-decoration:none;color:white}.brand span{color:#5abfff}h1{font-size:clamp(30px,5vw,46px)}.panel{background:#112b41;border:1px solid #315672;padding:24px;border-radius:18px;margin:20px 0}.metrics{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}.metric{background:#173a54;padding:18px;border-radius:12px}.metric strong{font-size:32px;display:block}.muted{color:#b9d0e1}table{width:100%;border-collapse:collapse}td,th{padding:12px;text-align:left;border-bottom:1px solid #365674}.table-wrap{overflow:auto}button{background:#167fc1;color:white;border:0;border-radius:12px;padding:12px 20px;cursor:pointer;font:inherit;font-weight:700}button:disabled{opacity:.45;cursor:not-allowed}@media(max-width:650px){.metrics{grid-template-columns:1fr}}:focus-visible{outline:3px solid #8bdcff;outline-offset:3px}
+</style></head><body><main><nav><a class="brand" href="/">HUGS<span>Links</span> Studio</a> · <a href="/studio/plans.html">View plans</a></nav><h1>My Studio account</h1><p class="muted">View your HUGSLinks Studio subscription, monthly credits, and AI generation activity.</p>
+<section class="panel" aria-live="polite"><h2>AI credit balance</h2><p id="status">Checking your HUGSLinks Studio account…</p><div id="balances" class="metrics" hidden><div class="metric">Available<strong id="available"></strong></div><div class="metric">Used<strong id="spent"></strong></div><div class="metric">Reserved<strong id="reserved"></strong></div></div><p id="plan" class="muted"></p><button id="refresh" type="button">Refresh credits</button></section>
+<section class="panel"><h2>Generation history</h2><div class="table-wrap"><table><thead><tr><th>Date</th><th>Generation type</th><th>Credits</th><th>Status</th></tr></thead><tbody id="history"><tr><td colspan="4">Sign in to see your generation history.</td></tr></tbody></table></div></section><p class="muted">Credits renew with your paid HUGSLinks Studio subscription. This account page cannot generate AI content or purchase additional credits.</p></main><script>
+const text=(id,value)=>document.getElementById(id).textContent=value;
+async function refresh(){
+ text('status','Checking your HUGSLinks Studio account…');document.getElementById('balances').hidden=true;
+ try{
+ const response=await fetch('/.netlify/functions/hl-studio-credits',{credentials:'same-origin',cache:'no-store'});
+ if(response.status===401){text('status','Studio account sign-in is not yet available. Your balance will appear here once account access is connected.');return}
+ if(!response.ok)throw Error('Account temporarily unavailable');
+ const data=await response.json();
+ if(!data.active){text('status','No active HUGSLinks Studio credit subscription is linked to this account.');return}
+ text('status','Your '+data.plan+' membership');document.getElementById('balances').hidden=false;
+ for(const k of ['available','spent','reserved'])text(k,String(data[k]??0));
+ text('plan',String(data.allowance)+' monthly credits · Renews '+new Date(data.period_end).toLocaleDateString());
+ const body=document.getElementById('history');body.replaceChildren();
+ for(const entry of (data.history||[])){
+ const tr=document.createElement('tr');
+ for(const value of [new Date(entry.created_at).toLocaleString(),String(entry.action).replaceAll('_',' '),String(entry.credits),String(entry.status)]){const td=document.createElement('td');td.textContent=value;tr.append(td)}body.append(tr)}
+ if(!(data.history||[]).length){const tr=document.createElement('tr'),td=document.createElement('td');td.colSpan=4;td.textContent='No generations this billing period.';tr.append(td);body.append(tr)}
+ }catch(e){text('status','Your credit balance is not available yet. Please try again later.')}
+}
+document.getElementById('refresh').addEventListener('click',refresh);refresh();
+</script></body></html>
