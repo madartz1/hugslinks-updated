@@ -14,11 +14,13 @@ export default async function(req){
  const sql=neon(process.env.HL_STUDIO_DATABASE_URL);
  // A failed guess consumes an attempt. Concurrent attempts serialize on the email row.
  const rows=await sql`
- UPDATE hl_studio_login_codes SET attempts=attempts+1
- WHERE email=${email} AND expires_at>NOW() AND attempts<5
- RETURNING token_digest`;
- if(!rows.length||rows[0].token_digest!==digest)return Response.json({error:'Code expired or invalid'},{status:401,headers});
- await sql`DELETE FROM hl_studio_login_codes WHERE email=${email} AND token_digest=${digest}`;
+ DELETE FROM hl_studio_login_codes
+ WHERE email=${email} AND token_digest=${digest} AND expires_at>NOW() AND attempts<5
+ RETURNING email`;
+ if(!rows.length){
+   await sql`UPDATE hl_studio_login_codes SET attempts=attempts+1 WHERE email=${email} AND expires_at>NOW() AND attempts<5`;
+   return Response.json({error:'Code expired or invalid'},{status:401,headers});
+ }
  const token=signStudioSession(accountId(email));
  return Response.json({ok:true},{headers:{...headers,'Set-Cookie':sessionCookie+'='+token+'; '+cookieOptions}});
  }catch(e){console.error('Studio sign-in verification failed',e);return Response.json({error:'Sign-in unavailable'},{status:503,headers})}
