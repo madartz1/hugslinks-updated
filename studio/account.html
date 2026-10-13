@@ -8,7 +8,7 @@ async function refresh(){
  text('status','Checking your HUGSLinks Studio account…');document.getElementById('balances').hidden=true;
  try{
  const response=await fetch('/.netlify/functions/hl-studio-credits',{credentials:'same-origin',cache:'no-store'});
- if(response.status===401){text('status','Studio account sign-in is not yet available. Your balance will appear here once account access is connected.');return}
+ if(response.status===401){text('status','Sign in at /studio/sign-in.html to view your credit balance.');return}
  if(!response.ok)throw Error('Account temporarily unavailable');
  const data=await response.json();
  if(!data.active){text('status','No active HUGSLinks Studio credit subscription is linked to this account.');return}
