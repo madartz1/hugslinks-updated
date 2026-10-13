@@ -1,5 +1,7 @@
 import { neon } from '@neondatabase/serverless';
-import { randomBytes, createHash, timingSafeEqual } from 'node:crypto';
+import { randomBytes, createHash, timingSafeEqual, scrypt as scryptCallback } from 'node:crypto';
+import { promisify } from 'node:util';
+const scrypt=promisify(scryptCallback);
 const json=(statusCode,data,headers={})=>({statusCode,headers:{'Content-Type':'application/json','Cache-Control':'no-store',...headers},body:JSON.stringify(data)});
 const hash=s=>createHash('sha256').update(s).digest('hex');
 const cookie=(name,value,age)=>`${name}=${value}; HttpOnly; Secure; SameSite=Lax; Path=/; Max-Age=${age}`;
@@ -7,10 +9,12 @@ const configured=()=>!!(process.env.HL_STUDIO_DATABASE_URL&&process.env.HL_STUDI
 const SESSION_SECONDS=30*24*60*60;
 const generic={message:'If that email has a subscription, a sign-in link will arrive shortly.'};
 const getCookie=(header,name)=>header?.split(';').map(s=>s.trim()).find(s=>s.startsWith(name+'='))?.slice(name.length+1);
+const passwordDigest=async(password,salt)=>{const bytes=await scrypt(password,Buffer.from(salt,'hex'),64,{N:16384,r:8,p:1});return bytes.toString('hex')};
+const validPassword=value=>typeof value==='string'&&value.length>=12&&value.length<=128;
 const safeEqual=(a,b)=>{const x=Buffer.from(a||''),y=Buffer.from(b||'');return x.length===y.length&&timingSafeEqual(x,y)};
 export const handler=async event=>{
  const action=(event.queryStringParameters?.action||'').toLowerCase();
- if(!['request','verify','status','logout'].includes(action))return json(404,{error:'Not found'});
+ if(!['request','verify','status','logout','setup-password','password-login'].includes(action))return json(404,{error:'Not found'});
  if(!configured())return json(503,{error:'Subscriber sign-in not configured'});
  const sql=neon(process.env.HL_STUDIO_DATABASE_URL);
  const headers=event.headers||{};
@@ -21,6 +25,49 @@ export const handler=async event=>{
  const ua=headers['user-agent']||'';
  const secureToken=()=>randomBytes(32).toString('hex');
  try{
+  if(action==='setup-password'||action==='password-login'){
+   if(event.httpMethod!=='POST')return json(405,{error:'Method not allowed'});
+   let body;try{body=JSON.parse(event.body||'{}')}catch{return json(400,{error:'Invalid request'})}
+   await sql`CREATE TABLE IF NOT EXISTS hl_studio_passwords (email TEXT PRIMARY KEY,salt TEXT NOT NULL,password_hash TEXT NOT NULL,updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW())`;
+   await sql`CREATE TABLE IF NOT EXISTS hl_studio_password_attempts (identity_hash TEXT PRIMARY KEY,attempts INTEGER NOT NULL DEFAULT 0,window_started TIMESTAMPTZ NOT NULL DEFAULT NOW(),locked_until TIMESTAMPTZ)`;
+   await sql`CREATE TABLE IF NOT EXISTS hl_studio_auth_sessions (session_hash TEXT PRIMARY KEY,email TEXT NOT NULL,expires_at TIMESTAMPTZ NOT NULL)`;
+   await sql`ALTER TABLE hl_studio_auth_sessions ADD COLUMN IF NOT EXISTS last_activity_at TIMESTAMPTZ NOT NULL DEFAULT NOW()`;
+   if(action==='setup-password'){
+    const session=getCookie(headers.cookie||headers.Cookie,'hl_studio_session');
+    if(!session||!/^[a-f0-9]{64}$/.test(session))return json(401,{error:'Verify your email before creating a password'});
+    const sh=hash(process.env.HL_STUDIO_AUTH_SECRET+session);
+    const rows=await sql`SELECT email FROM hl_studio_auth_sessions WHERE session_hash=${sh} AND expires_at>NOW() AND last_activity_at>NOW()-INTERVAL '1 hour' LIMIT 1`;
+    if(!rows.length)return json(401,{error:'Your session expired. Verify your email to set a password'});
+    if(!validPassword(body.password))return json(400,{error:'Use a password of 12 to 128 characters'});
+    const exists=await sql`SELECT 1 FROM hl_studio_passwords WHERE email=${rows[0].email}`;
+    if(exists.length)return json(409,{error:'A password is already configured. Sign in with your password'});
+    const salt=randomBytes(32).toString('hex'),digest=await passwordDigest(body.password,salt);
+    await sql`INSERT INTO hl_studio_passwords(email,salt,password_hash) VALUES(${rows[0].email},${salt},${digest}) ON CONFLICT DO NOTHING`;
+    return json(200,{message:'Password created. You can now sign in without an email link'});
+   }
+   const email=String(body.email||'').trim().toLowerCase(),password=body.password;
+   if(!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)||email.length>254||typeof password!=='string'||password.length>128)return json(401,{error:'Invalid email or password'});
+   const ip=(headers['x-nf-client-connection-ip']||headers['x-forwarded-for']||'unknown').split(',')[0].trim().slice(0,80);
+   const identity=hash(process.env.HL_STUDIO_AUTH_SECRET+email+':'+ip);
+   const lock=await sql`INSERT INTO hl_studio_password_attempts(identity_hash,attempts,window_started,locked_until) VALUES(${identity},0,NOW(),NULL) ON CONFLICT(identity_hash) DO UPDATE SET attempts=CASE WHEN hl_studio_password_attempts.window_started<NOW()-INTERVAL '15 minutes' THEN 0 ELSE hl_studio_password_attempts.attempts END,window_started=CASE WHEN hl_studio_password_attempts.window_started<NOW()-INTERVAL '15 minutes' THEN NOW() ELSE hl_studio_password_attempts.window_started END RETURNING attempts,locked_until`;
+   if(lock[0].locked_until&&new Date(lock[0].locked_until)>new Date())return json(429,{error:'Too many attempts. Try again in 15 minutes'});
+   const rows=await sql`SELECT salt,password_hash FROM hl_studio_passwords WHERE email=${email}`;
+   const salt=rows[0]?.salt||'00'.repeat(32),digest=await passwordDigest(password,salt);
+   if(!rows.length||!safeEqual(digest,rows[0].password_hash)){
+    await sql`UPDATE hl_studio_password_attempts SET attempts=attempts+1,locked_until=CASE WHEN attempts>=4 THEN NOW()+INTERVAL '15 minutes' ELSE locked_until END WHERE identity_hash=${identity}`;
+    return json(401,{error:'Invalid email or password'});
+   }
+   const Stripe=(await import('stripe')).default;
+   const stripe=new Stripe(process.env.HL_STUDIO_STRIPE_SECRET_KEY);
+   const customers=await stripe.customers.list({email,limit:20});
+   let subscribed=false;
+   for(const c of customers.data){const found=await sql`SELECT 1 FROM hl_studio_subscriptions WHERE stripe_customer_id=${c.id} AND is_entitled=TRUE LIMIT 1`;if(found.length){subscribed=true;break}}
+   if(!subscribed)return json(403,{error:'An active HL Studio subscription is required'});
+   await sql`DELETE FROM hl_studio_password_attempts WHERE identity_hash=${identity}`;
+   const session=secureToken(),sessionHash=hash(process.env.HL_STUDIO_AUTH_SECRET+session);
+   await sql`INSERT INTO hl_studio_auth_sessions(session_hash,email,expires_at) VALUES(${sessionHash},${email},NOW()+INTERVAL '30 days')`;
+   return json(200,{message:'Signed in'}, {'Set-Cookie':cookie('hl_studio_session',session,SESSION_SECONDS)});
+  }
   if(action==='request'){
    if(event.httpMethod!=='POST')return json(405,{error:'Method not allowed'});
    let input;try{input=JSON.parse(event.body||'{}')}catch{return json(400,{error:'Invalid request'})}
