@@ -6,9 +6,15 @@ const HUGS_PUBLIC_NAV=[
  ['resources.html','Resources'],['nyc-updates.html','NYC Updates'],['about.html','About'],['contact.html','Contact']
 ];
 document.querySelectorAll('.navlinks').forEach(nav=>{
- const existing=new Map([...nav.querySelectorAll('a')].map(a=>[a.getAttribute('href'),a]));
+ // Preserve authored navigation and append only genuinely missing destinations.
+ // Update the set as links are added, preventing duplicate entries.
+ const existing=new Set([...nav.querySelectorAll('a')].map(a=>new URL(a.getAttribute('href'),location.href).pathname.replace(/\\/$/,'/')));
  HUGS_PUBLIC_NAV.forEach(([href,label])=>{
-   if(!existing.has(href)){const a=document.createElement('a');a.href=href;a.textContent=label;nav.appendChild(a);}
+   const pathname=new URL(href,location.href).pathname.replace(/\\/$/,'/');
+   if(!existing.has(pathname)){
+     const a=document.createElement('a');a.href=href;a.textContent=label;nav.appendChild(a);
+     existing.add(pathname);
+   }
  });
 });
 document.querySelectorAll('.menu').forEach(btn=>btn.addEventListener('click',()=>{
