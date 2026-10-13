@@ -8,9 +8,9 @@ const HUGS_PUBLIC_NAV=[
 document.querySelectorAll('.navlinks').forEach(nav=>{
  // Preserve authored navigation and append only genuinely missing destinations.
  // Update the set as links are added, preventing duplicate entries.
- const existing=new Set([...nav.querySelectorAll('a')].map(a=>new URL(a.getAttribute('href'),location.href).pathname.replace(/\\/$/,'/')));
+ const existing=new Set([...nav.querySelectorAll('a')].map(a=>new URL(a.getAttribute('href'),location.href).pathname));
  HUGS_PUBLIC_NAV.forEach(([href,label])=>{
-   const pathname=new URL(href,location.href).pathname.replace(/\\/$/,'/');
+   const pathname=new URL(href,location.href).pathname;
    if(!existing.has(pathname)){
      const a=document.createElement('a');a.href=href;a.textContent=label;nav.appendChild(a);
      existing.add(pathname);
