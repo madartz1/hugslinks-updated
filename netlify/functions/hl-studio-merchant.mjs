@@ -14,7 +14,8 @@ export const handler=async event=>{
  const sql=neon(process.env.HL_STUDIO_DATABASE_URL);
  try{
  const sessionHash=hash(process.env.HL_STUDIO_AUTH_SECRET+raw);
- const sessions=await sql`SELECT email FROM hl_studio_auth_sessions WHERE session_hash=${sessionHash} AND expires_at>NOW() LIMIT 1`;
+ await sql`ALTER TABLE hl_studio_auth_sessions ADD COLUMN IF NOT EXISTS last_activity_at TIMESTAMPTZ NOT NULL DEFAULT NOW()`;
+ const sessions=await sql`UPDATE hl_studio_auth_sessions SET last_activity_at=NOW() WHERE session_hash=${sessionHash} AND expires_at>NOW() AND last_activity_at>NOW()-INTERVAL '1 hour' RETURNING email`;
  if(!sessions.length)return reply(401,{error:'Your session has expired. Sign in again.'});
  const email=sessions[0].email;
  const stripe=new Stripe(process.env.HL_STUDIO_STRIPE_SECRET_KEY);
