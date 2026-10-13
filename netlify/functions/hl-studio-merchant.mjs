@@ -30,6 +30,7 @@ export const handler=async event=>{
  await sql`CREATE TABLE IF NOT EXISTS hl_studio_assets (id UUID PRIMARY KEY,owner_email TEXT NOT NULL,filename TEXT NOT NULL,mime TEXT NOT NULL,blob_key TEXT NOT NULL,created_at TIMESTAMPTZ DEFAULT NOW())`;
  await sql`CREATE TABLE IF NOT EXISTS hl_studio_publications (campaign_id UUID PRIMARY KEY,owner_email TEXT NOT NULL,slug TEXT UNIQUE NOT NULL,published_at TIMESTAMPTZ NOT NULL DEFAULT NOW())`;
  await sql`CREATE TABLE IF NOT EXISTS hl_studio_ai_usage (owner_email TEXT NOT NULL,month TEXT NOT NULL,used INTEGER NOT NULL DEFAULT 0,PRIMARY KEY(owner_email,month))`;
+ await sql`CREATE TABLE IF NOT EXISTS hl_studio_ai_drafts (id UUID PRIMARY KEY,owner_email TEXT NOT NULL,platform TEXT NOT NULL,headline TEXT NOT NULL,ad TEXT NOT NULL,cta TEXT NOT NULL,created_at TIMESTAMPTZ NOT NULL DEFAULT NOW())`;
  const tiers={starter:{campaigns:5,assets:10,ai:10,publish:false},growth:{campaigns:25,assets:50,ai:100,publish:true},pro:{campaigns:100,assets:250,ai:500,publish:true}};
  const limits=tiers[plan];
  const action=event.queryStringParameters?.action||'dashboard';
@@ -71,8 +72,11 @@ export const handler=async event=>{
   await sql`INSERT INTO hl_studio_assets(id,owner_email,filename,mime,blob_key) VALUES(${id}::uuid,${email},${filename},${mime},${key})`;
   return reply(200,{message:'Media uploaded privately',id});
  }
+ if(action==='ai-history'&&method==='GET'){const history=await sql`SELECT id,platform,headline,ad,cta,created_at FROM hl_studio_ai_drafts WHERE owner_email=${email} ORDER BY created_at DESC LIMIT 50`;return reply(200,{history})}
+ if(action==='save-ai'){const platform=clean(body.platform,30),headline=clean(body.headline,180),ad=clean(body.ad,2000),cta=clean(body.cta,180);if(!['Instagram','Facebook','TikTok','Google Ads','Email','General'].includes(platform)||!headline||!ad||!cta)return reply(400,{error:'Invalid advertisement'});const id=randomUUID();await sql`INSERT INTO hl_studio_ai_drafts(id,owner_email,platform,headline,ad,cta) VALUES(${id}::uuid,${email},${platform},${headline},${ad},${cta})`;return reply(200,{id,message:'Advertisement saved'})}
  if(action==='generate'){
-  const prompt=clean(body.prompt,1000);
+  const prompt=clean(body.prompt,1000),platform=clean(body.platform,30);
+  if(!['Instagram','Facebook','TikTok','Google Ads','Email','General'].includes(platform))return reply(400,{error:'Choose an advertising platform'});
   if(prompt.length<10)return reply(400,{error:'Describe your promotion in at least 10 characters'});
   if(!process.env.HL_STUDIO_OPENAI_API_KEY)return reply(503,{error:'AI generation is not configured'});
   const month=new Date().toISOString().slice(0,7);
@@ -80,12 +84,13 @@ export const handler=async event=>{
   const claim=await sql`UPDATE hl_studio_ai_usage SET used=used+1 WHERE owner_email=${email} AND month=${month} AND used<${limits.ai} RETURNING used`;
   if(!claim.length)return reply(403,{error:'Monthly AI generation limit reached'});
   try{
-   const response=await fetch('https://api.openai.com/v1/responses',{method:'POST',headers:{Authorization:'Bearer '+process.env.HL_STUDIO_OPENAI_API_KEY,'Content-Type':'application/json'},body:JSON.stringify({model:'gpt-4.1-mini',max_output_tokens:400,input:[{role:'system',content:'Write concise, truthful promotional copy for a small business. No invented claims. Output a headline, two-sentence ad, and CTA in plain text.'},{role:'user',content:prompt}]})});
+   const response=await fetch('https://api.openai.com/v1/responses',{method:'POST',headers:{Authorization:'Bearer '+process.env.HL_STUDIO_OPENAI_API_KEY,'Content-Type':'application/json'},body:JSON.stringify({model:'gpt-4.1-mini',max_output_tokens:400,input:[{role:'system',content:'Write concise, truthful promotional copy for a small business. No invented claims. Return ONLY valid JSON with string keys headline, ad, cta. Write a concise headline, two-sentence ad, and CTA. Do not include markdown.'},{role:'user',content:'Platform: '+platform+'\nPromotion: '+prompt}]})});
    if(!response.ok){const code=response.status;const detail=await response.json().catch(()=>({}));const providerCode=detail?.error?.code||detail?.error?.type||'unknown';console.error('HL Studio AI provider request failed',{status:code,providerCode});const category=code===401||code===403?'AI provider authentication failed':code===429?'AI provider quota or rate limit reached':code===400||code===404?'AI model or request configuration needs attention':'AI provider unavailable';throw Error(category);}
    const result=await response.json();
    const output=(result.output||[]).flatMap(x=>x.content||[]).filter(x=>x.type==='output_text').map(x=>x.text).join('\n').slice(0,2000);
    if(!output)throw Error('No generated text');
-   return reply(200,{output,used:claim[0].used,limit:limits.ai});
+   let draft;try{const parsed=JSON.parse(output.replace(/^\x60\x60\x60(?:json)?\s*|\s*\x60\x60\x60$/g,''));draft={platform,headline:clean(parsed.headline,180),ad:clean(parsed.ad,2000),cta:clean(parsed.cta,180)};if(!draft.headline||!draft.ad||!draft.cta)throw Error()}catch{throw Error('Invalid AI response format')}
+   return reply(200,{draft,used:claim[0].used,limit:limits.ai});
   }catch(e){console.error('HL Studio AI generation failed',{reason:e.message});await sql`UPDATE hl_studio_ai_usage SET used=GREATEST(0,used-1) WHERE owner_email=${email} AND month=${month}`;return reply(502,{error:['AI provider authentication failed','AI provider quota or rate limit reached','AI model or request configuration needs attention'].includes(e.message)?e.message:'AI generation temporarily unavailable'})}
  }
  if(action==='publish'){
