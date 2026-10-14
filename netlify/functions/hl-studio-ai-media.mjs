@@ -9,8 +9,9 @@ const models={video:'fal-ai/fast-svd/text-to-video',music:'fal-ai/stable-audio'}
 // Do not expand limits until separately approved.
 const tiers={starter:{video:1,music:1},growth:{video:1,music:1},pro:{video:1,music:1}};
 const validId=id=>/^[a-zA-Z0-9_-]{12,100}$/.test(id||'');
+const providerUrl=value=>{const url=new URL(value,'https://queue.fal.run/');if(url.protocol!=='https:'||url.hostname!=='queue.fal.run'||url.username||url.password)throw Error('Invalid provider URL');return url.toString()};
 const fal=async(path,method='GET',body)=>{
- const res=await fetch('https://queue.fal.run/'+path,{method,headers:{Authorization:'Key '+process.env.HL_STUDIO_FAL_KEY,...(body?{'Content-Type':'application/json'}:{})},...(body?{body:JSON.stringify(body)}:{})});
+ const res=await fetch(providerUrl(path),{method,headers:{Authorization:'Key '+process.env.HL_STUDIO_FAL_KEY,...(body?{'Content-Type':'application/json'}:{})},...(body?{body:JSON.stringify(body)}:{})});
  const data=await res.json().catch(()=>({}));
  if(!res.ok)throw Error('Media provider error ('+res.status+'): '+String(data.detail||data.message||'Please retry').slice(0,180));
  return data;
@@ -33,6 +34,8 @@ export const handler=async event=>{
  for(const customer of customers.data){const rows=await sql`SELECT plan FROM hl_studio_subscriptions WHERE stripe_customer_id=${customer.id} AND is_entitled=TRUE ORDER BY updated_at DESC LIMIT 1`;if(rows.length){plan=rows[0].plan;break}}
  if(!tiers[plan])return reply(403,{error:'An active HL Studio membership is required'});
  await sql`CREATE TABLE IF NOT EXISTS hl_studio_media_jobs (id UUID PRIMARY KEY,owner_email TEXT NOT NULL,kind TEXT NOT NULL,provider_request_id TEXT,provider_status TEXT NOT NULL DEFAULT 'pending',output_url TEXT,created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW())`;
+ await sql`ALTER TABLE hl_studio_media_jobs ADD COLUMN IF NOT EXISTS provider_status_url TEXT`;
+ await sql`ALTER TABLE hl_studio_media_jobs ADD COLUMN IF NOT EXISTS provider_response_url TEXT`;
  await sql`CREATE TABLE IF NOT EXISTS hl_studio_media_usage (owner_email TEXT NOT NULL,month TEXT NOT NULL,kind TEXT NOT NULL,used INTEGER NOT NULL DEFAULT 0,PRIMARY KEY(owner_email,month,kind))`;
  const action=event.queryStringParameters?.action||'config';
  if(action==='config'&&event.httpMethod==='GET'){
@@ -40,9 +43,13 @@ export const handler=async event=>{
   const counts=Object.fromEntries(usage.map(row=>[row.kind,row.used]));
   return reply(200,{testOnly:true,enabled:isTestAccount&&process.env.HL_STUDIO_AI_MEDIA_ENABLED==='true'&&!!process.env.HL_STUDIO_FAL_KEY,providerConfigured:!!process.env.HL_STUDIO_FAL_KEY,betaEnabled:process.env.HL_STUDIO_AI_MEDIA_ENABLED==='true',limits:tiers[plan],used:{video:counts.video||0,music:counts.music||0},plan});
  }
- if(!['start','status'].includes(action))return reply(404,{error:'Unknown action'});
+ if(!['start','status','recent'].includes(action))return reply(404,{error:'Unknown action'});
  if(!isTestAccount)return reply(403,{error:'This preview test is restricted to the designated test account.'});
  if(process.env.HL_STUDIO_AI_MEDIA_ENABLED!=='true'||!process.env.HL_STUDIO_FAL_KEY)return reply(503,{error:'AI scenes and music are not activated yet. Studio administration must configure the media provider and enable this beta.'});
+ if(action==='recent'&&event.httpMethod==='GET'){
+  const jobs=await sql`SELECT id,kind,provider_status,output_url,created_at FROM hl_studio_media_jobs WHERE owner_email=${email} ORDER BY created_at DESC LIMIT 10`;
+  return reply(200,{jobs:jobs.map(job=>({id:job.id,kind:job.kind,status:job.provider_status,url:job.output_url,createdAt:job.created_at}))});
+ }
  if(action==='start'){
   if(event.httpMethod!=='POST')return reply(405,{error:'Method not allowed'});
   let body;try{body=JSON.parse(event.body||'{}')}catch{return reply(400,{error:'Invalid request'})}
@@ -56,7 +63,9 @@ export const handler=async event=>{
    const input=kind==='video'?{prompt:prompt+', cinematic advertising shot, realistic, no text overlays, no watermark',video_size:body.format==='16/9'?'landscape_16_9':body.format==='1/1'?'square':'portrait_16_9',fps:10,enable_safety_checker:true}:{prompt:prompt+', instrumental background music, no vocals, suitable for a short commercial',seconds_total:10,enable_safety_checker:true};
    const prediction=await fal(models[kind],'POST',input);
    if(!validId(prediction.request_id))throw Error('Provider did not return a valid request identifier');
-   await sql`INSERT INTO hl_studio_media_jobs(id,owner_email,kind,provider_request_id,provider_status) VALUES(${id}::uuid,${email},${kind},${prediction.request_id},'queued')`;
+   const statusUrl=providerUrl(prediction.status_url||models[kind]+'/requests/'+encodeURIComponent(prediction.request_id)+'/status');
+   const responseUrl=providerUrl(prediction.response_url||models[kind]+'/requests/'+encodeURIComponent(prediction.request_id));
+   await sql`INSERT INTO hl_studio_media_jobs(id,owner_email,kind,provider_request_id,provider_status,provider_status_url,provider_response_url) VALUES(${id}::uuid,${email},${kind},${prediction.request_id},'queued',${statusUrl},${responseUrl})`;
    return reply(202,{id,kind,status:'queued',remaining:limit-used[0].used});
   }catch(error){
    await sql`UPDATE hl_studio_media_usage SET used=GREATEST(0,used-1) WHERE owner_email=${email} AND month=${month} AND kind=${kind}`;
@@ -67,18 +76,20 @@ export const handler=async event=>{
  if(event.httpMethod!=='GET')return reply(405,{error:'Method not allowed'});
  const id=String(event.queryStringParameters?.id||'');
  if(!/^[0-9a-f-]{36}$/i.test(id))return reply(400,{error:'Invalid job identifier'});
- const rows=await sql`SELECT kind,provider_request_id,provider_status,output_url FROM hl_studio_media_jobs WHERE id=${id}::uuid AND owner_email=${email} LIMIT 1`;
+ const rows=await sql`SELECT kind,provider_request_id,provider_status,output_url,provider_status_url,provider_response_url FROM hl_studio_media_jobs WHERE id=${id}::uuid AND owner_email=${email} LIMIT 1`;
  if(!rows.length)return reply(404,{error:'Generation not found'});
  const job=rows[0];
  if(['completed','failed'].includes(job.provider_status))return reply(200,{status:job.provider_status,kind:job.kind,url:job.output_url});
  if(!validId(job.provider_request_id))return reply(502,{error:'Generation request is missing'});
  const route=models[job.kind]+'/requests/'+encodeURIComponent(job.provider_request_id);
- const state=await fal(route+'/status');
+ let state;
+ try{state=await fal(job.provider_status_url||route+'/status')}catch(error){console.error('Studio status fetch failed',{kind:job.kind,requestId:job.provider_request_id,message:error.message});return reply(502,{error:'Status check failed; the job is saved. Do not regenerate. '+String(error.message).slice(0,120)})}
  const status=String(state.status||'').toUpperCase();
  if(status==='COMPLETED'){
-  const result=await fal(route);
-  const url=job.kind==='video'?result.video?.url:result.audio_file?.url;
-  if(typeof url!=='string'||!/^https:\/\//.test(url))return reply(502,{error:'Provider completed but did not return a downloadable media file'});
+  let result;
+  try{result=await fal(job.provider_response_url||route)}catch(error){console.error('Studio result fetch failed',{kind:job.kind,requestId:job.provider_request_id,message:error.message});return reply(502,{error:'Video may be ready, but retrieving it failed. The job is saved. '+String(error.message).slice(0,120)})}
+  const url=job.kind==='video'?(result.video?.url||result.data?.video?.url):(result.audio_file?.url||result.data?.audio_file?.url);
+  if(typeof url!=='string'||!/^https:\/\//.test(url))return reply(502,{error:'Provider completed but returned an unexpected file format; job saved.'});
   await sql`UPDATE hl_studio_media_jobs SET provider_status='completed',output_url=${url},updated_at=NOW() WHERE id=${id}::uuid AND owner_email=${email}`;
   return reply(200,{status:'completed',kind:job.kind,url});
  }
