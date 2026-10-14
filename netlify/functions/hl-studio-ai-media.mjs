@@ -82,12 +82,16 @@ export const handler=async event=>{
  if(['completed','failed'].includes(job.provider_status))return reply(200,{status:job.provider_status,kind:job.kind,url:job.output_url});
  if(!validId(job.provider_request_id))return reply(502,{error:'Generation request is missing'});
  const route=models[job.kind]+'/requests/'+encodeURIComponent(job.provider_request_id);
+ // Legacy requests were saved before the provider supplied queue URLs were persisted.
+ // A 405 on those routes may mean the queue endpoint omits the model subpath.
+ const legacyRoute=models[job.kind].split('/').slice(0,-1).join('/')+'/requests/'+encodeURIComponent(job.provider_request_id);
+ const readProvider=async(url,fallback)=>{try{return await fal(url)}catch(error){if(!job.provider_status_url&&/Media provider error \(405\)/.test(error.message)&&fallback)return fal(fallback);throw error}};
  let state;
- try{state=await fal(job.provider_status_url||route+'/status')}catch(error){console.error('Studio status fetch failed',{kind:job.kind,requestId:job.provider_request_id,message:error.message});return reply(502,{error:'Status check failed; the job is saved. Do not regenerate. '+String(error.message).slice(0,120)})}
+ try{state=await readProvider(job.provider_status_url||route+'/status',legacyRoute+'/status')}catch(error){console.error('Studio status fetch failed',{kind:job.kind,requestId:job.provider_request_id,message:error.message});return reply(502,{error:'Status check failed; the job is saved. Do not regenerate. '+String(error.message).slice(0,120)})}
  const status=String(state.status||'').toUpperCase();
  if(status==='COMPLETED'){
   let result;
-  try{result=await fal(job.provider_response_url||route)}catch(error){console.error('Studio result fetch failed',{kind:job.kind,requestId:job.provider_request_id,message:error.message});return reply(502,{error:'Video may be ready, but retrieving it failed. The job is saved. '+String(error.message).slice(0,120)})}
+  try{result=await readProvider(job.provider_response_url||route,legacyRoute)}catch(error){console.error('Studio result fetch failed',{kind:job.kind,requestId:job.provider_request_id,message:error.message});return reply(502,{error:'Video may be ready, but retrieving it failed. The job is saved. '+String(error.message).slice(0,120)})}
   const url=job.kind==='video'?(result.video?.url||result.data?.video?.url):(result.audio_file?.url||result.data?.audio_file?.url);
   if(typeof url!=='string'||!/^https:\/\//.test(url))return reply(502,{error:'Provider completed but returned an unexpected file format; job saved.'});
   await sql`UPDATE hl_studio_media_jobs SET provider_status='completed',output_url=${url},updated_at=NOW() WHERE id=${id}::uuid AND owner_email=${email}`;
