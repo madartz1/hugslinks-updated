@@ -18,6 +18,12 @@ export const handler=async event=>{
    notes TEXT NOT NULL DEFAULT '', status TEXT NOT NULL DEFAULT 'new',
    created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(), updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
   )`;
+  await sql`ALTER TABLE hl_studio_pilot_requests ADD COLUMN IF NOT EXISTS quote_amount_cents INTEGER`;
+  await sql`ALTER TABLE hl_studio_pilot_requests ADD COLUMN IF NOT EXISTS quote_scope TEXT NOT NULL DEFAULT ''`;
+  await sql`ALTER TABLE hl_studio_pilot_requests ADD COLUMN IF NOT EXISTS quote_status TEXT NOT NULL DEFAULT 'not_sent'`;
+  await sql`ALTER TABLE hl_studio_pilot_requests ADD COLUMN IF NOT EXISTS preview_url TEXT NOT NULL DEFAULT ''`;
+  await sql`ALTER TABLE hl_studio_pilot_requests ADD COLUMN IF NOT EXISTS delivery_url TEXT NOT NULL DEFAULT ''`;
+  await sql`ALTER TABLE hl_studio_pilot_requests ADD COLUMN IF NOT EXISTS is_demo BOOLEAN NOT NULL DEFAULT FALSE`;
   const action=event.queryStringParameters?.action||'apply';
   if(action==='apply'){
    if(event.httpMethod!=='POST')return json(405,{error:'Method not allowed'});
@@ -36,7 +42,7 @@ export const handler=async event=>{
     VALUES(${id}::uuid,${name},${business},${email},${type},${service},${duration},${objective},${audience},${assets},${budget},${deadline},${notes})`;
    return json(200,{message:'Your pilot application has been saved for review. This is not an accepted booking or payment.',reference:id.slice(0,8).toUpperCase()});
   }
-  if(!['list','status'].includes(action))return json(404,{error:'Not found'});
+  if(!['list','status','demo','quote','delivery'].includes(action))return json(404,{error:'Not found'});
   if(!process.env.HL_STUDIO_AUTH_SECRET||!process.env.HL_STUDIO_PILOT_ADMIN_EMAIL)return json(403,{error:'Pilot administration is not configured.'});
   const session=cookie(event.headers?.cookie||event.headers?.Cookie,'hl_studio_session');
   if(!session||!/^[a-f0-9]{64}$/.test(session))return json(401,{error:'Sign in to HL Studio.'});
@@ -44,8 +50,33 @@ export const handler=async event=>{
   const sessions=await sql`SELECT email FROM hl_studio_auth_sessions WHERE session_hash=${sessionHash} AND expires_at>NOW() AND last_activity_at>NOW()-INTERVAL '1 hour' LIMIT 1`;
   if(!sessions.length||sessions[0].email.toLowerCase()!==process.env.HL_STUDIO_PILOT_ADMIN_EMAIL.trim().toLowerCase())return json(403,{error:'Not authorized to view production applications.'});
   if(action==='list'&&event.httpMethod==='GET'){
-   const rows=await sql`SELECT id,contact_name,business_name,email,business_type,service,duration,objective,audience,assets_url,budget,deadline,notes,status,created_at FROM hl_studio_pilot_requests ORDER BY created_at DESC LIMIT 100`;
+   const rows=await sql`SELECT id,contact_name,business_name,email,business_type,service,duration,objective,audience,assets_url,budget,deadline,notes,status,quote_amount_cents,quote_scope,quote_status,preview_url,delivery_url,is_demo,created_at FROM hl_studio_pilot_requests ORDER BY created_at DESC LIMIT 100`;
    return json(200,{requests:rows});
+  }
+  if(action==='demo'&&event.httpMethod==='POST'){
+   const existing=await sql`SELECT id FROM hl_studio_pilot_requests WHERE is_demo=TRUE LIMIT 1`;
+   if(existing.length)return json(200,{message:'Existing demo project ready.',id:existing[0].id});
+   const id=randomUUID();
+   await sql`INSERT INTO hl_studio_pilot_requests(id,contact_name,business_name,email,business_type,service,duration,objective,audience,budget,notes,is_demo)
+   VALUES(${id}::uuid,'Pilot Test Customer','La Rivera Restaurant','demo@example.invalid','Restaurant / food','business','30','Create a 30-second restaurant commercial showing signature dishes, warm hospitality, and a visit-us call to action.','Local diners and visitors','100-199','Internal demonstration only. No actual customer or payment.',TRUE)`;
+   return json(200,{message:'Internal restaurant demo created. No customer was contacted or charged.',id});
+  }
+  if(action==='quote'&&event.httpMethod==='POST'){
+   let body;try{body=JSON.parse(event.body||'{}')}catch{return json(400,{error:'Invalid request'})}
+   const id=clean(body.id,40),scope=clean(body.scope,2000),amount=Number(body.amount);
+   if(!/^[0-9a-f-]{36}$/i.test(id)||scope.length<20||!Number.isInteger(amount)||amount<0||amount>10000000)return json(400,{error:'Provide a valid project, quote scope and amount in cents.'});
+   const rows=await sql`UPDATE hl_studio_pilot_requests SET quote_amount_cents=${amount},quote_scope=${scope},quote_status='draft',status='reviewing',updated_at=NOW() WHERE id=${id}::uuid RETURNING id`;
+   if(!rows.length)return json(404,{error:'Application not found'});
+   return json(200,{message:'Internal quote draft saved. It has not been sent or approved.'});
+  }
+  if(action==='delivery'&&event.httpMethod==='POST'){
+   let body;try{body=JSON.parse(event.body||'{}')}catch{return json(400,{error:'Invalid request'})}
+   const id=clean(body.id,40),preview=clean(body.preview,500),delivery=clean(body.delivery,500);
+   if(!/^[0-9a-f-]{36}$/i.test(id))return json(400,{error:'Invalid project'});
+   for(const link of [preview,delivery])if(link){let url;try{url=new URL(link)}catch{return json(400,{error:'Use HTTPS media links'})}if(url.protocol!=='https:'||url.username||url.password)return json(400,{error:'Use HTTPS media links'})}
+   const rows=await sql`UPDATE hl_studio_pilot_requests SET preview_url=${preview},delivery_url=${delivery},updated_at=NOW() WHERE id=${id}::uuid RETURNING id`;
+   if(!rows.length)return json(404,{error:'Application not found'});
+   return json(200,{message:'Internal media references saved. No customer notification or delivery was sent.'});
   }
   if(action==='status'&&event.httpMethod==='POST'){
    let body;try{body=JSON.parse(event.body||'{}')}catch{return json(400,{error:'Invalid request'})}
