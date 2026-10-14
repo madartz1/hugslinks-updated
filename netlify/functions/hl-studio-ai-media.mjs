@@ -5,7 +5,9 @@ const reply=(statusCode,body)=>({statusCode,headers:{'Content-Type':'application
 const hash=s=>createHash('sha256').update(s).digest('hex');
 const getCookie=(raw,name)=>raw?.split(';').map(x=>x.trim()).find(x=>x.startsWith(name+'='))?.slice(name.length+1);
 const models={video:'fal-ai/fast-svd/text-to-video',music:'fal-ai/stable-audio'};
-// Preview-only test: maximum one paid generation of each type per member.\n// Do not expand limits until separately approved.\nconst tiers={starter:{video:1,music:1},growth:{video:1,music:1},pro:{video:1,music:1}};
+// Preview-only test: maximum one paid generation of each type per member.
+// Do not expand limits until separately approved.
+const tiers={starter:{video:1,music:1},growth:{video:1,music:1},pro:{video:1,music:1}};
 const validId=id=>/^[a-zA-Z0-9_-]{12,100}$/.test(id||'');
 const fal=async(path,method='GET',body)=>{
  const res=await fetch('https://queue.fal.run/'+path,{method,headers:{Authorization:'Key '+process.env.HL_STUDIO_FAL_KEY,...(body?{'Content-Type':'application/json'}:{})},...(body?{body:JSON.stringify(body)}:{})});
@@ -24,7 +26,9 @@ export const handler=async event=>{
  const sh=hash(process.env.HL_STUDIO_AUTH_SECRET+raw);
  const sessions=await sql`UPDATE hl_studio_auth_sessions SET last_activity_at=NOW() WHERE session_hash=${sh} AND expires_at>NOW() AND last_activity_at>NOW()-INTERVAL '1 hour' RETURNING email`;
  if(!sessions.length)return reply(401,{error:'Session expired. Sign in again'});
- const email=sessions[0].email,stripe=new Stripe(process.env.HL_STUDIO_STRIPE_SECRET_KEY);\n // Require an explicitly designated test account; no other preview member can incur charges.\n const isTestAccount=!!process.env.HL_STUDIO_AI_TEST_EMAIL && email.toLowerCase()===process.env.HL_STUDIO_AI_TEST_EMAIL.trim().toLowerCase();
+ const email=sessions[0].email,stripe=new Stripe(process.env.HL_STUDIO_STRIPE_SECRET_KEY);
+ // Require an explicitly designated test account; no other preview member can incur charges.
+ const isTestAccount=!!process.env.HL_STUDIO_AI_TEST_EMAIL && email.toLowerCase()===process.env.HL_STUDIO_AI_TEST_EMAIL.trim().toLowerCase();
  const customers=await stripe.customers.list({email,limit:20});let plan=null;
  for(const customer of customers.data){const rows=await sql`SELECT plan FROM hl_studio_subscriptions WHERE stripe_customer_id=${customer.id} AND is_entitled=TRUE ORDER BY updated_at DESC LIMIT 1`;if(rows.length){plan=rows[0].plan;break}}
  if(!tiers[plan])return reply(403,{error:'An active HL Studio membership is required'});
@@ -37,7 +41,8 @@ export const handler=async event=>{
   return reply(200,{testOnly:true,enabled:isTestAccount&&process.env.HL_STUDIO_AI_MEDIA_ENABLED==='true'&&!!process.env.HL_STUDIO_FAL_KEY,providerConfigured:!!process.env.HL_STUDIO_FAL_KEY,betaEnabled:process.env.HL_STUDIO_AI_MEDIA_ENABLED==='true',limits:tiers[plan],used:{video:counts.video||0,music:counts.music||0},plan});
  }
  if(!['start','status'].includes(action))return reply(404,{error:'Unknown action'});
- if(!isTestAccount)return reply(403,{error:'This preview test is restricted to the designated test account.'});\n if(process.env.HL_STUDIO_AI_MEDIA_ENABLED!=='true'||!process.env.HL_STUDIO_FAL_KEY)return reply(503,{error:'AI scenes and music are not activated yet. Studio administration must configure the media provider and enable this beta.'});
+ if(!isTestAccount)return reply(403,{error:'This preview test is restricted to the designated test account.'});
+ if(process.env.HL_STUDIO_AI_MEDIA_ENABLED!=='true'||!process.env.HL_STUDIO_FAL_KEY)return reply(503,{error:'AI scenes and music are not activated yet. Studio administration must configure the media provider and enable this beta.'});
  if(action==='start'){
   if(event.httpMethod!=='POST')return reply(405,{error:'Method not allowed'});
   let body;try{body=JSON.parse(event.body||'{}')}catch{return reply(400,{error:'Invalid request'})}
