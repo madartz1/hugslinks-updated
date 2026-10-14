@@ -5,7 +5,7 @@ const reply=(statusCode,body)=>({statusCode,headers:{'Content-Type':'application
 const hash=s=>createHash('sha256').update(s).digest('hex');
 const getCookie=(raw,name)=>raw?.split(';').map(x=>x.trim()).find(x=>x.startsWith(name+'='))?.slice(name.length+1);
 const models={video:'fal-ai/fast-svd/text-to-video',music:'fal-ai/stable-audio'};
-const tiers={starter:{video:1,music:2},growth:{video:5,music:10},pro:{video:20,music:40}};
+// Preview-only test: maximum one paid generation of each type per member.\n// Do not expand limits until separately approved.\nconst tiers={starter:{video:1,music:1},growth:{video:1,music:1},pro:{video:1,music:1}};
 const validId=id=>/^[a-zA-Z0-9_-]{12,100}$/.test(id||'');
 const fal=async(path,method='GET',body)=>{
  const res=await fetch('https://queue.fal.run/'+path,{method,headers:{Authorization:'Key '+process.env.HL_STUDIO_FAL_KEY,...(body?{'Content-Type':'application/json'}:{})},...(body?{body:JSON.stringify(body)}:{})});
@@ -32,9 +32,9 @@ export const handler=async event=>{
  await sql`CREATE TABLE IF NOT EXISTS hl_studio_media_usage (owner_email TEXT NOT NULL,month TEXT NOT NULL,kind TEXT NOT NULL,used INTEGER NOT NULL DEFAULT 0,PRIMARY KEY(owner_email,month,kind))`;
  const action=event.queryStringParameters?.action||'config';
  if(action==='config'&&event.httpMethod==='GET'){
-  const month=new Date().toISOString().slice(0,7),usage=await sql`SELECT kind,used FROM hl_studio_media_usage WHERE owner_email=${email} AND month=${month}`;
+  const month='preview-test-2026-10',usage=await sql`SELECT kind,used FROM hl_studio_media_usage WHERE owner_email=${email} AND month=${month}`;
   const counts=Object.fromEntries(usage.map(row=>[row.kind,row.used]));
-  return reply(200,{enabled:process.env.HL_STUDIO_AI_MEDIA_ENABLED==='true'&&!!process.env.HL_STUDIO_FAL_KEY,providerConfigured:!!process.env.HL_STUDIO_FAL_KEY,betaEnabled:process.env.HL_STUDIO_AI_MEDIA_ENABLED==='true',limits:tiers[plan],used:{video:counts.video||0,music:counts.music||0},plan});
+  return reply(200,{testOnly:true,enabled:process.env.HL_STUDIO_AI_MEDIA_ENABLED==='true'&&!!process.env.HL_STUDIO_FAL_KEY,providerConfigured:!!process.env.HL_STUDIO_FAL_KEY,betaEnabled:process.env.HL_STUDIO_AI_MEDIA_ENABLED==='true',limits:tiers[plan],used:{video:counts.video||0,music:counts.music||0},plan});
  }
  if(!['start','status'].includes(action))return reply(404,{error:'Unknown action'});
  if(process.env.HL_STUDIO_AI_MEDIA_ENABLED!=='true'||!process.env.HL_STUDIO_FAL_KEY)return reply(503,{error:'AI scenes and music are not activated yet. Studio administration must configure the media provider and enable this beta.'});
@@ -43,7 +43,7 @@ export const handler=async event=>{
   let body;try{body=JSON.parse(event.body||'{}')}catch{return reply(400,{error:'Invalid request'})}
   const kind=body.kind,prompt=String(body.prompt||'').trim();
   if(!models[kind]||prompt.length<12||prompt.length>700)return reply(400,{error:'Select video or music and provide a prompt between 12 and 700 characters'});
-  const month=new Date().toISOString().slice(0,7),limit=tiers[plan][kind];
+  const month='preview-test-2026-10',limit=tiers[plan][kind];
   const used=await sql`INSERT INTO hl_studio_media_usage(owner_email,month,kind,used) VALUES(${email},${month},${kind},1) ON CONFLICT(owner_email,month,kind) DO UPDATE SET used=hl_studio_media_usage.used+1 WHERE hl_studio_media_usage.used<${limit} RETURNING used`;
   if(!used.length)return reply(403,{error:'Monthly '+kind+' generation limit reached ('+limit+').'});
   const id=randomUUID();
@@ -79,7 +79,7 @@ export const handler=async event=>{
  }
  if(status==='FAILED'||status==='CANCELLED'){
   const changed=await sql`UPDATE hl_studio_media_jobs SET provider_status='failed',updated_at=NOW() WHERE id=${id}::uuid AND owner_email=${email} AND provider_status NOT IN ('completed','failed') RETURNING id`;
-  if(changed.length){const month=new Date().toISOString().slice(0,7);await sql`UPDATE hl_studio_media_usage SET used=GREATEST(0,used-1) WHERE owner_email=${email} AND month=${month} AND kind=${job.kind}`;}
+  if(changed.length){const month='preview-test-2026-10';await sql`UPDATE hl_studio_media_usage SET used=GREATEST(0,used-1) WHERE owner_email=${email} AND month=${month} AND kind=${job.kind}`;}
   return reply(200,{status:'failed',kind:job.kind,error:'Generation failed. Your allowance has been restored.'});
  }
  return reply(200,{status:status==='IN_PROGRESS'?'processing':'queued',kind:job.kind});
