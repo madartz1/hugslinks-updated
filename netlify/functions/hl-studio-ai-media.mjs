@@ -34,7 +34,7 @@ export const handler=async event=>{
  if(action==='config'&&event.httpMethod==='GET'){
   const month=new Date().toISOString().slice(0,7),usage=await sql`SELECT kind,used FROM hl_studio_media_usage WHERE owner_email=${email} AND month=${month}`;
   const counts=Object.fromEntries(usage.map(row=>[row.kind,row.used]));
-  return reply(200,{enabled:process.env.HL_STUDIO_AI_MEDIA_ENABLED==='true'&&!!process.env.HL_STUDIO_FAL_KEY,limits:tiers[plan],used:{video:counts.video||0,music:counts.music||0},plan});
+  return reply(200,{enabled:process.env.HL_STUDIO_AI_MEDIA_ENABLED==='true'&&!!process.env.HL_STUDIO_FAL_KEY,providerConfigured:!!process.env.HL_STUDIO_FAL_KEY,betaEnabled:process.env.HL_STUDIO_AI_MEDIA_ENABLED==='true',limits:tiers[plan],used:{video:counts.video||0,music:counts.music||0},plan});
  }
  if(!['start','status'].includes(action))return reply(404,{error:'Unknown action'});
  if(process.env.HL_STUDIO_AI_MEDIA_ENABLED!=='true'||!process.env.HL_STUDIO_FAL_KEY)return reply(503,{error:'AI scenes and music are not activated yet. Studio administration must configure the media provider and enable this beta.'});
