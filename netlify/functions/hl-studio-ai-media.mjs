@@ -24,7 +24,7 @@ export const handler=async event=>{
  const sh=hash(process.env.HL_STUDIO_AUTH_SECRET+raw);
  const sessions=await sql`UPDATE hl_studio_auth_sessions SET last_activity_at=NOW() WHERE session_hash=${sh} AND expires_at>NOW() AND last_activity_at>NOW()-INTERVAL '1 hour' RETURNING email`;
  if(!sessions.length)return reply(401,{error:'Session expired. Sign in again'});
- const email=sessions[0].email,stripe=new Stripe(process.env.HL_STUDIO_STRIPE_SECRET_KEY);
+ const email=sessions[0].email,stripe=new Stripe(process.env.HL_STUDIO_STRIPE_SECRET_KEY);\n // Require an explicitly designated test account; no other preview member can incur charges.\n const isTestAccount=!!process.env.HL_STUDIO_AI_TEST_EMAIL && email.toLowerCase()===process.env.HL_STUDIO_AI_TEST_EMAIL.trim().toLowerCase();
  const customers=await stripe.customers.list({email,limit:20});let plan=null;
  for(const customer of customers.data){const rows=await sql`SELECT plan FROM hl_studio_subscriptions WHERE stripe_customer_id=${customer.id} AND is_entitled=TRUE ORDER BY updated_at DESC LIMIT 1`;if(rows.length){plan=rows[0].plan;break}}
  if(!tiers[plan])return reply(403,{error:'An active HL Studio membership is required'});
@@ -34,10 +34,10 @@ export const handler=async event=>{
  if(action==='config'&&event.httpMethod==='GET'){
   const month='preview-test-2026-10',usage=await sql`SELECT kind,used FROM hl_studio_media_usage WHERE owner_email=${email} AND month=${month}`;
   const counts=Object.fromEntries(usage.map(row=>[row.kind,row.used]));
-  return reply(200,{testOnly:true,enabled:process.env.HL_STUDIO_AI_MEDIA_ENABLED==='true'&&!!process.env.HL_STUDIO_FAL_KEY,providerConfigured:!!process.env.HL_STUDIO_FAL_KEY,betaEnabled:process.env.HL_STUDIO_AI_MEDIA_ENABLED==='true',limits:tiers[plan],used:{video:counts.video||0,music:counts.music||0},plan});
+  return reply(200,{testOnly:true,enabled:isTestAccount&&process.env.HL_STUDIO_AI_MEDIA_ENABLED==='true'&&!!process.env.HL_STUDIO_FAL_KEY,providerConfigured:!!process.env.HL_STUDIO_FAL_KEY,betaEnabled:process.env.HL_STUDIO_AI_MEDIA_ENABLED==='true',limits:tiers[plan],used:{video:counts.video||0,music:counts.music||0},plan});
  }
  if(!['start','status'].includes(action))return reply(404,{error:'Unknown action'});
- if(process.env.HL_STUDIO_AI_MEDIA_ENABLED!=='true'||!process.env.HL_STUDIO_FAL_KEY)return reply(503,{error:'AI scenes and music are not activated yet. Studio administration must configure the media provider and enable this beta.'});
+ if(!isTestAccount)return reply(403,{error:'This preview test is restricted to the designated test account.'});\n if(process.env.HL_STUDIO_AI_MEDIA_ENABLED!=='true'||!process.env.HL_STUDIO_FAL_KEY)return reply(503,{error:'AI scenes and music are not activated yet. Studio administration must configure the media provider and enable this beta.'});
  if(action==='start'){
   if(event.httpMethod!=='POST')return reply(405,{error:'Method not allowed'});
   let body;try{body=JSON.parse(event.body||'{}')}catch{return reply(400,{error:'Invalid request'})}
