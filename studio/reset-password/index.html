@@ -65,7 +65,7 @@ footer{text-align:center;color:#698092;font-size:12px;padding:0 18px 24px}
 <footer>© HUGSLinks Studio · Produced by Resile Corp</footer>
 <script>
 (function(){
- const params=new URLSearchParams(location.search),token=params.get('token');
+ const params=new URLSearchParams(location.search),token=params.get('token'),returnTo=params.get('returnTo')==='/studio/pilot-admin/sign-in/'?'/studio/pilot-admin/sign-in/':'/studio/';
  history.replaceState({},'',location.pathname);
  const form=document.getElementById('reset'),status=document.getElementById('status'),submit=document.getElementById('submit');
  const say=(message,type)=>{status.textContent=message;status.className=type||''};
@@ -81,7 +81,7 @@ footer{text-align:center;color:#698092;font-size:12px;padding:0 18px 24px}
    const response=await fetch('/.netlify/functions/hl-studio-auth?action=reset-password',{method:'POST',credentials:'same-origin',headers:{'Content-Type':'application/json'},body:JSON.stringify({token,password})});
    const data=await response.json();
    if(!response.ok)throw Error(data.error||'Unable to reset password');
-   form.hidden=true;say('Your password has been updated successfully. Return to HL Studio and sign in with your new password.','success');
+   form.hidden=true;say('Your password has been updated successfully. Returning to sign-in…','success');setTimeout(()=>location.replace(returnTo),1400);
   }catch(error){say(error.message||'Unable to reset password. Please try again.','error');submit.disabled=false;submit.textContent='Update password →'}
  });
 })();
