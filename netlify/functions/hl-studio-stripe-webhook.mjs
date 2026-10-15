@@ -1,8 +1,9 @@
+import { modernHandler } from './_shared/hl-studio-modern.mjs';
 import Stripe from 'stripe';
 import { neon } from '@neondatabase/serverless';
 const reply = (statusCode, message) => ({ statusCode, headers: {'Content-Type':'application/json','Cache-Control':'no-store'}, body:JSON.stringify({message}) });
 const allowed = new Set(['active','trialing']);
-export const handler = async (event) => {
+const legacyHandler = async (event) => {
   if(event.httpMethod !== 'POST') return reply(405,'Method not allowed');
   if(!process.env.HL_STUDIO_STRIPE_SECRET_KEY || !process.env.HL_STUDIO_STRIPE_WEBHOOK_SECRET || !process.env.HL_STUDIO_DATABASE_URL) return reply(503,'Webhook not configured');
   const signature = event.headers?.['stripe-signature'] || event.headers?.['Stripe-Signature'];
@@ -61,3 +62,4 @@ export const handler = async (event) => {
     return reply(500,'Webhook processing failed');
   }
 };
+export default modernHandler(legacyHandler);
