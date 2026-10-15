@@ -157,14 +157,16 @@ const legacyHandler=async event=>{
   const rows=await sql`UPDATE hl_studio_auth_sessions SET last_activity_at=NOW() WHERE session_hash=${sh} AND expires_at>NOW() AND last_activity_at>NOW()-INTERVAL '1 hour' RETURNING email`;
   if(!rows.length)return json(200,{authenticated:false},{'Set-Cookie':cookie('hl_studio_session','',0)});
   const email=rows[0].email;
-  const Stripe=(await import('stripe')).default;
-  const stripe=new Stripe(process.env.HL_STUDIO_STRIPE_SECRET_KEY);
-  const customers=await stripe.customers.list({email,limit:20});
   let subscription=null;
-  for(const c of customers.data){const found=await sql`SELECT plan,stripe_status FROM hl_studio_subscriptions WHERE stripe_customer_id=${c.id} AND is_entitled=TRUE ORDER BY updated_at DESC LIMIT 1`;if(found.length){subscription=found[0];break}}
+  if(!isPilotAdmin(email)){
+   const Stripe=(await import('stripe')).default;
+   const stripe=new Stripe(process.env.HL_STUDIO_STRIPE_SECRET_KEY);
+   const customers=await stripe.customers.list({email,limit:20});
+   for(const c of customers.data){const found=await sql`SELECT plan,stripe_status FROM hl_studio_subscriptions WHERE stripe_customer_id=${c.id} AND is_entitled=TRUE ORDER BY updated_at DESC LIMIT 1`;if(found.length){subscription=found[0];break}}
+  }
   await sql`CREATE TABLE IF NOT EXISTS hl_studio_passwords (email TEXT PRIMARY KEY,salt TEXT NOT NULL,password_hash TEXT NOT NULL,updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW())`;
   const passwordRows=await sql`SELECT 1 FROM hl_studio_passwords WHERE email=${email} LIMIT 1`;
-  return json(200,{authenticated:true,email,entitled:!!subscription,plan:subscription?.plan||null,status:subscription?.stripe_status||null,hasPassword:passwordRows.length>0});
+  return json(200,{authenticated:true,email,entitled:!!subscription||isPilotAdmin(email),plan:subscription?.plan||(isPilotAdmin(email)?'pilot-admin':null),status:subscription?.stripe_status||null,hasPassword:passwordRows.length>0});
  }catch(e){console.error('HL Studio auth error',{category:e?.name||'unknown'});return json(500,{error:'Unable to complete sign-in'})}
 };
 export default modernHandler(legacyHandler);
