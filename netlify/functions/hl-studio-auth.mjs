@@ -8,6 +8,7 @@ const hash=s=>createHash('sha256').update(s).digest('hex');
 const cookie=(name,value,age)=>`${name}=${value}; HttpOnly; Secure; SameSite=Lax; Path=/; Max-Age=${age}`;
 const configured=()=>!!(process.env.HL_STUDIO_DATABASE_URL&&process.env.HL_STUDIO_AUTH_SECRET&&process.env.HL_STUDIO_RESEND_API_KEY&&process.env.HL_STUDIO_EMAIL_FROM);
 const SESSION_SECONDS=30*24*60*60;
+const isPilotAdmin=email=>!!process.env.HL_STUDIO_PILOT_ADMIN_EMAIL&&email===process.env.HL_STUDIO_PILOT_ADMIN_EMAIL.trim().toLowerCase();
 const generic={message:'If that email has a subscription, a sign-in link will arrive shortly.'};
 const getCookie=(header,name)=>header?.split(';').map(s=>s.trim()).find(s=>s.startsWith(name+'='))?.slice(name.length+1);
 const passwordDigest=async(password,salt)=>{const bytes=await scrypt(password,Buffer.from(salt,'hex'),64,{N:16384,r:8,p:1});return bytes.toString('hex')};
@@ -36,7 +37,7 @@ const legacyHandler=async event=>{
     if(!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)||email.length>254)return json(400,{error:'Enter a valid email address'});
     const genericReset={message:'If this HL Studio account has a password, a reset link will be sent shortly.'};
     const eligible=await sql`SELECT 1 FROM hl_studio_passwords WHERE email=${email} LIMIT 1`;
-    if(!eligible.length)return json(200,genericReset);
+    if(!eligible.length)return json(200,isPilotAdmin(email)?{message:'No password is set for this administrator account. Use Email me a verification link to set up your password.'}:genericReset);
     const recent=await sql`SELECT 1 FROM hl_studio_password_resets WHERE email=${email} AND created_at>NOW()-INTERVAL '5 minutes' LIMIT 1`;
     if(recent.length)return json(200,genericReset);
     const token=secureToken(),tokenHash=hash(process.env.HL_STUDIO_AUTH_SECRET+'reset:'+token);
@@ -45,7 +46,7 @@ const legacyHandler=async event=>{
     const resetReturn=body.returnTo==='/studio/pilot-admin/sign-in/'?'/studio/pilot-admin/sign-in/':'/studio/';
     const link=origin+'/studio/reset-password/?token='+encodeURIComponent(token)+'&returnTo='+encodeURIComponent(resetReturn);
     const response=await fetch('https://api.resend.com/emails',{method:'POST',headers:{Authorization:'Bearer '+process.env.HL_STUDIO_RESEND_API_KEY,'Content-Type':'application/json'},body:JSON.stringify({from:process.env.HL_STUDIO_EMAIL_FROM,to:[email],subject:'Reset your HL Studio password',html:'<div style="font-family:Arial,sans-serif;max-width:560px;margin:auto;padding:30px;color:#102b45"><h1>♡ HUGSLinks Studio</h1><p>We received a request to reset your HL Studio password.</p><p style="margin:30px 0"><a href="'+link+'" style="background:#087bbd;color:white;padding:15px 24px;text-decoration:none;border-radius:9px;font-weight:bold">Reset HL Studio password</a></p><p>This one-time link expires in 15 minutes. If you did not request this, ignore this email.</p><p style="font-size:13px;color:#567">HUGSLinks Studio · Produced by Resile Corp</p></div>',text:'HL Studio password reset (expires in 15 minutes):\n'+link+'\n\nIf you did not request this, ignore the message.'})});
-    if(!response.ok)console.error('HL Studio password reset email failed',{status:response.status});
+    if(!response.ok){console.error('HL Studio password reset email failed',{status:response.status});return json(502,{error:'Unable to send password reset email. Check Resend configuration and sender verification.'})}
     return json(200,genericReset);
    }
    const token=String(body.token||''),password=body.password;
@@ -96,7 +97,7 @@ const legacyHandler=async event=>{
    const customers=await stripe.customers.list({email,limit:20});
    let subscribed=false;
    for(const c of customers.data){const found=await sql`SELECT 1 FROM hl_studio_subscriptions WHERE stripe_customer_id=${c.id} AND is_entitled=TRUE LIMIT 1`;if(found.length){subscribed=true;break}}
-   if(!subscribed)return json(403,{error:'An active HL Studio subscription is required'});
+   if(!subscribed&&!isPilotAdmin(email))return json(403,{error:'An active HL Studio subscription is required'});
    await sql`DELETE FROM hl_studio_password_attempts WHERE identity_hash=${identity}`;
    const session=secureToken(),sessionHash=hash(process.env.HL_STUDIO_AUTH_SECRET+session);
    await sql`INSERT INTO hl_studio_auth_sessions(session_hash,email,expires_at) VALUES(${sessionHash},${email},NOW()+INTERVAL '30 days')`;
@@ -119,7 +120,7 @@ const legacyHandler=async event=>{
    const customerIds=customers.data.map(c=>c.id);
    let subscribed=false;
    for(const id of customerIds){const found=await sql`SELECT 1 FROM hl_studio_subscriptions WHERE stripe_customer_id=${id} AND is_entitled=TRUE LIMIT 1`;if(found.length){subscribed=true;break}}
-   if(subscribed){
+   if(subscribed||isPilotAdmin(email)){
     const token=secureToken(),tokenHash=hash(process.env.HL_STUDIO_AUTH_SECRET+token);
     await sql`DELETE FROM hl_studio_auth_links WHERE email=${email} AND used_at IS NULL`;
     await sql`INSERT INTO hl_studio_auth_links (token_hash,email,expires_at) VALUES (${tokenHash},${email},NOW()+INTERVAL '15 minutes')`;
