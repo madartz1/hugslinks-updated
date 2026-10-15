@@ -1,3 +1,4 @@
+import { modernHandler } from './_shared/hl-studio-modern.mjs';
 import { neon } from '@neondatabase/serverless';
 import { randomBytes, createHash, timingSafeEqual, scrypt as scryptCallback } from 'node:crypto';
 import { promisify } from 'node:util';
@@ -12,7 +13,7 @@ const getCookie=(header,name)=>header?.split(';').map(s=>s.trim()).find(s=>s.sta
 const passwordDigest=async(password,salt)=>{const bytes=await scrypt(password,Buffer.from(salt,'hex'),64,{N:16384,r:8,p:1});return bytes.toString('hex')};
 const validPassword=value=>typeof value==='string'&&value.length>=12&&value.length<=128;
 const safeEqual=(a,b)=>{const x=Buffer.from(a||''),y=Buffer.from(b||'');return x.length===y.length&&timingSafeEqual(x,y)};
-export const handler=async event=>{
+const legacyHandler=async event=>{
  const action=(event.queryStringParameters?.action||'').toLowerCase();
  if(!['request','verify','status','logout','setup-password','password-login','reset-request','reset-password'].includes(action))return json(404,{error:'Not found'});
  if(!configured())return json(503,{error:'Subscriber sign-in not configured'});
@@ -163,3 +164,4 @@ export const handler=async event=>{
   return json(200,{authenticated:true,email,entitled:!!subscription,plan:subscription?.plan||null,status:subscription?.stripe_status||null,hasPassword:passwordRows.length>0});
  }catch(e){console.error('HL Studio auth error',{category:e?.name||'unknown'});return json(500,{error:'Unable to complete sign-in'})}
 };
+export default modernHandler(legacyHandler);
