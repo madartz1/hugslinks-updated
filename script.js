@@ -7,7 +7,7 @@ const HUGS_PUBLIC_NAV=[
 ];
 document.querySelectorAll('.navlinks').forEach(nav=>{
  // Keep one link per destination, including links already authored in HTML.
- const key=href=>{try{return new URL(href,location.origin).pathname.replace(/\/$/,'')||'/'}catch{return href}};
+ const key=href=>{try{const url=new URL(href,location.origin+'/');const pathname=url.pathname.replace(/\/index\.html$/,'/').replace(/\.html$/,'').replace(/\/$/,'')||'/';return url.origin+pathname}catch{return href}};
  const existing=new Set();
  nav.querySelectorAll('a[href]').forEach(a=>{
   const destination=key(a.getAttribute('href'));
