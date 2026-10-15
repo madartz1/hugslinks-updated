@@ -37,7 +37,17 @@ const legacyHandler=async event=>{
     if(!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)||email.length>254)return json(400,{error:'Enter a valid email address'});
     const genericReset={message:'If this HL Studio account has a password, a reset link will be sent shortly.'};
     const eligible=await sql`SELECT 1 FROM hl_studio_passwords WHERE email=${email} LIMIT 1`;
-    if(!eligible.length)return json(200,isPilotAdmin(email)?{message:'No password is set for this administrator account. Use Email me a verification link to set up your password.'}:genericReset);
+    if(!eligible.length){
+     if(!isPilotAdmin(email))return json(200,genericReset);
+     await sql`CREATE TABLE IF NOT EXISTS hl_studio_auth_links (token_hash TEXT PRIMARY KEY,email TEXT NOT NULL,expires_at TIMESTAMPTZ NOT NULL,used_at TIMESTAMPTZ)`;
+     const token=secureToken(),tokenHash=hash(process.env.HL_STUDIO_AUTH_SECRET+token);
+     await sql`DELETE FROM hl_studio_auth_links WHERE email=${email} AND used_at IS NULL`;
+     await sql`INSERT INTO hl_studio_auth_links(token_hash,email,expires_at) VALUES(${tokenHash},${email},NOW()+INTERVAL '15 minutes')`;
+     const link=origin+'/studio/sign-in/?token='+encodeURIComponent(token)+'&returnTo='+encodeURIComponent('/studio/pilot-admin/sign-in/');
+     const response=await fetch('https://api.resend.com/emails',{method:'POST',headers:{Authorization:'Bearer '+process.env.HL_STUDIO_RESEND_API_KEY,'Content-Type':'application/json'},body:JSON.stringify({from:process.env.HL_STUDIO_EMAIL_FROM,to:[email],subject:'Set up your HUGS Studio administrator password',html:'<div style="font-family:Arial,sans-serif;padding:24px;color:#102b45"><h2>HUGSLinks Studio</h2><p>Verify your administrator email to create your password.</p><p><a href="'+link+'">Verify email and create password</a></p><p>This link expires in 15 minutes. If you did not request this, ignore this email.</p></div>',text:'Verify your HUGS Studio administrator email and create a password (15-minute link):\\n'+link})});
+     if(!response.ok){console.error('HL Studio admin setup email failed',{status:response.status});return json(502,{error:'Unable to send administrator setup email. Check Resend sender configuration.'})}
+     return json(200,{message:'Administrator setup email sent. Open the link to verify your email and create a password.'});
+    }
     const recent=await sql`SELECT 1 FROM hl_studio_password_resets WHERE email=${email} AND created_at>NOW()-INTERVAL '5 minutes' LIMIT 1`;
     if(recent.length)return json(200,genericReset);
     const token=secureToken(),tokenHash=hash(process.env.HL_STUDIO_AUTH_SECRET+'reset:'+token);
