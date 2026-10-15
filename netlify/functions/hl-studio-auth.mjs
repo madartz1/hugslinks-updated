@@ -42,7 +42,8 @@ const legacyHandler=async event=>{
     const token=secureToken(),tokenHash=hash(process.env.HL_STUDIO_AUTH_SECRET+'reset:'+token);
     await sql`DELETE FROM hl_studio_password_resets WHERE email=${email} AND used_at IS NULL`;
     await sql`INSERT INTO hl_studio_password_resets(token_hash,email,expires_at) VALUES(${tokenHash},${email},NOW()+INTERVAL '15 minutes')`;
-    const link=origin+'/studio/reset-password/?token='+encodeURIComponent(token);
+    const resetReturn=body.returnTo==='/studio/pilot-admin/sign-in/'?'/studio/pilot-admin/sign-in/':'/studio/';
+    const link=origin+'/studio/reset-password/?token='+encodeURIComponent(token)+'&returnTo='+encodeURIComponent(resetReturn);
     const response=await fetch('https://api.resend.com/emails',{method:'POST',headers:{Authorization:'Bearer '+process.env.HL_STUDIO_RESEND_API_KEY,'Content-Type':'application/json'},body:JSON.stringify({from:process.env.HL_STUDIO_EMAIL_FROM,to:[email],subject:'Reset your HL Studio password',html:'<div style="font-family:Arial,sans-serif;max-width:560px;margin:auto;padding:30px;color:#102b45"><h1>♡ HUGSLinks Studio</h1><p>We received a request to reset your HL Studio password.</p><p style="margin:30px 0"><a href="'+link+'" style="background:#087bbd;color:white;padding:15px 24px;text-decoration:none;border-radius:9px;font-weight:bold">Reset HL Studio password</a></p><p>This one-time link expires in 15 minutes. If you did not request this, ignore this email.</p><p style="font-size:13px;color:#567">HUGSLinks Studio · Produced by Resile Corp</p></div>',text:'HL Studio password reset (expires in 15 minutes):\n'+link+'\n\nIf you did not request this, ignore the message.'})});
     if(!response.ok)console.error('HL Studio password reset email failed',{status:response.status});
     return json(200,genericReset);
