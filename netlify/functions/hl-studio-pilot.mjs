@@ -1,10 +1,11 @@
+import { modernHandler } from './_shared/hl-studio-modern.mjs';
 import { neon } from '@neondatabase/serverless';
 import { randomUUID,createHash } from 'node:crypto';
 const json=(statusCode,body)=>({statusCode,headers:{'Content-Type':'application/json','Cache-Control':'no-store','X-Content-Type-Options':'nosniff'},body:JSON.stringify(body)});
 const clean=(value,max)=>typeof value==='string'?value.trim().slice(0,max):'';
 const validEmail=value=>/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value)&&value.length<=254;
 const cookie=(raw,name)=>raw?.split(';').map(x=>x.trim()).find(x=>x.startsWith(name+'='))?.slice(name.length+1);
-export const handler=async event=>{
+const legacyHandler=async event=>{
  const host=event.headers?.host||event.headers?.Host||'';
  if(!/^deploy-preview-14--hugslinks-web-build\.netlify\.app$/i.test(host))return json(403,{error:'Pilot intake is available in the authorized development preview only.'});
  if(!process.env.HL_STUDIO_DATABASE_URL)return json(503,{error:'Pilot request storage is not configured.'});
@@ -88,3 +89,5 @@ export const handler=async event=>{
   return json(405,{error:'Method not allowed'});
  }catch(error){console.error('HL Studio pilot intake error',{message:error?.message});return json(503,{error:'Pilot intake is temporarily unavailable. Please try again later.'})}
 };
+
+export default modernHandler(legacyHandler);
