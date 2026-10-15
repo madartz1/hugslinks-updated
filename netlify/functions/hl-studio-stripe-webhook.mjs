@@ -1,4 +1,5 @@
 import { modernHandler } from './_shared/hl-studio-modern.mjs';
+import { syncPilotPayment } from './_shared/hl-studio-pilot-commerce.mjs';
 import Stripe from 'stripe';
 import { neon } from '@neondatabase/serverless';
 const reply = (statusCode, message) => ({ statusCode, headers: {'Content-Type':'application/json','Cache-Control':'no-store'}, body:JSON.stringify({message}) });
@@ -14,6 +15,13 @@ const legacyHandler = async (event) => {
     const payload = event.isBase64Encoded ? Buffer.from(event.body||'','base64') : event.body||'';
     verified = stripe.webhooks.constructEvent(payload,signature,process.env.HL_STUDIO_STRIPE_WEBHOOK_SECRET);
   } catch { return reply(400,'Invalid Stripe signature'); }
+  if(verified.data.object.metadata?.product==='hl-studio-pilot'){
+    if((event.headers?.host||event.headers?.Host||'').toLowerCase()!=='deploy-preview-14--hugslinks-web-build.netlify.app')return reply(403,'Pilot webhook is preview-only');
+    try {
+      await syncPilotPayment(neon(process.env.HL_STUDIO_DATABASE_URL),stripe,verified);
+      return reply(200,'Sandbox pilot payment synchronized');
+    } catch { return reply(500,'Pilot payment synchronization failed'); }
+  }
   const types = new Set(['checkout.session.completed','customer.subscription.created','customer.subscription.updated','customer.subscription.deleted','invoice.paid','invoice.payment_failed']);
   if(!types.has(verified.type)) return reply(200,'Event ignored');
   let subscriptionId;
