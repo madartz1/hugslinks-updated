@@ -1,7 +1,8 @@
+import { modernHandler } from './_shared/hl-studio-modern.mjs';
 import Stripe from 'stripe';
 const plans = { starter: 'HL_STUDIO_PRICE_STARTER', growth: 'HL_STUDIO_PRICE_GROWTH', pro: 'HL_STUDIO_PRICE_PRO' };
 const json = (statusCode, body) => ({statusCode,headers:{'Content-Type':'application/json','Cache-Control':'no-store'},body:JSON.stringify(body)});
-export const handler = async (event) => {
+const legacyHandler = async (event) => {
   if(event.httpMethod !== 'POST') return json(405,{error:'Method not allowed'});
   if(!process.env.HL_STUDIO_STRIPE_SECRET_KEY) return json(503,{error:'Checkout is not configured yet'});
   let body;
@@ -43,3 +44,4 @@ export const handler = async (event) => {
     return json(502,{error:'Unable to start checkout'});
   }
 };
+export default modernHandler(legacyHandler);
