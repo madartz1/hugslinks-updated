@@ -56,7 +56,7 @@ const legacyHandler=async event=>{
   if(!sessions.length||sessions[0].email.toLowerCase()!==process.env.HL_STUDIO_PILOT_ADMIN_EMAIL.trim().toLowerCase())return json(403,{error:'Not authorized to view production applications.'});
   if(action==='quote-send')return await sendPilotQuote(sql,event);
   if(action==='list'&&event.httpMethod==='GET'){
-   const rows=await sql`SELECT id,contact_name,business_name,email,business_type,service,duration,objective,audience,assets_url,budget,deadline,notes,status,quote_amount_cents,quote_scope,quote_status,preview_url,delivery_url,is_demo,payment_status,quote_sent_at,quote_approved_at,paid_at FROM hl_studio_pilot_requests ORDER BY created_at DESC LIMIT 100`;
+   const rows=await sql`SELECT id,contact_name,business_name,email,business_type,service,duration,objective,audience,assets_url,budget,deadline,notes,status,quote_amount_cents,quote_scope,quote_status,preview_url,delivery_url,is_demo,payment_status,quote_sent_at,quote_approved_at,paid_at,created_at FROM hl_studio_pilot_requests ORDER BY created_at DESC LIMIT 100`;
    return json(200,{requests:rows});
   }
   if(action==='demo'&&event.httpMethod==='POST'){
