@@ -1,3 +1,4 @@
+import { sceneInput } from './_shared/hl-studio-scene-input.mjs';
 import { neon } from '@neondatabase/serverless';
 import Stripe from 'stripe';
 import { createHash, randomUUID } from 'node:crypto';
@@ -13,7 +14,7 @@ const providerUrl=value=>{const url=new URL(value,'https://queue.fal.run/');if(u
 const fal=async(path,method='GET',body)=>{
  const res=await fetch(providerUrl(path),{method,headers:{Authorization:'Key '+process.env.HL_STUDIO_FAL_KEY,...(body?{'Content-Type':'application/json'}:{})},...(body?{body:JSON.stringify(body)}:{})});
  const data=await res.json().catch(()=>({}));
- if(!res.ok)throw Error('Media provider error ('+res.status+'): '+String(data.detail||data.message||'Please retry').slice(0,180));
+ if(!res.ok)throw Error('Media provider error ('+res.status+'). Please check the saved request before retrying.');
  return data;
 };
 export const handler=async event=>{
@@ -52,19 +53,23 @@ export const handler=async event=>{
  }
  if(action==='start'){
   if(event.httpMethod!=='POST')return reply(405,{error:'Method not allowed'});
+  if((event.headers?.origin||event.headers?.Origin)!=='https://deploy-preview-14--hugslinks-web-build.netlify.app')return reply(403,{error:'Unsupported origin'});
+  if((event.body||'').length>2900000)return reply(413,{error:'Photo attachment is too large'});
   let body;try{body=JSON.parse(event.body||'{}')}catch{return reply(400,{error:'Invalid request'})}
   const kind=body.kind,prompt=String(body.prompt||'').trim();
   if(!models[kind]||prompt.length<12||prompt.length>700)return reply(400,{error:'Select video or music and provide a prompt between 12 and 700 characters'});
+  let videoRequest;try{if(kind==='video')videoRequest=sceneInput(body);else if(body.image!==undefined)throw Error('Photo attachments are only supported for video scenes.')}catch(error){return reply(400,{error:error.message})}
   const month='preview-test-2026-10',limit=tiers[plan][kind];
   const used=await sql`INSERT INTO hl_studio_media_usage(owner_email,month,kind,used) VALUES(${email},${month},${kind},1) ON CONFLICT(owner_email,month,kind) DO UPDATE SET used=hl_studio_media_usage.used+1 WHERE hl_studio_media_usage.used<${limit} RETURNING used`;
   if(!used.length)return reply(403,{error:'Monthly '+kind+' generation limit reached ('+limit+').'});
   const id=randomUUID();
   try{
-   const input=kind==='video'?{prompt:prompt+', cinematic advertising shot, realistic, no text overlays, no watermark',video_size:body.format==='16/9'?'landscape_16_9':body.format==='1/1'?'square':'portrait_16_9',fps:10,enable_safety_checker:true}:{prompt:prompt+', instrumental background music, no vocals, suitable for a short commercial',seconds_total:10,enable_safety_checker:true};
-   const prediction=await fal(models[kind],'POST',input);
+   const model=kind==='video'?videoRequest.model:models.music;
+   const input=kind==='video'?videoRequest.input:{prompt:prompt+', instrumental background music, no vocals, suitable for a short commercial',seconds_total:10,enable_safety_checker:true};
+   const prediction=await fal(model,'POST',input);
    if(!validId(prediction.request_id))throw Error('Provider did not return a valid request identifier');
-   const statusUrl=providerUrl(prediction.status_url||models[kind]+'/requests/'+encodeURIComponent(prediction.request_id)+'/status');
-   const responseUrl=providerUrl(prediction.response_url||models[kind]+'/requests/'+encodeURIComponent(prediction.request_id));
+   const statusUrl=providerUrl(prediction.status_url||model+'/requests/'+encodeURIComponent(prediction.request_id)+'/status');
+   const responseUrl=providerUrl(prediction.response_url||model+'/requests/'+encodeURIComponent(prediction.request_id));
    await sql`INSERT INTO hl_studio_media_jobs(id,owner_email,kind,provider_request_id,provider_status,provider_status_url,provider_response_url) VALUES(${id}::uuid,${email},${kind},${prediction.request_id},'queued',${statusUrl},${responseUrl})`;
    return reply(202,{id,kind,status:'queued',remaining:limit-used[0].used});
   }catch(error){

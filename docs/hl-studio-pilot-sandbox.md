@@ -25,3 +25,9 @@ From the repo root, run `npm install --no-save --package-lock=false @electric-sq
 ## Limits before production
 
 Production host access remains disabled. Confirm real contract terms, refund/cancellation policy, taxes, email delivery, customer identity/quote access policy, quote revisions and recovery, and live webhook configuration before a separate production launch. This implementation sends one quote-review email; it does not send delivery or payment confirmation emails.
+
+### Photo-guided video scenes
+
+The video prompt accepts one JPG/PNG/WebP attachment (8 MB source limit). The browser normalizes it to JPEG, strips metadata, and resizes the longest edge to 1280 px before submission (2 MB prepared limit). Selection alone does not upload. Generate sends the image as a data URI plus the motion prompt to fal's `fal-ai/minimax/video-01/image-to-video`; text-only scenes keep the existing SVD route. Image-guided output follows the source proportions. Existing preview host, designated test account, membership gate and one-video allowance apply to both routes. No new generation allowance is granted. Provider-supplied queue URLs persist for recovery. There is no separate text-to-image generator.
+
+Validation: `node --test tests/scene-input.test.mjs`. Live image-to-video rendering still requires the designated subscriber account and an available allowance.
