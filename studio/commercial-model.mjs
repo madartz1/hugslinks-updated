@@ -6,10 +6,15 @@ export const templates={
  offer:{label:'Special offer',goal:'Promote a specific offer',audience:'People who would benefit from this offer',lines:['Something special is here.','Add your exact offer here.','Add the deadline and conditions.','Get the offer'],shots:['Show the featured item or service','Show what is included','Display the real deadline and conditions','Your logo and redemption details']}
 };
 export const timings=[3,6,3,3];
-export function sceneAt(seconds){let start=0;for(let i=0;i<timings.length;i++){if(seconds<start+timings[i]||i===timings.length-1)return {index:i,elapsed:Math.max(0,seconds-start),duration:timings[i]};start+=timings[i]}}
+export function sceneAt(seconds,durations=timings){let start=0;for(let i=0;i<durations.length;i++){if(seconds<start+durations[i]||i===durations.length-1)return {index:i,elapsed:Math.max(0,seconds-start),duration:durations[i]};start+=durations[i]}}
 export function wrapLines(ctx,text,maxWidth,maxLines){
  const words=[];for(const word of String(text||'').split(/\s+/)){let part='';for(const character of word){if(part&&ctx.measureText(part+character).width>maxWidth){words.push(part);part=''}part+=character}if(part)words.push(part)}
  let lines=[],line='';for(const word of words){const candidate=line?line+' '+word:word;if(ctx.measureText(candidate).width>maxWidth&&line){lines.push(line);line=word}else line=candidate}if(line)lines.push(line);if(lines.length>maxLines){lines=lines.slice(0,maxLines);let last=lines[maxLines-1];while(last&&ctx.measureText(last+'…').width>maxWidth)last=last.slice(0,-1);lines[maxLines-1]=last+'…'}return lines
 }
 
 export function exportProfile(quality){const presets={fullhd:{width:1080,height:1920,bitrate:8000000,label:'Full HD'},hd:{width:720,height:1280,bitrate:4500000,label:'HD'},compact:{width:540,height:960,bitrate:3000000,label:'Compact'}};return presets[quality]||presets.fullhd}
+
+export function sceneLength(value){const n=Number(value);return Number.isFinite(n)?Math.min(10,Math.max(1,Math.round(n*2)/2)):3}
+export function timeline(order,durations){let start=0;return order.map(id=>{const duration=sceneLength(durations[id]),scene={id,start,end:start+duration,duration};start=scene.end;return scene})}
+export function moveScene(order,id,direction){const result=[...order],from=result.indexOf(id),to=from+direction;if(from<0||to<0||to>=result.length||![-1,1].includes(direction))return result;[result[from],result[to]]=[result[to],result[from]];return result}
+export function clipRange(start,end,duration){if(!Number.isFinite(duration)||duration<=0)throw Error('Video duration is unavailable. Choose another MP4.');const first=Math.min(Math.max(0,Number(start)||0),Math.max(0,duration-.05));const last=Math.min(duration,Math.max(first+.05,Number(end)||duration));return {start:first,end:last}}
