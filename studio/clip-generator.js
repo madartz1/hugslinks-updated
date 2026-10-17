@@ -7,7 +7,7 @@ volume.addEventListener('input',()=>{by('clipVolumeValue').textContent=volume.va
 window.addEventListener('pagehide',cleanup);
 const fit=(ctx,text,maxWidth,maxLines)=>{const words=String(text||'').split(/\s+/),lines=[];let line='';for(const word of words){const test=line?line+' '+word:word;if(ctx.measureText(test).width>maxWidth&&line){lines.push(line);line=word}else line=test}if(line)lines.push(line);return lines.slice(0,maxLines)};
 const wrap=(ctx,text,x,y,maxWidth,lineHeight,maxLines)=>{const lines=fit(ctx,text,maxWidth,maxLines);for(const line of lines){ctx.fillText(line,x,y);y+=lineHeight}};
-const loadLogo=()=>new Promise(resolve=>{const img=new Image();img.onload=()=>resolve(img);img.onerror=()=>resolve(null);img.src='/assets/HUGS_Header_Logo_Transparent.png'});
+const loadLogo=()=>new Promise(resolve=>{const img=new Image();img.onload=()=>resolve(img);img.onerror=()=>resolve(null);img.src='/assets/hl-studio-clapper-logo.webp'});
 function supportedType(){return ['video/mp4;codecs=avc1.42E01E,mp4a.40.2','video/mp4','video/webm;codecs=vp9,opus','video/webm;codecs=vp8,opus','video/webm'].find(type=>MediaRecorder.isTypeSupported(type))||''}
 button.addEventListener('click',async()=>{if(!lastAiDraft){exportStatus.textContent='Generate or select an advertisement first.';return}if(!window.MediaRecorder||!HTMLCanvasElement.prototype.captureStream){exportStatus.textContent='This browser does not support video recording. Try Chrome or Safari on a supported device.';return}const type=supportedType();if(!type){exportStatus.textContent='Video export is unavailable in this browser.';return}
 button.disabled=true;exportStatus.textContent='Preparing your 10-second ad clip…';let stream,ctxAudio,source,destination,recorder;try{
