@@ -13,7 +13,7 @@ export function drawCommercial(ctx,s,drawMedia){
   if(style==='bold'){ctx.beginPath();ctx.moveTo(320,0);ctx.lineTo(540,0);ctx.lineTo(540,820);ctx.lineTo(0,960);ctx.lineTo(0,820);ctx.closePath();ctx.fill();ctx.globalAlpha=.15;ctx.fillRect(0,180,540,9);ctx.fillRect(0,200,540,3)}
   else{ctx.beginPath();ctx.arc(490,220,230,0,Math.PI*2);ctx.fill();ctx.strokeStyle=accent;ctx.lineWidth=2;ctx.beginPath();ctx.arc(475,250,270,0,Math.PI*2);ctx.stroke();ctx.beginPath();ctx.arc(475,250,290,0,Math.PI*2);ctx.stroke()}
   ctx.restore();
- }else{drawMedia();gradient=ctx.createLinearGradient(0,0,0,960);gradient.addColorStop(0,'#00000085');gradient.addColorStop(.35,'#00000000');gradient.addColorStop(.55,'#00000035');gradient.addColorStop(1,'#000000e8');ctx.fillStyle=gradient;ctx.fillRect(0,0,540,960)}
+ }else{drawMedia();gradient=ctx.createLinearGradient(0,0,0,960);gradient.addColorStop(0,s.coverPreset?'#00000055':'#00000085');gradient.addColorStop(.35,'#00000000');gradient.addColorStop(.55,s.coverPreset?'#00000000':'#00000035');gradient.addColorStop(1,s.coverPreset?'#00000035':'#000000e8');ctx.fillStyle=gradient;ctx.fillRect(0,0,540,960)}
  if(s.index!==3&&s.logo){const image=s.logo,ratio=Math.min(150/image.naturalWidth,100/image.naturalHeight),w=image.naturalWidth*ratio,h=image.naturalHeight*ratio,lx=align==='left'?64:align==='right'?476-w:270-w/2;round(lx-9,85,w+18,h+18,14,'#ffffff');ctx.drawImage(image,lx,94,w,h)}
  if(s.index===3){
   if(s.hasMedia)rect(0,0,540,960,'#00000075');
@@ -28,8 +28,8 @@ export function drawCommercial(ctx,s,drawMedia){
   rect(64,350,72,5,accent);text(s.message,425,49,5,'700',color);
  }else{
   text(s.business||'Your business',s.logo?250:190,22,2,'400','#ffffff');
-  const titleY=s.hasMedia?605:style==='bold'?390:380;
-  if(s.hasMedia||inkOn(color)==='#ffffff'){round(42,titleY-65,456,Math.min(300,4*58*scale+50),16,inkOn(color)==='#ffffff'?'#fffffff2':'#061322ae')}
+  const titleY=s.coverPreset?355:s.hasMedia?605:style==='bold'?390:380;
+  if((s.hasMedia&&!s.coverPreset)||inkOn(color)==='#ffffff'){round(42,titleY-65,456,Math.min(300,4*58*scale+50),16,inkOn(color)==='#ffffff'?'#fffffff2':'#061322ae')}
   ctx.save();ctx.shadowColor='#00000055';ctx.shadowBlur=14;ctx.shadowOffsetY=2;text(s.message,titleY,style==='bold'?60:52,s.hasMedia?3:4,'700',color);ctx.restore();
   rect(64,778,412,1,'#ffffff45');rect(64,775,85,6,accent);
  }
