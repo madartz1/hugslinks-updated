@@ -9,3 +9,8 @@ test('client logo renders in each scene and selected typography reaches export d
  }
 });
 test('CTA contrast uses readable ink for light and dark client accent colors',()=>{assert.equal(inkOn('#ffffff'),'#102b45');assert.equal(inkOn('#087bbd'),'#ffffff')});
+
+test('opening scene prioritizes the client name over the promotional headline',()=>{
+ const ctx=context();drawCommercial(ctx,{index:0,font:'modern',style:'spotlight',size:'medium',align:'left',business:'La Rivera Restaurant',message:'Your next favorite meal.',brand:'#102b45',accent:'#087bbd',color:'#ffffff',hasMedia:false},()=>{});
+ const brand=ctx.text.find(t=>t.value.includes('La Rivera')),headline=ctx.text.find(t=>t.value.includes('Your next'));assert(brand&&headline);assert.match(brand.font,/800 52px/);assert.match(headline.font,/700 40px/);assert(brand.y<headline.y);
+});
