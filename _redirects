@@ -3,6 +3,8 @@
 /member  /member.html  200
 /reviews  /reviews.html  200
 /art  /art-community.html  200
+/wall-art  /wall-art.html  200
+/digital-wall-art  /wall-art.html  200
 /art-voting  /art-voting.html  200
 /submit-art  /artist-submit.html  200
 /find-food  /find-food.html  200
