@@ -4,13 +4,18 @@ Customer flow: verify sender email with a six-digit code → recipient email and
 
 Production is disabled by a host allowlist in `hugs-card-links.mjs`. Do not enable or merge to production until the owner authorizes launch. Preview cap: three cards per verified sender per day. No pricing or paid entitlement is changed here.
 
-## Existing environment configuration
+## Dedicated HUGS Cards environment configuration
 
-- `HL_STUDIO_DATABASE_URL` (Neon tables with a `hugs_card_` / `hugs_private_cards` prefix; no Studio subscription tables changed).
-- `HL_STUDIO_AUTH_SECRET` (signs sender sessions and hashes verification codes).
-- `HL_STUDIO_RESEND_API_KEY`, `HL_STUDIO_EMAIL_FROM` (existing verified sender). General `RESEND_API_KEY` and `HUGS_FROM_EMAIL` / `FROM_EMAIL` are fallbacks.
-- `R2_ACCOUNT_ID`, `R2_ACCESS_KEY_ID`, `R2_SECRET_ACCESS_KEY`, `R2_BUCKET_NAME`.
-- Optional independent `HUGS_CARDS_STORAGE_SECRET`; otherwise `HL_STUDIO_AUTH_SECRET` encrypts media. Preserve the storage secret for the full lifetime of saved cards. Rotating it makes old media unreadable.
+Use the following HUGS Cards-specific Netlify variables so the card app and HL Studio can be configured independently:
+
+- `HUGS_CARDS_DATABASE_URL` — Neon connection. The card tables use a `hugs_card_` / `hugs_private_cards` prefix; they do not modify Studio subscription tables.
+- `HUGS_CARDS_AUTH_SECRET` — signs sender sessions and hashes verification codes.
+- `HUGS_CARDS_RESEND_API_KEY` and `HUGS_CARDS_EMAIL_FROM` — verified sender identity for card delivery.
+- `HUGS_CARDS_R2_ACCOUNT_ID`, `HUGS_CARDS_R2_ACCESS_KEY_ID`, `HUGS_CARDS_R2_SECRET_ACCESS_KEY`, `HUGS_CARDS_R2_BUCKET_NAME` — private card media storage.
+- `HUGS_CARDS_STORAGE_SECRET` — stable encryption key for saved card media. This must remain unchanged for the lifetime of saved cards.
+- Optional AI message helper: `HUGS_CARDS_AI_MESSAGES_ENABLED=true` and `HUGS_CARDS_OPENAI_API_KEY`. Keep disabled until abuse controls and usage limits are approved.
+
+Migration note: the function temporarily accepts the prior `HL_STUDIO_*` / `R2_*` variables as fallbacks so the current preview is not broken while configuration is moved. Set the dedicated variables before removing those legacy variables. **Before changing the auth secret, copy the exact current media-encryption secret into `HUGS_CARDS_STORAGE_SECRET`** (currently the old `HL_STUDIO_AUTH_SECRET` when no storage secret was set). Never rotate that storage secret for existing cards.
 
 No secrets belong in browser code, git, screenshots, or logs. R2 access must include reading, writing, HEAD, and deleting the `private-hugs/preview-14/` prefix.
 
