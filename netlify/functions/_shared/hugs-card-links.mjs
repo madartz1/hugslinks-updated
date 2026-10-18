@@ -71,8 +71,8 @@ export function openMedia(bytes,secret,identity){
  const key=createHmac('sha256',secret).update('hugs-private-media:'+identity).digest(),b=Buffer.from(bytes),cipher=createDecipheriv('aes-256-gcm',key,b.subarray(0,12));cipher.setAuthTag(b.subarray(12,28));return Buffer.concat([cipher.update(b.subarray(28)),cipher.final()]);
 }
 export function storageFor(env) {
- const client=new S3Client({region:'auto',endpoint:`https://${env.R2_ACCOUNT_ID}.r2.cloudflarestorage.com`,credentials:{accessKeyId:env.R2_ACCESS_KEY_ID,secretAccessKey:env.R2_SECRET_ACCESS_KEY}}),Bucket=env.R2_BUCKET_NAME;
- const secret=env.HUGS_CARDS_STORAGE_SECRET||env.HL_STUDIO_AUTH_SECRET;
+ const client=new S3Client({region:'auto',endpoint:`https://${env.HUGS_CARDS_R2_ACCOUNT_ID}.r2.cloudflarestorage.com`,credentials:{accessKeyId:env.HUGS_CARDS_R2_ACCESS_KEY_ID,secretAccessKey:env.HUGS_CARDS_R2_SECRET_ACCESS_KEY}}),Bucket=env.HUGS_CARDS_R2_BUCKET_NAME;
+ const secret=env.HUGS_CARDS_STORAGE_SECRET||env.HUGS_CARDS_AUTH_SECRET;
  const key=(id,slot,part)=>`private-hugs/preview-14/${id}/${slot}/${part}`;
  return {
   async put(id,slot,part,bytes){await client.send(new PutObjectCommand({Bucket,Key:key(id,slot,part),Body:protectMedia(bytes,secret,id+'/'+slot+'/'+part),ContentType:'application/octet-stream'}));},
@@ -82,11 +82,11 @@ export function storageFor(env) {
  };
 }
 export function dependencies(env=process.env) {
- const secret=env.HL_STUDIO_AUTH_SECRET;
- const apiKey=env.HL_STUDIO_RESEND_API_KEY||env.RESEND_API_KEY,from=env.HL_STUDIO_EMAIL_FROM||env.HUGS_FROM_EMAIL||env.FROM_EMAIL;
- const configured=!!(env.HL_STUDIO_DATABASE_URL&&secret&&apiKey&&from&&['R2_ACCOUNT_ID','R2_ACCESS_KEY_ID','R2_SECRET_ACCESS_KEY','R2_BUCKET_NAME'].every(k=>env[k]));
+ const secret=env.HUGS_CARDS_AUTH_SECRET;
+ const apiKey=env.HUGS_CARDS_RESEND_API_KEY,from=env.HUGS_CARDS_EMAIL_FROM;
+ const configured=!!(env.HUGS_CARDS_DATABASE_URL&&secret&&apiKey&&from&&['HUGS_CARDS_R2_ACCOUNT_ID','HUGS_CARDS_R2_ACCESS_KEY_ID','HUGS_CARDS_R2_SECRET_ACCESS_KEY','HUGS_CARDS_R2_BUCKET_NAME'].every(k=>env[k]));
  if(!configured)return {configured:false};
- return {configured:true,secret,store:makeStore(neon(env.HL_STUDIO_DATABASE_URL)),storage:storageFor(env),async send(to,content,key){const r=await fetch('https://api.resend.com/emails',{method:'POST',headers:{Authorization:'Bearer '+apiKey,'Content-Type':'application/json','Idempotency-Key':key},body:JSON.stringify({from,to:[to],...content})});if(!r.ok)throw failure(502,'The email service could not accept this message. Your card is saved; try sending again shortly.');return (await r.json()).id;}};
+ return {configured:true,secret,store:makeStore(neon(env.HUGS_CARDS_DATABASE_URL)),storage:storageFor(env),async send(to,content,key){const r=await fetch('https://api.resend.com/emails',{method:'POST',headers:{Authorization:'Bearer '+apiKey,'Content-Type':'application/json','Idempotency-Key':key},body:JSON.stringify({from,to:[to],...content})});if(!r.ok)throw failure(502,'The email service could not accept this message. Your card is saved; try sending again shortly.');return (await r.json()).id;}};
 }
 const headers={'Cache-Control':'no-store','X-Content-Type-Options':'nosniff','Referrer-Policy':'no-referrer'};
 const json=(status,body)=>Response.json(body,{status,headers});
