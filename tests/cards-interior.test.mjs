@@ -1,0 +1,16 @@
+import {readFileSync} from 'node:fs';
+import vm from 'node:vm';
+import assert from 'node:assert/strict';
+import test from 'node:test';
+const source=readFileSync(new URL('../app/creator.js',import.meta.url),'utf8');
+function harness(){
+ const nodes=new Map();
+ function element(tag='div'){const classes=new Set();return {tag,children:[],dataset:{},attributes:{},style:{setProperty(){}},classList:{toggle(k,v){v?classes.add(k):classes.delete(k)},contains:k=>classes.has(k)},replaceChildren(){this.children=[]},append(x){this.children.push(x)},setAttribute(k,v){this.attributes[k]=v},getAttribute(k){return this.attributes[k]},addEventListener(k,fn){this[k]=fn},querySelector(tag){return this.children.find(x=>x.tag===tag)},pause(){this.paused=true}};}
+ const document={getElementById(id){if(!nodes.has(id))nodes.set(id,element());return nodes.get(id)},createElement:element};
+ const context=vm.createContext({document,Audio:function(){this.paused=true;this.play=()=>{this.paused=false;return Promise.resolve()};this.pause=()=>this.paused=true}});
+ vm.runInContext(source.slice(source.indexOf('function fillInside('),source.indexOf('function drawInside('))+source.slice(source.indexOf('function recipient('),source.indexOf('function safeJSON(')),context);
+ return {context,get:document.getElementById};
+}
+const state={language:'en',fields:{title:'Happy birthday',occasion:'Birthday',message:'With love',titleStyle:'modern',titlePosition:'bottom'},media:{inside:{data:'data:image/png;base64,AA=='},video:{data:'data:video/mp4;base64,AA=='},audio:{data:'data:audio/mpeg;base64,AA=='}},musicEnabled:true};
+test('photo and video occupy independent pages and navigation pauses video',()=>{const {context,get}=harness();context.s=state;vm.runInContext("recipient(s,['navy','gold','cream'])",context);assert.equal(get('insidePhoto').children[0].tag,'img');assert.equal(get('insideMedia').children[0].tag,'video');assert.equal(get('book').dataset.titleStyle,'modern');get('viewInside').onclick();assert.ok(get('book').classList.contains('opened'));get('viewBack').onclick();assert.ok(get('book').classList.contains('back-visible'));assert.equal(get('insideMedia').children[0].paused,true);get('close').onclick();assert.equal(get('book').classList.contains('back-visible'),false);});
+test('empty optional media still renders both pages',()=>{const {context,get}=harness();context.s={...state,media:{}};vm.runInContext("recipient(s,['navy','gold','cream'])",context);assert.match(get('insidePhoto').textContent,/connection/);assert.match(get('insideMedia').textContent,/just for you/);});
