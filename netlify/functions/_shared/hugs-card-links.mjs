@@ -81,7 +81,21 @@ export function storageFor(env) {
   async remove(row){const Objects=Object.entries(row.card.media||{}).flatMap(([slot,m])=>Array.from({length:m.parts},(_,part)=>({Key:key(row.id,slot,part)})));if(Objects.length){const r=await client.send(new DeleteObjectsCommand({Bucket,Delete:{Objects}}));if(r.Errors?.length)throw Error('Storage cleanup incomplete');}}
  };
 }
-export function dependencies(env=process.env) {
+export function dependencies(source=process.env) {
+ // HUGS Cards uses its own namespace. Legacy fallbacks keep the already-working
+ // preview compatible during migration; remove them after Netlify vars are set.
+ const env={
+  ...source,
+  HUGS_CARDS_DATABASE_URL:source.HUGS_CARDS_DATABASE_URL||source.HL_STUDIO_DATABASE_URL,
+  HUGS_CARDS_AUTH_SECRET:source.HUGS_CARDS_AUTH_SECRET||source.HL_STUDIO_AUTH_SECRET,
+  HUGS_CARDS_RESEND_API_KEY:source.HUGS_CARDS_RESEND_API_KEY||source.HL_STUDIO_RESEND_API_KEY||source.RESEND_API_KEY,
+  HUGS_CARDS_EMAIL_FROM:source.HUGS_CARDS_EMAIL_FROM||source.HL_STUDIO_EMAIL_FROM||source.HUGS_FROM_EMAIL||source.FROM_EMAIL,
+  HUGS_CARDS_R2_ACCOUNT_ID:source.HUGS_CARDS_R2_ACCOUNT_ID||source.R2_ACCOUNT_ID,
+  HUGS_CARDS_R2_ACCESS_KEY_ID:source.HUGS_CARDS_R2_ACCESS_KEY_ID||source.R2_ACCESS_KEY_ID,
+  HUGS_CARDS_R2_SECRET_ACCESS_KEY:source.HUGS_CARDS_R2_SECRET_ACCESS_KEY||source.R2_SECRET_ACCESS_KEY,
+  HUGS_CARDS_R2_BUCKET_NAME:source.HUGS_CARDS_R2_BUCKET_NAME||source.R2_BUCKET_NAME,
+  HUGS_CARDS_STORAGE_SECRET:source.HUGS_CARDS_STORAGE_SECRET||source.HUGS_CARDS_AUTH_SECRET||source.HL_STUDIO_AUTH_SECRET
+ };
  const secret=env.HUGS_CARDS_AUTH_SECRET;
  const apiKey=env.HUGS_CARDS_RESEND_API_KEY,from=env.HUGS_CARDS_EMAIL_FROM;
  const configured=!!(env.HUGS_CARDS_DATABASE_URL&&secret&&apiKey&&from&&['HUGS_CARDS_R2_ACCOUNT_ID','HUGS_CARDS_R2_ACCESS_KEY_ID','HUGS_CARDS_R2_SECRET_ACCESS_KEY','HUGS_CARDS_R2_BUCKET_NAME'].every(k=>env[k]));
