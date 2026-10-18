@@ -3,8 +3,8 @@ const tones=new Set(['heartfelt','joyful','inspirational','romantic','playful'])
 export default async function handler(request){
  if(request.method!=='POST')return reply(405,{error:'Method not allowed'});
  // Explicit gate until abuse controls and usage limits are configured.
- if(process.env.HUGS_CARD_AI_MESSAGES_ENABLED!=='true')return reply(503,{error:'AI message generation is not enabled yet'});
- const key=process.env.HL_STUDIO_OPENAI_API_KEY;
+ if((process.env.HUGS_CARDS_AI_MESSAGES_ENABLED||process.env.HUGS_CARD_AI_MESSAGES_ENABLED)!=='true')return reply(503,{error:'AI message generation is not enabled yet'});
+ const key=process.env.HUGS_CARDS_OPENAI_API_KEY||process.env.HL_STUDIO_OPENAI_API_KEY;
  if(!key)return reply(503,{error:'AI provider is not configured'});
  let body;try{body=await request.json()}catch{return reply(400,{error:'Invalid request'})}
  const prompt=typeof body.prompt==='string'?body.prompt.trim():'';
