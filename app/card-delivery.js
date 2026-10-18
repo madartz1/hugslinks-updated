@@ -20,7 +20,7 @@
   let data;try{data=await r.json()}catch{throw Error('The connection was interrupted. Keep this page open and try again.');}
   if(!r.ok){if(r.status===401&&auth){session=null;try{sessionStorage.removeItem('hugs-card-sender')}catch{}get('senderStatus').textContent='Verify your sender email again to continue.';buttons();}throw Error(data.error||'Unable to complete this step. Please try again.');}return data;
  }
- function invalidate(){revision++;prepared=null;job=null;get('deliveryReady').hidden=true;get('emailResult').textContent='';if(!busy)say('Your edits will be included when you prepare a new link. Existing saved links keep their original card.');}
+ function invalidate(){revision++;prepared=null;job=null;get('deliveryReady').hidden=true;get('emailResult').textContent='';if(!busy)say(verified()?'Your edits will be included when you prepare a new link. Existing saved links keep their original card.':'Verify your sender email, then prepare your private card link. No card email has been sent.');}
  document.addEventListener('card:changed',invalidate);
  for(const id of ['deliveryName','deliveryEmail','deliveryNote'])get(id).addEventListener('input',invalidate);
  get('senderEmail').addEventListener('input',()=>{challenge=null;get('senderCodeStep').hidden=true;get('senderStatus').textContent=verified()?'Email verified.':'Verify this email before sending.';invalidate();buttons();});
