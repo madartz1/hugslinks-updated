@@ -11,7 +11,6 @@ const ALLOWED_ORIGINS = new Set([
 // Keep this allowlist server-controlled. Add only SKUs verified for the store.
 const PRODUCT_SKUS = new Set([
   "GLOBAL-CAN-10x10",
-  "GLOBAL-FAP-16x24",
 ]);
 
 function isAllowedOrigin(origin) {
@@ -56,7 +55,9 @@ exports.handler = async (event) => {
   if (event.httpMethod !== "GET") {
     return reply(405, { ok: false, message: "Use GET for catalogue details." }, origin);
   }
-  if (!isAllowedOrigin(origin)) {
+  // This endpoint is read-only; same-origin GET requests may omit Origin.
+  // If a browser sends Origin, enforce the allowlist.
+  if (origin && !isAllowedOrigin(origin)) {
     return reply(403, { ok: false, message: "Origin not allowed." }, origin);
   }
 
