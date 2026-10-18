@@ -1,6 +1,6 @@
 'use strict';
 (() => {
- const get=id=>document.getElementById(id),urls=[];
+ const get=id=>document.getElementById(id);
  const match=location.hash.match(/^#([a-f0-9]{32})\.([a-f0-9]{64})$/);
  const api='/.netlify/functions/hugs-card-links';
  let busy=false;
@@ -25,16 +25,19 @@
      chunks.push(bytes);loaded+=bytes.byteLength;get('viewProgress').value=total?Math.round(loaded/total*100):100;
      get('viewStatus').textContent=`Getting your photos, video, and music ready… ${get('viewProgress').value}%`;
     }
-    const url=URL.createObjectURL(new Blob(chunks,{type:m.type}));urls.push(url);media[slot]={data:url};
+    // A sandboxed frame has an opaque origin and cannot read parent-origin blob URLs.
+    // Embed media as data URLs, as in the existing offline card export.
+    const data=await new Promise((resolve,reject)=>{const reader=new FileReader();reader.onload=()=>resolve(reader.result);reader.onerror=()=>reject(Error('Unable to prepare your card media. Please try again.'));reader.readAsDataURL(new Blob(chunks,{type:m.type}));});
+    media[slot]={data};
    }
    const s={...card,media};
    let html=await cardHTML(s);
-   const policy="default-src 'none'; script-src 'unsafe-inline'; style-src 'unsafe-inline'; img-src data: blob:; media-src data: blob:; connect-src 'none'; base-uri 'none'; form-action 'none'";
+   const policy="default-src 'none'; script-src 'unsafe-inline'; style-src 'unsafe-inline'; img-src data:; media-src data:; connect-src 'none'; base-uri 'none'; form-action 'none'";
    html=html.replace('<head>','<head><meta name="referrer" content="no-referrer"><meta http-equiv="Content-Security-Policy" content="'+policy+'">');
    const frame=get('recipientFrame');frame.srcdoc=html;frame.hidden=false;get('cardLoading').hidden=true;
-  }catch(e){urls.splice(0).forEach(URL.revokeObjectURL);get('viewStatus').textContent=e.message;get('retryCard').hidden=!match;}
+  }catch(e){get('viewStatus').textContent=e.message;get('retryCard').hidden=!match;}
   finally{busy=false;}
  }
  get('retryCard').onclick=open;
- window.addEventListener('pagehide',()=>urls.splice(0).forEach(URL.revokeObjectURL));open();
+ open();
 })();

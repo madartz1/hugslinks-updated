@@ -20,7 +20,7 @@ The browser describes allowed fields and media, hashes each 2 MiB part, then upl
 
 R2 objects are encrypted with AES-256-GCM and a key derived from the storage secret and the card/slot/part identity, even if the existing bucket has a public domain. The random viewer token is stored only as a hash in the database. It lives in the URL fragment, not a URL sent to a server or referrer. The viewer sends it in Authorization headers. Viewing and media responses use no-store; recipients and sender details are not returned by the viewer endpoint. Anyone who possesses the complete link can view it until removal/expiry; it is not a recipient-login system.
 
-Only sanitized JSON is stored; uploaded HTML or executable SVG is not accepted. A shared renderer builds the recipient view inside a sandboxed iframe with a restrictive CSP. Photo/video/audio become local blob URLs after authenticated downloads and hash checks. The envelope animation and music still require user activation. Reassemble media on page load; no public permanent R2 URLs are exposed.
+Only sanitized JSON is stored; uploaded HTML or executable SVG is not accepted. A shared renderer builds the recipient view inside a sandboxed iframe with a restrictive CSP. Photo/video/audio become embedded data URLs after authenticated downloads and hash checks. Parent-origin blob URLs are intentionally avoided because an opaque sandbox cannot read them. The envelope animation and music still require user activation. Reassemble media on page load; no public permanent R2 URLs are exposed.
 
 ## Sending, expiry, and removal
 
