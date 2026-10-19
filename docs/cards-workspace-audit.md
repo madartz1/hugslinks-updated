@@ -21,6 +21,10 @@ Inspected Deploy Preview #14 /app/#account and the current card workspace source
 5. Production card hosting/domain activation is still disabled by the current deploy-preview host policy. Daily physical cleanup runs only on published deploys; preview links still expire on time and sender removal works immediately.
 6. The creator accepts uploaded pictures, videos, and music and has an AI text-message assistant. It does not yet generate a full AI image/video/music card itself. Studio generation/assembly is a separate flow.
 
+## Deployment blocker resolved
+
+The first build completed bundling but failed during function upload because legacy Lambda-compatible entry points exceeded the 4 KB environment-variable limit. The remaining legacy entries now use the existing modern Request/Response bridge, preserving raw webhook bodies, binary responses, cookies, and preflight status codes. Housing endpoints retain their URL names after conversion to `.mjs`; the shared voter utility returns 404 when requested as an endpoint. No secrets were deleted or exposed. Production remains locked.
+
 ## Validation
 
 Automated checks cover verified-owner list isolation, blocked cross-owner media reads, encrypted link recovery, legacy link restoration, expiry, existing recipient playback preparation, sign-in/library/sign-out behavior, SQL migrations/queries and original large-upload/email safeguards. No live verification email or card email was sent by the agent. Real sign-in requires the owner to receive and enter their code.

@@ -1,3 +1,4 @@
+import { modernHandler } from './_shared/hl-studio-modern.mjs';
 import { sceneInput } from './_shared/hl-studio-scene-input.mjs';
 import { neon } from '@neondatabase/serverless';
 import Stripe from 'stripe';
@@ -17,7 +18,7 @@ const fal=async(path,method='GET',body)=>{
  if(!res.ok)throw Error('Media provider error ('+res.status+'). Please check the saved request before retrying.');
  return data;
 };
-export const handler=async event=>{
+const legacyHandler=async event=>{
  const host=event.headers?.host||event.headers?.Host||'';
  if(!/^deploy-preview-14--hugslinks-web-build\.netlify\.app$/i.test(host))return reply(403,{error:'Unsupported host'});
  if(!process.env.HL_STUDIO_DATABASE_URL||!process.env.HL_STUDIO_AUTH_SECRET||!process.env.HL_STUDIO_STRIPE_SECRET_KEY)return reply(503,{error:'Studio membership system is not configured'});
@@ -110,3 +111,4 @@ export const handler=async event=>{
  return reply(200,{status:status==='IN_PROGRESS'?'processing':'queued',kind:job.kind});
  }catch(error){console.error('HL Studio AI media error',{message:error?.message,code:error?.code});return reply(500,{error:'Unable to process media request. Please retry.'})}
 };
+export default modernHandler(legacyHandler);

@@ -1,6 +1,7 @@
+import { modernHandler } from './_shared/hl-studio-modern.mjs';
 import {neon} from '@neondatabase/serverless';
 const json=(statusCode,data)=>({statusCode,headers:{'Content-Type':'application/json','Cache-Control':'no-store','X-Content-Type-Options':'nosniff'},body:JSON.stringify(data)});
-export const handler=async event=>{
+const legacyHandler=async event=>{
  if(event.httpMethod!=='GET')return json(405,{error:'Method not allowed'});
  if(process.env.HL_STUDIO_ENABLE_PUBLIC_PUBLISHING!=='true')return json(404,{error:'Publishing not enabled'});
  const slug=event.queryStringParameters?.slug||'';
@@ -13,3 +14,4 @@ export const handler=async event=>{
  return json(200,{campaign:rows[0]});
  }catch(e){return json(500,{error:'Unable to load campaign'})}
 };
+export default modernHandler(legacyHandler);

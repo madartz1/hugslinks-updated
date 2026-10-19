@@ -1,3 +1,4 @@
+import { modernHandler } from './_shared/hl-studio-modern.mjs';
 import { neon } from '@neondatabase/serverless';
 import Stripe from 'stripe';
 import { createHash, randomUUID } from 'node:crypto';
@@ -5,7 +6,7 @@ const reply=(statusCode,body)=>({statusCode,headers:{'Content-Type':'application
 const hash=s=>createHash('sha256').update(s).digest('hex');
 const cookie=(raw,name)=>raw?.split(';').map(x=>x.trim()).find(x=>x.startsWith(name+'='))?.slice(name.length+1);
 const clean=(v,max)=>typeof v==='string'?v.trim().slice(0,max):'';
-export const handler=async event=>{
+const legacyHandler=async event=>{
  if(!process.env.HL_STUDIO_DATABASE_URL||!process.env.HL_STUDIO_AUTH_SECRET||!process.env.HL_STUDIO_STRIPE_SECRET_KEY)return reply(503,{error:'Merchant dashboard is not configured'});
  const host=event.headers?.host||event.headers?.Host||'';
  if(!/^deploy-preview-14--hugslinks-web-build\.netlify\.app$/i.test(host))return reply(403,{error:'Unsupported host'});
@@ -140,3 +141,4 @@ export const handler=async event=>{
  return reply(404,{error:'Unknown action'});
  }catch(e){console.error('HL Studio merchant error',{category:e?.name||'unknown',code:e?.code||undefined,message:e?.message});const error=String(e?.message||'');const isSchema=/relation .* does not exist|column .* does not exist|permission denied|syntax error/i.test(error);return reply(500,{error:isSchema?'Studio database needs an update. Please contact support.':'Unable to complete this Studio request. Please try again.'})}
 };
+export default modernHandler(legacyHandler);

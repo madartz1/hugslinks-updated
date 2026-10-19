@@ -6,3 +6,6 @@ const token=async email=>{const payload=btoa(JSON.stringify({email,exp:Date.now(
 const session=async req=>{try{const cookie=(req.headers.get("cookie")||"").split(";").map(x=>x.trim()).find(x=>x.startsWith("hugs_voter="))?.slice(11)||"";const [payload,mac]=cookie.split(".");if(!payload||!mac||await sign(payload)!==mac)return null;const obj=JSON.parse(atob(payload.replaceAll("-","+").replaceAll("_","/")));return obj.exp>Date.now()?obj.email:null}catch{return null}};
 const guestVoter=req=>{const cookie=(req.headers.get("cookie")||"").split(";").map(x=>x.trim()).find(x=>x.startsWith("hugs_art_guest="))?.slice(15)||"";if(/^[A-Za-z0-9_-]{32,160}$/.test(cookie))return{id:cookie,header:null};const id=crypto.randomUUID().replaceAll("-","")+crypto.randomUUID().replaceAll("-","");return{id,header:`hugs_art_guest=${id}; Path=/; Max-Age=31536000; HttpOnly; Secure; SameSite=Lax`}};
 export {getStore,json,digest,token,session,guestVoter};
+
+// Shared utilities are not a public authentication endpoint.
+export default () => new Response('Not found', {status:404});

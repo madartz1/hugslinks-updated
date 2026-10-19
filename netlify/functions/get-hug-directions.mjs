@@ -1,3 +1,4 @@
+import { modernHandler } from './_shared/hl-studio-modern.mjs';
 /*
 ==========================================================
 HUGSLinks
@@ -641,7 +642,7 @@ function extractSteps(route){
    MAIN HANDLER
 ======================================================== */
 
-export async function handler(event){
+async function legacyHandler(event){
 
   if(
     event.httpMethod !== "POST"
@@ -993,3 +994,5 @@ export async function handler(event){
   }
 
 }
+
+export default modernHandler(legacyHandler);

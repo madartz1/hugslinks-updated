@@ -1,3 +1,4 @@
+import { modernHandler } from './_shared/hl-studio-modern.mjs';
 /**
  * HUGSLinks Housing Watch v2
  * netlify/functions/housing-watch.js
@@ -12,10 +13,12 @@
  * a verified housing-policy change.
  */
 
-const fs = require("fs");
-const path = require("path");
-const crypto = require("crypto");
-const { getStore } = require("@netlify/blobs");
+import fs from "node:fs";
+import path from "node:path";
+import { fileURLToPath } from "node:url";
+const __dirname=path.dirname(fileURLToPath(import.meta.url));
+import crypto from "node:crypto";
+import { getStore } from "@netlify/blobs";
 
 
 /* =========================================================
@@ -1272,7 +1275,7 @@ async function runHousingWatch() {
    NETLIFY HANDLER
 ========================================================= */
 
-exports.handler =
+const handler =
   async function handler(event) {
 
     if (
@@ -1371,8 +1374,6 @@ exports.handler =
    EXPORT FOR FUTURE USE
 ========================================================= */
 
-exports.runHousingWatch =
-  runHousingWatch;
+export { runHousingWatch, checkSource };
 
-exports.checkSource =
-  checkSource;
+export default modernHandler(handler);

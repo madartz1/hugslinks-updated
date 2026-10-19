@@ -1,3 +1,4 @@
+import { modernHandler } from './_shared/hl-studio-modern.mjs';
 // HUGSLinks Printify connection diagnostic
 // Uses PRINTIFY_API_TOKEN from Netlify environment variables.
 // Read-only: this function does not create, update, or submit orders.
@@ -31,7 +32,7 @@ async function printify(path, token) {
   return data;
 }
 
-export async function handler() {
+async function legacyHandler() {
   const token = process.env.PRINTIFY_API_TOKEN;
 
   if (!token) {
@@ -122,3 +123,5 @@ export async function handler() {
     };
   }
 };
+
+export default modernHandler(legacyHandler);
