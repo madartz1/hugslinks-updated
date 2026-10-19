@@ -7,14 +7,14 @@ const sha=b=>createHash('sha256').update(b).digest('hex');
 const recipient='recipient@example.com',owner='sender@example.com',secret='test-only-sender-signing-key';
 function setup(){
  const cards=new Map(),codes=new Map(),objects=new Map(),emails=[],counts=new Map();let failMail=false;
- const store={init:async()=>{},limit:async(k,max)=>{const n=(counts.get(k)||0)+1;counts.set(k,n);if(n>max)throw Object.assign(Error('Limit reached'),{status:429});},putCode:async c=>codes.set(c.id,{...c,attempts:0}),attempt:async id=>{const c=codes.get(id);if(!c||c.used||c.attempts>=5||new Date(c.expires_at)<=new Date())return;c.attempts++;return c;},useCode:async id=>{const c=codes.get(id);if(c.used)return false;c.used=true;return true;},find:async(o,k)=>[...cards.values()].find(c=>c.owner===o&&c.request_key===k),get:async id=>cards.get(id),create:async c=>{const row={...c,state:'uploading',email_state:'pending'};cards.set(c.id,row);return row;},ready:async id=>cards.get(id).state='ready',claimMail:async id=>{const r=cards.get(id);if(r.email_state!=='pending')return false;r.email_state='sending';return true;},mailDone:async(id,p)=>Object.assign(cards.get(id),{email_state:'sent',provider_id:p}),mailFailed:async id=>cards.get(id).email_state='pending',revoke:async id=>cards.get(id).deleted_at=new Date().toISOString(),purged:async id=>cards.get(id).purged_at=new Date().toISOString()};
+ const store={init:async()=>{},limit:async(k,max)=>{const n=(counts.get(k)||0)+1;counts.set(k,n);if(n>max)throw Object.assign(Error('Limit reached'),{status:429});},putCode:async c=>codes.set(c.id,{...c,attempts:0}),attempt:async id=>{const c=codes.get(id);if(!c||c.used||c.attempts>=5||new Date(c.expires_at)<=new Date())return;c.attempts++;return c;},useCode:async id=>{const c=codes.get(id);if(c.used)return false;c.used=true;return true;},find:async(o,k)=>[...cards.values()].find(c=>c.owner===o&&c.request_key===k),get:async id=>cards.get(id),list:async(owner,offset=0)=>[...cards.values()].filter(c=>c.owner===owner&&!c.deleted_at).slice(offset,offset+51).map(c=>({...c,title:c.card.fields.title})),rememberLink:async(id,value)=>cards.get(id).view_token=value,create:async c=>{const row={...c,created_at:new Date().toISOString(),state:'uploading',email_state:'pending'};cards.set(c.id,row);return row;},ready:async id=>cards.get(id).state='ready',claimMail:async id=>{const r=cards.get(id);if(r.email_state!=='pending')return false;r.email_state='sending';return true;},mailDone:async(id,p)=>Object.assign(cards.get(id),{email_state:'sent',provider_id:p}),mailFailed:async id=>cards.get(id).email_state='pending',revoke:async id=>cards.get(id).deleted_at=new Date().toISOString(),purged:async id=>cards.get(id).purged_at=new Date().toISOString()};
  const storage={put:async(id,slot,part,b)=>objects.set(id+'/'+slot+'/'+part,Buffer.from(b)),head:async(id,slot,part)=>{const b=objects.get(id+'/'+slot+'/'+part);if(!b)throw Error('Not uploaded');return b.length;},get:async(id,slot,part)=>objects.get(id+'/'+slot+'/'+part),remove:async r=>{for(const k of objects.keys())if(k.startsWith(r.id+'/'))objects.delete(k);}};
  const deps={configured:true,secret,store,storage,send:async(to,content,key)=>{if(failMail)throw Object.assign(Error('Email temporarily unavailable'),{status:502});emails.push({to,...content,key});return 'provider-test-id';}};
  const handler=makeHandler(deps),session=sessionFor(owner,secret);
  const call=async(action,{body,bytes,id,slot,part,auth=session,host=origin}={})=>{
   const q=new URLSearchParams({action});if(id)q.set('id',id);if(slot)q.set('slot',slot);if(part!==undefined)q.set('part',part);
   const headers={origin:host};if(auth)headers.authorization='Bearer '+auth;if(bytes)headers['content-type']='application/octet-stream';else if(body)headers['content-type']='application/json';
-  return handler(new Request(host+'/.netlify/functions/hugs-card-links?'+q,{method:['status','view','part'].includes(action)?'GET':'POST',headers,body:bytes|| (body?JSON.stringify(body):undefined)}));
+  return handler(new Request(host+'/.netlify/functions/hugs-card-links?'+q,{method:['status','view','part','list','owner-view','owner-part'].includes(action)?'GET':'POST',headers,body:bytes|| (body?JSON.stringify(body):undefined)}));
  };
  return {call,cards,codes,objects,emails,failMail:v=>failMail=v};
 }
@@ -60,3 +60,18 @@ test('expired links, unsafe media, production hosts, and daily quota are rejecte
 });
 
 test('stored media is encrypted and cannot be opened using a different card identity',()=>{const original=Buffer.from('private family photo');const sealed=protectMedia(original,secret,'card/inside/0');assert.equal(sealed.length,original.length+28);assert.equal(sealed.includes(original),false);assert.deepEqual(openMedia(sealed,secret,'card/inside/0'),original);assert.throws(()=>openMedia(sealed,secret,'other/inside/0'));sealed[sealed.length-1]^=1;assert.throws(()=>openMedia(sealed,secret,'card/inside/0'));});
+
+test('My Cards is scoped to the verified owner and restores share links without exposing other cards',async()=>{
+ const h=setup(),input=cardInput(Buffer.from('private-video')),{id}=await(await h.call('create',{body:input})).json();
+ await h.call('upload',{id,slot:'video',part:0,bytes:Buffer.from('private-video')});await h.call('finish',{id,body:{}});
+ assert.equal((await h.call('list',{auth:''})).status,401);
+ const another=sessionFor('another@example.com',secret);assert.equal((await(await h.call('list',{auth:another})).json()).cards.length,0);
+ assert.equal((await h.call('owner-view',{id,auth:another})).status,404);assert.equal((await h.call('owner-part',{id,slot:'video',part:0,auth:another})).status,404);
+ const list=await(await h.call('list')).json();assert.equal(list.cards.length,1);assert.equal(list.cards[0].viewToken,input.viewToken);assert.match(list.cards[0].viewUrl,/view-card.html#/);assert.equal(list.cards[0].view_hash,undefined);
+ assert.equal((await h.call('owner-view',{id})).status,200);assert.equal((await h.call('owner-part',{id,slot:'video',part:0})).status,200);
+ h.cards.get(id).view_token=null;assert.equal((await h.call('remember-link',{id,body:{viewToken:'c'.repeat(64)}})).status,400);
+ assert.equal((await h.call('remember-link',{id,body:{viewToken:input.viewToken}})).status,200);assert.ok(h.cards.get(id).view_token);
+ assert.equal((await(await h.call('list')).json()).cards[0].viewToken,input.viewToken);
+ const publicData=await(await h.call('view',{id,auth:input.viewToken})).json();assert.equal(JSON.stringify(publicData).includes(input.viewToken),false);
+ h.cards.get(id).expires_at='2000-01-01';assert.equal((await h.call('owner-view',{id})).status,404);
+});

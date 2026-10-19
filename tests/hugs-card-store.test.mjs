@@ -13,7 +13,7 @@ test('database enforces code consumption, idempotent card saves, mail claims, qu
   assert.equal(await store.useCode('code'),true);assert.equal(await store.useCode('code'),false);
   const card={id:'card',owner:'sender@example.com',request_key:'key',view_hash:'hash',card:{fields:{message:'<test>'},media:{}},recipient_email:'friend@example.com',recipient_name:'Friend',note:'A note',expires_at:new Date(Date.now()+86400000).toISOString()};
   const created=await store.create(card);assert.equal(created.state,'uploading');assert.equal(created.card.fields.message,'<test>');
-  const repeated=await store.create({...card,id:'other'});assert.equal(repeated.id,'card');assert.equal((await store.find(card.owner,'key')).id,'card');
+  const repeated=await store.create({...card,id:'other'});assert.equal(repeated.id,'card');assert.equal((await store.find(card.owner,'key')).id,'card');await store.rememberLink('card','encrypted');assert.equal((await store.list(card.owner))[0].view_token,'encrypted');assert.equal((await store.list('other@example.com')).length,0);
   await store.ready('card');assert.equal((await store.get('card')).state,'ready');
   const claims=await Promise.all([store.claimMail('card'),store.claimMail('card')]);assert.equal(claims.filter(Boolean).length,1);
   await store.mailFailed('card');assert.equal(await store.claimMail('card'),true);await store.mailDone('card','provider');assert.equal(await store.claimMail('card'),false);assert.equal((await store.get('card')).email_state,'sent');

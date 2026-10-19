@@ -44,20 +44,24 @@ export function makeStore(sql) {
    await sql`CREATE TABLE IF NOT EXISTS hugs_card_limits (key TEXT PRIMARY KEY,hits INTEGER NOT NULL,expires_at TIMESTAMPTZ NOT NULL)`;
    await sql`CREATE TABLE IF NOT EXISTS hugs_card_codes (id TEXT PRIMARY KEY,email TEXT NOT NULL,code_hash TEXT NOT NULL,attempts INTEGER NOT NULL DEFAULT 0,expires_at TIMESTAMPTZ NOT NULL,used_at TIMESTAMPTZ)`;
    await sql`CREATE TABLE IF NOT EXISTS hugs_private_cards (id TEXT PRIMARY KEY,owner TEXT NOT NULL,request_key TEXT NOT NULL,view_hash TEXT NOT NULL,card JSONB NOT NULL,recipient_email TEXT NOT NULL,recipient_name TEXT NOT NULL,note TEXT NOT NULL,state TEXT NOT NULL DEFAULT 'uploading',email_state TEXT NOT NULL DEFAULT 'pending',email_started_at TIMESTAMPTZ,provider_id TEXT,created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),expires_at TIMESTAMPTZ NOT NULL,deleted_at TIMESTAMPTZ,purged_at TIMESTAMPTZ,UNIQUE(owner,request_key))`;
+   await sql`ALTER TABLE hugs_private_cards ADD COLUMN IF NOT EXISTS view_token TEXT`;
+   await sql`CREATE INDEX IF NOT EXISTS hugs_private_cards_owner_created ON hugs_private_cards(owner,created_at DESC)`;
   },
   async limit(key,max,seconds){const bucket=Math.floor(Date.now()/(seconds*1000));const [r]=await sql`INSERT INTO hugs_card_limits(key,hits,expires_at) VALUES(${key+':'+bucket},1,NOW()+(${seconds}*INTERVAL '1 second')) ON CONFLICT(key) DO UPDATE SET hits=hugs_card_limits.hits+1 RETURNING hits`;if(r.hits>max)throw failure(429,'Please wait before trying again. Your sending allowance is limited during the preview.');},
   async putCode(c){await sql`INSERT INTO hugs_card_codes(id,email,code_hash,expires_at) VALUES(${c.id},${c.email},${c.code_hash},${c.expires_at})`;},
   async attempt(id){return (await sql`UPDATE hugs_card_codes SET attempts=attempts+1 WHERE id=${id} AND used_at IS NULL AND expires_at>NOW() AND attempts<5 RETURNING *`)[0];},
   async useCode(id){return (await sql`UPDATE hugs_card_codes SET used_at=NOW() WHERE id=${id} AND used_at IS NULL RETURNING id`).length>0;},
   async find(owner,key){return (await sql`SELECT * FROM hugs_private_cards WHERE owner=${owner} AND request_key=${key}`)[0];},
+  async list(owner,offset=0){return await sql`SELECT id,card->'fields'->>'title' AS title,recipient_name,recipient_email,created_at,expires_at,state,email_state,view_token FROM hugs_private_cards WHERE owner=${owner} AND deleted_at IS NULL ORDER BY created_at DESC,id DESC LIMIT 51 OFFSET ${offset}`;},
+  async rememberLink(id,value){await sql`UPDATE hugs_private_cards SET view_token=${value} WHERE id=${id} AND deleted_at IS NULL`;},
   async get(id){return (await sql`SELECT * FROM hugs_private_cards WHERE id=${id}`)[0];},
-  async create(c){return (await sql`INSERT INTO hugs_private_cards(id,owner,request_key,view_hash,card,recipient_email,recipient_name,note,expires_at) VALUES(${c.id},${c.owner},${c.request_key},${c.view_hash},${JSON.stringify(c.card)}::jsonb,${c.recipient_email},${c.recipient_name},${c.note},${c.expires_at}) ON CONFLICT(owner,request_key) DO UPDATE SET request_key=EXCLUDED.request_key RETURNING *`)[0];},
+  async create(c){return (await sql`INSERT INTO hugs_private_cards(id,owner,request_key,view_hash,card,recipient_email,recipient_name,note,expires_at,view_token) VALUES(${c.id},${c.owner},${c.request_key},${c.view_hash},${JSON.stringify(c.card)}::jsonb,${c.recipient_email},${c.recipient_name},${c.note},${c.expires_at},${c.view_token||null}) ON CONFLICT(owner,request_key) DO UPDATE SET request_key=EXCLUDED.request_key RETURNING *`)[0];},
   async ready(id){await sql`UPDATE hugs_private_cards SET state='ready' WHERE id=${id} AND state='uploading' AND deleted_at IS NULL`;},
   async claimMail(id){return (await sql`UPDATE hugs_private_cards SET email_state='sending',email_started_at=NOW() WHERE id=${id} AND deleted_at IS NULL AND state='ready' AND (email_state='pending' OR (email_state='sending' AND email_started_at<NOW()-INTERVAL '2 minutes')) RETURNING id`).length>0;},
   async mailDone(id,provider){await sql`UPDATE hugs_private_cards SET email_state='sent',provider_id=${provider} WHERE id=${id}`;},
   async mailFailed(id){await sql`UPDATE hugs_private_cards SET email_state='pending' WHERE id=${id} AND email_state='sending'`;},
   async revoke(id){await sql`UPDATE hugs_private_cards SET deleted_at=COALESCE(deleted_at,NOW()) WHERE id=${id}`;},
-  async purged(id){await sql`UPDATE hugs_private_cards SET purged_at=NOW(),card='{}'::jsonb,recipient_email='',recipient_name='',note='' WHERE id=${id}`;},
+  async purged(id){await sql`UPDATE hugs_private_cards SET purged_at=NOW(),card='{}'::jsonb,recipient_email='',recipient_name='',note='',view_token=NULL WHERE id=${id}`;},
   async expired(){return await sql`SELECT * FROM hugs_private_cards WHERE purged_at IS NULL AND (deleted_at IS NOT NULL OR expires_at<NOW() OR (state='uploading' AND created_at<NOW()-INTERVAL '1 day')) LIMIT 20`;},
   async cleanCodes(){await sql`DELETE FROM hugs_card_codes WHERE expires_at<NOW()`;await sql`DELETE FROM hugs_card_limits WHERE expires_at<NOW()`;}
  };
@@ -112,7 +116,7 @@ export function makeHandler(deps) {
   const url=new URL(req.url),action=url.searchParams.get('action')||'status';
   if(!isDeployPreview(url.host))return json(403,{error:'Private card sending is enabled only on isolated HUGS Cards deploy previews until production launch is approved.'});
   if(req.method!=='GET'&&req.headers.get('origin')!==url.origin)return json(403,{error:'Open this request from HUGSLinks.'});
-  const expected=['status','view','part'].includes(action)?'GET':'POST';if(req.method!==expected)return json(405,{error:'Method not allowed.'});
+  const expected=['status','view','part','list','owner-view','owner-part'].includes(action)?'GET':'POST';if(req.method!==expected)return json(405,{error:'Method not allowed.'});
   if(action==='status')return json(200,{configured:deps.configured,expiresInDays:DAYS,maxCardsPerDay:3});
   if(!deps.configured)return json(503,{error:'Card delivery needs storage, database, and verified email configuration. Your draft is still saved on this device.'});
   const {store,storage,secret}=deps;
@@ -140,12 +144,18 @@ export function makeHandler(deps) {
     const {slot,part}=partFor(row,url);return new Response(await storage.get(id,slot,part),{headers:{...headers,'Content-Type':'application/octet-stream'}});
    }
    const owner=readSession(bearer,secret);if(!owner)throw failure(401,'Verify your sender email to continue.');
+   if(action==='list'){
+    const raw=url.searchParams.get('offset')||'0';if(!/^\d{1,5}$/.test(raw))throw failure(400,'Invalid page.');const offset=Number(raw),rows=await store.list(owner,offset),hasMore=rows.length>50;
+    const cards=rows.slice(0,50).map(r=>{let viewToken=null;try{if(r.view_token)viewToken=openMedia(Buffer.from(r.view_token,'base64'),secret,r.id+'/share-link').toString();}catch{}return {id:r.id,title:r.title||'Your HUG Card',recipientName:r.recipient_name,recipientEmail:r.recipient_email,createdAt:r.created_at,expiresAt:r.expires_at,state:r.state,emailState:r.email_state,viewToken,viewUrl:viewToken?url.origin+'/app/view-card.html#'+r.id+'.'+viewToken:null};});
+    return json(200,{email:owner,cards,nextOffset:hasMore?offset+50:null});
+   }
    if(action==='create'){
     const b=await body(req);if(!/^[a-f0-9]{32}$/.test(b.requestKey||'')||!validToken(b.viewToken))throw failure(400,'Invalid card request.');
     const existing=await store.find(owner,b.requestKey);if(existing){active(existing);return json(200,{id:existing.id,ready:existing.state==='ready',expiresAt:existing.expires_at});}
     const card=validateCard(b),recipient_email=email(b.recipientEmail);
     await store.limit('create:'+digest(owner),3,86400);
-    const row=await store.create({id:randomBytes(16).toString('hex'),owner,request_key:b.requestKey,view_hash:digest(b.viewToken),card,recipient_email,recipient_name:clean(b.recipientName,80),note:clean(b.note,500),expires_at:new Date(Date.now()+DAYS*86400000).toISOString()});
+    const newID=randomBytes(16).toString('hex'),sealed=protectMedia(Buffer.from(b.viewToken),secret,newID+'/share-link').toString('base64');
+    const row=await store.create({id:newID,view_token:sealed,owner,request_key:b.requestKey,view_hash:digest(b.viewToken),card,recipient_email,recipient_name:clean(b.recipientName,80),note:clean(b.note,500),expires_at:new Date(Date.now()+DAYS*86400000).toISOString()});
     return json(200,{id:row.id,ready:row.state==='ready',expiresAt:row.expires_at});
    }
    if(!validID(id))throw failure(400,'Invalid card.');
@@ -154,6 +164,15 @@ export function makeHandler(deps) {
     await store.revoke(id);await storage.remove(row);await store.purged(id);return json(200,{deleted:true});
    }
    active(row);
+   if(action==='remember-link'){
+    const b=await body(req);if(!validToken(b.viewToken)||!equal(digest(b.viewToken),row.view_hash))throw failure(400,'Invalid card link.');
+    await store.rememberLink(id,protectMedia(Buffer.from(b.viewToken),secret,id+'/share-link').toString('base64'));return json(200,{saved:true});
+   }
+   if(action==='owner-view'||action==='owner-part'){
+    if(row.state!=='ready')throw failure(409,'This card has not finished uploading.');
+    if(action==='owner-view')return json(200,{card:row.card,expiresAt:row.expires_at});
+    const {slot,part}=partFor(row,url);return new Response(await storage.get(id,slot,part),{headers:{...headers,'Content-Type':'application/octet-stream'}});
+   }
    if(action==='upload'){
     if(row.state!=='uploading')throw failure(409,'This saved card cannot be changed. Prepare a new card.');
     const {slot,part,m,size}=partFor(row,url);

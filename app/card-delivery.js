@@ -11,7 +11,7 @@
  function remember(key,value,where=localStorage){try{where.setItem(key,JSON.stringify(value))}catch{}}
  const records=()=>read('hugs-private-card-links');
  function saveRecord(record){remember('hugs-private-card-links',[record,...records().filter(x=>x.id!==record.id)].slice(0,30));history();}
- function buttons(){get('prepareDelivery').disabled=busy||!configured||!verified();get('requestSenderCode').disabled=busy||!configured;get('verifySenderCode').disabled=busy;}
+ function buttons(){const entry=get('cardAccountEntry');if(entry)entry.textContent=verified()?'Account':'Sign in';get('prepareDelivery').disabled=busy||!configured||!verified();get('requestSenderCode').disabled=busy||!configured;get('verifySenderCode').disabled=busy;}
  async function request(action,{body,bytes,id,slot,part,auth=true}={}){
   const q=new URLSearchParams({action});if(id)q.set('id',id);if(slot)q.set('slot',slot);if(part!==undefined)q.set('part',String(part));
   const headers={};if(auth&&session)headers.Authorization='Bearer '+session.session;
@@ -71,7 +71,7 @@
  get('copyCardLink').onclick=()=>{if(prepared)copy(prepared.url);};
  get('shareCardLink').onclick=async()=>{if(!prepared)return;try{await navigator.share({title:'A HUGS Card for you',text:'I made this HUG just for you.',url:prepared.url});say('Link handed to your chosen app. Finish sending there.');}catch(e){if(e.name!=='AbortError')say('Use Copy card link to share this HUG.');}};
  function history(){
-  const list=get('savedCardList');list.replaceChildren();const saved=records().filter(r=>/^[a-f0-9]{32}$/.test(r.id));get('savedCardHistory').hidden=!saved.length;
+  const list=get('savedCardList');list.replaceChildren();const saved=records().filter(r=>verified()&&r.owner===session.email&&/^[a-f0-9]{32}$/.test(r.id));get('savedCardHistory').hidden=!saved.length;
   for(const record of saved){
    const li=document.createElement('li'),label=document.createElement('span');label.textContent=(record.recipientName||record.recipientEmail)+' · '+new Date(record.expiresAt).toLocaleDateString()+(record.emailed?' · emailed':' · link ready');li.append(label);const expired=new Date(record.expiresAt)<=new Date();if(expired)label.textContent+=' · expired';
    const copyButton=document.createElement('button');copyButton.className='secondary';copyButton.textContent='Copy link';copyButton.disabled=expired;copyButton.onclick=()=>copy(record.url);li.append(copyButton);
