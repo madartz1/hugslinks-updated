@@ -4,7 +4,7 @@ import { S3Client, PutObjectCommand, GetObjectCommand, HeadObjectCommand, Delete
 
 export const CHUNK_SIZE = 2 * 1024 * 1024;
 export const DAYS = 30;
-const isDeployPreview = host => /^deploy-preview-\d+--hugslinks-web-build\.netlify\.app$/i.test(host || '');
+const isCardsHost = host => /^(?:www\.)?hugslinks\.com$/i.test(host || '') || /^deploy-preview-\d+--hugslinks-web-build\.netlify\.app$/i.test(host || '');
 const slots = { cover: [8, ['image/jpeg','image/png','image/webp','image/gif']], inside: [8, ['image/jpeg','image/png','image/webp','image/gif']], video: [25, ['video/mp4','video/webm']], audio: [8, ['audio/mpeg','audio/wav','audio/mp4','audio/x-m4a','audio/x-wav']] };
 const digest = s => createHash('sha256').update(s).digest('hex');
 const token = () => randomBytes(32).toString('hex');
@@ -114,7 +114,7 @@ function partFor(row,url){const slot=url.searchParams.get('slot'),part=Number(ur
 export function makeHandler(deps) {
  return async req=>{
   const url=new URL(req.url),action=url.searchParams.get('action')||'status';
-  if(!isDeployPreview(url.host))return json(403,{error:'Private card sending is enabled only on isolated HUGS Cards deploy previews until production launch is approved.'});
+  if(!isCardsHost(url.host))return json(403,{error:'Open HUGS Cards on hugslinks.com or an official HUGS Cards deploy preview.'});
   if(req.method!=='GET'&&req.headers.get('origin')!==url.origin)return json(403,{error:'Open this request from HUGSLinks.'});
   const expected=['status','view','part','list','owner-view','owner-part'].includes(action)?'GET':'POST';if(req.method!==expected)return json(405,{error:'Method not allowed.'});
   if(action==='status')return json(200,{configured:deps.configured,expiresInDays:DAYS,maxCardsPerDay:3});

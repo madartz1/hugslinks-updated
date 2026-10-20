@@ -2,7 +2,7 @@
 
 Customer flow: verify sender email with a six-digit code → recipient email and note → Prepare private card link → Send HUGS Card. Copy/share link and recipient preview are available after preparation. Preparing does not send an email. The customer explicitly presses Send; provider acceptance is shown separately from inbox delivery.
 
-Production remains blocked by the host allowlist in `hugs-card-links.mjs`; only Netlify Deploy Preview hosts are allowed. Do not enable production until the owner authorizes launch. Preview cap: three cards per verified sender per day. No pricing or paid entitlement is changed here.
+The owner authorized live-site testing on October 20, 2026. The host allowlist in `hugs-card-links.mjs` permits hugslinks.com, www.hugslinks.com, and official Netlify Deploy Preview hosts. Email-code verification, owner-only access, and the three-card daily sender cap remain enforced. No pricing or paid entitlement is changed here. Production needs the same required environment variables as preview and a published build containing this change.
 
 ## Dedicated HUGS Cards environment configuration
 

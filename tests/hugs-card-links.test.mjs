@@ -50,13 +50,26 @@ test('email retries are safe, recipient is fixed, escaped copy, and deletion rev
  assert.equal((await h.call('delete',{id,body:{},auth:sessionFor('other@example.com',secret)})).status,404);
  assert.equal((await h.call('delete',{id,body:{}})).status,200);assert.equal((await h.call('view',{id,auth:input.viewToken})).status,404);assert.ok(h.cards.get(id).purged_at);
 });
-test('expired links, unsafe media, production hosts, and daily quota are rejected',async()=>{
- const h=setup();assert.equal((await h.call('status',{host:'https://hugslinks.com'})).status,403);
+test('expired links, unsafe media, unofficial hosts, and daily quota are rejected',async()=>{
+ const h=setup();assert.equal((await h.call('status',{host:'https://untrusted.example'})).status,403);
  assert.throws(()=>validateCard({card:{media:{cover:{type:'image/svg+xml',size:50,hashes:['a'.repeat(64)]}}}}),/Unsupported/);
  assert.throws(()=>validateCard({card:{media:{video:{type:'video/mp4',size:26*1024*1024,hashes:[]}}}}),/too large/);
  let first;for(let i=0;i<3;i++){const input=cardInput();input.requestKey=i.toString().repeat(32);const r=await h.call('create',{body:input});assert.equal(r.status,200);first=await r.json();}
  const extra=cardInput();extra.requestKey='f'.repeat(32);assert.equal((await h.call('create',{body:extra})).status,429);
  await h.call('finish',{id:first.id,body:{}});h.cards.get(first.id).expires_at='2000-01-01T00:00:00Z';assert.equal((await h.call('view',{id:first.id,auth:'b'.repeat(64)})).status,404);
+});
+
+test('live card domains allow code requests but still require verification and same-origin writes',async()=>{
+ for(const host of ['https://hugslinks.com','https://www.hugslinks.com']){
+  const h=setup();assert.equal((await h.call('status',{host})).status,200);
+  assert.equal((await h.call('request-code',{host,body:{email:owner},auth:''})).status,200);
+  assert.equal(h.emails.length,1);
+  assert.equal((await h.call('list',{host,auth:''})).status,401);
+  assert.equal((await h.call('create',{host,body:cardInput(),auth:''})).status,401);
+  const blocked=await makeHandler({configured:true})(new Request(host+'/.netlify/functions/hugs-card-links?action=request-code',{method:'POST',headers:{origin:'https://untrusted.example'},body:JSON.stringify({email:owner})}));
+  assert.equal(blocked.status,403);
+ }
+ const h=setup();assert.equal((await h.call('status',{host:'https://hugslinks.com.attacker.example'})).status,403);
 });
 
 test('stored media is encrypted and cannot be opened using a different card identity',()=>{const original=Buffer.from('private family photo');const sealed=protectMedia(original,secret,'card/inside/0');assert.equal(sealed.length,original.length+28);assert.equal(sealed.includes(original),false);assert.deepEqual(openMedia(sealed,secret,'card/inside/0'),original);assert.throws(()=>openMedia(sealed,secret,'other/inside/0'));sealed[sealed.length-1]^=1;assert.throws(()=>openMedia(sealed,secret,'card/inside/0'));});
