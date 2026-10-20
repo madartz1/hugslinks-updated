@@ -1,0 +1,22 @@
+
+/* Top portions of the original room composites are the interior photographs. */
+.room.interactive-room{background:#0b2035;border:1px solid #d4b77a;box-shadow:0 14px 32px #071f3b16}
+.room-stage{position:relative;overflow:hidden;isolation:isolate;background:#292724}
+.room.interactive-room .room-background{position:absolute;inset:0 auto auto 0;width:100%;height:auto;max-width:none;aspect-ratio:auto;display:block}
+.room-frame{position:absolute;left:var(--frame-x);top:var(--frame-y);width:var(--frame-w);height:var(--frame-h);padding:clamp(3px,.6vw,7px);margin:0;border:3px ridge #c3a46a;border-radius:0;background:#11100e;box-shadow:3px 5px 10px #0009,inset 0 0 0 1px #e3ce96;cursor:pointer;overflow:hidden;min-width:0;min-height:0}
+.room.interactive-room .room-art{display:block;width:100%;height:100%;aspect-ratio:auto;object-fit:contain;background:#100f0d}
+.room-frame:focus-visible{outline:3px solid #9ad8ff;outline-offset:4px}
+.room.interactive-room figcaption{padding:20px}
+.room.interactive-room h3{margin:0 0 5px;font-size:1.25rem;color:#fff}
+.room.interactive-room .room-credit{color:#ead5a4;margin:0 0 18px;font-size:.9rem;line-height:1.5;min-height:2.7em;font-weight:500}
+.room.interactive-room label{display:block;font-size:.8rem;margin-bottom:7px;color:#bcd1df}
+.room-choice{box-sizing:border-box;width:100%;max-width:100%;background:#fff;color:#102b43;border:1px solid #a1b8c8;border-radius:9px;padding:12px;font:inherit;font-size:16px}
+.room-controls{display:flex;flex-wrap:wrap;gap:8px;margin:12px 0}
+.room-controls button{background:transparent;color:#fff;border:1px solid #708797;border-radius:999px;padding:10px 14px;font:inherit;font-size:.85rem;min-height:44px;cursor:pointer}
+.room-controls button[aria-pressed=true]{background:#ead099;color:#0b2035;border-color:#ead099}
+.room-controls button:focus-visible,.room-choice:focus-visible{outline:3px solid #9ad8ff;outline-offset:3px}
+.room.interactive-room small{display:block;color:#bed0dc;font-size:.8rem;font-weight:400;line-height:1.5}
+.room.interactive-room .room-status{color:#f5d99a;font-size:.85rem;font-weight:400;line-height:1.4;margin:6px 0 0}
+.room.interactive-room .room-status:empty{display:none}
+.gallery-room-action{border:1px solid #bb9e65;border-radius:8px;background:#0b2035;color:white;padding:10px 14px;cursor:pointer;font:inherit}
+@media(max-width:760px){.room.interactive-room figcaption{padding:18px}.room-frame{border-width:2px}}
