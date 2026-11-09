@@ -1,28 +1,50 @@
-/* Keep the public HUGSLinks navigation consistent across legacy and newer pages. */
-const HUGS_PUBLIC_NAV=[
- ['index.html','Home'],['shop.html','Shop'],['hugs-cards.html','HUGS Cards'],['art-community.html','Art'],
- ['food-support.html','Food'],['housing-help.html','Housing'],['business-services.html','Business'],
- ['reviews.html','HUGS Reviews'],['help-app.html','Help App'],['help-center.html','Help Center'],
- ['resources.html','Resources'],['nyc-updates.html','NYC Updates'],['about.html','About'],['contact.html','Contact']
-];
-// Homepage navigation is fully authored in index.html. Do not append another menu.
-// Legacy pages may still need missing links added.
-if (!document.body.classList.contains('hugs-home-nav-static')) {
- document.querySelectorAll('.navlinks').forEach(nav=>{
-  const existing=new Set([...nav.querySelectorAll('a')].map(a=>new URL(a.href).pathname));
-  HUGS_PUBLIC_NAV.forEach(([href,label])=>{
-   const pathname=new URL(href,location.href).pathname;
-   if(!existing.has(pathname)){
-    const a=document.createElement('a');a.href=href;a.textContent=label;nav.appendChild(a);existing.add(pathname);
-   }
+/* Keep one clean navigation dropdown on every public page. */
+(() => {
+  if (window.__HUGS_NAV_READY__) return;
+  window.__HUGS_NAV_READY__ = true;
+
+  document.querySelectorAll('.nav').forEach(nav => {
+    const menuButtons = [...nav.querySelectorAll(':scope > .menu')];
+    menuButtons.slice(1).forEach(button => button.remove());
+
+    const navLists = [...nav.querySelectorAll(':scope > .navlinks')];
+    const primaryList = navLists.shift();
+    if (!primaryList) return;
+
+    navLists.forEach(extraList => {
+      [...extraList.querySelectorAll('a')].forEach(link => primaryList.appendChild(link));
+      extraList.remove();
+    });
+
+    const destinations = new Set();
+    const labels = new Set();
+    [...primaryList.querySelectorAll('a')].forEach(link => {
+      const destination = new URL(link.getAttribute('href') || '', location.href);
+      const route = destination.pathname.replace(/\/+$/, '') || '/';
+      const label = (link.textContent || '').trim().replace(/\s+/g, ' ').toLowerCase();
+      if (destinations.has(route) || (label && labels.has(label))) {
+        link.remove();
+        return;
+      }
+      destinations.add(route);
+      if (label) labels.add(label);
+    });
+
+    const button = menuButtons[0];
+    if (!button) return;
+    button.type = 'button';
+    button.setAttribute('aria-expanded', 'false');
+    button.addEventListener('click', () => {
+      const isOpen = primaryList.classList.toggle('open');
+      button.setAttribute('aria-expanded', String(isOpen));
+    });
   });
- });
-}
-document.querySelectorAll('.menu').forEach(btn=>btn.addEventListener('click',()=>{
- const nav=btn.closest('.nav')?.querySelector('.navlinks')||document.querySelector('.navlinks');
- if(nav){nav.classList.toggle('open');btn.setAttribute('aria-expanded',String(nav.classList.contains('open')));}
-}));
-const path=location.pathname.split('/').pop()||'index.html';document.querySelectorAll('.navlinks a').forEach(a=>{if(a.getAttribute('href')===path)a.classList.add('active')});
+
+  const path = location.pathname.split('/').pop() || 'index.html';
+  document.querySelectorAll('.navlinks a').forEach(link => {
+    if (link.getAttribute('href') === path) link.classList.add('active');
+  });
+})();
 
 /* Sitewide HUGS electric buttons and visitor-controlled sound */
 (() => {
