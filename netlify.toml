@@ -1,0 +1,7 @@
+[build]
+  command = "node -e \"console.log(\'HUGSLinks static site ready\')\""
+  publish = "."
+  functions = "netlify/functions"
+
+[functions]
+  node_bundler = "esbuild"
