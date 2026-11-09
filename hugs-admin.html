@@ -4303,7 +4303,7 @@ async function loadMotionOrders(){
   }catch(e){list.textContent=e.message}
 }
 async function saveMotionCard(){
-  const button=motionEl("motionSave");
+  const button=motionEl("motionSaveButton");
   button.disabled=true;
   try{
     const card=await motionFormCard();
@@ -4336,6 +4336,7 @@ function motionPreview(){
   clearInterval(motionPreviewTimer);
   motionPreviewIndex=0;
   box.hidden=false;
+  motionEl("motionPreviewTitle").textContent=motionEl("motionTitle").value||"Motion Story HUG";
   const paint=()=>{
     const scene=scenes[motionPreviewIndex%scenes.length];
     motionEl("motionPreviewImage").src=scene.image_url;
@@ -4345,9 +4346,12 @@ function motionPreview(){
   motionPreviewTimer=setInterval(()=>{motionPreviewIndex=(motionPreviewIndex+1)%scenes.length;paint()},Math.max(1200,Number(motionEl("motionInterval").value)||3600));
 }
 motionEl("motionAddScene")?.addEventListener("click",()=>motionSceneRow({}));
-motionEl("motionNew")?.addEventListener("click",()=>motionReset({}));
-motionEl("motionSave")?.addEventListener("click",saveMotionCard);
-motionEl("motionPreview")?.addEventListener("click",motionPreview);
+motionEl("motionNewButton")?.addEventListener("click",()=>motionReset({}));
+motionEl("motionSaveButton")?.addEventListener("click",saveMotionCard);
+motionEl("motionPreviewButton")?.addEventListener("click",motionPreview);
+function motionPreviewStep(delta){const scenes=[...document.querySelectorAll(".motion-scene-row")].map(row=>({image_url:row.querySelector(".motion-scene-url").value.trim(),caption:row.querySelector(".motion-scene-caption").value.trim()})).filter(x=>x.image_url);if(!scenes.length)return;motionPreviewIndex=(motionPreviewIndex+delta+scenes.length)%scenes.length;motionEl("motionPreviewImage").src=scenes[motionPreviewIndex].image_url;motionEl("motionPreviewCaption").textContent=scenes[motionPreviewIndex].caption}
+motionEl("motionPreviewPrev")?.addEventListener("click",()=>motionPreviewStep(-1));
+motionEl("motionPreviewNext")?.addEventListener("click",()=>motionPreviewStep(1));
 motionEl("motionRefresh")?.addEventListener("click",async()=>{await loadMotionCards();await loadMotionOrders()});
 
 document
