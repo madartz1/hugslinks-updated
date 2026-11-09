@@ -3,6 +3,7 @@
  * This endpoint never creates, updates, or fulfills an order.
  * Required Netlify environment variable: PRODIGI_API_KEY (sandbox key).
  */
+import { withLambda } from "@netlify/aws-lambda-compat";
 const ALLOWED_ORIGINS = new Set([
   "https://hugslinks.com",
   "https://www.hugslinks.com",
@@ -33,7 +34,7 @@ function response(statusCode, payload, origin) {
   return { statusCode, headers, body: JSON.stringify(payload) };
 }
 
-exports.handler = async (event) => {
+const handler = async (event) => {
   const origin = event.headers?.origin || event.headers?.Origin || "";
 
   if (event.httpMethod === "OPTIONS") {
@@ -114,3 +115,5 @@ exports.handler = async (event) => {
     }, origin);
   }
 };
+
+export default withLambda(handler);

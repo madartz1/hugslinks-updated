@@ -1,5 +1,5 @@
 import {neon} from "@neondatabase/serverless";
-import {getStore,json} from "./_art-voter-auth.mjs";
+import {getStore,json} from "../function-libs/_art-voter-auth.mjs";
 const store=getStore("hugs-art-contests"),KEY="current";
 const auth=r=>{const secret=process.env.HUGS_ADMIN_TOKEN||"",h=r.headers.get("authorization")||"";return !!secret&&h==="Bearer "+secret};
 export default async request=>{

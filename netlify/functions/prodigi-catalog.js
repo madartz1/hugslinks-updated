@@ -3,6 +3,7 @@
  * Only exposes catalogue details; never returns the API key or wholesale quotes.
  * Required Netlify environment variable: PRODIGI_API_KEY (sandbox key).
  */
+import { withLambda } from "@netlify/aws-lambda-compat";
 const ALLOWED_ORIGINS = new Set([
   "https://hugslinks.com",
   "https://www.hugslinks.com",
@@ -35,7 +36,7 @@ function reply(statusCode, payload, origin) {
   return { statusCode, headers, body: JSON.stringify(payload) };
 }
 
-exports.handler = async (event) => {
+const handler = async (event) => {
   const origin = event.headers?.origin || event.headers?.Origin || "";
   if (event.httpMethod === "OPTIONS") {
     if (!isAllowedOrigin(origin)) return reply(403, { ok: false }, origin);
@@ -119,3 +120,5 @@ exports.handler = async (event) => {
     return reply(502, { ok: false, message: "Could not reach Prodigi sandbox catalogue." }, origin);
   }
 };
+
+export default withLambda(handler);

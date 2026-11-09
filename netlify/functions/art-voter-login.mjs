@@ -1,4 +1,4 @@
-import {getStore,json,digest,token,session} from "./_art-voter-auth.mjs";
+import {getStore,json,digest,token,session} from "../function-libs/_art-voter-auth.mjs";
 const emailOK=e=>/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(e);
 export default async request=>{
 if(!process.env.HUGS_VOTER_SESSION_SECRET||!process.env.HUGS_VOTER_RESEND_API_KEY||!process.env.HUGS_VOTER_FROM_EMAIL)return json({ok:false,error:"Member email sign-in is not configured yet."},503);

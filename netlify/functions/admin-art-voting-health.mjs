@@ -1,5 +1,5 @@
 import {neon} from "@neondatabase/serverless";
-import {getStore,json} from "./_art-voter-auth.mjs";
+import {getStore,json} from "../function-libs/_art-voter-auth.mjs";
 const authorized=r=>{const secret=process.env.HUGS_ADMIN_TOKEN||"";return !!secret&&r.headers.get("authorization")==="Bearer "+secret};
 export default async request=>{
 if(!authorized(request))return json({ok:false,error:"Unauthorized"},401);

@@ -12,10 +12,11 @@
  * a verified housing-policy change.
  */
 
-const fs = require("fs");
-const path = require("path");
-const crypto = require("crypto");
-const { getStore } = require("@netlify/blobs");
+import fs from "fs";
+import path from "path";
+import crypto from "crypto";
+import { getStore } from "@netlify/blobs";
+import { withLambda } from "@netlify/aws-lambda-compat";
 
 
 /* =========================================================
@@ -1272,7 +1273,7 @@ async function runHousingWatch() {
    NETLIFY HANDLER
 ========================================================= */
 
-exports.handler =
+const handler =
   async function handler(event) {
 
     if (
@@ -1371,8 +1372,5 @@ exports.handler =
    EXPORT FOR FUTURE USE
 ========================================================= */
 
-exports.runHousingWatch =
-  runHousingWatch;
-
-exports.checkSource =
-  checkSource;
+export { runHousingWatch, checkSource };
+export default withLambda(handler);

@@ -2,6 +2,8 @@
 // Uses PRINTIFY_API_TOKEN from Netlify environment variables.
 // Read-only: this function does not create, update, or submit orders.
 
+import { withLambda } from "@netlify/aws-lambda-compat";
+
 const API = "https://api.printify.com/v1";
 
 async function printify(path, token) {
@@ -31,7 +33,7 @@ async function printify(path, token) {
   return data;
 }
 
-export async function handler() {
+async function handler() {
   const token = process.env.PRINTIFY_API_TOKEN;
 
   if (!token) {
@@ -122,3 +124,5 @@ export async function handler() {
     };
   }
 };
+
+export default withLambda(handler);

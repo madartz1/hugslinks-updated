@@ -1,5 +1,5 @@
 import {neon} from "@neondatabase/serverless";
-import {getStore,json,digest,guestVoter} from "./_art-voter-auth.mjs";
+import {getStore,json,digest,guestVoter} from "../function-libs/_art-voter-auth.mjs";
 
 export default async request=>{
   if(!process.env.HUGS_VOTER_SESSION_SECRET||!process.env.HUGS_VOTING_DATABASE_URL)return json({ok:false,error:"Voting not configured"},503);

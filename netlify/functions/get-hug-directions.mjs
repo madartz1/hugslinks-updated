@@ -1,3 +1,5 @@
+import { withLambda } from "@netlify/aws-lambda-compat";
+
 /*
 ==========================================================
 HUGSLinks
@@ -641,7 +643,7 @@ function extractSteps(route){
    MAIN HANDLER
 ======================================================== */
 
-export async function handler(event){
+async function handler(event){
 
   if(
     event.httpMethod !== "POST"
@@ -993,3 +995,5 @@ export async function handler(event){
   }
 
 }
+
+export default withLambda(handler);

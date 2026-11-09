@@ -5,7 +5,8 @@
  * netlify/functions/housing-updates.js
  */
 
-const { getStore } = require("@netlify/blobs");
+import { getStore } from "@netlify/blobs";
+import { withLambda } from "@netlify/aws-lambda-compat";
 
 const STORE_NAME = "hugs-housing-watch";
 const HISTORY_KEY = "housing-history";
@@ -40,7 +41,7 @@ function emptyFeed() {
 }
 
 
-exports.handler = async function handler(event) {
+async function handler(event) {
 
   if (event?.httpMethod === "OPTIONS") {
     return {
@@ -141,3 +142,5 @@ exports.handler = async function handler(event) {
   }
 
 };
+
+export default withLambda(handler);
