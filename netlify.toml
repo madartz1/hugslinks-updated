@@ -1,5 +1,5 @@
 [build]
-  command = "node -e \"console.log(\'HUGSLinks static site ready\')\""
+  command = "echo HUGSLinks-static-site-ready"
   publish = "."
   functions = "netlify/functions"
 
