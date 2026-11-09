@@ -584,7 +584,7 @@
     .token-wrap{position:relative}.token-wrap input{padding-right:76px}.token-toggle{position:absolute;right:7px;top:7px;border:0;background:#eef7ff;color:#071f3b;border-radius:9px;padding:7px 9px;font-weight:800;cursor:pointer}
     .login-card .primary-button{width:100%;min-height:48px}
     .admin-security-copy{font-size:.88rem;color:var(--muted);line-height:1.55;margin:14px 0 0}
-  </style>
+  .motion-editor-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px}.motion-editor-grid .wide{grid-column:1/-1}.motion-scene-row{display:grid;grid-template-columns:1.1fr 1fr 120px auto;gap:9px;align-items:end;padding:12px;margin:10px 0;border:1px solid var(--border);border-radius:14px;background:#f8fbff}.motion-scene-row .field{margin:0}.motion-card-actions{display:flex;gap:8px;flex-wrap:wrap}.motion-preview{display:grid;grid-template-columns:220px 1fr;gap:16px;align-items:center;padding:15px;border-radius:16px;background:var(--navy);color:white;margin-top:15px}.motion-preview img{width:100%;max-height:300px;object-fit:contain;border-radius:12px;background:white}@media(max-width:760px){.motion-editor-grid{grid-template-columns:1fr}.motion-scene-row{grid-template-columns:1fr}.motion-preview{grid-template-columns:1fr}}</style>
 </head>
 
 
@@ -772,6 +772,7 @@
       <button class="tab-button" data-tab="artists" type="button">Artists</button>
       <button class="tab-button" data-tab="gallery" type="button">Art Gallery</button><button class="tab-button" data-tab="contest" type="button">Art Competition</button>
 
+      <button class="tab-button" data-tab="motionCards" type="button">Motion Cards</button>
       <button
         class="tab-button"
         data-tab="food"
@@ -807,7 +808,7 @@
     </div>
 
 
-    <!-- REQUESTS -->
+<section class="admin-section" id="motionCardsSection"><div class="record-card"><h3>Motion Story HUG Builder</h3><p>Duplicate the original motion-card format, replace its storyboard images and music, preview it, set the price and publish a new variation.</p><input id="motionId" type="hidden"><div class="motion-editor-grid"><div class="field"><label>Card title</label><input id="motionTitle"></div><div class="field"><label>URL slug</label><input id="motionSlug"></div><div class="field"><label>Subtitle</label><input id="motionSubtitle"></div><div class="field"><label>Price in dollars</label><input id="motionPrice" type="number" min="1" step=".01" value="6.99"></div><div class="field wide"><label>Description</label><textarea id="motionDescription"></textarea></div><div class="field"><label>Cover image URL</label><input id="motionCoverUrl"><input id="motionCoverFile" type="file" accept="image/jpeg,image/png,image/webp"></div><div class="field"><label>Music URL</label><input id="motionAudioUrl"><input id="motionAudioFile" type="file" accept="audio/mpeg,audio/wav,audio/mp4"></div><div class="field"><label>Free preview scenes</label><input id="motionPreviewCount" type="number" min="1" max="30" value="3"></div><div class="field"><label>Default scene timing (milliseconds)</label><input id="motionInterval" type="number" min="1200" max="15000" value="3600"></div><label><input id="motionHearts" type="checkbox" checked> Floating heart effect</label><label><input id="motionPublished" type="checkbox"> Published for buyers</label></div><h4>Storyboard Scenes</h4><div id="motionScenes"></div><div class="motion-card-actions"><button class="secondary-button" id="motionAddScene" type="button">+ Add Scene</button><button class="secondary-button" id="motionPreviewButton" type="button">Preview Draft</button><button class="primary-button" id="motionSaveButton" type="button">Save Motion Card</button><button class="hold-button" id="motionNewButton" type="button">New Blank Card</button></div><p id="motionStatus" role="status" aria-live="polite"></p><div class="motion-preview" id="motionPreviewBox" hidden><img id="motionPreviewImage" alt=""><div><h3 id="motionPreviewTitle"></h3><p id="motionPreviewCaption"></p><div class="motion-card-actions"><button class="secondary-button" id="motionPreviewPrev" type="button">Previous</button><button class="secondary-button" id="motionPreviewNext" type="button">Next</button></div></div></div></div><h3 style="margin-top:24px">Saved Motion Story HUGS</h3><div class="record-grid" id="motionCardList"></div><h3 style="margin-top:24px">Recent Motion Card Orders</h3><div class="record-grid" id="motionOrderList"></div></section>    <!-- REQUESTS -->
 
     <section
       class="admin-section active"
@@ -1364,7 +1365,7 @@ const ARTIST_API =
   "/.netlify/functions/admin-artists";
 
 
-const GALLERY_API="/.netlify/functions/admin-art-gallery";
+const GALLERY_API="/.netlify/functions/admin-art-gallery";const MOTION_API="/.netlify/functions/admin-motion-hugs";const MOTION_UPLOAD_API="/.netlify/functions/upload-motion-hug-asset";
 let adminToken = "";
 
 let requestRecords = [];
@@ -1689,7 +1690,7 @@ loginButton.addEventListener(
 
       await loadArtists();
        await loadGallery();
-       await loadContestAdmin();
+       await loadContestAdmin();await loadMotionCards();await loadMotionOrders();
 
       await loadMatches();
 
@@ -2048,7 +2049,7 @@ refreshButton.addEventListener(
 
       await loadFoodOffers();
 
-      await loadArtists();
+      await loadArtists();await loadMotionCards();await loadMotionOrders();
 
       await loadMatches();
 
@@ -4219,6 +4220,386 @@ function formatDate(value){
 
 }
 
+
+let motionCards=[],motionPreviewIndex=0,motionPreviewTimer=null;const motionEl=id=>document.getElementById(id);
+function motionSceneRow(scene={}){const row=document.createElement("div");row.className="motion-scene-row";row.dataset.id=scene.id||"";row.innerHTML='<div class="field"><label>Scene image URL</label><input class="motion-scene-url" value="'+escapeHTML(scene.image_url||"")+'"><input class="motion-scene-file" type="file" accept="image/jpeg,image/png,image/webp"></div><div class="field"><label>Caption</label><input class="motion-scene-caption" value="'+escapeHTML(scene.caption||"")+'"></div><div class="field"><label>Duration ms</label><input class="motion-scene-duration" type="number" min="1200" max="15000" value="'+escapeHTML(scene.duration_ms||motionEl("motionInterval")?.value||3600)+'"></div><button class="decline-button motion-remove-scene" type="button">Remove</button>';row.querySelector(".motion-remove-scene").onclick=()=>row.remove();motionEl("motionScenes").append(row)}
+function motionReset(c={}){motionEl("motionId").value=c.id||"";motionEl("motionTitle").value=c.title||"";motionEl("motionSlug").value=c.slug||"";motionEl("motionSubtitle").value=c.subtitle||"";motionEl("motionDescription").value=c.description||"";motionEl("motionPrice").value=((c.price_cents||699)/100).toFixed(2);motionEl("motionCoverUrl").value=c.cover_url||"";motionEl("motionAudioUrl").value=c.audio_url||"";motionEl("motionPreviewCount").value=c.preview_scene_count||3;motionEl("motionInterval").value=c.scene_interval_ms||3600;motionEl("motionHearts").checked=c.hearts_enabled!==false;motionEl("motionPublished").checked=c.published===true;motionEl("motionCoverFile").value="";motionEl("motionAudioFile").value="";motionEl("motionScenes").replaceChildren();(c.scenes?.length?c.scenes:[{}]).forEach(motionSceneRow);motionEl("motionPreviewBox").hidden=true;motionEl("motionStatus").textContent=""}
+async function motionUpload(file){if(!file)return "";const form=new FormData();form.append("asset",file);const r=await fetch(MOTION_UPLOAD_API,{method:"POST",headers:{Authorization:"Bearer "+adminToken},body:form,cache:"no-store"}),d=await r.json();if(!r.ok||!d.ok)throw Error(d.error||"Upload failed");return d.asset_url}
+async function motionFormCard(){motionEl("motionStatus").textContent="Uploading assets and saving…";const coverFile=motionEl("motionCoverFile").files?.[0],audioFile=motionEl("motionAudioFile").files?.[0],cover=coverFile?await motionUpload(coverFile):motionEl("motionCoverUrl").value.trim(),audio=audioFile?await motionUpload(audioFile):motionEl("motionAudioUrl").value.trim(),rows=[...document.querySelectorAll(".motion-scene-row")],scenes=[];for(let i=0;i<rows.length;i++){const row=rows[i],file=row.querySelector(".motion-scene-file").files?.[0],image=file?await motionUpload(file):row.querySelector(".motion-scene-url").value.trim();if(image)scenes.push({id:row.dataset.id||"",image_url:image,caption:row.querySelector(".motion-scene-caption").value.trim()||"Scene "+(i+1),duration_ms:Number(row.querySelector(".motion-scene-duration").value)||3600})}return{id:motionEl("motionId").value,title:motionEl("motionTitle").value,slug:motionEl("motionSlug").value,subtitle:motionEl("motionSubtitle").value,description:motionEl("motionDescription").value,price_cents:Math.round(Number(motionEl("motionPrice").value)*100),cover_url:cover,audio_url:audio,preview_scene_count:Number(motionEl("motionPreviewCount").value),scene_interval_ms:Number(motionEl("motionInterval").value),hearts_enabled:motionEl("motionHearts").checked,published:motionEl("motionPublished").checked,scenes}}
+async function loadMotionCards(){const d=await adminFetch(MOTION_API);motionCards=Array.isArray(d.cards)?d.cards:[];renderMotionCards();if(!motionEl("motionScenes").children.length)motionReset(motionCards[0]||{})}
+function renderMotionCards(){
+  const list=motionEl("motionCardList");
+  if(!list)return;
+  list.replaceChildren();
+  if(!motionCards.length){
+    list.innerHTML='<article class="record-card"><h3>No Motion Story HUGS yet</h3></article>';
+    return;
+  }
+  motionCards.forEach(c=>{
+    const a=document.createElement("article");
+    a.className="record-card";
+    const top=document.createElement("div");
+    top.className="record-top";
+    const info=document.createElement("div");
+    const id=document.createElement("div");
+    id.className="record-id";
+    id.textContent=c.slug;
+    const h=document.createElement("h3");
+    h.textContent=c.title;
+    info.append(id,h);
+    const badge=document.createElement("span");
+    badge.className="status-badge";
+    badge.textContent=c.published?"Published":"Draft";
+    top.append(info,badge);
+    const desc=document.createElement("p");
+    desc.textContent=c.description||"";
+    const meta=document.createElement("p");
+    const sceneCount=Array.isArray(c.scenes)?c.scenes.length:0;
+    meta.textContent=sceneCount+" scenes · $"+((c.price_cents||0)/100).toFixed(2);
+    const actions=document.createElement("div");
+    actions.className="record-actions";
+    const edit=document.createElement("button");
+    edit.className="secondary-button";
+    edit.type="button";
+    edit.textContent="Edit";
+    edit.onclick=()=>motionReset(c);
+    const view=document.createElement("a");
+    view.className="secondary-button";
+    view.textContent="Open Preview";
+    view.href="/motion-hug.html?card="+encodeURIComponent(c.slug);
+    view.target="_blank";
+    view.rel="noopener";
+    const duplicate=document.createElement("button");
+    duplicate.className="approve-button";
+    duplicate.type="button";
+    duplicate.textContent="Duplicate";
+    duplicate.onclick=()=>duplicateMotionCard(c);
+    actions.append(edit,view,duplicate);
+    a.append(top,desc,meta,actions);
+    list.append(a);
+  });
+}
+async function loadMotionOrders(){
+  const list=motionEl("motionOrderList");
+  if(!list)return;
+  try{
+    const d=await adminFetch(MOTION_API+"?view=orders");
+    list.replaceChildren();
+    const orders=Array.isArray(d.orders)?d.orders:[];
+    if(!orders.length){
+      list.innerHTML='<article class="record-card"><h3>No Motion Story HUG orders yet</h3></article>';
+      return;
+    }
+    orders.slice(0,25).forEach(o=>{
+      const a=document.createElement("article");
+      a.className="record-card";
+      const h=document.createElement("h3");
+      h.textContent=(o.card_title||o.card_slug||"Motion Story HUG")+" — "+(o.payment_status||"pending");
+      const p=document.createElement("p");
+      p.textContent=(o.customer_email||"Email pending")+" · "+(o.created_at?new Date(o.created_at).toLocaleString():"");
+      a.append(h,p);
+      list.append(a);
+    });
+  }catch(e){list.textContent=e.message}
+}
+async function saveMotionCard(){
+  const button=motionEl("motionSave");
+  button.disabled=true;
+  try{
+    const card=await motionFormCard();
+    const d=await adminFetch(MOTION_API,{method:"POST",body:JSON.stringify({action:"save",card})});
+    motionEl("motionStatus").textContent="Saved. The card is ready in your catalog.";
+    await loadMotionCards();
+    motionReset(d.card||card);
+  }catch(e){motionEl("motionStatus").textContent=e.message}
+  finally{button.disabled=false}
+}
+async function duplicateMotionCard(card){
+  try{
+    const d=await adminFetch(MOTION_API,{method:"POST",body:JSON.stringify({action:"duplicate",id:card.id})});
+    await loadMotionCards();
+    motionReset(d.card);
+    motionEl("motionStatus").textContent="Duplicate created as a draft. Rename it, replace the story scenes, then publish.";
+  }catch(e){showMessage(e.message,"error")}
+}
+function motionPreview(){
+  const box=motionEl("motionPreviewBox");
+  const rows=[...document.querySelectorAll(".motion-scene-row")];
+  const scenes=rows.map(row=>({
+    image_url:row.querySelector(".motion-scene-url").value.trim(),
+    caption:row.querySelector(".motion-scene-caption").value.trim()
+  })).filter(x=>x.image_url);
+  if(!scenes.length){
+    motionEl("motionStatus").textContent="Save uploaded scene files first, or add scene image URLs to preview.";
+    return;
+  }
+  clearInterval(motionPreviewTimer);
+  motionPreviewIndex=0;
+  box.hidden=false;
+  const paint=()=>{
+    const scene=scenes[motionPreviewIndex%scenes.length];
+    motionEl("motionPreviewImage").src=scene.image_url;
+    motionEl("motionPreviewCaption").textContent=scene.caption;
+  };
+  paint();
+  motionPreviewTimer=setInterval(()=>{motionPreviewIndex=(motionPreviewIndex+1)%scenes.length;paint()},Math.max(1200,Number(motionEl("motionInterval").value)||3600));
+}
+motionEl("motionAddScene")?.addEventListener("click",()=>motionSceneRow({}));
+motionEl("motionNew")?.addEventListener("click",()=>motionReset({}));
+motionEl("motionSave")?.addEventListener("click",saveMotionCard);
+motionEl("motionPreview")?.addEventListener("click",motionPreview);
+motionEl("motionRefresh")?.addEventListener("click",async()=>{await loadMotionCards();await loadMotionOrders()});
+
+document
+  .querySelectorAll(
+    ".tab-button"
+  )
+  .forEach(
+    button => {
+
+      button.addEventListener(
+        "click",
+        () => {
+
+          document
+            .querySelectorAll(
+              ".tab-button"
+            )
+            .forEach(
+              item =>
+                item.classList.remove(
+                  "active"
+                )
+            );
+
+
+          document
+            .querySelectorAll(
+              ".admin-section"
+            )
+            .forEach(
+              section =>
+                section.classList.remove(
+                  "active"
+                )
+            );
+
+
+          button.classList.add(
+            "active"
+          );
+
+
+          const target =
+            document.getElementById(
+              button.dataset.tab +
+              "Section"
+            );
+
+
+          if(target){
+
+            target.classList.add(
+              "active"
+            );
+
+          }
+
+        }
+      );
+
+    }
+  );
+
+
+/* ==========================================
+   PAGE EXIT
+========================================== */
+
+window.addEventListener(
+  "pagehide",
+  () => {
+
+    adminToken =
+      "";
+
+    issuedTrackingToken =
+      "";
+
+
+    if(trackingCodeDisplay){
+
+      trackingCodeDisplay.value =
+        "";
+
+    }
+
+  }
+);
+
+
+const g=id=>document.getElementById(id);
+if(g('galleryCollection')&&!Array.from(g('galleryCollection').options).some(o=>o.value==='Community Gallery')){g('galleryCollection').prepend(new Option('Community Gallery','Community Gallery'))}
+let galleryPreviewURL=null;
+g('galleryUpload')?.addEventListener('change',()=>{
+ const f=g('galleryUpload').files?.[0];if(galleryPreviewURL)URL.revokeObjectURL(galleryPreviewURL);
+ g('galleryPreview').style.display='none';g('galleryUploadStatus').textContent='';
+ if(!f)return;
+ if(!['image/jpeg','image/png','image/webp'].includes(f.type)||f.size>8*1024*1024){g('galleryUploadStatus').textContent='Choose JPEG, PNG or WebP up to 8 MB.';g('galleryUpload').value='';return}
+ galleryPreviewURL=URL.createObjectURL(f);g('galleryPreview').src=galleryPreviewURL;g('galleryPreview').style.display='block';
+});
+g('galleryUploadButton')?.addEventListener('click',async()=>{
+ const f=g('galleryUpload').files?.[0];if(!f){g('galleryUploadStatus').textContent='Select an image first.';return}
+ const btn=g('galleryUploadButton');btn.disabled=true;g('galleryUploadStatus').textContent='Uploading…';
+ try{const fd=new FormData();fd.append('artwork',f);const response=await fetch('/.netlify/functions/upload-art-image',{method:'POST',headers:{Authorization:'Bearer '+adminToken},body:fd,cache:'no-store'});const d=await response.json();if(!response.ok||!d.ok)throw Error(d.error||'Upload failed');g('galleryImage').value=d.image_url;g('galleryUploadStatus').textContent='Uploaded. Click Save / Replace Artwork to publish.';g('galleryUpload').value=''}catch(e){g('galleryUploadStatus').textContent=e.message}finally{btn.disabled=false}
+});
+function galleryReset(){for(const id of ['galleryId','galleryTitle','galleryArtist','galleryImage','galleryMedium','galleryDescription'])g(id).value='';g('galleryPublished').checked=true;g('galleryUpload').value='';g('galleryPreview').style.display='none';g('galleryUploadStatus').textContent=''}
+g('galleryNew')?.addEventListener('click',galleryReset);
+async function loadGallery(){const el=g('galleryList');if(!el)return;try{const d=await adminFetch(GALLERY_API);galleryRecords=d.works||[];el.replaceChildren();if(!galleryRecords.length){el.textContent='No managed artwork yet.';return}for(const w of galleryRecords){const card=document.createElement('article'),h=document.createElement('h3'),p=document.createElement('p'),btn=document.createElement('button');card.className='record-card';h.textContent=w.title+' — '+w.artist_name;p.textContent=w.collection+(w.published?' · Published':' · Draft');btn.className='secondary-button';btn.textContent='Edit / Replace';btn.onclick=()=>{g('galleryId').value=w.id;g('galleryTitle').value=w.title;g('galleryArtist').value=w.artist_name;g('galleryImage').value=w.image_url;g('galleryMedium').value=w.medium||'';g('galleryDescription').value=w.description||'';g('galleryCollection').value=w.collection;g('galleryPublished').checked=!!w.published;g('galleryUploadStatus').textContent='Choose a new image to replace this artwork, or edit the details.';g('galleryPreview').style.display='none';};card.append(h,p,btn);el.append(card)}}catch(e){el.textContent=e.message}}
+g('gallerySave')?.addEventListener('click',async()=>{const btn=g('gallerySave');btn.disabled=true;try{await adminFetch(GALLERY_API,{method:'POST',body:JSON.stringify({action:'save',id:g('galleryId').value,title:g('galleryTitle').value,artist_name:g('galleryArtist').value,collection:g('galleryCollection').value,image_url:g('galleryImage').value,medium:g('galleryMedium').value,description:g('galleryDescription').value,published:g('galleryPublished').checked})});showMessage('Artwork saved.');galleryReset();await loadGallery()}catch(e){showMessage(e.message,'error')}finally{btn.disabled=false}});
+
+const contestAPI='/.netlify/functions/admin-art-contest';let currentContest=null;
+async function contestAction(action,extra={}){const s=document.getElementById('contestAdminStatus');try{const d=await adminFetch(contestAPI,{method:'POST',body:JSON.stringify({action,...extra})});s.textContent='Saved: '+d.contest.status;await loadContestAdmin()}catch(e){s.textContent=e.message}}
+async function loadContestAdmin(){const s=document.getElementById('contestAdminStatus'),box=document.getElementById('contestAdminEntries');try{const [d,g]=await Promise.all([adminFetch(contestAPI),adminFetch(GALLERY_API)]);currentContest=d.contest;box.replaceChildren();s.textContent=currentContest?currentContest.title+' · '+currentContest.status+' · '+currentContest.entries.length+'/'+currentContest.max_entries+' entries':'No competition created.';for(const w of g.works.filter(w=>w.published)){const label=document.createElement('label');label.style.display='block';label.style.padding='8px';const input=document.createElement('input');input.type='checkbox';input.value=w.id;input.checked=!!currentContest?.entries.includes(w.id);input.disabled=currentContest?.status!=='draft';label.append(input,document.createTextNode(' '+w.title+' — '+w.artist_name));box.append(label)}}catch(e){s.textContent=e.message}}
+document.getElementById('contestHealth')?.addEventListener('click',async()=>{const el=document.getElementById('contestHealthStatus');el.textContent='Checking private voting setup…';try{const d=await adminFetch('/.netlify/functions/admin-art-voting-health');el.textContent=Object.entries(d.checks).map(([key,ready])=>key.replaceAll('_',' ')+': '+(ready?'Ready':'Needs setup')).join(' | ')}catch(e){el.textContent=e.message}});
+document.getElementById('contestCreate')?.addEventListener('click',()=>contestAction('create',{title:document.getElementById('contestName').value,max_entries:Number(document.getElementById('contestLimit').value)}));
+document.getElementById('contestSet')?.addEventListener('click',()=>contestAction('set_entries',{entries:[...document.querySelectorAll('#contestAdminEntries input:checked')].map(x=>x.value)}));
+document.getElementById('contestOpen')?.addEventListener('click',()=>contestAction('open'));
+document.getElementById('contestClose')?.addEventListener('click',()=>contestAction('close'));
+document.getElementById('contestPublish')?.addEventListener('click',()=>contestAction('publish_winners'));
+</script>
+
+</body>
+</html>
++(c.price_cents/100).toFixed(2)+'</strong></p><div class="motion-card-actions"></div>';const actions=a.querySelector(".motion-card-actions"),edit=document.createElement("button"),dup=document.createElement("button");edit.className=dup.className="secondary-button";edit.textContent="Edit";dup.textContent="Duplicate";edit.onclick=()=>{motionReset(c);scrollTo({top:motionEl("motionCardsSection").offsetTop-30,behavior:"smooth"})};dup.onclick=()=>motionAction("duplicate",c.id);actions.append(edit,dup);if(c.published){const view=document.createElement("a");view.className="primary-button";view.textContent="View Public Card";view.href="/motion-hug.html?card="+encodeURIComponent(c.slug);view.target="_blank";view.style.textDecoration="none";actions.append(view)}list.append(a)})}
+async function loadMotionOrders(){const list=motionEl("motionOrderList");if(!list)return;const d=await adminFetch(MOTION_API+"?view=orders"),orders=Array.isArray(d.orders)?d.orders:[];list.replaceChildren();if(!orders.length){list.innerHTML='<article class="record-card"><h3>No Motion Card Orders Yet</h3><p>Paid and pending purchases will appear here.</p></article>';return}orders.slice(0,30).forEach(o=>{const a=document.createElement("article");a.className="record-card";a.innerHTML='<div class="record-top"><div><div class="record-id">'+escapeHTML(o.order_id)+'</div><h3>'+escapeHTML(o.card_title||o.card_slug||"Motion HUG")+'</h3></div><span class="status-badge">'+escapeHTML(o.payment_status||"Pending")+'</span></div><p>'+escapeHTML(o.stripe_customer_email||o.customer_email||"Email not available")+'</p><p>
+
+document
+  .querySelectorAll(
+    ".tab-button"
+  )
+  .forEach(
+    button => {
+
+      button.addEventListener(
+        "click",
+        () => {
+
+          document
+            .querySelectorAll(
+              ".tab-button"
+            )
+            .forEach(
+              item =>
+                item.classList.remove(
+                  "active"
+                )
+            );
+
+
+          document
+            .querySelectorAll(
+              ".admin-section"
+            )
+            .forEach(
+              section =>
+                section.classList.remove(
+                  "active"
+                )
+            );
+
+
+          button.classList.add(
+            "active"
+          );
+
+
+          const target =
+            document.getElementById(
+              button.dataset.tab +
+              "Section"
+            );
+
+
+          if(target){
+
+            target.classList.add(
+              "active"
+            );
+
+          }
+
+        }
+      );
+
+    }
+  );
+
+
+/* ==========================================
+   PAGE EXIT
+========================================== */
+
+window.addEventListener(
+  "pagehide",
+  () => {
+
+    adminToken =
+      "";
+
+    issuedTrackingToken =
+      "";
+
+
+    if(trackingCodeDisplay){
+
+      trackingCodeDisplay.value =
+        "";
+
+    }
+
+  }
+);
+
+
+const g=id=>document.getElementById(id);
+if(g('galleryCollection')&&!Array.from(g('galleryCollection').options).some(o=>o.value==='Community Gallery')){g('galleryCollection').prepend(new Option('Community Gallery','Community Gallery'))}
+let galleryPreviewURL=null;
+g('galleryUpload')?.addEventListener('change',()=>{
+ const f=g('galleryUpload').files?.[0];if(galleryPreviewURL)URL.revokeObjectURL(galleryPreviewURL);
+ g('galleryPreview').style.display='none';g('galleryUploadStatus').textContent='';
+ if(!f)return;
+ if(!['image/jpeg','image/png','image/webp'].includes(f.type)||f.size>8*1024*1024){g('galleryUploadStatus').textContent='Choose JPEG, PNG or WebP up to 8 MB.';g('galleryUpload').value='';return}
+ galleryPreviewURL=URL.createObjectURL(f);g('galleryPreview').src=galleryPreviewURL;g('galleryPreview').style.display='block';
+});
+g('galleryUploadButton')?.addEventListener('click',async()=>{
+ const f=g('galleryUpload').files?.[0];if(!f){g('galleryUploadStatus').textContent='Select an image first.';return}
+ const btn=g('galleryUploadButton');btn.disabled=true;g('galleryUploadStatus').textContent='Uploading…';
+ try{const fd=new FormData();fd.append('artwork',f);const response=await fetch('/.netlify/functions/upload-art-image',{method:'POST',headers:{Authorization:'Bearer '+adminToken},body:fd,cache:'no-store'});const d=await response.json();if(!response.ok||!d.ok)throw Error(d.error||'Upload failed');g('galleryImage').value=d.image_url;g('galleryUploadStatus').textContent='Uploaded. Click Save / Replace Artwork to publish.';g('galleryUpload').value=''}catch(e){g('galleryUploadStatus').textContent=e.message}finally{btn.disabled=false}
+});
+function galleryReset(){for(const id of ['galleryId','galleryTitle','galleryArtist','galleryImage','galleryMedium','galleryDescription'])g(id).value='';g('galleryPublished').checked=true;g('galleryUpload').value='';g('galleryPreview').style.display='none';g('galleryUploadStatus').textContent=''}
+g('galleryNew')?.addEventListener('click',galleryReset);
+async function loadGallery(){const el=g('galleryList');if(!el)return;try{const d=await adminFetch(GALLERY_API);galleryRecords=d.works||[];el.replaceChildren();if(!galleryRecords.length){el.textContent='No managed artwork yet.';return}for(const w of galleryRecords){const card=document.createElement('article'),h=document.createElement('h3'),p=document.createElement('p'),btn=document.createElement('button');card.className='record-card';h.textContent=w.title+' — '+w.artist_name;p.textContent=w.collection+(w.published?' · Published':' · Draft');btn.className='secondary-button';btn.textContent='Edit / Replace';btn.onclick=()=>{g('galleryId').value=w.id;g('galleryTitle').value=w.title;g('galleryArtist').value=w.artist_name;g('galleryImage').value=w.image_url;g('galleryMedium').value=w.medium||'';g('galleryDescription').value=w.description||'';g('galleryCollection').value=w.collection;g('galleryPublished').checked=!!w.published;g('galleryUploadStatus').textContent='Choose a new image to replace this artwork, or edit the details.';g('galleryPreview').style.display='none';};card.append(h,p,btn);el.append(card)}}catch(e){el.textContent=e.message}}
+g('gallerySave')?.addEventListener('click',async()=>{const btn=g('gallerySave');btn.disabled=true;try{await adminFetch(GALLERY_API,{method:'POST',body:JSON.stringify({action:'save',id:g('galleryId').value,title:g('galleryTitle').value,artist_name:g('galleryArtist').value,collection:g('galleryCollection').value,image_url:g('galleryImage').value,medium:g('galleryMedium').value,description:g('galleryDescription').value,published:g('galleryPublished').checked})});showMessage('Artwork saved.');galleryReset();await loadGallery()}catch(e){showMessage(e.message,'error')}finally{btn.disabled=false}});
+
+const contestAPI='/.netlify/functions/admin-art-contest';let currentContest=null;
+async function contestAction(action,extra={}){const s=document.getElementById('contestAdminStatus');try{const d=await adminFetch(contestAPI,{method:'POST',body:JSON.stringify({action,...extra})});s.textContent='Saved: '+d.contest.status;await loadContestAdmin()}catch(e){s.textContent=e.message}}
+async function loadContestAdmin(){const s=document.getElementById('contestAdminStatus'),box=document.getElementById('contestAdminEntries');try{const [d,g]=await Promise.all([adminFetch(contestAPI),adminFetch(GALLERY_API)]);currentContest=d.contest;box.replaceChildren();s.textContent=currentContest?currentContest.title+' · '+currentContest.status+' · '+currentContest.entries.length+'/'+currentContest.max_entries+' entries':'No competition created.';for(const w of g.works.filter(w=>w.published)){const label=document.createElement('label');label.style.display='block';label.style.padding='8px';const input=document.createElement('input');input.type='checkbox';input.value=w.id;input.checked=!!currentContest?.entries.includes(w.id);input.disabled=currentContest?.status!=='draft';label.append(input,document.createTextNode(' '+w.title+' — '+w.artist_name));box.append(label)}}catch(e){s.textContent=e.message}}
+document.getElementById('contestHealth')?.addEventListener('click',async()=>{const el=document.getElementById('contestHealthStatus');el.textContent='Checking private voting setup…';try{const d=await adminFetch('/.netlify/functions/admin-art-voting-health');el.textContent=Object.entries(d.checks).map(([key,ready])=>key.replaceAll('_',' ')+': '+(ready?'Ready':'Needs setup')).join(' | ')}catch(e){el.textContent=e.message}});
+document.getElementById('contestCreate')?.addEventListener('click',()=>contestAction('create',{title:document.getElementById('contestName').value,max_entries:Number(document.getElementById('contestLimit').value)}));
+document.getElementById('contestSet')?.addEventListener('click',()=>contestAction('set_entries',{entries:[...document.querySelectorAll('#contestAdminEntries input:checked')].map(x=>x.value)}));
+document.getElementById('contestOpen')?.addEventListener('click',()=>contestAction('open'));
+document.getElementById('contestClose')?.addEventListener('click',()=>contestAction('close'));
+document.getElementById('contestPublish')?.addEventListener('click',()=>contestAction('publish_winners'));
+</script>
+
+</body>
+</html>
++((o.price_cents||0)/100).toFixed(2)+' · '+formatDate(o.created_at)+'</p>';list.append(a)})}
+async function motionAction(action,id){try{await adminFetch(MOTION_API,{method:"POST",body:JSON.stringify({action,id})});showMessage("Motion Story HUG updated.");await loadMotionCards()}catch(e){showMessage(e.message,"error")}}
+motionEl("motionAddScene")?.addEventListener("click",()=>motionSceneRow({}));motionEl("motionNewButton")?.addEventListener("click",()=>motionReset({}));motionEl("motionSaveButton")?.addEventListener("click",async()=>{const b=motionEl("motionSaveButton");b.disabled=true;try{const card=await motionFormCard(),d=await adminFetch(MOTION_API,{method:"POST",body:JSON.stringify({action:"save",card})});motionReset(d.card);await loadMotionCards();motionEl("motionStatus").textContent="Saved successfully."}catch(e){motionEl("motionStatus").textContent=e.message}finally{b.disabled=false}});
+function motionPreviewRender(){const rows=[...document.querySelectorAll(".motion-scene-row")].filter(r=>r.querySelector(".motion-scene-url").value.trim());if(!rows.length){motionEl("motionStatus").textContent="Add a scene URL or save uploaded files first.";return}motionPreviewIndex=(motionPreviewIndex+rows.length)%rows.length;const r=rows[motionPreviewIndex];motionEl("motionPreviewImage").src=r.querySelector(".motion-scene-url").value.trim();motionEl("motionPreviewTitle").textContent=motionEl("motionTitle").value||"Motion Story HUG";motionEl("motionPreviewCaption").textContent=r.querySelector(".motion-scene-caption").value||"Scene "+(motionPreviewIndex+1);motionEl("motionPreviewBox").hidden=false}
+motionEl("motionPreviewButton")?.addEventListener("click",()=>{motionPreviewIndex=0;motionPreviewRender();clearInterval(motionPreviewTimer);motionPreviewTimer=setInterval(()=>{motionPreviewIndex++;motionPreviewRender()},Number(motionEl("motionInterval").value)||3600)});motionEl("motionPreviewPrev")?.addEventListener("click",()=>{motionPreviewIndex--;motionPreviewRender()});motionEl("motionPreviewNext")?.addEventListener("click",()=>{motionPreviewIndex++;motionPreviewRender()});
 
 /* ==========================================
    TABS
