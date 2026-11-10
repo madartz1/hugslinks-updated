@@ -4552,10 +4552,14 @@ async function loadMotionOrders(){
       const a=document.createElement("article");
       a.className="record-card";
       const h=document.createElement("h3");
-      h.textContent=(o.card_title||o.card_slug||"Motion Story HUG")+" — "+(o.payment_status||"pending");
+      h.textContent=o.card_title||o.card_slug||"Motion Story HUG";
       const p=document.createElement("p");
-      p.textContent=(o.customer_email||"Email pending")+" · "+(o.created_at?new Date(o.created_at).toLocaleString():"");
-      a.append(h,p);
+      const amount=((o.amount_cents||o.price_cents||0)/100).toFixed(2);
+      p.textContent=(o.stripe_customer_email||o.customer_email||"Email pending")+" · $"+amount+" · "+(o.created_at?new Date(o.created_at).toLocaleString():"");
+      const detail=document.createElement("p");
+      detail.className="record-id";
+      detail.textContent="Order "+(o.id||o.order_id||"Unavailable")+" · Payment: "+(o.payment_status||"pending")+" · Delivery: "+(o.fulfillment_status||"waiting");
+      a.append(h,p,detail);
       list.append(a);
     });
   }catch(e){list.textContent=e.message}
