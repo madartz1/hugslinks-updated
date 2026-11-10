@@ -82,3 +82,5 @@ export const slug = value => clean(value, 100)
   .replace(/[^a-z0-9]+/g,"-")
   .replace(/(^-|-$)/g,"")
   .slice(0,80);
+
+export default () => new Response("Not found", { status:404 });
