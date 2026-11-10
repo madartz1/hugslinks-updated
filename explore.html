@@ -87,7 +87,7 @@
         <div><span class="badge">Cards &amp; shopping</span><h2 id="cards-title">Send something meaningful.</h2></div>
         <p>Choose a HUGS Card experience, make a personalized card, shop HUGSLinks products or enter the member area.</p>
       </div>
-      <div class="project-grid">
+      <div class="project-grid" data-project-grid="cards-commerce">
         <a class="project-card featured" href="hugs-cards.html">
           <div class="project-top"><span class="project-icon" aria-hidden="true">💌</span><span class="project-status">Live</span></div>
           <h3>HUGS Cards</h3><p>Browse digital, printable, motion-story and app-style HUGS Card experiences.</p>
@@ -121,7 +121,7 @@
         <div><span class="badge">Art &amp; creativity</span><h2 id="creative-title">Create, exhibit and build.</h2></div>
         <p>Explore art, support artists, vote on community work and use HUGSLinks creative production tools.</p>
       </div>
-      <div class="project-grid">
+      <div class="project-grid" data-project-grid="creative">
         <a class="project-card featured" href="https://hugslinks-community-art.netlify.app/">
           <div class="project-top"><span class="project-icon" aria-hidden="true">🖼️</span><span class="project-status">Live gallery</span></div>
           <h3>HL Art Gallery</h3><p>Experience the dedicated HUGSLinks art gallery, artist stories and community artwork.</p>
@@ -160,7 +160,7 @@
         <div><span class="badge">Community support</span><h2 id="community-title">Find help and local pathways.</h2></div>
         <p>Go directly to HUGSLinks support tools, food and housing pathways, public resources and current NYC information.</p>
       </div>
-      <div class="project-grid">
+      <div class="project-grid" data-project-grid="community">
         <a class="project-card featured" href="help-app.html">
           <div class="project-top"><span class="project-icon" aria-hidden="true">🤝</span><span class="project-status">Live</span></div>
           <h3>HUGS Help App</h3><p>Start with the mobile-friendly support experience and connect to the help you need.</p>
@@ -210,6 +210,41 @@
       <div><h3>Support</h3><a href="help-center.html">Help Center</a><a href="resources.html">Community resources</a><a href="contact.html">Contact HUGSLinks</a></div>
     </div>
   </footer>
+  <script>
+    (()=>{
+      const grids=new Map([...document.querySelectorAll('[data-project-grid]')].map(grid=>[grid.dataset.projectGrid,grid]));
+      const projectCard=project=>{
+        const link=document.createElement('a');
+        link.className='project-card'+(project.featured?' featured':'');
+        link.href=project.url;
+
+        const top=document.createElement('div');top.className='project-top';
+        const icon=document.createElement('span');icon.className='project-icon';icon.setAttribute('aria-hidden','true');icon.textContent=project.icon||'💙';
+        const status=document.createElement('span');status.className='project-status';status.textContent=project.status||'Live';
+        top.append(icon,status);
+
+        const title=document.createElement('h3');title.textContent=project.title;
+        const description=document.createElement('p');description.textContent=project.description;
+        const action=document.createElement('span');action.className='project-link';
+        const actionText=document.createElement('span');actionText.textContent=project.link_text||'Open project';
+        const arrow=document.createElement('span');arrow.setAttribute('aria-hidden','true');arrow.textContent=/^https?:/i.test(project.url)?'↗':'→';
+        action.append(actionText,arrow);link.append(top,title,description,action);
+        return link;
+      };
+      fetch('/.netlify/functions/project-directory',{cache:'no-store'})
+        .then(response=>response.ok?response.json():Promise.reject())
+        .then(data=>{
+          if(!data.ok||!Array.isArray(data.projects))return;
+          const grouped=new Map([...grids.keys()].map(category=>[category,[]]));
+          data.projects.forEach(project=>grouped.get(project.category)?.push(project));
+          grouped.forEach((projects,category)=>{
+            if(!projects.length)return;
+            const grid=grids.get(category);grid.replaceChildren(...projects.map(projectCard));
+          });
+        })
+        .catch(()=>{});
+    })();
+  </script>
   <script src="live-help-config.js"></script><script src="script.js"></script>
 </body>
 </html>

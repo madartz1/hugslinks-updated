@@ -65,6 +65,26 @@ export const REVIEW_BUSINESSES = [
   }
 ];
 
+export const PROJECTS = [
+  {id:"hugs-cards",title:"HUGS Cards",description:"Browse digital, printable, motion-story and app-style HUGS Card experiences.",url:"hugs-cards.html",icon:"💌",status:"Live",link_text:"Explore HUGS Cards",category:"cards-commerce",featured:true,published:true,sort_order:1},
+  {id:"create-hugs-card",title:"Create Your HUGS Card",description:"Build a personalized digital HUG with your message, design and recipient details.",url:"/app/create-card.html",icon:"✨",status:"Live",link_text:"Start creating",category:"cards-commerce",featured:false,published:true,sort_order:2},
+  {id:"original-motion-hug",title:"Original Motion HUG",description:"View the original interactive card experience that inspired the first HUGS Card type.",url:"https://hugscard.netlify.app/",icon:"🎬",status:"Live demo",link_text:"View the motion card",category:"cards-commerce",featured:false,published:true,sort_order:3},
+  {id:"hugslinks-shop",title:"HUGSLinks Shop",description:"Discover HUGSLinks cards, art-inspired products and meaningful merchandise.",url:"shop.html",icon:"🛍️",status:"Live",link_text:"Visit the shop",category:"cards-commerce",featured:false,published:true,sort_order:4},
+  {id:"hugslinks-members",title:"HUGSLinks Members",description:"Enter the member experience for HUGSLinks benefits, access and updates.",url:"member.html",icon:"💙",status:"Member",link_text:"Member access",category:"cards-commerce",featured:false,published:true,sort_order:5},
+  {id:"hl-art-gallery",title:"HL Art Gallery",description:"Experience the dedicated HUGSLinks art gallery, artist stories and community artwork.",url:"https://hugslinks-community-art.netlify.app/",icon:"🖼️",status:"Live gallery",link_text:"Enter the gallery",category:"creative",featured:true,published:true,sort_order:1},
+  {id:"art-community",title:"Art & Community",description:"Discover creative programs, artist participation, voting and support campaigns.",url:"art-community.html",icon:"🎨",status:"Live",link_text:"Explore community art",category:"creative",featured:false,published:true,sort_order:2},
+  {id:"hl-studio",title:"HL Studio",description:"Use the HUGSLinks creative workspace for design, media and project production.",url:"/studio/",icon:"🪄",status:"Live",link_text:"Open HL Studio",category:"creative",featured:false,published:true,sort_order:3},
+  {id:"business-services",title:"Business Services",description:"Get help with creative setup, digital presence and practical business growth.",url:"business-services.html",icon:"💼",status:"Live",link_text:"View services",category:"creative",featured:false,published:true,sort_order:4},
+  {id:"hugs-reviews",title:"HUGS Reviews",description:"Find thoughtful community-centered reviews and recognition for better local service.",url:"reviews.html",icon:"⭐",status:"Live",link_text:"Read HUGS Reviews",category:"creative",featured:false,published:true,sort_order:5},
+  {id:"hugslinks-crypto",title:"HUGSLinks Crypto",description:"Explore the HUGSLinks digital innovation and community technology project.",url:"https://hugslinks-crypto.netlify.app/",icon:"🔗",status:"Project",link_text:"Visit the project",category:"creative",featured:false,published:true,sort_order:6},
+  {id:"hugs-help-app",title:"HUGS Help App",description:"Start with the mobile-friendly support experience and connect to the help you need.",url:"help-app.html",icon:"🤝",status:"Live",link_text:"Open the Help App",category:"community",featured:true,published:true,sort_order:1},
+  {id:"food-support",title:"Food Support",description:"Find food support information, local resources and partner pathways.",url:"food-support.html",icon:"🍎",status:"Live",link_text:"Find food support",category:"community",featured:false,published:true,sort_order:2},
+  {id:"housing-help",title:"Housing Help",description:"Access housing navigation, advocacy information and practical next steps.",url:"housing-help.html",icon:"🏠",status:"Live",link_text:"Find housing help",category:"community",featured:false,published:true,sort_order:3},
+  {id:"community-resources",title:"Community Resources",description:"Browse benefits, emergency, clothing, government and community resource pathways.",url:"resources.html",icon:"📚",status:"Live",link_text:"Browse resources",category:"community",featured:false,published:true,sort_order:4},
+  {id:"nyc-updates",title:"HUGS NYC Updates",description:"See public alerts, programs, policy developments and selected local headlines.",url:"nyc-updates.html",icon:"🗽",status:"Live",link_text:"View NYC updates",category:"community",featured:false,published:true,sort_order:5},
+  {id:"support-hugs",title:"Support HUGS",description:"Help HUGSLinks grow its creative and community support mission.",url:"support-hugs.html",icon:"💞",status:"Support",link_text:"Support the mission",category:"community",featured:false,published:true,sort_order:6}
+];
+
 export const clean = (value, max=1000) => typeof value === "string"
   ? value.trim().replace(/[\u0000-\u001F\u007F]/g, "").slice(0, max)
   : "";

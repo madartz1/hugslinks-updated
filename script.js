@@ -16,6 +16,21 @@
       extraList.remove();
     });
 
+    const hasExplore = [...primaryList.querySelectorAll('a')].some(link => {
+      const destination = new URL(link.getAttribute('href') || '', location.href);
+      return destination.pathname.replace(/\.(html?)$/i, '').replace(/\/+$/, '') === '/explore';
+    });
+    if (!hasExplore) {
+      const explore = document.createElement('a');
+      explore.href = '/explore';
+      explore.textContent = 'Explore';
+      const home = [...primaryList.querySelectorAll('a')].find(link => {
+        const route = new URL(link.getAttribute('href') || '', location.href).pathname.replace(/\/+$/, '') || '/';
+        return route === '/' || /\/index\.html$/i.test(route);
+      });
+      home ? home.after(explore) : primaryList.prepend(explore);
+    }
+
     const destinations = new Set();
     const labels = new Set();
     [...primaryList.querySelectorAll('a')].forEach(link => {
@@ -161,7 +176,7 @@
 (()=>{
  const STORAGE_KEY='hugsLanguage';
  const dictionary={
-'Home':'Inicio','Shop':'Tienda','HUGS Cards':'Tarjetas HUGS','Art':'Arte','Food':'Alimentos','Housing':'Vivienda','Business':'Negocios','Help App':'App de Ayuda','Help Center':'Centro de Ayuda','Resources':'Recursos','About':'Nosotros','Contact':'Contacto','Menu':'Menú',
+'Home':'Inicio','Explore':'Explorar','Shop':'Tienda','HUGS Cards':'Tarjetas HUGS','Art':'Arte','Food':'Alimentos','Housing':'Vivienda','Business':'Negocios','Help App':'App de Ayuda','Help Center':'Centro de Ayuda','Resources':'Recursos','About':'Nosotros','Contact':'Contacto','Menu':'Menú',
 'Premium help network':'Red de ayuda premium','Art, support, and community systems built with care.':'Arte, apoyo y sistemas comunitarios creados con cuidado.','HUGSLinks connects creative products, community support, business services, and practical resources into one clean premium ecosystem.':'HUGSLinks conecta productos creativos, apoyo comunitario, servicios para negocios y recursos prácticos en un ecosistema premium y accesible.',
 'Send a HUG':'Enviar un HUG','Support Through Art':'Apoyar a través del arte','Find Local Food':'Encontrar alimentos locales','HUGS Navigator':'Navegador HUGS','How can HUGS help today?':'¿Cómo puede ayudarte HUGS hoy?','Choose what you need—or how you want to help—and we’ll take you directly to the right HUGSLinks path.':'Elige lo que necesitas —o cómo quieres ayudar— y te llevaremos directamente al recurso adecuado de HUGSLinks.',
 'I need food':'Necesito alimentos','Food support and local resources':'Apoyo alimentario y recursos locales','I need housing help':'Necesito ayuda con vivienda','Housing navigation and advocacy':'Orientación y defensa para vivienda','I need clothing / winter help':'Necesito ropa / ayuda para el invierno','Coats, cold-weather and emergency resources':'Abrigos y recursos para el frío y emergencias','I need benefits':'Necesito beneficios','Government assistance and HRA pathways':'Asistencia gubernamental y opciones de HRA','I want to help someone':'Quiero ayudar a alguien','Volunteer, become a helper or support a HUG':'Hazte voluntario, ayudante o apoya un HUG','I’m an artist':'Soy artista','Submit work and join the art community':'Envía tu trabajo y únete a la comunidad artística','I want to support HUGS':'Quiero apoyar a HUGS','Help the mission grow and reach more people':'Ayuda a que la misión crezca y llegue a más personas','Not sure where to start?':'¿No sabes por dónde empezar?','Open the HUGS Help Center →':'Abrir el Centro de Ayuda HUGS →',

@@ -1,5 +1,5 @@
 import { getStore } from "@netlify/blobs";
-import { STORE_PRODUCTS, REVIEW_BUSINESSES, clean, validURL, slug } from "./_owner-content.mjs";
+import { STORE_PRODUCTS, REVIEW_BUSINESSES, PROJECTS, clean, validURL, slug } from "./_owner-content.mjs";
 
 const headers={"Content-Type":"application/json; charset=utf-8","Cache-Control":"private, no-store"};
 const json=(body,status=200)=>new Response(JSON.stringify(body),{status,headers});
@@ -56,6 +56,27 @@ function reviewRecord(body,existing=[]){
   return record;
 }
 
+function projectRecord(body,existing=[]){
+  const categories=["cards-commerce","creative","community"];
+  const id=slug(body.id||body.title)||("project-"+crypto.randomUUID().slice(0,8));
+  const record={
+    id,
+    title:clean(body.title,160),
+    description:clean(body.description,1000),
+    url:clean(body.url,700),
+    icon:clean(body.icon,16)||"💙",
+    status:clean(body.status,60)||"Live",
+    link_text:clean(body.link_text,120)||"Open project",
+    category:categories.includes(body.category)?body.category:"cards-commerce",
+    featured:body.featured===true,
+    published:body.published===true,
+    sort_order:Number.isFinite(Number(body.sort_order))?Math.max(0,Math.min(999,Number(body.sort_order))):existing.length+1,
+    updated_at:new Date().toISOString()
+  };
+  if(!record.title||!record.description||!record.url||!record.link_text||!validURL(record.url)) throw new Error("Project title, description, valid link and button text are required.");
+  return record;
+}
+
 async function listMembers(){
   const memberStore=getStore("hugs-original-333");
   const adminStore=getStore("hugs-member-admin");
@@ -78,6 +99,7 @@ export default async request=>{
     if(request.method==="GET"){
       if(area==="store") return json({ok:true,products:await ownerList(store,"store-products",STORE_PRODUCTS,"products")});
       if(area==="reviews") return json({ok:true,businesses:await ownerList(store,"review-businesses",REVIEW_BUSINESSES,"businesses")});
+      if(area==="projects") return json({ok:true,projects:await ownerList(store,"project-directory",PROJECTS,"projects")});
       if(area==="members") return json({ok:true,members:await listMembers()});
       return json({ok:false,error:"Unknown workspace area."},400);
     }
@@ -94,6 +116,12 @@ export default async request=>{
       if(index>=0) businesses[index]=record; else businesses.push(record);
       await store.setJSON("review-businesses",{updated_at:record.updated_at,businesses});
       return json({ok:true,business:record});
+    }
+    if(area==="projects"){
+      const projects=await ownerList(store,"project-directory",PROJECTS,"projects"),record=projectRecord(body,projects),index=projects.findIndex(x=>x.id===record.id);
+      if(index>=0) projects[index]=record; else projects.push(record);
+      await store.setJSON("project-directory",{updated_at:record.updated_at,projects});
+      return json({ok:true,project:record});
     }
     if(area==="members"){
       const number=Number(body.number),key="member:"+String(number).padStart(3,"0"),status=clean(body.status,40),allowed=["Active","On Hold","Archived"];

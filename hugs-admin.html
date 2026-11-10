@@ -864,6 +864,7 @@
       <button class="tab-button" data-tab="gallery" type="button">Art Gallery</button><button class="tab-button" data-tab="contest" type="button">Art Competition</button>
 
       <button class="tab-button" data-tab="motionCards" type="button">Motion Cards</button>
+      <button class="tab-button" data-tab="projectManager" type="button">Projects</button>
       <button class="tab-button" data-tab="storeManager" type="button">Store</button>
       <button class="tab-button" data-tab="reviewsManager" type="button">Reviews</button>
       <button class="tab-button" data-tab="membersManager" type="button">Members</button>
@@ -911,7 +912,7 @@
         <div class="owner-workspace-status">
           <div class="record-id">WORKSPACE STATUS</div>
           <h3>Connected tools</h3>
-          <p>HUGS Cards, art, food, help operations, the store catalog, HUGS Reviews and founding-member records are connected here now. Future projects can join this same private workspace.</p>
+          <p>The public project directory, HUGS Cards, art, food, help operations, the store catalog, HUGS Reviews and founding-member records are connected here now.</p>
         </div>
       </div>
 
@@ -976,7 +977,39 @@
             <button class="secondary-button workspace-open-tab" type="button" data-open-tab="membersManager">Manage Members</button>
           </div>
         </article>
+
+        <article class="workspace-card">
+          <div class="workspace-card-icon" aria-hidden="true">🧭</div>
+          <h3>Public Project Directory</h3>
+          <p>Control which HUGSLinks projects viewers can discover, their category, status, description, link and display order.</p>
+          <div class="workspace-actions">
+            <button class="primary-button workspace-open-tab" type="button" data-open-tab="projectManager">Manage Projects</button>
+            <a class="secondary-button" href="explore.html" target="_blank" rel="noopener">View Explore Page</a>
+          </div>
+        </article>
       </div>
+    </section>
+
+    <section class="admin-section" id="projectManagerSection">
+      <div class="record-card">
+        <div class="owner-section-heading"><div><h3>HUGSLinks Project Manager</h3><p>Edit the public Explore directory. Hidden projects stay saved here but disappear from the viewer page.</p></div><a class="secondary-button" href="explore.html" target="_blank" rel="noopener">View Live Directory</a></div>
+        <input id="ownerProjectId" type="hidden">
+        <div class="owner-editor-grid">
+          <div class="field"><label>Project name</label><input id="ownerProjectTitle"></div>
+          <div class="field"><label>Project icon or emoji</label><input id="ownerProjectIcon" maxlength="16" placeholder="💙"></div>
+          <div class="field wide"><label>Short public description</label><textarea id="ownerProjectDescription"></textarea></div>
+          <div class="field wide"><label>Project link</label><input id="ownerProjectUrl" placeholder="project-page.html or https://..."></div>
+          <div class="field"><label>Button text</label><input id="ownerProjectLinkText" placeholder="Open project"></div>
+          <div class="field"><label>Status label</label><select id="ownerProjectStatus"><option>Live</option><option>Live demo</option><option>Live gallery</option><option>Member</option><option>Support</option><option>Coming Soon</option><option>Project</option></select></div>
+          <div class="field"><label>Directory category</label><select id="ownerProjectCategory"><option value="cards-commerce">Cards &amp; shopping</option><option value="creative">Art &amp; creativity</option><option value="community">Community support</option></select></div>
+          <div class="field"><label>Display order within category</label><input id="ownerProjectOrder" type="number" min="0" max="999" value="1"></div>
+          <label><input id="ownerProjectFeatured" type="checkbox"> Use featured navy card style</label>
+          <label><input id="ownerProjectPublished" type="checkbox" checked> Visible in the public Explore directory</label>
+        </div>
+        <div class="record-actions"><button class="primary-button" id="ownerProjectSave" type="button">Save Project</button><button class="secondary-button" id="ownerProjectNew" type="button">New Project</button></div>
+        <p id="projectManagerStatus" role="status" aria-live="polite"></p>
+      </div>
+      <div class="owner-record-list" id="ownerProjectList"></div>
     </section>
 
     <section class="admin-section" id="storeManagerSection">
@@ -4680,8 +4713,30 @@ window.addEventListener(
 
 
 const g=id=>document.getElementById(id);
-let ownerStoreProducts=[],ownerReviewBusinesses=[];
+let ownerProjects=[],ownerStoreProducts=[],ownerReviewBusinesses=[];
 const ownerText=(tag,text,className="")=>{const node=document.createElement(tag);if(className)node.className=className;node.textContent=text;return node};
+
+function resetOwnerProject(){
+  ["ownerProjectId","ownerProjectTitle","ownerProjectDescription","ownerProjectUrl","ownerProjectLinkText"].forEach(id=>g(id).value="");
+  g("ownerProjectIcon").value="💙";g("ownerProjectStatus").value="Live";g("ownerProjectCategory").value="cards-commerce";g("ownerProjectOrder").value=ownerProjects.length+1;g("ownerProjectFeatured").checked=false;g("ownerProjectPublished").checked=true;g("projectManagerStatus").textContent="Creating a new public project card.";
+}
+function editOwnerProject(project){
+  g("ownerProjectId").value=project.id||"";g("ownerProjectTitle").value=project.title||"";g("ownerProjectDescription").value=project.description||"";g("ownerProjectUrl").value=project.url||"";g("ownerProjectIcon").value=project.icon||"💙";g("ownerProjectStatus").value=project.status||"Live";g("ownerProjectLinkText").value=project.link_text||"Open project";g("ownerProjectCategory").value=project.category||"cards-commerce";g("ownerProjectOrder").value=project.sort_order||1;g("ownerProjectFeatured").checked=project.featured===true;g("ownerProjectPublished").checked=project.published===true;g("projectManagerStatus").textContent="Editing "+project.title+".";
+}
+function renderOwnerProjects(){
+  const list=g("ownerProjectList");list.replaceChildren();
+  const categoryNames={"cards-commerce":"Cards & shopping",creative:"Art & creativity",community:"Community support"};
+  for(const project of [...ownerProjects].sort((a,b)=>(a.category||"").localeCompare(b.category||"")||(a.sort_order||0)-(b.sort_order||0))){
+    const card=ownerText("article","","record-card"),title=ownerText("h3",(project.icon||"💙")+" "+project.title),meta=ownerText("p",(categoryNames[project.category]||project.category)+" · "+(project.status||"Live")+" · "+(project.published?"Visible":"Hidden")+" · Order "+(project.sort_order||0),"owner-record-meta"),button=ownerText("button","Edit Project","secondary-button"),open=document.createElement("a");button.type="button";button.onclick=()=>editOwnerProject(project);open.className="secondary-button";open.textContent="Open";open.href=project.url;open.target="_blank";open.rel="noopener";card.append(title,meta,button,open);list.append(card);
+  }
+}
+async function loadProjectManager(){
+  const data=await adminFetch(OWNER_COMMERCE_API+"?area=projects");ownerProjects=Array.isArray(data.projects)?data.projects:[];renderOwnerProjects();if(!g("ownerProjectId").value&&ownerProjects[0])editOwnerProject(ownerProjects[0]);
+}
+async function saveOwnerProject(){
+  const button=g("ownerProjectSave");button.disabled=true;g("projectManagerStatus").textContent="Saving project…";
+  try{await adminFetch(OWNER_COMMERCE_API+"?area=projects",{method:"POST",body:JSON.stringify({id:g("ownerProjectId").value,title:g("ownerProjectTitle").value,description:g("ownerProjectDescription").value,url:g("ownerProjectUrl").value,icon:g("ownerProjectIcon").value,status:g("ownerProjectStatus").value,link_text:g("ownerProjectLinkText").value,category:g("ownerProjectCategory").value,sort_order:Number(g("ownerProjectOrder").value),featured:g("ownerProjectFeatured").checked,published:g("ownerProjectPublished").checked})});g("projectManagerStatus").textContent="Project saved to the public directory.";await loadProjectManager()}catch(error){g("projectManagerStatus").textContent=error.message}finally{button.disabled=false}
+}
 
 function resetStoreProduct(){
   ["storeProductId","storeProductTitle","storeProductPrice","storeProductLabel","storeProductBadge","storeProductDescription","storeProductFeatures","storeProductImage","storeProductPreviewUrl","storeProductPreviewText","storeProductCtaUrl","storeProductCtaText"].forEach(id=>g(id).value="");
@@ -4731,8 +4786,8 @@ async function loadMembersManager(){
   if(!members.length){list.append(ownerText("article","No founding member records yet.","record-card"));return}
   for(const member of members){const card=ownerText("article","","record-card"),title=ownerText("h3","Member "+member.displayNumber),meta=ownerText("p",(member.name||"HUGS Original Member")+" · "+(member.email||"No email")+" · "+new Date(member.createdAt).toLocaleDateString(),"owner-record-meta"),select=document.createElement("select"),note=document.createElement("textarea"),button=ownerText("button","Save Member Note","primary-button");["Active","On Hold","Archived"].forEach(value=>select.append(new Option(value,value)));select.value=member.status||"Active";note.placeholder="Private owner note";note.value=member.admin_note||"";button.type="button";button.onclick=()=>updateOwnerMember(member,card);card.append(title,meta,select,note,button);list.append(card)}
 }
-async function loadOwnerAreas(){await loadStoreManager();await loadReviewsManager();await loadMembersManager()}
-g("storeProductSave")?.addEventListener("click",saveStoreProduct);g("storeProductNew")?.addEventListener("click",resetStoreProduct);g("reviewBusinessSave")?.addEventListener("click",saveReviewBusiness);g("reviewBusinessNew")?.addEventListener("click",resetReviewBusiness);
+async function loadOwnerAreas(){await loadProjectManager();await loadStoreManager();await loadReviewsManager();await loadMembersManager()}
+g("ownerProjectSave")?.addEventListener("click",saveOwnerProject);g("ownerProjectNew")?.addEventListener("click",resetOwnerProject);g("storeProductSave")?.addEventListener("click",saveStoreProduct);g("storeProductNew")?.addEventListener("click",resetStoreProduct);g("reviewBusinessSave")?.addEventListener("click",saveReviewBusiness);g("reviewBusinessNew")?.addEventListener("click",resetReviewBusiness);
 if(g('galleryCollection')&&!Array.from(g('galleryCollection').options).some(o=>o.value==='Community Gallery')){g('galleryCollection').prepend(new Option('Community Gallery','Community Gallery'))}
 let galleryPreviewURL=null;
 g('galleryUpload')?.addEventListener('change',()=>{
