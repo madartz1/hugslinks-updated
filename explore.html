@@ -1,0 +1,215 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Explore HUGSLinks | Every HUGSLinks Experience</title>
+  <meta name="description" content="Explore the active HUGSLinks projects for digital cards, art, shopping, community support, creative services and local information.">
+  <link rel="stylesheet" href="styles.css">
+  <style>
+    :root{--explore-navy:#061b34;--explore-blue:#1674b8;--explore-sky:#78cdfc;--explore-gold:#e2b75d;--explore-cream:#fbf7ef}
+    .explore-hero{position:relative;overflow:hidden;background:linear-gradient(135deg,#04162c 0%,#0a3158 58%,#0b5680 100%);color:#fff;padding:clamp(64px,10vw,120px) 20px}
+    .explore-hero:before,.explore-hero:after{content:"";position:absolute;border:1px solid rgba(120,205,252,.22);border-radius:50%;pointer-events:none}
+    .explore-hero:before{width:420px;height:420px;right:-170px;top:-210px;box-shadow:0 0 80px rgba(120,205,252,.12)}
+    .explore-hero:after{width:220px;height:220px;left:-100px;bottom:-120px}
+    .explore-hero-inner{position:relative;z-index:1;max-width:1000px;margin:0 auto;text-align:center}
+    .explore-mark{width:88px;height:88px;object-fit:contain;margin:0 auto 20px;filter:drop-shadow(0 12px 22px rgba(0,0,0,.25))}
+    .explore-kicker{display:inline-flex;align-items:center;gap:8px;border:1px solid rgba(255,255,255,.22);background:rgba(255,255,255,.08);border-radius:999px;padding:9px 15px;font-size:.82rem;font-weight:900;letter-spacing:.08em;text-transform:uppercase;color:#cfeeff}
+    .explore-hero h1{max-width:850px;margin:18px auto 14px;color:#fff;font-size:clamp(2.25rem,6vw,4.8rem);line-height:.98;letter-spacing:-.045em}
+    .explore-hero p{max-width:720px;margin:0 auto;color:#dbeefe;font-size:clamp(1rem,2vw,1.2rem);line-height:1.65}
+    .explore-jump{display:flex;justify-content:center;gap:10px;flex-wrap:wrap;margin-top:28px}
+    .explore-jump a{color:#fff;text-decoration:none;font-weight:800;border:1px solid rgba(255,255,255,.2);border-radius:999px;padding:10px 15px;background:rgba(255,255,255,.08)}
+    .explore-jump a:hover,.explore-jump a:focus-visible{background:#fff;color:var(--explore-navy)}
+    .project-section{max-width:1200px;margin:0 auto;padding:clamp(54px,8vw,92px) 20px}
+    .project-section+.project-section{padding-top:0}
+    .project-heading{display:flex;justify-content:space-between;align-items:end;gap:24px;margin-bottom:24px}
+    .project-heading h2{margin:.3rem 0 0;color:var(--explore-navy);font-size:clamp(1.8rem,4vw,3rem)}
+    .project-heading p{max-width:520px;margin:0;color:#526579;line-height:1.55}
+    .project-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:18px}
+    .project-card{position:relative;display:flex;flex-direction:column;min-height:260px;padding:25px;border:1px solid #dce7ef;border-radius:24px;background:#fff;color:var(--explore-navy);text-decoration:none;box-shadow:0 14px 34px rgba(7,31,59,.08);transition:transform .2s ease,box-shadow .2s ease,border-color .2s ease}
+    .project-card:hover,.project-card:focus-visible{transform:translateY(-4px);border-color:#8ed2fa;box-shadow:0 18px 44px rgba(7,31,59,.14)}
+    .project-card:focus-visible{outline:3px solid #4aafe9;outline-offset:3px}
+    .project-top{display:flex;justify-content:space-between;align-items:start;gap:14px}
+    .project-icon{display:grid;place-items:center;width:54px;height:54px;border-radius:17px;background:linear-gradient(145deg,#eaf7ff,#d8efff);font-size:27px}
+    .project-status{border-radius:999px;background:#eaf8ef;color:#176b3b;padding:7px 10px;font-size:.7rem;font-weight:900;letter-spacing:.06em;text-transform:uppercase}
+    .project-card h3{margin:22px 0 8px;font-size:1.35rem}
+    .project-card p{margin:0;color:#5a6d7e;line-height:1.55}
+    .project-link{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-top:auto;padding-top:22px;color:#075f9c;font-weight:900}
+    .project-link span:last-child{font-size:1.25rem}
+    .project-card.featured{background:linear-gradient(145deg,#071f3b,#0b416c);border-color:#176a9b;color:#fff}
+    .project-card.featured p{color:#d8eaf7}.project-card.featured .project-link{color:#88d5ff}.project-card.featured .project-icon{background:rgba(255,255,255,.12)}
+    .project-note{max-width:1200px;margin:0 auto 80px;padding:0 20px}
+    .project-note-inner{display:grid;grid-template-columns:auto 1fr auto;align-items:center;gap:18px;border-radius:24px;background:var(--explore-cream);border:1px solid #eadfca;padding:22px 24px}
+    .project-note-icon{font-size:30px}.project-note h2{font-size:1.1rem;margin:0 0 4px}.project-note p{margin:0;color:#5f6370}.project-note a{white-space:nowrap}
+    @media(max-width:900px){.project-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.project-heading{display:block}.project-heading p{margin-top:10px}}
+    @media(max-width:620px){.project-grid{grid-template-columns:1fr}.project-card{min-height:235px}.project-note-inner{grid-template-columns:auto 1fr}.project-note a{grid-column:1/-1;text-align:center}.explore-hero{padding-top:48px}}
+    @media(prefers-reduced-motion:reduce){.project-card{transition:none}.project-card:hover{transform:none}}
+  </style>
+</head>
+<body>
+  <header class="topbar">
+    <nav class="nav" aria-label="Main navigation">
+      <a class="brand" href="index.html">HugsLinks</a>
+      <div class="seal"><img src="assets/HUGS_Header_Logo_Transparent.png" alt="HUGS logo" class="header-logo"></div>
+      <button class="menu" type="button" aria-label="Open menu">Menu</button>
+      <div class="navlinks">
+        <a href="index.html">Home</a>
+        <a href="explore.html" aria-current="page">Explore</a>
+        <a href="shop.html">Shop</a>
+        <a href="hugs-cards.html">HUGS Cards</a>
+        <a href="/app/">Cards App</a>
+        <a href="art-community.html">Art</a>
+        <a href="/studio/">HL Studio</a>
+        <a href="help-center.html">Help Center</a>
+        <a href="about.html">About</a>
+        <a href="contact.html">Contact</a>
+      </div>
+    </nav>
+  </header>
+
+  <main>
+    <section class="explore-hero">
+      <div class="explore-hero-inner">
+        <img class="explore-mark" src="assets/HUGS_Header_Logo_Transparent.png" alt="">
+        <span class="explore-kicker">One connected HUGSLinks home</span>
+        <h1>Explore every way to create, connect and receive support.</h1>
+        <p>This is the public directory for active HUGSLinks experiences. Choose a project below and go directly to the right place—without searching through menus.</p>
+        <nav class="explore-jump" aria-label="Project categories">
+          <a href="#cards-commerce">Cards &amp; shopping</a>
+          <a href="#creative">Art &amp; creativity</a>
+          <a href="#community">Community support</a>
+        </nav>
+      </div>
+    </section>
+
+    <section class="project-section" id="cards-commerce" aria-labelledby="cards-title">
+      <div class="project-heading">
+        <div><span class="badge">Cards &amp; shopping</span><h2 id="cards-title">Send something meaningful.</h2></div>
+        <p>Choose a HUGS Card experience, make a personalized card, shop HUGSLinks products or enter the member area.</p>
+      </div>
+      <div class="project-grid">
+        <a class="project-card featured" href="hugs-cards.html">
+          <div class="project-top"><span class="project-icon" aria-hidden="true">💌</span><span class="project-status">Live</span></div>
+          <h3>HUGS Cards</h3><p>Browse digital, printable, motion-story and app-style HUGS Card experiences.</p>
+          <span class="project-link"><span>Explore HUGS Cards</span><span aria-hidden="true">→</span></span>
+        </a>
+        <a class="project-card" href="/app/create-card.html">
+          <div class="project-top"><span class="project-icon" aria-hidden="true">✨</span><span class="project-status">Live</span></div>
+          <h3>Create Your HUGS Card</h3><p>Build a personalized digital HUG with your message, design and recipient details.</p>
+          <span class="project-link"><span>Start creating</span><span aria-hidden="true">→</span></span>
+        </a>
+        <a class="project-card" href="https://hugscard.netlify.app/">
+          <div class="project-top"><span class="project-icon" aria-hidden="true">🎬</span><span class="project-status">Live demo</span></div>
+          <h3>Original Motion HUG</h3><p>View the original interactive card experience that inspired the first HUGS Card type.</p>
+          <span class="project-link"><span>View the motion card</span><span aria-hidden="true">↗</span></span>
+        </a>
+        <a class="project-card" href="shop.html">
+          <div class="project-top"><span class="project-icon" aria-hidden="true">🛍️</span><span class="project-status">Live</span></div>
+          <h3>HUGSLinks Shop</h3><p>Discover HUGSLinks cards, art-inspired products and meaningful merchandise.</p>
+          <span class="project-link"><span>Visit the shop</span><span aria-hidden="true">→</span></span>
+        </a>
+        <a class="project-card" href="member.html">
+          <div class="project-top"><span class="project-icon" aria-hidden="true">💙</span><span class="project-status">Member</span></div>
+          <h3>HUGSLinks Members</h3><p>Enter the member experience for HUGSLinks benefits, access and updates.</p>
+          <span class="project-link"><span>Member access</span><span aria-hidden="true">→</span></span>
+        </a>
+      </div>
+    </section>
+
+    <section class="project-section" id="creative" aria-labelledby="creative-title">
+      <div class="project-heading">
+        <div><span class="badge">Art &amp; creativity</span><h2 id="creative-title">Create, exhibit and build.</h2></div>
+        <p>Explore art, support artists, vote on community work and use HUGSLinks creative production tools.</p>
+      </div>
+      <div class="project-grid">
+        <a class="project-card featured" href="https://hugslinks-community-art.netlify.app/">
+          <div class="project-top"><span class="project-icon" aria-hidden="true">🖼️</span><span class="project-status">Live gallery</span></div>
+          <h3>HL Art Gallery</h3><p>Experience the dedicated HUGSLinks art gallery, artist stories and community artwork.</p>
+          <span class="project-link"><span>Enter the gallery</span><span aria-hidden="true">↗</span></span>
+        </a>
+        <a class="project-card" href="art-community.html">
+          <div class="project-top"><span class="project-icon" aria-hidden="true">🎨</span><span class="project-status">Live</span></div>
+          <h3>Art &amp; Community</h3><p>Discover creative programs, artist participation, voting and support campaigns.</p>
+          <span class="project-link"><span>Explore community art</span><span aria-hidden="true">→</span></span>
+        </a>
+        <a class="project-card" href="/studio/">
+          <div class="project-top"><span class="project-icon" aria-hidden="true">🪄</span><span class="project-status">Live</span></div>
+          <h3>HL Studio</h3><p>Use the HUGSLinks creative workspace for design, media and project production.</p>
+          <span class="project-link"><span>Open HL Studio</span><span aria-hidden="true">→</span></span>
+        </a>
+        <a class="project-card" href="business-services.html">
+          <div class="project-top"><span class="project-icon" aria-hidden="true">💼</span><span class="project-status">Live</span></div>
+          <h3>Business Services</h3><p>Get help with creative setup, digital presence and practical business growth.</p>
+          <span class="project-link"><span>View services</span><span aria-hidden="true">→</span></span>
+        </a>
+        <a class="project-card" href="reviews.html">
+          <div class="project-top"><span class="project-icon" aria-hidden="true">⭐</span><span class="project-status">Live</span></div>
+          <h3>HUGS Reviews</h3><p>Find thoughtful community-centered reviews and recognition for better local service.</p>
+          <span class="project-link"><span>Read HUGS Reviews</span><span aria-hidden="true">→</span></span>
+        </a>
+        <a class="project-card" href="https://hugslinks-crypto.netlify.app/">
+          <div class="project-top"><span class="project-icon" aria-hidden="true">🔗</span><span class="project-status">Project</span></div>
+          <h3>HUGSLinks Crypto</h3><p>Explore the HUGSLinks digital innovation and community technology project.</p>
+          <span class="project-link"><span>Visit the project</span><span aria-hidden="true">↗</span></span>
+        </a>
+      </div>
+    </section>
+
+    <section class="project-section" id="community" aria-labelledby="community-title">
+      <div class="project-heading">
+        <div><span class="badge">Community support</span><h2 id="community-title">Find help and local pathways.</h2></div>
+        <p>Go directly to HUGSLinks support tools, food and housing pathways, public resources and current NYC information.</p>
+      </div>
+      <div class="project-grid">
+        <a class="project-card featured" href="help-app.html">
+          <div class="project-top"><span class="project-icon" aria-hidden="true">🤝</span><span class="project-status">Live</span></div>
+          <h3>HUGS Help App</h3><p>Start with the mobile-friendly support experience and connect to the help you need.</p>
+          <span class="project-link"><span>Open the Help App</span><span aria-hidden="true">→</span></span>
+        </a>
+        <a class="project-card" href="food-support.html">
+          <div class="project-top"><span class="project-icon" aria-hidden="true">🍎</span><span class="project-status">Live</span></div>
+          <h3>Food Support</h3><p>Find food support information, local resources and partner pathways.</p>
+          <span class="project-link"><span>Find food support</span><span aria-hidden="true">→</span></span>
+        </a>
+        <a class="project-card" href="housing-help.html">
+          <div class="project-top"><span class="project-icon" aria-hidden="true">🏠</span><span class="project-status">Live</span></div>
+          <h3>Housing Help</h3><p>Access housing navigation, advocacy information and practical next steps.</p>
+          <span class="project-link"><span>Find housing help</span><span aria-hidden="true">→</span></span>
+        </a>
+        <a class="project-card" href="resources.html">
+          <div class="project-top"><span class="project-icon" aria-hidden="true">📚</span><span class="project-status">Live</span></div>
+          <h3>Community Resources</h3><p>Browse benefits, emergency, clothing, government and community resource pathways.</p>
+          <span class="project-link"><span>Browse resources</span><span aria-hidden="true">→</span></span>
+        </a>
+        <a class="project-card" href="nyc-updates.html">
+          <div class="project-top"><span class="project-icon" aria-hidden="true">🗽</span><span class="project-status">Live</span></div>
+          <h3>HUGS NYC Updates</h3><p>See public alerts, programs, policy developments and selected local headlines.</p>
+          <span class="project-link"><span>View NYC updates</span><span aria-hidden="true">→</span></span>
+        </a>
+        <a class="project-card" href="support-hugs.html">
+          <div class="project-top"><span class="project-icon" aria-hidden="true">💞</span><span class="project-status">Support</span></div>
+          <h3>Support HUGS</h3><p>Help HUGSLinks grow its creative and community support mission.</p>
+          <span class="project-link"><span>Support the mission</span><span aria-hidden="true">→</span></span>
+        </a>
+      </div>
+    </section>
+
+    <aside class="project-note" aria-labelledby="missing-project-title">
+      <div class="project-note-inner">
+        <span class="project-note-icon" aria-hidden="true">🔎</span>
+        <div><h2 id="missing-project-title">Looking for something else?</h2><p>Contact HUGSLinks if you need help finding a project, service or card experience.</p></div>
+        <a class="btn primary" href="contact.html">Contact HUGSLinks</a>
+      </div>
+    </aside>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+      <div><h2>HUGS — Help Under Good Service</h2><p class="notice">One connected home for creativity, support, service and opportunity.</p></div>
+      <div><h3>Explore</h3><a href="explore.html">All HUGSLinks projects</a><a href="hugs-cards.html">HUGS Cards</a><a href="shop.html">Shop HUGS</a><a href="art-community.html">Art &amp; Community</a></div>
+      <div><h3>Support</h3><a href="help-center.html">Help Center</a><a href="resources.html">Community resources</a><a href="contact.html">Contact HUGSLinks</a></div>
+    </div>
+  </footer>
+  <script src="live-help-config.js"></script><script src="script.js"></script>
+</body>
+</html>
