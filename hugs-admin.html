@@ -14,7 +14,7 @@
     content="noindex, nofollow, noarchive"
   >
 
-  <title>HUGS Admin | HUGSLinks</title>
+  <title>Owner’s Central Workspace | HUGSLinks</title>
 
   <link
     rel="stylesheet"
@@ -246,6 +246,80 @@
       gap:9px;
       flex-wrap:wrap;
       margin-bottom:24px;
+    }
+
+    .owner-workspace-intro{
+      display:grid;
+      grid-template-columns:minmax(0,1.35fr) minmax(260px,.65fr);
+      gap:18px;
+      align-items:stretch;
+      margin-bottom:22px;
+    }
+
+    .owner-workspace-welcome,
+    .owner-workspace-status{
+      border:1px solid rgba(18,103,255,.14);
+      border-radius:22px;
+      background:linear-gradient(145deg,#fff,#f6f9ff);
+      box-shadow:0 16px 34px rgba(7,31,59,.08);
+      padding:24px;
+    }
+
+    .owner-workspace-welcome h3,
+    .owner-workspace-status h3{
+      margin:0 0 8px;
+      color:#071f3b;
+    }
+
+    .owner-workspace-welcome p,
+    .owner-workspace-status p{
+      margin:0;
+      color:var(--muted);
+      line-height:1.6;
+    }
+
+    .workspace-grid{
+      display:grid;
+      grid-template-columns:repeat(3,minmax(0,1fr));
+      gap:18px;
+    }
+
+    .workspace-card{
+      display:flex;
+      flex-direction:column;
+      min-height:245px;
+      padding:22px;
+      border:1px solid rgba(18,103,255,.14);
+      border-radius:22px;
+      background:#fff;
+      box-shadow:0 14px 30px rgba(7,31,59,.07);
+    }
+
+    .workspace-card-icon{
+      width:48px;
+      height:48px;
+      display:grid;
+      place-items:center;
+      margin-bottom:14px;
+      border-radius:15px;
+      background:linear-gradient(145deg,#071f3b,#1267ff);
+      color:#fff;
+      font-size:1.35rem;
+    }
+
+    .workspace-card h3{margin:0 0 8px;color:#071f3b}
+    .workspace-card p{margin:0 0 18px;color:var(--muted);line-height:1.55;flex:1}
+    .workspace-actions{display:flex;flex-wrap:wrap;gap:9px}
+    .workspace-actions a,.workspace-actions button{font-size:.86rem}
+
+    @media (max-width:920px){
+      .workspace-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
+    }
+
+    @media (max-width:640px){
+      .owner-workspace-intro{grid-template-columns:1fr}
+      .workspace-grid{grid-template-columns:1fr}
+      .workspace-card{min-height:0}
     }
 
     .tab-button{
@@ -595,17 +669,15 @@
   <div class="admin-shell">
 
     <div class="admin-badge">
-      Private HUGS Control Center
+      Private HUGSLinks Owner Access
     </div>
 
-    <h1>HUGS Admin</h1>
+    <h1>Owner’s Central Workspace</h1>
 
     <p>
-      Review HUG Requests, approve HUGS Helpers,
-      create safe public missions, manage
-      Helper-to-Mission connections, prepare
-      private delivery routes and issue protected
-      recipient tracking access.
+      Manage HUGS Cards, art and galleries, food support,
+      HUG requests, Helpers, customer support and the growing
+      HUGSLinks community from one organized private workspace.
     </p>
 
   </div>
@@ -638,7 +710,7 @@
 
     <div class="admin-lockup"><img src="assets/HUGS_Header_Logo_Transparent.png" alt=""></div>
     <div class="admin-private-label">🔒 Private Owner Access</div>
-    <h2>HUGS Admin Sign In</h2>
+    <h2>Owner Workspace Sign In</h2>
 
     <p>
       Enter your HUGS Admin Token.
@@ -666,7 +738,7 @@
       id="loginButton"
       type="button"
     >
-      Open HUGS Admin
+      Open Owner Workspace
     </button>
 
   </section>
@@ -679,7 +751,7 @@
     <div class="admin-toolbar">
 
       <h2>
-        HUGS Help Operations
+        HUGSLinks Owner’s Central Workspace
       </h2>
 
       <div class="toolbar-buttons">
@@ -761,6 +833,14 @@
 
       <button
         class="tab-button active"
+        data-tab="workspace"
+        type="button"
+      >
+        Owner Overview
+      </button>
+
+      <button
+        class="tab-button"
         data-tab="requests"
         type="button"
       >
@@ -807,11 +887,89 @@
 
     </div>
 
+    <section class="admin-section active" id="workspaceSection">
+      <div class="owner-workspace-intro">
+        <div class="owner-workspace-welcome">
+          <div class="record-id">OWNER’S CENTRAL WORKSPACE</div>
+          <h3>Manage the HUGSLinks community from one private home.</h3>
+          <p>Open a management tool, review what the public sees and move between HUGS Cards, art, food, support and community-help operations without getting lost.</p>
+        </div>
+        <div class="owner-workspace-status">
+          <div class="record-id">WORKSPACE STATUS</div>
+          <h3>Connected tools</h3>
+          <p>Core HUGS operations are connected here now. Store, reviews, membership and future projects can be added to this same owner workspace as their management tools are completed.</p>
+        </div>
+      </div>
+
+      <div class="workspace-grid">
+        <article class="workspace-card">
+          <div class="workspace-card-icon" aria-hidden="true">💌</div>
+          <h3>HUGS Cards Studio</h3>
+          <p>Create and duplicate Motion Story HUGS, edit story scenes, upload music, preview drafts and review recent card orders.</p>
+          <div class="workspace-actions">
+            <button class="primary-button workspace-open-tab" type="button" data-open-tab="motionCards">Manage Cards</button>
+            <a class="secondary-button" href="hugs-cards.html" target="_blank" rel="noopener">View Cards Page</a>
+          </div>
+        </article>
+
+        <article class="workspace-card">
+          <div class="workspace-card-icon" aria-hidden="true">🎨</div>
+          <h3>Art &amp; Galleries</h3>
+          <p>Review artist submissions, publish approved artwork, manage gallery records and operate HUGS art competitions.</p>
+          <div class="workspace-actions">
+            <button class="primary-button workspace-open-tab" type="button" data-open-tab="gallery">Manage Gallery</button>
+            <a class="secondary-button" href="art-community.html" target="_blank" rel="noopener">View Art Community</a>
+          </div>
+        </article>
+
+        <article class="workspace-card">
+          <div class="workspace-card-icon" aria-hidden="true">🥗</div>
+          <h3>Food Network</h3>
+          <p>Review food-partner offers and open the dedicated directory manager for public food resources and listings.</p>
+          <div class="workspace-actions">
+            <button class="primary-button workspace-open-tab" type="button" data-open-tab="food">Food Partners</button>
+            <a class="secondary-button" href="food-support.html" target="_blank" rel="noopener">View Food Support</a>
+          </div>
+        </article>
+
+        <article class="workspace-card">
+          <div class="workspace-card-icon" aria-hidden="true">🤝</div>
+          <h3>Help Operations</h3>
+          <p>Review HUG requests, approve Helpers, create matches and prepare protected mission routes and recipient tracking.</p>
+          <div class="workspace-actions">
+            <button class="primary-button workspace-open-tab" type="button" data-open-tab="requests">Open Requests</button>
+            <a class="secondary-button" href="help-app.html" target="_blank" rel="noopener">View Help App</a>
+          </div>
+        </article>
+
+        <article class="workspace-card">
+          <div class="workspace-card-icon" aria-hidden="true">🛟</div>
+          <h3>Customer Support</h3>
+          <p>Read incoming support messages, leave private owner notes and move requests from open to resolved.</p>
+          <div class="workspace-actions">
+            <button class="primary-button workspace-open-tab" type="button" data-open-tab="support">Manage Support</button>
+            <a class="secondary-button" href="help-center.html" target="_blank" rel="noopener">View Help Center</a>
+          </div>
+        </article>
+
+        <article class="workspace-card">
+          <div class="workspace-card-icon" aria-hidden="true">🏪</div>
+          <h3>Website, Store &amp; Community</h3>
+          <p>Quick access to the public store, HUGS Reviews and member experience while their owner-management tools are brought into this workspace.</p>
+          <div class="workspace-actions">
+            <a class="primary-button" href="shop.html" target="_blank" rel="noopener">Open Store</a>
+            <a class="secondary-button" href="reviews.html" target="_blank" rel="noopener">HUGS Reviews</a>
+            <a class="secondary-button" href="member.html" target="_blank" rel="noopener">Members</a>
+          </div>
+        </article>
+      </div>
+    </section>
+
 
 <section class="admin-section" id="motionCardsSection"><div class="record-card"><h3>Motion Story HUG Builder</h3><p>Duplicate the original motion-card format, replace its storyboard images and music, preview it, set the price and publish a new variation.</p><input id="motionId" type="hidden"><div class="motion-editor-grid"><div class="field"><label>Card title</label><input id="motionTitle"></div><div class="field"><label>URL slug</label><input id="motionSlug"></div><div class="field"><label>Subtitle</label><input id="motionSubtitle"></div><div class="field"><label>Price in dollars</label><input id="motionPrice" type="number" min="1" step=".01" value="6.99"></div><div class="field wide"><label>Description</label><textarea id="motionDescription"></textarea></div><div class="field"><label>Cover image URL</label><input id="motionCoverUrl"><input id="motionCoverFile" type="file" accept="image/jpeg,image/png,image/webp"></div><div class="field"><label>Music URL</label><input id="motionAudioUrl"><input id="motionAudioFile" type="file" accept="audio/mpeg,audio/wav,audio/mp4"></div><div class="field"><label>Free preview scenes</label><input id="motionPreviewCount" type="number" min="1" max="30" value="3"></div><div class="field"><label>Default scene timing (milliseconds)</label><input id="motionInterval" type="number" min="1200" max="15000" value="3600"></div><label><input id="motionHearts" type="checkbox" checked> Floating heart effect</label><label><input id="motionPublished" type="checkbox"> Published for buyers</label></div><h4>Storyboard Scenes</h4><div id="motionScenes"></div><div class="motion-card-actions"><button class="secondary-button" id="motionAddScene" type="button">+ Add Scene</button><button class="secondary-button" id="motionPreviewButton" type="button">Preview Draft</button><button class="primary-button" id="motionSaveButton" type="button">Save Motion Card</button><button class="hold-button" id="motionNewButton" type="button">New Blank Card</button></div><p id="motionStatus" role="status" aria-live="polite"></p><div class="motion-preview" id="motionPreviewBox" hidden><img id="motionPreviewImage" alt=""><div><h3 id="motionPreviewTitle"></h3><p id="motionPreviewCaption"></p><div class="motion-card-actions"><button class="secondary-button" id="motionPreviewPrev" type="button">Previous</button><button class="secondary-button" id="motionPreviewNext" type="button">Next</button></div></div></div></div><h3 style="margin-top:24px">Saved Motion Story HUGS</h3><div class="record-grid" id="motionCardList"></div><h3 style="margin-top:24px">Recent Motion Card Orders</h3><div class="record-grid" id="motionOrderList"></div></section>    <!-- REQUESTS -->
 
     <section
-      class="admin-section active"
+      class="admin-section"
       id="requestsSection"
     >
 
@@ -4414,6 +4572,18 @@ document
 
     }
   );
+
+document.querySelectorAll(".workspace-open-tab").forEach(button => {
+  button.addEventListener("click", () => {
+    const targetButton = document.querySelector(
+      '.tab-button[data-tab="' + button.dataset.openTab + '"]'
+    );
+    if(targetButton){
+      targetButton.click();
+      targetButton.scrollIntoView({behavior:"smooth",block:"center"});
+    }
+  });
+});
 
 
 /* ==========================================
