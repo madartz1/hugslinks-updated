@@ -1,12 +1,7 @@
 import { getStore } from "@netlify/blobs";
+import { allReviewBusinesses } from "./review-directory.mjs";
 const store=getStore("hugs-business-reviews");
 const json=(body,status=200,headers={})=>new Response(JSON.stringify(body),{status,headers:{"Content-Type":"application/json","Cache-Control":"no-store",...headers}});
-const BUSINESSES={
-  "champion-pizza-flushing":{
-    id:"champion-pizza-flushing",name:"Champion Pizza",neighborhood:"Flushing, Queens",
-    address:"136-31 Roosevelt Ave, Flushing, NY 11354",editorial_status:"HUGS Approved"
-  }
-};
 const cookieValue=(req,name)=>(req.headers.get("cookie")||"").split(";").map(x=>x.trim()).find(x=>x.startsWith(name+"="))?.slice(name.length+1)||"";
 const validId=x=>/^[a-z0-9-]{3,80}$/.test(x||"");
 const counts=async id=>{
@@ -15,7 +10,9 @@ const counts=async id=>{
   return{hug,no_hug,total,hug_percent:total?Math.round(hug/total*100):0};
 };
 export default async request=>{
-  const url=new URL(request.url),id=url.searchParams.get("business")||"champion-pizza-flushing",business=BUSINESSES[id];
+  const url=new URL(request.url),id=url.searchParams.get("business")||"champion-pizza-flushing";
+  const businesses=await allReviewBusinesses();
+  const business=businesses.find(item=>item.id===id&&item.published);
   if(!business||!validId(id))return json({ok:false,error:"Business not found."},404);
   if(request.method==="GET")return json({ok:true,business,results:await counts(id),your_vote:cookieValue(request,"hugs_review_"+id)||null});
   if(request.method!=="POST")return json({ok:false,error:"Method not allowed."},405);

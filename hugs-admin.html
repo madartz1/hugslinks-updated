@@ -312,6 +312,15 @@
     .workspace-actions{display:flex;flex-wrap:wrap;gap:9px}
     .workspace-actions a,.workspace-actions button{font-size:.86rem}
 
+    .owner-editor-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px}
+    .owner-editor-grid .wide{grid-column:1/-1}
+    .owner-record-list{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px;margin-top:22px}
+    .owner-record-list .record-card{padding:18px}
+    .owner-record-meta{color:var(--muted);font-size:.9rem;line-height:1.5;margin:7px 0 14px}
+    .owner-section-heading{display:flex;align-items:flex-start;justify-content:space-between;gap:16px;flex-wrap:wrap;margin-bottom:18px}
+    .owner-section-heading h3{margin:0 0 6px}
+    .owner-section-heading p{margin:0;color:var(--muted)}
+
     @media (max-width:920px){
       .workspace-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
     }
@@ -320,6 +329,8 @@
       .owner-workspace-intro{grid-template-columns:1fr}
       .workspace-grid{grid-template-columns:1fr}
       .workspace-card{min-height:0}
+      .owner-editor-grid,.owner-record-list{grid-template-columns:1fr}
+      .owner-editor-grid .wide{grid-column:auto}
     }
 
     .tab-button{
@@ -853,6 +864,9 @@
       <button class="tab-button" data-tab="gallery" type="button">Art Gallery</button><button class="tab-button" data-tab="contest" type="button">Art Competition</button>
 
       <button class="tab-button" data-tab="motionCards" type="button">Motion Cards</button>
+      <button class="tab-button" data-tab="storeManager" type="button">Store</button>
+      <button class="tab-button" data-tab="reviewsManager" type="button">Reviews</button>
+      <button class="tab-button" data-tab="membersManager" type="button">Members</button>
       <button
         class="tab-button"
         data-tab="food"
@@ -897,7 +911,7 @@
         <div class="owner-workspace-status">
           <div class="record-id">WORKSPACE STATUS</div>
           <h3>Connected tools</h3>
-          <p>Core HUGS operations are connected here now. Store, reviews, membership and future projects can be added to this same owner workspace as their management tools are completed.</p>
+          <p>HUGS Cards, art, food, help operations, the store catalog, HUGS Reviews and founding-member records are connected here now. Future projects can join this same private workspace.</p>
         </div>
       </div>
 
@@ -955,14 +969,67 @@
         <article class="workspace-card">
           <div class="workspace-card-icon" aria-hidden="true">🏪</div>
           <h3>Website, Store &amp; Community</h3>
-          <p>Quick access to the public store, HUGS Reviews and member experience while their owner-management tools are brought into this workspace.</p>
+          <p>Manage the live store catalog, HUGS Reviews business directory and private HUGS Original member records.</p>
           <div class="workspace-actions">
-            <a class="primary-button" href="shop.html" target="_blank" rel="noopener">Open Store</a>
-            <a class="secondary-button" href="reviews.html" target="_blank" rel="noopener">HUGS Reviews</a>
-            <a class="secondary-button" href="member.html" target="_blank" rel="noopener">Members</a>
+            <button class="primary-button workspace-open-tab" type="button" data-open-tab="storeManager">Manage Store</button>
+            <button class="secondary-button workspace-open-tab" type="button" data-open-tab="reviewsManager">Manage Reviews</button>
+            <button class="secondary-button workspace-open-tab" type="button" data-open-tab="membersManager">Manage Members</button>
           </div>
         </article>
       </div>
+    </section>
+
+    <section class="admin-section" id="storeManagerSection">
+      <div class="record-card">
+        <div class="owner-section-heading"><div><h3>Store Catalog Manager</h3><p>Edit what appears in the HUGSLinks Shop. Unpublishing hides a product without erasing it.</p></div><a class="secondary-button" href="shop.html" target="_blank" rel="noopener">View Live Store</a></div>
+        <input id="storeProductId" type="hidden">
+        <div class="owner-editor-grid">
+          <div class="field"><label>Product title</label><input id="storeProductTitle"></div>
+          <div class="field"><label>Displayed price</label><input id="storeProductPrice" placeholder="$6.99"></div>
+          <div class="field"><label>Image label</label><input id="storeProductLabel" placeholder="Ready to Send"></div>
+          <div class="field"><label>Product badge</label><input id="storeProductBadge" placeholder="Animated HUGS Card"></div>
+          <div class="field wide"><label>Description</label><textarea id="storeProductDescription"></textarea></div>
+          <div class="field wide"><label>Features — one per line</label><textarea id="storeProductFeatures"></textarea></div>
+          <div class="field wide"><label>Image URL</label><input id="storeProductImage"></div>
+          <div class="field"><label>Preview URL (optional)</label><input id="storeProductPreviewUrl"></div>
+          <div class="field"><label>Preview button text</label><input id="storeProductPreviewText"></div>
+          <div class="field"><label>Purchase/action URL</label><input id="storeProductCtaUrl"></div>
+          <div class="field"><label>Purchase/action button text</label><input id="storeProductCtaText"></div>
+          <div class="field"><label>Card style</label><select id="storeProductStyle"><option value="standard">Standard</option><option value="featured">Featured</option><option value="premium">Premium</option></select></div>
+          <div class="field"><label>Display order</label><input id="storeProductOrder" type="number" min="0" max="999" value="1"></div>
+          <label><input id="storeProductPublished" type="checkbox" checked> Published in the live store</label>
+        </div>
+        <div class="record-actions"><button class="primary-button" id="storeProductSave" type="button">Save Product</button><button class="secondary-button" id="storeProductNew" type="button">New Product</button></div>
+        <p id="storeManagerStatus" role="status" aria-live="polite"></p>
+      </div>
+      <div class="owner-record-list" id="storeProductList"></div>
+    </section>
+
+    <section class="admin-section" id="reviewsManagerSection">
+      <div class="record-card">
+        <div class="owner-section-heading"><div><h3>HUGS Reviews Manager</h3><p>Add local businesses, update editorial recognition and control which listings accept public community votes.</p></div><a class="secondary-button" href="reviews.html" target="_blank" rel="noopener">View Live Reviews</a></div>
+        <input id="reviewBusinessId" type="hidden">
+        <div class="owner-editor-grid">
+          <div class="field"><label>Business name</label><input id="reviewBusinessName"></div>
+          <div class="field"><label>Neighborhood / area</label><input id="reviewBusinessArea"></div>
+          <div class="field wide"><label>Address</label><input id="reviewBusinessAddress"></div>
+          <div class="field"><label>Editorial status</label><select id="reviewBusinessStatus"><option>HUGS Approved</option><option>Community Listing</option><option>Under Review</option></select></div>
+          <div class="field"><label>Display order</label><input id="reviewBusinessOrder" type="number" min="0" max="999" value="1"></div>
+          <div class="field wide"><label>Short description (optional)</label><textarea id="reviewBusinessDescription"></textarea></div>
+          <label><input id="reviewBusinessPublished" type="checkbox" checked> Published on HUGS Reviews</label>
+        </div>
+        <div class="record-actions"><button class="primary-button" id="reviewBusinessSave" type="button">Save Business</button><button class="secondary-button" id="reviewBusinessNew" type="button">New Business</button></div>
+        <p id="reviewsManagerStatus" role="status" aria-live="polite"></p>
+      </div>
+      <div class="owner-record-list" id="reviewBusinessList"></div>
+    </section>
+
+    <section class="admin-section" id="membersManagerSection">
+      <div class="record-card">
+        <div class="owner-section-heading"><div><h3>HUGS Original Member Directory</h3><p>View founding members and maintain private owner status notes. Vault tokens and payment identifiers remain hidden.</p></div><a class="secondary-button" href="member.html" target="_blank" rel="noopener">View Member Hub</a></div>
+        <p id="membersManagerStatus" role="status" aria-live="polite"></p>
+      </div>
+      <div class="owner-record-list" id="ownerMemberList"></div>
     </section>
 
 
@@ -1523,7 +1590,7 @@ const ARTIST_API =
   "/.netlify/functions/admin-artists";
 
 
-const GALLERY_API="/.netlify/functions/admin-art-gallery";const MOTION_API="/.netlify/functions/admin-motion-hugs";const MOTION_UPLOAD_API="/.netlify/functions/upload-motion-hug-asset";
+const GALLERY_API="/.netlify/functions/admin-art-gallery";const MOTION_API="/.netlify/functions/admin-motion-hugs";const MOTION_UPLOAD_API="/.netlify/functions/upload-motion-hug-asset";const OWNER_COMMERCE_API="/.netlify/functions/admin-owner-commerce";
 let adminToken = "";
 
 let requestRecords = [];
@@ -1722,7 +1789,7 @@ async function adminFetch(
   if(!adminToken){
 
     throw new Error(
-      "HUGS Admin is locked."
+      "Owner Workspace is locked."
     );
 
   }
@@ -1848,7 +1915,7 @@ loginButton.addEventListener(
 
       await loadArtists();
        await loadGallery();
-       await loadContestAdmin();await loadMotionCards();await loadMotionOrders();
+       await loadContestAdmin();await loadMotionCards();await loadMotionOrders();await loadOwnerAreas();
 
       await loadMatches();
 
@@ -1868,7 +1935,7 @@ loginButton.addEventListener(
 
 
       showMessage(
-        "HUGS Admin opened."
+        "Owner Workspace opened."
       );
 
     }
@@ -1889,7 +1956,7 @@ loginButton.addEventListener(
         false;
 
       loginButton.textContent =
-        "Open HUGS Admin";
+        "Open Owner Workspace";
 
     }
 
@@ -2207,13 +2274,13 @@ refreshButton.addEventListener(
 
       await loadFoodOffers();
 
-      await loadArtists();await loadMotionCards();await loadMotionOrders();
+      await loadArtists();await loadMotionCards();await loadMotionOrders();await loadOwnerAreas();
 
       await loadMatches();
 
 
       showMessage(
-        "HUGS Admin refreshed."
+        "Owner Workspace refreshed."
       );
 
     }
@@ -4613,6 +4680,59 @@ window.addEventListener(
 
 
 const g=id=>document.getElementById(id);
+let ownerStoreProducts=[],ownerReviewBusinesses=[];
+const ownerText=(tag,text,className="")=>{const node=document.createElement(tag);if(className)node.className=className;node.textContent=text;return node};
+
+function resetStoreProduct(){
+  ["storeProductId","storeProductTitle","storeProductPrice","storeProductLabel","storeProductBadge","storeProductDescription","storeProductFeatures","storeProductImage","storeProductPreviewUrl","storeProductPreviewText","storeProductCtaUrl","storeProductCtaText"].forEach(id=>g(id).value="");
+  g("storeProductStyle").value="standard";g("storeProductOrder").value=ownerStoreProducts.length+1;g("storeProductPublished").checked=true;g("storeManagerStatus").textContent="Creating a new store product.";
+}
+function editStoreProduct(product){
+  g("storeProductId").value=product.id||"";g("storeProductTitle").value=product.title||"";g("storeProductPrice").value=product.price||"";g("storeProductLabel").value=product.label||"";g("storeProductBadge").value=product.badge||"";g("storeProductDescription").value=product.description||"";g("storeProductFeatures").value=(product.features||[]).join("\n");g("storeProductImage").value=product.image_url||"";g("storeProductPreviewUrl").value=product.preview_url||"";g("storeProductPreviewText").value=product.preview_text||"";g("storeProductCtaUrl").value=product.cta_url||"";g("storeProductCtaText").value=product.cta_text||"";g("storeProductStyle").value=product.style||"standard";g("storeProductOrder").value=product.sort_order||1;g("storeProductPublished").checked=product.published===true;g("storeManagerStatus").textContent="Editing "+product.title+".";
+}
+function renderStoreProducts(){
+  const list=g("storeProductList");list.replaceChildren();
+  for(const product of [...ownerStoreProducts].sort((a,b)=>(a.sort_order||0)-(b.sort_order||0))){
+    const card=ownerText("article","","record-card"),title=ownerText("h3",product.title),meta=ownerText("p",product.price+" · "+(product.published?"Published":"Hidden")+" · Order "+(product.sort_order||0),"owner-record-meta"),button=ownerText("button","Edit Product","secondary-button");button.type="button";button.onclick=()=>editStoreProduct(product);card.append(title,meta,button);list.append(card);
+  }
+}
+async function loadStoreManager(){
+  const data=await adminFetch(OWNER_COMMERCE_API+"?area=store");ownerStoreProducts=Array.isArray(data.products)?data.products:[];renderStoreProducts();if(!g("storeProductId").value&&ownerStoreProducts[0])editStoreProduct(ownerStoreProducts[0]);
+}
+async function saveStoreProduct(){
+  const button=g("storeProductSave");button.disabled=true;g("storeManagerStatus").textContent="Saving product…";
+  try{await adminFetch(OWNER_COMMERCE_API+"?area=store",{method:"POST",body:JSON.stringify({id:g("storeProductId").value,title:g("storeProductTitle").value,price:g("storeProductPrice").value,label:g("storeProductLabel").value,badge:g("storeProductBadge").value,description:g("storeProductDescription").value,features:g("storeProductFeatures").value.split("\n"),image_url:g("storeProductImage").value,preview_url:g("storeProductPreviewUrl").value,preview_text:g("storeProductPreviewText").value,cta_url:g("storeProductCtaUrl").value,cta_text:g("storeProductCtaText").value,style:g("storeProductStyle").value,sort_order:Number(g("storeProductOrder").value),published:g("storeProductPublished").checked})});g("storeManagerStatus").textContent="Product saved to the live catalog.";await loadStoreManager()}catch(error){g("storeManagerStatus").textContent=error.message}finally{button.disabled=false}
+}
+
+function resetReviewBusiness(){
+  ["reviewBusinessId","reviewBusinessName","reviewBusinessArea","reviewBusinessAddress","reviewBusinessDescription"].forEach(id=>g(id).value="");g("reviewBusinessStatus").value="HUGS Approved";g("reviewBusinessOrder").value=ownerReviewBusinesses.length+1;g("reviewBusinessPublished").checked=true;g("reviewsManagerStatus").textContent="Creating a new business listing.";
+}
+function editReviewBusiness(business){
+  g("reviewBusinessId").value=business.id||"";g("reviewBusinessName").value=business.name||"";g("reviewBusinessArea").value=business.neighborhood||"";g("reviewBusinessAddress").value=business.address||"";g("reviewBusinessDescription").value=business.description||"";g("reviewBusinessStatus").value=business.editorial_status||"Community Listing";g("reviewBusinessOrder").value=business.sort_order||1;g("reviewBusinessPublished").checked=business.published===true;g("reviewsManagerStatus").textContent="Editing "+business.name+".";
+}
+function renderReviewBusinesses(){
+  const list=g("reviewBusinessList");list.replaceChildren();
+  for(const business of [...ownerReviewBusinesses].sort((a,b)=>(a.sort_order||0)-(b.sort_order||0))){
+    const card=ownerText("article","","record-card"),title=ownerText("h3",business.name),meta=ownerText("p",business.neighborhood+" · "+business.editorial_status+" · "+(business.published?"Published":"Hidden"),"owner-record-meta"),button=ownerText("button","Edit Business","secondary-button");button.type="button";button.onclick=()=>editReviewBusiness(business);card.append(title,meta,button);list.append(card);
+  }
+}
+async function loadReviewsManager(){const data=await adminFetch(OWNER_COMMERCE_API+"?area=reviews");ownerReviewBusinesses=Array.isArray(data.businesses)?data.businesses:[];renderReviewBusinesses();if(!g("reviewBusinessId").value&&ownerReviewBusinesses[0])editReviewBusiness(ownerReviewBusinesses[0])}
+async function saveReviewBusiness(){
+  const button=g("reviewBusinessSave");button.disabled=true;g("reviewsManagerStatus").textContent="Saving business…";
+  try{await adminFetch(OWNER_COMMERCE_API+"?area=reviews",{method:"POST",body:JSON.stringify({id:g("reviewBusinessId").value,name:g("reviewBusinessName").value,neighborhood:g("reviewBusinessArea").value,address:g("reviewBusinessAddress").value,editorial_status:g("reviewBusinessStatus").value,description:g("reviewBusinessDescription").value,sort_order:Number(g("reviewBusinessOrder").value),published:g("reviewBusinessPublished").checked})});g("reviewsManagerStatus").textContent="Business saved to HUGS Reviews.";await loadReviewsManager()}catch(error){g("reviewsManagerStatus").textContent=error.message}finally{button.disabled=false}
+}
+
+async function updateOwnerMember(member,card){
+  const status=card.querySelector("select").value,note=card.querySelector("textarea").value,button=card.querySelector("button");button.disabled=true;
+  try{await adminFetch(OWNER_COMMERCE_API+"?area=members",{method:"POST",body:JSON.stringify({number:member.number,status,admin_note:note})});showMessage("Member record updated.")}catch(error){showMessage(error.message,"error")}finally{button.disabled=false}
+}
+async function loadMembersManager(){
+  const list=g("ownerMemberList"),status=g("membersManagerStatus");list.textContent="Loading member records…";const data=await adminFetch(OWNER_COMMERCE_API+"?area=members");const members=Array.isArray(data.members)?data.members:[];status.textContent=members.length+" of 333 founding member records.";list.replaceChildren();
+  if(!members.length){list.append(ownerText("article","No founding member records yet.","record-card"));return}
+  for(const member of members){const card=ownerText("article","","record-card"),title=ownerText("h3","Member "+member.displayNumber),meta=ownerText("p",(member.name||"HUGS Original Member")+" · "+(member.email||"No email")+" · "+new Date(member.createdAt).toLocaleDateString(),"owner-record-meta"),select=document.createElement("select"),note=document.createElement("textarea"),button=ownerText("button","Save Member Note","primary-button");["Active","On Hold","Archived"].forEach(value=>select.append(new Option(value,value)));select.value=member.status||"Active";note.placeholder="Private owner note";note.value=member.admin_note||"";button.type="button";button.onclick=()=>updateOwnerMember(member,card);card.append(title,meta,select,note,button);list.append(card)}
+}
+async function loadOwnerAreas(){await loadStoreManager();await loadReviewsManager();await loadMembersManager()}
+g("storeProductSave")?.addEventListener("click",saveStoreProduct);g("storeProductNew")?.addEventListener("click",resetStoreProduct);g("reviewBusinessSave")?.addEventListener("click",saveReviewBusiness);g("reviewBusinessNew")?.addEventListener("click",resetReviewBusiness);
 if(g('galleryCollection')&&!Array.from(g('galleryCollection').options).some(o=>o.value==='Community Gallery')){g('galleryCollection').prepend(new Option('Community Gallery','Community Gallery'))}
 let galleryPreviewURL=null;
 g('galleryUpload')?.addEventListener('change',()=>{

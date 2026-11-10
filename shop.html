@@ -652,7 +652,7 @@
       </div>
 
 
-      <div class="product-grid">
+      <div class="product-grid" id="storeProductGrid">
 
 
         <!-- SEND A HUG -->
@@ -980,6 +980,39 @@
   </footer>
 
 
+  <script>
+    async function loadOwnerStoreCatalog(){
+      const grid=document.getElementById("storeProductGrid");
+      if(!grid)return;
+      try{
+        const response=await fetch("/.netlify/functions/store-catalog",{cache:"no-store"});
+        const data=await response.json();
+        if(!response.ok||!data.ok||!Array.isArray(data.products))return;
+        const cards=[];
+        for(const product of data.products){
+          const article=document.createElement("article");
+          article.className="product-card"+(product.style==="featured"?" featured":"");
+          const imageWrap=document.createElement("div");imageWrap.className="product-image-wrap";
+          const image=document.createElement("img");image.className="product-image";image.src=product.image_url||"assets/get-a-hug-envelope.png";image.alt=product.title||"HUGSLinks product";
+          const label=document.createElement("span");label.className="product-image-label";label.textContent=product.label||"HUGSLinks";
+          imageWrap.append(image,label);
+          if(product.style==="featured"){const popular=document.createElement("span");popular.className="popular-pill";popular.textContent="Featured";imageWrap.append(popular)}
+          const content=document.createElement("div");content.className="product-content";
+          const badge=document.createElement("span");badge.className="badge"+(product.style==="featured"?" popular":"");badge.textContent=product.badge||"HUGSLinks";
+          const title=document.createElement("h3");title.textContent=product.title;
+          const price=document.createElement("div");price.className="product-price";price.textContent=product.price;
+          const description=document.createElement("p");description.textContent=product.description||"";
+          const features=document.createElement("ul");features.className="features";(product.features||[]).forEach(item=>{const li=document.createElement("li");li.textContent=item;features.append(li)});
+          content.append(badge,title,price,description,features);
+          if(product.preview_url&&product.preview_text){const preview=document.createElement("a");preview.className="product-button";preview.href=product.preview_url;preview.textContent=product.preview_text;content.append(preview)}
+          const action=document.createElement("a");action.className="product-button "+(product.style==="premium"?"premium":"gold");action.href=product.cta_url;action.textContent=product.cta_text;content.append(action);
+          article.append(imageWrap,content);cards.push(article);
+        }
+        if(cards.length)grid.replaceChildren(...cards);
+      }catch(error){console.warn("Owner store catalog unavailable; using page defaults.",error)}
+    }
+    loadOwnerStoreCatalog();
+  </script>
   <script src="live-help-config.js"></script><script src="script.js"></script>
 
 </body>
