@@ -8,6 +8,9 @@
   <style>
     :root{--navy:#071f3b;--blue:#168dff;--gold:#f1b84b;--cream:#fff7ef}*{box-sizing:border-box}body{margin:0;font-family:Arial,Helvetica,sans-serif;color:#23374d;background:radial-gradient(circle at 50% 0,#dff3ff,#fff7ef 55%,#fff);min-height:100vh}a{color:inherit}.top{display:flex;align-items:center;justify-content:space-between;gap:18px;padding:16px 5vw;background:var(--navy);color:#fff}.brand{font-weight:900;text-decoration:none;font-size:1.25rem}.back{font-weight:800;color:#9fd8ff}main{width:min(920px,calc(100% - 28px));margin:34px auto 70px;text-align:center}.eyebrow{color:var(--blue);font-weight:900;letter-spacing:.15em;text-transform:uppercase;font-size:.76rem}h1{font-size:clamp(2.4rem,8vw,4.9rem);line-height:.95;color:var(--navy);margin:10px 0}.lead{font-size:1.08rem;line-height:1.65;max-width:720px;margin:0 auto 22px;color:#587086}.hero{width:min(100%,560px);max-height:650px;object-fit:contain;border-radius:24px;box-shadow:0 22px 60px rgba(7,31,59,.22);background:#fff;animation:rise .7s ease both,float 5s ease-in-out infinite}@keyframes rise{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:none}}@keyframes float{50%{transform:translateY(-6px)}}.story{display:flex;gap:13px;overflow:auto;scroll-snap-type:x mandatory;padding:15px;margin:24px auto;border-radius:20px;background:rgba(255,255,255,.76);box-shadow:0 12px 36px rgba(7,31,59,.1)}.story figure{margin:0;flex:0 0 210px;scroll-snap-align:start;position:relative}.story img{width:210px;height:270px;object-fit:cover;border-radius:16px}.story figcaption{font-weight:800;padding:8px}.locked{filter:blur(7px);opacity:.55}.lock-label{position:absolute;inset:90px 22px auto;background:rgba(7,31,59,.9);color:#fff;padding:11px;border-radius:12px;font-weight:900}.actions{display:flex;flex-wrap:wrap;gap:12px;justify-content:center;margin:22px 0}.btn{border:0;border-radius:999px;padding:15px 22px;font-size:1rem;font-weight:900;cursor:pointer;text-decoration:none}.primary{background:var(--navy);color:#fff}.gold{background:linear-gradient(135deg,var(--gold),#f8d77e);color:#17212c}.outline{background:#fff;border:2px solid var(--navy);color:var(--navy)}.price{font-size:1.4rem;font-weight:900;color:var(--navy)}.notice{padding:14px;border-radius:14px;background:#fff4ce;color:#594308;margin:16px auto;max-width:650px}.status{min-height:24px;font-weight:800}.delivery{max-width:760px;margin:26px auto;padding:26px;border-radius:24px;text-align:left;background:linear-gradient(145deg,#071f3b,#103c69);color:#fff;box-shadow:0 20px 55px rgba(7,31,59,.28)}.delivery .eyebrow{color:#8fd4ff}.delivery h2{font-size:clamp(1.7rem,5vw,2.55rem);margin:7px 0 10px}.delivery p{line-height:1.6}.delivery ol{margin:18px 0;padding-left:22px;line-height:1.65}.delivery .actions{justify-content:flex-start;margin-bottom:12px}.delivery .primary{background:#fff;color:var(--navy)}.delivery .outline{background:transparent;border-color:#8fd4ff;color:#fff}.private-note{border-top:1px solid rgba(255,255,255,.25);padding-top:14px;font-size:.92rem;color:#d8ecff}.order-line{font-weight:800;color:#f8d77e}dialog{border:0;padding:0;border-radius:25px;width:min(94vw,900px);background:var(--navy);color:#fff;box-shadow:0 30px 90px rgba(0,0,0,.55)}dialog::backdrop{background:rgba(2,10,23,.84);backdrop-filter:blur(7px)}.modal-head{display:flex;justify-content:space-between;align-items:center;padding:14px 18px}.close{width:42px;height:42px;border:0;border-radius:50%;font-size:1.5rem}.player{position:relative;padding:14px 64px 28px}.frame{position:relative;border-radius:18px;overflow:hidden;background:#fff;min-height:320px;display:grid;place-items:center}.frame img{width:100%;max-height:68vh;object-fit:contain}.caption{position:absolute;left:12px;right:12px;bottom:12px;padding:10px;background:rgba(0,0,0,.58);border-radius:12px}.nav{position:absolute;top:48%;width:46px;height:46px;border:0;border-radius:50%;font-size:1.7rem;z-index:3}.prev{left:9px}.next{right:9px}.dots{display:flex;justify-content:center;gap:8px;margin:12px}.dot{width:11px;height:11px;border:0;border-radius:50%;background:#71849a}.dot.active{background:var(--gold)}.controls{display:flex;flex-wrap:wrap;justify-content:center;gap:9px}.controls button{padding:10px 14px;border:0;border-radius:10px;font-weight:800}.hearts{position:absolute;inset:0;pointer-events:none;overflow:hidden}.heart{position:absolute;bottom:-20px;animation:heart linear forwards;opacity:.8}@keyframes heart{to{transform:translateY(-100vh) scale(1.5);opacity:0}}@media(max-width:600px){.player{padding:8px 45px 22px}.story figure,.story img{width:170px}.story img{height:220px}.top{align-items:flex-start;flex-direction:column}.delivery{padding:22px 18px}.delivery .actions{justify-content:center}.delivery .btn{width:100%;text-align:center}}
   </style>
+  <style>
+    .personalize{max-width:700px;margin:24px auto;padding:24px;text-align:left;background:#fff;border:1px solid #d9e9f5;border-radius:22px;box-shadow:0 14px 38px rgba(7,31,59,.1)}.personalize h2{margin:0 0 7px;color:var(--navy)}.personalize>p{margin:0 0 18px;color:#587086}.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px}.field{display:grid;gap:7px;font-weight:800;color:var(--navy)}.field.wide{grid-column:1/-1}.field input,.field textarea{width:100%;border:1px solid #b9cfdf;border-radius:12px;padding:13px;font:inherit;color:#23374d;background:#fbfdff}.field textarea{min-height:100px;resize:vertical}.counter{font-size:.82rem;text-align:right;color:#70869a}.gift-note{max-width:700px;margin:20px auto;padding:22px;border-left:6px solid var(--gold);border-radius:16px;text-align:left;background:#fff;color:var(--navy);box-shadow:0 12px 32px rgba(7,31,59,.1)}.gift-note strong{display:block;font-size:1.15rem}.gift-note blockquote{margin:12px 0 0;font-size:1.12rem;line-height:1.6;font-style:italic}.gift-note .from{margin-top:12px;font-weight:900;color:#41617e}@media(max-width:600px){.form-grid{grid-template-columns:1fr}.field.wide{grid-column:auto}.personalize{padding:20px 16px}}
+  </style>
 </head>
 <body>
   <header class="top"><a class="brand" href="/">HUGSLinks</a><a class="back" href="/hugs-cards">← HUGS Cards</a></header>
@@ -16,9 +19,19 @@
     <h1 id="title">Opening your HUG…</h1>
     <p class="lead" id="description"></p>
     <img class="hero" id="cover" alt="" hidden>
+    <aside class="gift-note" id="giftNote" hidden><strong id="giftFor"></strong><blockquote id="giftMessage"></blockquote><div class="from" id="giftFrom"></div></aside>
     <div id="cancelled" class="notice" hidden>Checkout was canceled. Your card preview is still here whenever you are ready.</div>
     <div class="story" id="story" hidden></div>
     <div class="price" id="price"></div>
+    <section class="personalize" id="personalize" hidden aria-labelledby="personalizeTitle">
+      <h2 id="personalizeTitle">Personalize this HUG</h2>
+      <p>Add the names and message that will appear with the full card.</p>
+      <div class="form-grid">
+        <label class="field">Recipient name<input id="recipientName" maxlength="80" autocomplete="name" placeholder="Who is receiving this HUG?" required></label>
+        <label class="field">Your name<input id="senderName" maxlength="80" autocomplete="name" placeholder="Who is sending it?" required></label>
+        <label class="field wide">Personal message<textarea id="personalMessage" maxlength="300" placeholder="Write a warm message…"></textarea><span class="counter" id="messageCounter">0 / 300</span></label>
+      </div>
+    </section>
     <p class="status" id="status" role="status" aria-live="polite"></p>
     <div class="actions"><button class="btn primary" id="previewBtn" hidden>Preview Motion Card</button><button class="btn gold" id="buyBtn" hidden>Unlock Full Card</button></div>
     <section class="delivery" id="delivery" hidden aria-labelledby="deliveryTitle">
@@ -38,7 +51,7 @@
   <audio id="music" loop playsinline></audio>
   <script>
     const q=new URLSearchParams(location.search),slug=q.get("card"),order=q.get("order"),access=q.get("access"),sessionId=q.get("session_id"),el=id=>document.getElementById(id);
-    let card=null,full=false,current=0,timer=null,heartTimer=null,sharePath="";
+    let card=null,full=false,current=0,timer=null,heartTimer=null,sharePath="",personalization={};
     const money=c=>new Intl.NumberFormat("en-US",{style:"currency",currency:"USD"}).format((c||0)/100);
     async function api(url,options){const r=await fetch(url,{cache:"no-store",...options}),d=await r.json();if(!r.ok)throw Object.assign(Error(d.error||"Request failed"),{pending:d.pending});return d}
     function recipientURL(){return sharePath?new URL(sharePath,location.origin).href:location.href}
@@ -49,7 +62,7 @@
       el("deliveryIntro").textContent=buyerReturn?"Play the complete card, then send its private link to someone special.":"Open the complete motion story and enjoy every scene.";
       el("orderLine").textContent=buyerReturn&&order?"Order "+order:"";
       el("orderLine").hidden=!buyerReturn;el("deliverySteps").hidden=!buyerReturn;
-      const subject="A HUGSLinks card for you",body="Someone special is sending you a HUG. Open your motion card here: "+recipientURL();
+      const subject=(personalization.sender_name||"Someone special")+" sent you a HUG",body="A HUGSLinks motion card is waiting for "+(personalization.recipient_name||"you")+". Open it here: "+recipientURL();
       el("emailShareBtn").href="mailto:?subject="+encodeURIComponent(subject)+"&body="+encodeURIComponent(body);
       el("delivery").hidden=false;
     }
@@ -59,7 +72,7 @@
         if(order&&access){
           let attempts=0;
           while(true){
-            try{const d=await api("/.netlify/functions/motion-hug-access",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({order_id:order,access_key:access,session_id:sessionId})});card=d.card;full=true;sharePath=d.share_path;break}
+            try{const d=await api("/.netlify/functions/motion-hug-access",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({order_id:order,access_key:access,session_id:sessionId})});card=d.card;full=true;sharePath=d.share_path;personalization=d.personalization||{};break}
             catch(e){if(!e.pending||attempts++>5)throw e;el("status").textContent="Confirming payment…";await new Promise(r=>setTimeout(r,1800))}
           }
         }else card=(await api("/.netlify/functions/motion-hug-catalog?slug="+encodeURIComponent(slug||"heres-a-hug-original"))).card;
@@ -75,14 +88,15 @@
       const locked=Math.max(0,(card.total_scene_count||card.scenes.length)-visible.length);
       if(!full&&locked){const f=document.createElement("figure"),i=document.createElement("img"),l=document.createElement("div");i.src=card.cover_url;i.alt="Locked scenes";i.className="locked";l.className="lock-label";l.textContent=locked+" more scenes";f.append(i,l);el("story").append(f)}
       el("story").hidden=false;el("previewBtn").hidden=false;el("buyBtn").hidden=full;el("buyBtn").textContent="Unlock Full Card — "+money(card.price_cents);
+      el("personalize").hidden=full;
       el("status").textContent=full?(sessionId?"Payment confirmed. Your card is ready to send.":"Your complete HUG is ready to enjoy."):"Preview before purchasing.";
-      if(full)prepareDelivery();
+      if(full){const hasNote=personalization.recipient_name||personalization.sender_name||personalization.message;if(hasNote){el("giftFor").textContent=personalization.recipient_name?"For "+personalization.recipient_name:"A HUG for you";el("giftMessage").textContent=personalization.message||"Sending you warmth, care, and a HUG.";el("giftFrom").textContent=personalization.sender_name?"With love from "+personalization.sender_name:"";el("giftNote").hidden=false}prepareDelivery()}
     }
     function scenes(){return full?card.scenes:card.scenes.slice(0,Math.max(1,card.preview_scene_count||3))}
     function show(i){const s=scenes();current=(i+s.length)%s.length;el("slide").src=s[current].image_url;el("slide").alt=s[current].caption;el("caption").textContent=s[current].caption;[...el("dots").children].forEach((d,n)=>d.classList.toggle("active",n===current))}
     function start(){stop();const s=scenes(),next=()=>{show(current+1);timer=setTimeout(next,s[current]?.duration_ms||card.scene_interval_ms||3600)};timer=setTimeout(next,s[current]?.duration_ms||card.scene_interval_ms||3600)}
     function stop(){clearTimeout(timer);timer=null}
-    function openPlayer(){el("dots").replaceChildren();scenes().forEach((_,i)=>{const b=document.createElement("button");b.className="dot";b.setAttribute("aria-label","Go to scene "+(i+1));b.onclick=()=>{show(i);start()};el("dots").append(b)});el("playerTitle").textContent=card.title;show(0);el("player").showModal();start();if(card.hearts_enabled)heartTimer=setInterval(spawnHeart,700);if(card.audio_url&&!el("music").src)el("music").src=card.audio_url}
+    function openPlayer(){el("dots").replaceChildren();scenes().forEach((_,i)=>{const b=document.createElement("button");b.className="dot";b.setAttribute("aria-label","Go to scene "+(i+1));b.onclick=()=>{show(i);start()};el("dots").append(b)});el("playerTitle").textContent=personalization.recipient_name?"A HUG for "+personalization.recipient_name:card.title;show(0);el("player").showModal();start();if(card.hearts_enabled)heartTimer=setInterval(spawnHeart,700);if(card.audio_url&&!el("music").src)el("music").src=card.audio_url}
     function closePlayer(){el("player").close();stop();clearInterval(heartTimer);el("hearts").replaceChildren();el("music").pause()}
     function spawnHeart(){const h=document.createElement("span");h.className="heart";h.textContent=Math.random()>.5?"❤":"💙";h.style.left=Math.random()*100+"%";h.style.fontSize=14+Math.random()*20+"px";h.style.animationDuration=5+Math.random()*5+"s";el("hearts").append(h);setTimeout(()=>h.remove(),10500)}
     async function copyLink(){try{await navigator.clipboard.writeText(recipientURL());el("status").textContent="Private recipient link copied."}catch{prompt("Copy this private recipient link:",recipientURL())}}
@@ -90,7 +104,8 @@
     el("playBtn").onclick=()=>{if(timer){stop();el("playBtn").textContent="Play"}else{start();el("playBtn").textContent="Pause"}};
     el("musicBtn").onclick=async()=>{try{await el("music").play();el("musicBtn").textContent="Music Playing ✓"}catch{el("status").textContent="Turn off silent mode, then tap Play Music again."}};
     el("stopMusicBtn").onclick=()=>{el("music").pause();el("music").currentTime=0;el("musicBtn").textContent="Play Music"};
-    el("buyBtn").onclick=async()=>{el("buyBtn").disabled=true;el("status").textContent="Opening secure checkout…";try{const d=await api("/.netlify/functions/create-motion-hug-checkout",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({card_slug:card.slug})});location.assign(d.checkout_url)}catch(e){el("status").textContent=e.message;el("buyBtn").disabled=false}};
+    el("personalMessage").oninput=()=>{el("messageCounter").textContent=el("personalMessage").value.length+" / 300"};
+    el("buyBtn").onclick=async()=>{const recipient_name=el("recipientName").value.trim(),sender_name=el("senderName").value.trim(),message=el("personalMessage").value.trim();if(!recipient_name||!sender_name){el("status").textContent="Please add the recipient name and your name before checkout.";(!recipient_name?el("recipientName"):el("senderName")).focus();return}el("buyBtn").disabled=true;el("status").textContent="Opening secure checkout…";try{const d=await api("/.netlify/functions/create-motion-hug-checkout",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({card_slug:card.slug,recipient_name,sender_name,message})});location.assign(d.checkout_url)}catch(e){el("status").textContent=e.message;el("buyBtn").disabled=false}};
     el("shareBtn").onclick=copyLink;
     el("nativeShareBtn").onclick=async()=>{if(navigator.share){try{await navigator.share({title:card.title,text:"A HUGSLinks motion card for you",url:recipientURL()});return}catch(e){if(e.name==="AbortError")return}}await copyLink()};
     el("player").addEventListener("click",e=>{if(e.target===el("player"))closePlayer()});

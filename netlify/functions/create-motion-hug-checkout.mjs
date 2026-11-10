@@ -1,2 +1,53 @@
-import Stripe from "stripe";import { getStore } from "@netlify/blobs";import { hashSecret,json,ORDER_STORE,publicCard,readCards } from "../function-libs/_motion-hugs.mjs";
-export default async request=>{if(request.method!=="POST")return json({ok:false,error:"Method not allowed."},405);try{if(!process.env.STRIPE_SECRET_KEY)return json({ok:false,error:"Checkout is not configured."},503);const stripe=new Stripe(process.env.STRIPE_SECRET_KEY),body=await request.json(),slug=String(body?.card_slug||"").trim().toLowerCase(),email=String(body?.customer_email||"").trim().toLowerCase().slice(0,254),card=(await readCards()).find(c=>c.slug===slug&&c.published===true&&c.archived!==true);if(!card)return json({ok:false,error:"This Motion Story HUG is unavailable."},404);const orderId="MOTION-"+new Date().getFullYear()+"-"+crypto.randomUUID().replaceAll("-","").slice(0,12).toUpperCase(),accessKey=crypto.randomUUID().replaceAll("-")+crypto.randomUUID().replaceAll("-"),accessHash=await hashSecret(accessKey),site=(process.env.URL||"https://hugslinks.com").replace(/\/$/,""),productImage=card.cover_url.startsWith("/")?site+card.cover_url:card.cover_url,lineItem=card.stripe_price_id?{price:card.stripe_price_id,quantity:1}:{price_data:{currency:card.currency||"usd",unit_amount:card.price_cents,product_data:{name:card.title+" — Motion Story HUG",description:card.description||"Interactive HUGSLinks Motion Story Card",images:/^https:\/\//.test(productImage)?[productImage]:[]}},quantity:1},snapshot=publicCard(card),order={order_id:orderId,product_type:"motion-story",card_id:card.id,card_slug:card.slug,card_title:card.title,card_snapshot:snapshot,price_cents:card.price_cents,currency:card.currency||"usd",customer_email:email||"",access_hash:accessHash,payment_status:"awaiting-payment",fulfillment_status:"pending",created_at:new Date().toISOString()},store=getStore({name:ORDER_STORE,consistency:"strong"});await store.setJSON(orderId,order);const session=await stripe.checkout.sessions.create({mode:"payment",client_reference_id:orderId,customer_email:email||undefined,line_items:[lineItem],metadata:{hugs_product_type:"motion-story",order_id:orderId,card_slug:card.slug},success_url:site+"/motion-hug.html?order="+encodeURIComponent(orderId)+"&access="+encodeURIComponent(accessKey)+"&session_id={CHECKOUT_SESSION_ID}",cancel_url:site+"/motion-hug.html?card="+encodeURIComponent(card.slug)+"&checkout=cancelled"});order.stripe_session_id=session.id;await store.setJSON(orderId,order);return json({ok:true,order_id:orderId,checkout_url:session.url})}catch(error){console.error("Motion HUG checkout error",error);return json({ok:false,error:"Could not start secure checkout."},500)}};
+import Stripe from "stripe";
+import { getStore } from "@netlify/blobs";
+import { clean,hashSecret,json,ORDER_STORE,publicCard,readCards } from "../function-libs/_motion-hugs.mjs";
+
+export default async request=>{
+  if(request.method!=="POST")return json({ok:false,error:"Method not allowed."},405);
+  try{
+    if(!process.env.STRIPE_SECRET_KEY)return json({ok:false,error:"Checkout is not configured."},503);
+    const stripe=new Stripe(process.env.STRIPE_SECRET_KEY);
+    const body=await request.json();
+    const slug=String(body?.card_slug||"").trim().toLowerCase();
+    const email=String(body?.customer_email||"").trim().toLowerCase().slice(0,254);
+    const personalization={
+      recipient_name:clean(body?.recipient_name,80),
+      sender_name:clean(body?.sender_name,80),
+      message:clean(body?.message,300)
+    };
+    if(!personalization.recipient_name||!personalization.sender_name){
+      return json({ok:false,error:"Recipient name and sender name are required."},400);
+    }
+    const card=(await readCards()).find(c=>c.slug===slug&&c.published===true&&c.archived!==true);
+    if(!card)return json({ok:false,error:"This Motion Story HUG is unavailable."},404);
+    const orderId="MOTION-"+new Date().getFullYear()+"-"+crypto.randomUUID().replaceAll("-","").slice(0,12).toUpperCase();
+    const accessKey=crypto.randomUUID().replaceAll("-")+crypto.randomUUID().replaceAll("-");
+    const accessHash=await hashSecret(accessKey);
+    const site=(process.env.URL||"https://hugslinks.com").replace(/\/$/,"");
+    const productImage=card.cover_url.startsWith("/")?site+card.cover_url:card.cover_url;
+    const lineItem=card.stripe_price_id
+      ?{price:card.stripe_price_id,quantity:1}
+      :{price_data:{currency:card.currency||"usd",unit_amount:card.price_cents,product_data:{name:card.title+" — Motion Story HUG",description:card.description||"Interactive HUGSLinks Motion Story Card",images:/^https:\/\//.test(productImage)?[productImage]:[]}},quantity:1};
+    const snapshot=publicCard(card);
+    const order={
+      order_id:orderId,product_type:"motion-story",card_id:card.id,card_slug:card.slug,card_title:card.title,
+      card_snapshot:snapshot,personalization,price_cents:card.price_cents,currency:card.currency||"usd",
+      customer_email:email||"",access_hash:accessHash,payment_status:"awaiting-payment",
+      fulfillment_status:"pending",created_at:new Date().toISOString()
+    };
+    const store=getStore({name:ORDER_STORE,consistency:"strong"});
+    await store.setJSON(orderId,order);
+    const session=await stripe.checkout.sessions.create({
+      mode:"payment",client_reference_id:orderId,customer_email:email||undefined,line_items:[lineItem],
+      metadata:{hugs_product_type:"motion-story",order_id:orderId,card_slug:card.slug},
+      success_url:site+"/motion-hug.html?order="+encodeURIComponent(orderId)+"&access="+encodeURIComponent(accessKey)+"&session_id={CHECKOUT_SESSION_ID}",
+      cancel_url:site+"/motion-hug.html?card="+encodeURIComponent(card.slug)+"&checkout=cancelled"
+    });
+    order.stripe_session_id=session.id;
+    await store.setJSON(orderId,order);
+    return json({ok:true,order_id:orderId,checkout_url:session.url});
+  }catch(error){
+    console.error("Motion HUG checkout error",error);
+    return json({ok:false,error:"Could not start secure checkout."},500);
+  }
+};

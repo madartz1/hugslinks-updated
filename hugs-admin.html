@@ -4559,7 +4559,10 @@ async function loadMotionOrders(){
       const detail=document.createElement("p");
       detail.className="record-id";
       detail.textContent="Order "+(o.id||o.order_id||"Unavailable")+" · Payment: "+(o.payment_status||"pending")+" · Delivery: "+(o.fulfillment_status||"waiting");
-      a.append(h,p,detail);
+      const personal=document.createElement("p");
+      const names=o.personalization||{};
+      personal.textContent=(names.recipient_name?"For "+names.recipient_name:"Recipient not added")+(names.sender_name?" · From "+names.sender_name:"")+(names.message?" · “"+names.message+"”":"");
+      a.append(h,p,personal,detail);
       list.append(a);
     });
   }catch(e){list.textContent=e.message}
