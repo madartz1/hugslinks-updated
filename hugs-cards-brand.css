@@ -1,0 +1,7 @@
+/* HUGS Cards section identity; parent HUGSLinks navigation remains intact. */
+a.hugs-cards-mark{box-sizing:border-box;display:flex;align-items:center;justify-content:center;width:min(240px,100%);margin:0 auto 24px;padding:12px 14px;background:#fffdf6;border:1px solid #e5cb92;border-radius:20px;box-shadow:0 8px 24px #071f3b12;text-decoration:none;line-height:0}
+a.hugs-cards-mark.hugs-cards-mark-left{margin-left:0}
+a.hugs-cards-mark.hugs-cards-mark-header{width:155px;margin:0;padding:8px 10px;border-radius:14px}
+a.hugs-cards-mark>img{display:block;width:100%;height:auto;max-width:100%;max-height:none;object-fit:contain;margin:0;border:0;border-radius:0;box-shadow:none;background:transparent}
+a.hugs-cards-mark:focus-visible{outline:3px solid #087bbd;outline-offset:5px}
+@media(max-width:600px){a.hugs-cards-mark{width:200px;padding:10px 12px;border-radius:16px;margin-bottom:20px}a.hugs-cards-mark.hugs-cards-mark-header{width:120px;padding:6px 8px}}
