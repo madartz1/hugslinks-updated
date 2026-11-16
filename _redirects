@@ -18,3 +18,5 @@
 /api/support-checkout  /.netlify/functions/support-checkout  200
 /api/prodigi-check  /.netlify/functions/prodigi-check  200
 /api/prodigi-catalog  /.netlify/functions/prodigi-catalog  200
+
+/news  /nyc-updates  301

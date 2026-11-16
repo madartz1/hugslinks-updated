@@ -1,10 +1,12 @@
 (() => {
   const ENDPOINT = "/api/nyc-updates";
   const TYPE_CONFIG = {
-    alert: { label: "Official Alert", icon: "!", action: "Open Notify NYC" },
+    nonprofit: { label: "Nonprofit / private support", icon: "♡", action: "Read organization update" },
+    event: { label: "Event", icon: "◇", action: "Check event details" },
+    alert: { label: "Official Alert", icon: "!", action: "Open issuing agency" },
     council: { label: "Council & Law", icon: "⚖", action: "Open Council source" },
     program: { label: "Program", icon: "✓", action: "View program" },
-    news: { label: "Local News", icon: "●", action: "Read at source" }
+    news: { label: "Public News", icon: "●", action: "Read at source" }
   };
 
   const dateFormatter = new Intl.DateTimeFormat("en-US", {
@@ -25,7 +27,7 @@
   });
 
   function validDate(value) {
-    const date = new Date(value || 0);
+    const date = new Date(value || "invalid");
     return Number.isFinite(date.getTime()) ? date : null;
   }
 
@@ -63,6 +65,8 @@
   }
 
   function sourceLine(item) {
+    if (item.date_only && item.published_at) return `Published ${new Intl.DateTimeFormat("en-US", {timeZone:"UTC", dateStyle:"medium"}).format(new Date(item.published_at))}`;
+    if (item.type === "event") return `Event date: ${item.event_date || "Check organizer"}`;
     if (item.type === "program") return `Program data updated ${formatDate(item.updated_at, true)}`;
     if (item.type === "alert") return `Issued ${formatDate(item.published_at, true)}`;
     return `Published ${formatDate(item.published_at, true)}`;
@@ -180,13 +184,14 @@
       search.value = params.get("q").slice(0, 120);
       state.query = search.value.toLowerCase().trim();
     }
-    if (params.get("type") && ["program", "council", "alert", "news"].includes(params.get("type"))) state.type = params.get("type");
+    if (params.get("type") && ["program", "council", "alert", "news", "nonprofit", "event"].includes(params.get("type"))) state.type = params.get("type");
 
     function filteredItems() {
       return state.items.filter(item => {
         if (state.type !== "all" && item.type !== state.type) return false;
         if (state.topic !== "all" && item.topic !== state.topic) return false;
-        if (state.borough !== "all" && !(item.boroughs || []).includes(state.borough)) return false;
+        if (["US", "NYC"].includes(state.borough)) { if ((item.region || "NYC") !== state.borough) return false; }
+        else if (state.borough !== "all" && !(item.boroughs || []).includes(state.borough)) return false;
         if (state.query && !itemSearchText(item).includes(state.query)) return false;
         return true;
       });
@@ -225,8 +230,8 @@
       if (status) {
         status.dataset.state = delayed ? "partial" : "live";
         status.textContent = delayed
-          ? `Updated ${formatDate(data.generated_at, true)} • Some sources temporarily delayed`
-          : `Updated ${formatDate(data.generated_at, true)} • Official and local sources connected`;
+          ? `Sources checked ${formatDate(data.generated_at, true)} • Some sources temporarily delayed`
+          : `Sources checked ${formatDate(data.generated_at, true)} • Daily edition available`;
       }
     }
 
@@ -237,7 +242,7 @@
       }
       if (status) {
         status.dataset.state = "loading";
-        status.textContent = "Connecting to NYC sources…";
+        status.textContent = "Checking the daily edition…";
       }
       try {
         const data = await requestUpdates(false, force);
@@ -246,9 +251,12 @@
           ...(data.alerts || []),
           ...(data.council || []),
           ...(data.news || []),
-          ...(data.programs || [])
+          ...(data.programs || []),
+          ...(data.nonprofit || []),
+          ...(data.events || []).filter(item => item.event_date >= new Intl.DateTimeFormat("en-CA", { timeZone: "America/New_York" }).format(new Date()))
         ].sort((a, b) => itemTime(b) - itemTime(a));
         updateHealth(data);
+        renderBanners(state.items);
         feed.setAttribute("aria-busy", "false");
         render();
       } catch (error) {
@@ -263,11 +271,13 @@
           const healthText = health.querySelector("span");
           if (healthText) healthText.textContent = "Connection temporarily unavailable.";
         }
+        renderBanners([]);
         if (status) {
           status.dataset.state = "error";
           status.textContent = error.message;
         }
       } finally {
+        feed.setAttribute("aria-busy", "false");
         if (refresh) {
           refresh.disabled = false;
           refresh.textContent = "↻ Refresh updates";
@@ -312,6 +322,29 @@
     syncTabs();
     load();
   }
+
+
+  function renderBanners(items) {
+    const recent = items.filter(item => item.type !== "program" && item.type !== "event" && itemTime(item) <= Date.now() && Date.now() - itemTime(item) < 14 * 86400000).sort((a, b) => itemTime(b) - itemTime(a));
+    const featured = document.getElementById("hugs-headlines");
+    if (featured) featured.replaceChildren(...(recent.length ? recent.slice(0, 3).map(createUpdateCard) : [el("p", "", "No recent dated headlines are available. Browse the source directories below.")]));
+    const tickerItems = [...recent.slice(0, 6), ...items.filter(x => x.type === "event").slice(0, 3)];
+    document.querySelectorAll("[data-news-ticker]").forEach(track => {
+      track.replaceChildren();
+      if (!tickerItems.length) { track.append(el("span", "", "Source headlines unavailable — use the help and event directories above.")); return; }
+      tickerItems.forEach(item => {
+        const link = el("a", "", `${item.title} · ${item.source} · ${item.event_date || formatDate(item.published_at, true)}`);
+        link.href = safeHref(item.source_url); link.target = "_blank"; link.rel = "noopener noreferrer";
+        track.append(link);
+      });
+    });
+  }
+  document.querySelectorAll(".hugs-pause").forEach(button => button.addEventListener("click", () => {
+    const paused = button.getAttribute("aria-pressed") !== "true";
+    button.setAttribute("aria-pressed", String(paused));
+    button.textContent = paused ? "Resume scrolling" : "Pause scrolling";
+    button.closest(".hugs-ticker").classList.toggle("is-paused", paused);
+  }));
 
   initHomePanel();
   initDashboard();
