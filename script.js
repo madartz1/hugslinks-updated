@@ -31,6 +31,9 @@
       home ? home.after(explore) : primaryList.prepend(explore);
     }
 
+    let newsLink = [...primaryList.querySelectorAll('a')].find(link => /\/(nyc-updates|news)(\.html)?$/.test(new URL(link.href).pathname));
+    if (!newsLink) { newsLink = document.createElement('a'); primaryList.appendChild(newsLink); }
+    newsLink.href = '/nyc-updates'; newsLink.textContent = 'News & Resources';
     const destinations = new Set();
     const labels = new Set();
     [...primaryList.querySelectorAll('a')].forEach(link => {
