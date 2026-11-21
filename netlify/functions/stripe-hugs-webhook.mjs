@@ -78,7 +78,13 @@ export default async (req) => {
       );
     }
 
-    if(session.metadata?.hugs_product_type==="motion-story"){const motionOrderId=session.client_reference_id||session.metadata?.order_id;if(!motionOrderId)throw new Error("Missing Motion Story HUG order ID");const motionStore=getStore({name:"hugs-motion-orders",consistency:"strong"}),motionOrder=await motionStore.get(motionOrderId,{type:"json",consistency:"strong"});if(!motionOrder)throw new Error("Motion Story HUG order not found: "+motionOrderId);motionOrder.payment_status="paid";motionOrder.fulfillment_status="ready";motionOrder.stripe_session_id=session.id;motionOrder.stripe_customer_email=session.customer_details?.email||session.customer_email||motionOrder.customer_email||"";motionOrder.paid_at=motionOrder.paid_at||new Date().toISOString();await motionStore.setJSON(motionOrderId,motionOrder);console.log("Paid Motion Story HUG order saved:",{order_id:motionOrderId,card_slug:motionOrder.card_slug});return new Response(JSON.stringify({received:true,order_id:motionOrderId,payment_status:"paid",product_type:"motion-story"}),{status:200,headers:{"Content-Type":"application/json"}})}
+    if(session.metadata?.hugs_product_type==="motion-story"){const motionOrderId=session.client_reference_id||session.metadata?.order_id;if(!motionOrderId)throw new Error("Missing Motion Story HUG order ID");const motionStore=getStore({name:"hugs-motion-orders",consistency:"strong"}),motionOrder=await motionStore.get(motionOrderId,{type:"json",consistency:"strong"});if(!motionOrder)throw new Error("Motion Story HUG order not found: "+motionOrderId);if (motionOrder.card_slug === "anniversary-motion" &&
+      (!session.livemode || session.id !== motionOrder.stripe_session_id ||
+        session.payment_status !== "paid" || session.amount_total !== motionOrder.price_cents ||
+        session.currency !== motionOrder.currency)) {
+      throw new Error("The payment does not match the Anniversary Card order");
+    }
+    motionOrder.payment_status="paid";motionOrder.fulfillment_status="ready";motionOrder.stripe_session_id=session.id;motionOrder.stripe_customer_email=session.customer_details?.email||session.customer_email||motionOrder.customer_email||"";motionOrder.paid_at=motionOrder.paid_at||new Date().toISOString();await motionStore.setJSON(motionOrderId,motionOrder);console.log("Paid Motion Story HUG order saved:",{order_id:motionOrderId,card_slug:motionOrder.card_slug});return new Response(JSON.stringify({received:true,order_id:motionOrderId,payment_status:"paid",product_type:"motion-story"}),{status:200,headers:{"Content-Type":"application/json"}})}
 
     const orderId =
       session.client_reference_id;

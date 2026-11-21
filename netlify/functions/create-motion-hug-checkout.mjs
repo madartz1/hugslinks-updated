@@ -1,6 +1,6 @@
 import Stripe from "stripe";
 import { getStore } from "@netlify/blobs";
-import { clean,hashSecret,json,ORDER_STORE,publicCard,readCards } from "../function-libs/_motion-hugs.mjs";
+import { ANNIVERSARY_PAGE,ANNIVERSARY_SLUG,clean,hashSecret,json,ORDER_STORE,publicCard,readCards } from "../function-libs/_motion-hugs.mjs";
 
 export default async request=>{
   if(request.method!=="POST")return json({ok:false,error:"Method not allowed."},405);
@@ -20,10 +20,17 @@ export default async request=>{
     }
     const card=(await readCards()).find(c=>c.slug===slug&&c.published===true&&c.archived!==true);
     if(!card)return json({ok:false,error:"This Motion Story HUG is unavailable."},404);
+    const isAnniversary = slug === ANNIVERSARY_SLUG;
+    if (isAnniversary && (new URL(request.url).origin !== "https://hugslinks.com" ||
+        !/^(sk|rk)_live_/.test(process.env.STRIPE_SECRET_KEY))) {
+      return json({ok:false,error:"Open the Anniversary Card on hugslinks.com to purchase it."},503);
+    }
     const orderId="MOTION-"+new Date().getFullYear()+"-"+crypto.randomUUID().replaceAll("-","").slice(0,12).toUpperCase();
     const accessKey=crypto.randomUUID().replaceAll("-")+crypto.randomUUID().replaceAll("-");
     const accessHash=await hashSecret(accessKey);
     const site=(process.env.URL||"https://hugslinks.com").replace(/\/$/,"");
+    const returnSite = isAnniversary ? "https://hugslinks.com" : site;
+    const page = isAnniversary ? ANNIVERSARY_PAGE : "/motion-hug.html";
     const productImage=card.cover_url.startsWith("/")?site+card.cover_url:card.cover_url;
     const lineItem=card.stripe_price_id
       ?{price:card.stripe_price_id,quantity:1}
@@ -38,11 +45,12 @@ export default async request=>{
     const store=getStore({name:ORDER_STORE,consistency:"strong"});
     await store.setJSON(orderId,order);
     const session=await stripe.checkout.sessions.create({
-      mode:"payment",client_reference_id:orderId,customer_email:email||undefined,line_items:[lineItem],
+      mode:"payment",...(isAnniversary ? {payment_method_types:["card"]} : {}),client_reference_id:orderId,customer_email:email||undefined,line_items:[lineItem],
       metadata:{hugs_product_type:"motion-story",order_id:orderId,card_slug:card.slug},
-      success_url:site+"/motion-hug.html?order="+encodeURIComponent(orderId)+"&access="+encodeURIComponent(accessKey)+"&session_id={CHECKOUT_SESSION_ID}",
-      cancel_url:site+"/motion-hug.html?card="+encodeURIComponent(card.slug)+"&checkout=cancelled"
+      success_url:returnSite+page+"?order="+encodeURIComponent(orderId)+"&access="+encodeURIComponent(accessKey)+"&session_id={CHECKOUT_SESSION_ID}",
+      cancel_url:returnSite+page+"?card="+encodeURIComponent(card.slug)+"&checkout=cancelled"
     });
+    if (isAnniversary && !session.livemode) return json({ok:false,error:"Live checkout is unavailable."},503);
     order.stripe_session_id=session.id;
     await store.setJSON(orderId,order);
     return json({ok:true,order_id:orderId,checkout_url:session.url});
