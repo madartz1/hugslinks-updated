@@ -9,7 +9,7 @@ const anniversaryCard = {
   title: "Anniversary Motion Card", subtitle: "Happy Anniversary, My Love",
   description: "Send the Anniversary HUG with Moma and Poppa Bear and your own message.",
   cover_url: "https://hugslinks-card-app.netlify.app/assets/anniversary/motion-poster.webp",
-  price_cents: 699, currency: "usd", preview_scene_count: 1, scene_interval_ms: 15000,
+  price_cents: 399, currency: "usd", preview_scene_count: 1, scene_interval_ms: 15000,
   published: true, archived: false, hearts_enabled: false,
   scenes: [{ id: "anniversary-cover", image_url: "https://hugslinks-card-app.netlify.app/assets/anniversary/motion-poster.webp", caption: "Happy Anniversary, My Love", duration_ms: 15000 }]
 };
