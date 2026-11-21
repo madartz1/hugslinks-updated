@@ -3,6 +3,8 @@
 const find = id => document.getElementById(id);
 const statusLabel = find("gift-status");
 const installed = matchMedia("(display-mode: standalone)").matches || navigator.standalone === true;
+const ios = /iPhone|iPad|iPod/.test(navigator.userAgent) ||
+  (navigator.platform === "MacIntel" && navigator.maxTouchPoints > 1);
 const recipientPath = "/app/open-hug.html";
 let installPrompt;
 
@@ -12,7 +14,14 @@ if ("serviceWorker" in navigator && !installed) {
 window.addEventListener("beforeinstallprompt", event => {
   event.preventDefault();
   installPrompt = event;
+  find("install-hugs").hidden = false;
 });
+
+if (ios && !installed) {
+  find("install-help").open = true;
+  find("install-steps").textContent =
+    "If you opened this from email, open the page in Safari first. In Safari, tap Share, then Add to Home Screen. Turn on Open as Web App if shown.";
+}
 
 function parseCardLink(value) {
   try {
@@ -39,7 +48,7 @@ async function openGift(link) {
   find("paste-gift").hidden = true;
   find("gift-install").hidden = installed;
   if (!installed) {
-    find("copy-gift").hidden = false;
+    find("gift-transfer").hidden = false;
     find("gift-link").value = link;
   }
   statusLabel.textContent = "Finding your HUG…";
@@ -87,28 +96,29 @@ async function openGift(link) {
 }
 
 find("install-hugs").onclick = async () => {
-  if (installPrompt) {
-    const prompt = installPrompt;
-    installPrompt = undefined;
+  if (!installPrompt) return;
+  const prompt = installPrompt;
+  installPrompt = undefined;
+  find("install-hugs").hidden = true;
+  try {
     await prompt.prompt();
+  } catch {
+    find("install-help").open = true;
   }
-  const ios = /iPhone|iPad|iPod/.test(navigator.userAgent) ||
-    (navigator.platform === "MacIntel" && navigator.maxTouchPoints > 1);
-  const help = find("install-help");
-  help.textContent = ios
-    ? "In Safari, tap Share, then Add to Home Screen. Turn on Open as Web App if Safari shows that option."
-    : "Use Install app or Add to Home screen in your browser’s menu if the install prompt doesn’t appear.";
-  help.hidden = false;
 };
 
 find("copy-gift").onclick = async () => {
+  const field = find("gift-link");
+  const feedback = find("copy-gift-status");
   try {
-    await navigator.clipboard.writeText(find("gift-link").value);
-    statusLabel.textContent = "Card link copied. Paste it in the installed app.";
+    await navigator.clipboard.writeText(field.value);
+    feedback.textContent = "Link copied. Open HUGS Cards from your Home Screen to paste it.";
   } catch {
-    find("manual-gift").hidden = false;
-    find("gift-link").select();
-    statusLabel.textContent = "Copy the selected link, then paste it in the installed app.";
+    find("manual-gift").open = true;
+    field.focus();
+    field.select();
+    field.setSelectionRange(0, field.value.length);
+    feedback.textContent = "Automatic copy is unavailable here. Copy the link from the field below.";
   }
 };
 
