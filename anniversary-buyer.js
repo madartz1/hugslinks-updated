@@ -4,7 +4,7 @@ const get = id => document.getElementById(id);
 const cardApp = "https://hugslinks-card-app.netlify.app/.netlify/functions/anniversary-live";
 const functions = "/.netlify/functions/";
 const slug = "anniversary-motion";
-const sections = ["choose", "personalization", "preview", "delivery", "recipient-gift"];
+const sections = ["choose", "personalization", "preview", "delivery", "sender-card", "recipient-gift"];
 const form = get("details");
 const status = get("status");
 const draftKey = "anniversary-preview-draft";
@@ -94,6 +94,7 @@ const query = new URLSearchParams(location.search);
 const orderId = query.get("order");
 const accessKey = query.get("access");
 const sessionId = query.get("session_id");
+const senderLink = /^#sender=(ANNIVERSARY-\d{4}-[A-F0-9]{12})\.([a-f0-9]{64})$/.exec(location.hash);
 
 async function openPurchasedCard() {
   const isBuyer = Boolean(sessionId);
@@ -122,6 +123,10 @@ async function openPurchasedCard() {
     const message = "An Anniversary HUG is waiting for you. Open it here: " + cardURL;
     get("email-share").href = "mailto:?subject=" + encodeURIComponent(subject) + "&body=" + encodeURIComponent(message);
     get("delivery-title").textContent = "Your HUG is ready!";
+    if (senderLink?.[1] === orderId) {
+      get("view-sender").href = "/anniversary-motion.html" + senderLink[0];
+      get("view-sender").hidden = false;
+    }
     const note = get("delivery-note");
     if (result.email_status === "sent") {
       note.textContent = "We sent the HUGSLinks envelope to your recipient by email.";
@@ -138,6 +143,25 @@ async function openPurchasedCard() {
     status.textContent = error.message;
     if (isBuyer) get("retry").hidden = false;
     else get("recipient-title").textContent = "We couldn’t open this HUG.";
+  }
+}
+
+async function viewSentCard() {
+  show("sender-card");
+  status.textContent = "Opening your card…";
+  try {
+    const { slug: cardType, personalization } = await post(cardApp, {
+      action: "open", mode: "sender", order_id: senderLink[1], access_key: senderLink[2]
+    });
+    if (cardType !== slug || !personalization) throw new Error("This card link is unavailable.");
+    mountAnniversaryStory(get("sender-story"), {
+      sender: personalization.sender_name,
+      recipient: personalization.recipient_name,
+      message: personalization.message
+    });
+    status.textContent = "";
+  } catch (error) {
+    status.textContent = error.message;
   }
 }
 
@@ -169,6 +193,8 @@ if (orderId || accessKey || sessionId) {
   show(sessionId ? "delivery" : "recipient-gift");
   get("retry").onclick = openPurchasedCard;
   openPurchasedCard();
+} else if (senderLink) {
+  viewSentCard();
 } else if (query.get("checkout") === "cancelled") {
   try {
     const saved = JSON.parse(sessionStorage.getItem(draftKey));
