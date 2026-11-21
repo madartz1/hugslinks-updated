@@ -59,7 +59,7 @@
    unchanged();const done=await request('finish',{id:r.id,body:{}});unchanged();
    const url=location.origin+'/app/view-card.html#'+r.id+'.'+pending.viewToken;
    prepared={id:r.id,viewToken:pending.viewToken,url,recipientEmail:pending.recipientEmail,recipientName:pending.recipientName,expiresAt:done.expiresAt,owner:session.email};
-   saveRecord(prepared);get('deliveryProgress').value=100;get('deliveryReady').hidden=false;get('deliverySummary').textContent=`Ready for ${prepared.recipientName||prepared.recipientEmail} · ${prepared.recipientEmail} · Available until ${new Date(prepared.expiresAt).toLocaleDateString()}`;
+   saveRecord(prepared);get('deliveryProgress').value=100;get('deliveryReady').hidden=false;get('deliverySummary').textContent=`Ready for ${prepared.recipientName||prepared.recipientEmail} · ${prepared.recipientEmail} · Saved in My Cards`;
    get('viewSavedCard').href=url;get('sendCardEmail').disabled=false;get('shareCardLink').hidden=!navigator.share;say('Your private card link is ready. Tap Send HUGS Card to email it. No card email has been sent yet.');
   }catch(e){say(e.message);}finally{busy=false;buttons();}
  };
@@ -73,9 +73,9 @@
  function history(){
   const list=get('savedCardList');list.replaceChildren();const saved=records().filter(r=>verified()&&r.owner===session.email&&/^[a-f0-9]{32}$/.test(r.id));get('savedCardHistory').hidden=!saved.length;
   for(const record of saved){
-   const li=document.createElement('li'),label=document.createElement('span');label.textContent=(record.recipientName||record.recipientEmail)+' · '+new Date(record.expiresAt).toLocaleDateString()+(record.emailed?' · emailed':' · link ready');li.append(label);const expired=new Date(record.expiresAt)<=new Date();if(expired)label.textContent+=' · expired';
-   const copyButton=document.createElement('button');copyButton.className='secondary';copyButton.textContent='Copy link';copyButton.disabled=expired;copyButton.onclick=()=>copy(record.url);li.append(copyButton);
-   if(!record.emailed&&!expired){const send=document.createElement('button');send.className='secondary';send.textContent='Email card';send.onclick=async()=>{if(!verified()||session.email!==record.owner){say('Verify '+record.owner+' above to email this saved card.');return;}send.disabled=true;try{await request('send',{id:record.id,body:{viewToken:record.viewToken}});saveRecord({...record,emailed:true});say('Email accepted for sending to '+record.recipientEmail+'. Inbox delivery is not yet confirmed.');}catch(e){say(e.message);send.disabled=false;}};li.append(send);}
+   const li=document.createElement('li'),label=document.createElement('span');label.textContent=(record.recipientName||record.recipientEmail)+(record.emailed?' · emailed':' · link ready');li.append(label);
+   const copyButton=document.createElement('button');copyButton.className='secondary';copyButton.textContent='Copy link';copyButton.onclick=()=>copy(record.url);li.append(copyButton);
+   if(!record.emailed){const send=document.createElement('button');send.className='secondary';send.textContent='Email card';send.onclick=async()=>{if(!verified()||session.email!==record.owner){say('Verify '+record.owner+' above to email this saved card.');return;}send.disabled=true;try{await request('send',{id:record.id,body:{viewToken:record.viewToken}});saveRecord({...record,emailed:true});say('Email accepted for sending to '+record.recipientEmail+'. Inbox delivery is not yet confirmed.');}catch(e){say(e.message);send.disabled=false;}};li.append(send);}
    const remove=document.createElement('button');remove.className='secondary';remove.textContent='Remove card';remove.onclick=async()=>{
     if(!verified()||session.email!==record.owner){say('Verify '+record.owner+' above to remove this saved card.');get('senderEmail').focus();return;}
     if(!confirm('Remove this online card and its media? Its link will stop working for everyone. Your local draft stays on this device.'))return;
