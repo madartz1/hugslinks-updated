@@ -1,0 +1,42 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="referrer" content="no-referrer">
+  <meta name="robots" content="noindex, nofollow">
+  <meta name="theme-color" content="#071f3b">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <title>Open Your HUG · HUGSLinks</title>
+  <link rel="manifest" href="/app/manifest.webmanifest">
+  <link rel="apple-touch-icon" href="/app/icon-192.png">
+  <link rel="stylesheet" href="/anniversary.css">
+  <script src="/app/open-hug.js" defer></script>
+</head>
+<body>
+  <header class="brand"><a href="/app/">HUGSLinks<span> ♥</span></a></header>
+  <main>
+    <section class="panel centered">
+      <h1 id="gift-heading" tabindex="-1">Open Your HUG</h1>
+      <p id="gift-status" class="status" role="status"></p>
+      <section id="gift-preview" hidden aria-label="Card preview">
+        <p id="gift-preview-title" class="eyebrow"></p>
+        <img id="gift-cover" class="gift-preview-cover" alt="Anniversary Card preview" hidden>
+        <p>Open it in the HUGS Cards app to see the animation and your personal message.</p>
+      </section>
+      <div id="gift-install" hidden>
+        <button id="install-hugs">Install HUGS Cards</button>
+        <button id="copy-gift" class="secondary" hidden>Copy Card Link</button>
+        <label id="manual-gift" hidden>Card link <input id="gift-link" readonly></label>
+        <p id="install-help" hidden></p>
+        <p>Once installed, open the HUGS Cards icon, choose <strong>Open a HUG</strong>, and paste your card link.</p>
+      </div>
+      <form id="paste-gift" hidden>
+        <label>Card link<input id="pasted-link" type="url" required autocomplete="off" placeholder="Paste the link you received"></label>
+        <button>Open Card</button>
+      </form>
+      <div id="full-gift" hidden></div>
+    </section>
+  </main>
+</body>
+</html>

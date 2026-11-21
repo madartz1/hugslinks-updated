@@ -98,33 +98,25 @@ async function openPurchasedCard() {
     const result = await post("motion-hug-access", {
       order_id: orderId, access_key: accessKey, session_id: sessionId
     });
-    if (result.card?.slug !== slug) throw new Error("This link does not belong to an Anniversary HUG.");
-
-    const card = {
-      recipient: result.personalization?.recipient_name || "My Love",
-      sender: result.personalization?.sender_name || "Someone special",
-      message: result.personalization?.message || sample.message
-    };
+    if (result.slug !== slug) throw new Error("This link does not belong to an Anniversary HUG.");
     if (!isBuyer) {
-      get("recipient-title").textContent = card.sender + " sent you a HUG.";
-      mountAnniversaryStory(get("recipient-story"), card);
-      status.textContent = "";
+      location.replace(result.share_path);
       return;
     }
 
     const url = new URL(result.share_path, location.origin);
-    if (url.origin !== location.origin || url.pathname !== "/anniversary-motion.html") {
+    if (url.origin !== location.origin || url.pathname !== "/app/open-hug.html") {
       throw new Error("Unable to open the card.");
     }
     cardURL = url.href;
     get("view").href = cardURL;
-    get("view").setAttribute("aria-label", "Play Full HUG in a new tab");
+    get("view").setAttribute("aria-label", "Preview the recipient link in a new tab");
     get("share-link").value = cardURL;
-    const subject = card.sender + " sent you an Anniversary HUG";
+    const subject = (result.preview?.sender_name || "Someone special") + " sent you an Anniversary HUG";
     const message = "An Anniversary HUG is waiting for you. Open it here: " + cardURL;
     get("email-share").href = "mailto:?subject=" + encodeURIComponent(subject) + "&body=" + encodeURIComponent(message);
     get("delivery-title").textContent = "Your HUG is ready!";
-    get("delivery-note").textContent = "Preview your card or share the private link with your recipient.";
+    get("delivery-note").textContent = "Share the preview link. Your recipient opens the full card in the HUGS Cards app.";
     get("delivery-actions").hidden = false;
     status.textContent = "";
     try { sessionStorage.removeItem(draftKey); } catch { /* The card is saved online. */ }
