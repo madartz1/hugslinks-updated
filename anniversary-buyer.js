@@ -61,7 +61,7 @@ form.onsubmit = event => {
   event.preventDefault();
   draft = Object.fromEntries(new FormData(form).entries());
   for (const name of Object.keys(draft)) draft[name] = draft[name].trim();
-  if (Object.values(draft).some(value => !value)) {
+  if (!draft.recipient || !draft.sender || !draft.message) {
     status.textContent = "Please add a name in each field and write a message.";
     return;
   }
@@ -75,7 +75,11 @@ get("checkout").onclick = async () => {
   status.textContent = "Opening secure checkout…";
   try {
     const result = await post(cardApp, {
-      action: "checkout", recipient_name: draft.recipient, sender_name: draft.sender, message: draft.message
+      action: "checkout",
+      recipient_name: draft.recipient,
+      recipient_email: draft.recipient_email,
+      sender_name: draft.sender,
+      message: draft.message
     });
     const destination = new URL(result.checkout_url);
     if (destination.origin !== "https://checkout.stripe.com") throw new Error("Unable to open checkout.");
@@ -118,7 +122,15 @@ async function openPurchasedCard() {
     const message = "An Anniversary HUG is waiting for you. Open it here: " + cardURL;
     get("email-share").href = "mailto:?subject=" + encodeURIComponent(subject) + "&body=" + encodeURIComponent(message);
     get("delivery-title").textContent = "Your HUG is ready!";
-    get("delivery-note").textContent = "Share the preview link. Your recipient opens the full card in the HUGS Cards app.";
+    const note = get("delivery-note");
+    if (result.email_status === "sent") {
+      note.textContent = "We sent the HUGSLinks envelope to your recipient by email.";
+    } else if (result.email_status === "pending") {
+      note.textContent = "Payment confirmed. We’re sending the HUGSLinks envelope to your recipient by email.";
+      get("retry").hidden = false;
+    } else {
+      note.textContent = "Share the preview link. Your recipient opens the full card in the HUGS Cards app.";
+    }
     get("delivery-actions").hidden = false;
     status.textContent = "";
     try { sessionStorage.removeItem(draftKey); } catch { /* The card is saved online. */ }
@@ -161,7 +173,7 @@ if (orderId || accessKey || sessionId) {
   try {
     const saved = JSON.parse(sessionStorage.getItem(draftKey));
     if (saved) {
-      for (const name of ["recipient", "sender", "message"]) {
+      for (const name of ["recipient", "recipient_email", "sender", "message"]) {
         form.elements.namedItem(name).value = saved[name] || "";
       }
       draft = saved;

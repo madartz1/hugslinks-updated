@@ -27,6 +27,10 @@
       <h1 tabindex="-1">Make it yours</h1>
       <form id="details">
         <label>To <input name="recipient" maxlength="80" required></label>
+        <label>Recipient email (optional)
+          <input type="email" name="recipient_email" maxlength="254" aria-describedby="email-help">
+        </label>
+        <p id="email-help">Add an email address to send the HUGSLinks envelope automatically after payment.</p>
         <label>From <input name="sender" maxlength="80" required></label>
         <label>Your message <textarea name="message" maxlength="300" rows="4" required></textarea></label>
         <button type="submit">Preview My HUG</button>
@@ -50,7 +54,7 @@
         </div>
         <a id="view" class="secondary link-button" target="_blank" rel="noopener">Preview Recipient Link</a>
         <button id="share">Share My HUG</button>
-        <a id="email-share" class="secondary link-button">Email My HUG</a>
+        <a id="email-share" class="secondary link-button">Share by Email</a>
         <button id="copy" class="secondary">Copy Link</button>
         <label id="manual-copy" hidden>Recipient link <input id="share-link" readonly></label>
       </div>
