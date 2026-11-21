@@ -117,7 +117,7 @@ async function openPurchasedCard() {
     }
     cardURL = url.href;
     get("view").href = cardURL;
-    get("view").setAttribute("aria-label", "Preview the recipient link in a new tab");
+    get("view").setAttribute("aria-label", "Open the recipient’s card in a new tab");
     get("share-link").value = cardURL;
     const subject = (result.preview?.sender_name || "Someone special") + " sent you an Anniversary HUG";
     const message = "An Anniversary HUG is waiting for you. Open it here: " + cardURL;
@@ -134,7 +134,7 @@ async function openPurchasedCard() {
       note.textContent = "Payment confirmed. We’re sending the HUGSLinks envelope to your recipient by email.";
       get("retry").hidden = false;
     } else {
-      note.textContent = "Share the preview link. Your recipient opens the full card in the HUGS Cards app.";
+      note.textContent = "Share the link so your recipient can open the full card.";
     }
     get("delivery-actions").hidden = false;
     status.textContent = "";
