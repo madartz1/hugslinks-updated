@@ -105,7 +105,7 @@ async function openPurchasedCard() {
     }
 
     const url = new URL(result.share_path, location.origin);
-    if (url.origin !== location.origin || url.pathname !== "/app/open-hug.html") {
+    if (url.origin !== location.origin || !["/app/open-hug.html", "/app/open-hug"].includes(url.pathname)) {
       throw new Error("Unable to open the card.");
     }
     cardURL = url.href;

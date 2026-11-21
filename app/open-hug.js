@@ -17,7 +17,7 @@ window.addEventListener("beforeinstallprompt", event => {
 function parseCardLink(value) {
   try {
     const url = new URL(value);
-    if (url.origin !== location.origin || url.pathname !== recipientPath) return null;
+    if (url.origin !== location.origin || ![recipientPath, "/app/open-hug"].includes(url.pathname)) return null;
     const match = /^#(MOTION-\d{4}-[A-F0-9]{12})\.([a-f0-9]{64})$/.exec(url.hash);
     return match ? { order_id: match[1], access_key: match[2] } : null;
   } catch {
