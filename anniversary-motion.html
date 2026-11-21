@@ -31,6 +31,7 @@
           <input type="email" name="recipient_email" maxlength="254" aria-describedby="email-help">
         </label>
         <p id="email-help">Add an email address to send the HUGSLinks envelope automatically after payment.</p>
+        <p>Your confirmation and private card link go to the email you enter at checkout.</p>
         <label>From <input name="sender" maxlength="80" required></label>
         <label>Your message <textarea name="message" maxlength="300" rows="4" required></textarea></label>
         <button type="submit">Preview My HUG</button>
@@ -53,12 +54,17 @@
           <img class="envelope-sealed" src="https://hugslinks-card-app.netlify.app/assets/anniversary/envelope-sealed.webp" alt="">
         </div>
         <a id="view" class="secondary link-button" target="_blank" rel="noopener">Preview Recipient Link</a>
+        <a id="view-sender" class="secondary link-button" hidden>View My Card</a>
         <button id="share">Share My HUG</button>
         <a id="email-share" class="secondary link-button">Share by Email</a>
         <button id="copy" class="secondary">Copy Link</button>
         <label id="manual-copy" hidden>Recipient link <input id="share-link" readonly></label>
       </div>
       <button id="retry" class="secondary" hidden>Check Again</button>
+    </section>
+    <section id="sender-card" class="panel centered" hidden>
+      <h1 tabindex="-1">Your Anniversary HUG</h1>
+      <div id="sender-story"></div>
     </section>
     <section id="recipient-gift" class="panel centered" hidden>
       <p class="eyebrow">Anniversary HUG</p>
