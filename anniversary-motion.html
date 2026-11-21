@@ -1,0 +1,67 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="referrer" content="no-referrer">
+  <meta name="robots" content="noindex, nofollow">
+  <title>Send an Anniversary HUG · HUGSLinks</title>
+  <link rel="stylesheet" href="/anniversary.css">
+  <script src="/anniversary-story.js" defer></script>
+  <script src="/anniversary-buyer.js" defer></script>
+</head>
+<body>
+  <header class="brand"><a href="/app/#cards">HUGSLinks<span> ♥</span></a></header>
+  <main>
+    <section id="choose" class="panel centered">
+      <p class="eyebrow">Ready-to-send video card · $6.99</p>
+      <h1>Send an Anniversary HUG</h1>
+      <p>Send the Moma and Poppa Bear Anniversary video with your own message.</p>
+      <div class="envelope-art" aria-hidden="true">
+        <img class="envelope-sealed" src="https://hugslinks-card-app.netlify.app/assets/anniversary/envelope-sealed.webp" alt="">
+      </div>
+      <button id="preview-card">Preview Card</button>
+      <button id="personalize" class="secondary">Make It Yours</button>
+    </section>
+    <section id="personalization" class="panel" hidden>
+      <h1 tabindex="-1">Make it yours</h1>
+      <form id="details">
+        <label>To <input name="recipient" maxlength="80" required></label>
+        <label>From <input name="sender" maxlength="80" required></label>
+        <label>Your message <textarea name="message" maxlength="300" rows="4" required></textarea></label>
+        <button type="submit">Preview My HUG</button>
+      </form>
+    </section>
+    <section id="preview" class="panel centered" hidden>
+      <p id="preview-label" class="eyebrow">Card preview</p>
+      <h1 id="preview-title" tabindex="-1">An Anniversary HUG</h1>
+      <div id="preview-story"></div>
+      <div class="actions">
+        <button id="preview-edit" class="secondary">Make It Yours</button>
+        <button id="checkout" hidden>Continue to Checkout · $6.99</button>
+      </div>
+    </section>
+    <section id="delivery" class="panel centered" hidden>
+      <h1 id="delivery-title" tabindex="-1">We’re preparing your HUG</h1>
+      <p id="delivery-note">We’ll show your card here once Stripe confirms your payment.</p>
+      <div id="delivery-actions" hidden>
+        <div class="envelope-art" aria-hidden="true">
+          <img class="envelope-sealed" src="https://hugslinks-card-app.netlify.app/assets/anniversary/envelope-sealed.webp" alt="">
+        </div>
+        <a id="view" class="secondary link-button" target="_blank" rel="noopener">Preview Recipient Link</a>
+        <button id="share">Share My HUG</button>
+        <a id="email-share" class="secondary link-button">Email My HUG</a>
+        <button id="copy" class="secondary">Copy Link</button>
+        <label id="manual-copy" hidden>Recipient link <input id="share-link" readonly></label>
+      </div>
+      <button id="retry" class="secondary" hidden>Check Again</button>
+    </section>
+    <section id="recipient-gift" class="panel centered" hidden>
+      <p class="eyebrow">Anniversary HUG</p>
+      <h1 id="recipient-title" tabindex="-1">Finding your HUG…</h1>
+      <div id="recipient-story"></div>
+    </section>
+    <p id="status" role="status" class="status"></p>
+  </main>
+</body>
+</html>

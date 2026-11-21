@@ -1,6 +1,6 @@
 import Stripe from "stripe";
 import { getStore } from "@netlify/blobs";
-import { hashSecret,json,ORDER_STORE } from "../function-libs/_motion-hugs.mjs";
+import { ANNIVERSARY_SLUG,hashSecret,json,ORDER_STORE } from "../function-libs/_motion-hugs.mjs";
 
 export default async request=>{
   if(request.method!=="POST")return json({ok:false,error:"Method not allowed."},405);
@@ -13,10 +13,14 @@ export default async request=>{
     const store=getStore({name:ORDER_STORE,consistency:"strong"});
     const order=await store.get(orderId,{type:"json",consistency:"strong"});
     if(!order||order.access_hash!==await hashSecret(key))return json({ok:false,error:"This HUG link is not valid."},403);
+    const isAnniversary = order.card_slug === ANNIVERSARY_SLUG;
     if(order.payment_status!=="paid"&&sessionId&&process.env.STRIPE_SECRET_KEY){
       const stripe=new Stripe(process.env.STRIPE_SECRET_KEY);
       const session=await stripe.checkout.sessions.retrieve(sessionId);
-      if(session.client_reference_id===orderId&&session.payment_status==="paid"){
+      const validAnniversaryPayment = !isAnniversary ||
+        (session.livemode && session.id === order.stripe_session_id && session.status === "complete" &&
+          session.amount_total === order.price_cents && session.currency === order.currency);
+      if(session.client_reference_id===orderId&&session.payment_status==="paid"&&validAnniversaryPayment){
         order.payment_status="paid";
         order.fulfillment_status="ready";
         order.stripe_customer_email=session.customer_details?.email||session.customer_email||order.customer_email;
@@ -25,6 +29,18 @@ export default async request=>{
       }
     }
     if(order.payment_status!=="paid")return json({ok:false,error:"Payment is still being confirmed.",pending:true},409);
+    if (isAnniversary) {
+      const preview = {
+        title: order.card_title,
+        sender_name: order.personalization?.sender_name || "Someone special",
+        cover_url: order.card_snapshot?.cover_url
+      };
+      const sharePath = "/app/open-hug.html#" + encodeURIComponent(orderId + "." + key);
+      if (body?.mode !== "app") {
+        return json({ok:true,slug:ANNIVERSARY_SLUG,preview,share_path:sharePath});
+      }
+      return json({ok:true,slug:ANNIVERSARY_SLUG,card:order.card_snapshot,personalization:order.personalization||{}});
+    }
     return json({
       ok:true,order_id:orderId,card:order.card_snapshot,
       personalization:order.personalization||{},
