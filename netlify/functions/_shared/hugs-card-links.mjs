@@ -3,7 +3,6 @@ import { neon } from '@neondatabase/serverless';
 import { S3Client, PutObjectCommand, GetObjectCommand, HeadObjectCommand, DeleteObjectsCommand } from '@aws-sdk/client-s3';
 
 export const CHUNK_SIZE = 2 * 1024 * 1024;
-export const DAYS = 30;
 const isCardsHost = host => /^(?:www\.)?hugslinks\.com$/i.test(host || '') || /^deploy-preview-\d+--hugslinks-web-build\.netlify\.app$/i.test(host || '');
 const slots = { cover: [8, ['image/jpeg','image/png','image/webp','image/gif']], inside: [8, ['image/jpeg','image/png','image/webp','image/gif']], video: [25, ['video/mp4','video/webm']], audio: [8, ['audio/mpeg','audio/wav','audio/mp4','audio/x-m4a','audio/x-wav']] };
 const digest = s => createHash('sha256').update(s).digest('hex');
@@ -36,14 +35,23 @@ export function mailContent(row,link) {
  const who=row.card.fields.from||'Someone who cares';
  const greeting=row.recipient_name?`Hi ${row.recipient_name},`:'A HUG has arrived!';
  const note=row.note||`${who} made this HUGS Card for you.`;
- return {subject:'A HUGS Card is waiting for you',text:`${greeting}\n\n${note}\n\nOpen your HUG: ${link}\n\nAvailable until ${new Date(row.expires_at).toISOString().slice(0,10)}. Anyone with this private link can open the card.\n\nGive a HUG. Get a HUG. — HUGSLinks`,html:`<div style="background:#091f38;color:#fff5e4;padding:36px;font-family:Arial,sans-serif;max-width:560px;margin:auto;border:1px solid #d9b96f;border-radius:16px"><h1 style="color:#efd08a">HUGS Cards ♡</h1><h2>${escape(greeting)}</h2><p style="white-space:pre-wrap;line-height:1.7">${escape(note)}</p><p style="margin:32px 0"><a href="${escape(link)}" style="display:inline-block;padding:16px 24px;background:#efd08a;color:#091f38;border-radius:12px;text-decoration:none;font-weight:bold">Open your HUG</a></p><p>Your photos, video, and music are inside the card.</p><p style="color:#addaf0;font-size:13px">Available until ${new Date(row.expires_at).toISOString().slice(0,10)}. Keep this link private; anyone with the link can open it.</p><p>Give a HUG. Get a HUG.<br>HUGSLinks · Produced by Resile Corp</p></div>`};
+ const library='Sign in to My Cards with this email address to find this card again.';
+ return {subject:'A HUGS Card is waiting for you',text:`${greeting}\n\n${note}\n\nOpen your HUG: ${link}\n\n${library} Anyone with this private link can open the card.\n\nGive a HUG. Get a HUG. — HUGSLinks`,html:`<div style="background:#091f38;color:#fff5e4;padding:36px;font-family:Arial,sans-serif;max-width:560px;margin:auto;border:1px solid #d9b96f;border-radius:16px"><h1 style="color:#efd08a">HUGS Cards ♡</h1><h2>${escape(greeting)}</h2><p style="white-space:pre-wrap;line-height:1.7">${escape(note)}</p><p style="margin:32px 0"><a href="${escape(link)}" style="display:inline-block;padding:16px 24px;background:#efd08a;color:#091f38;border-radius:12px;text-decoration:none;font-weight:bold">Open your HUG</a></p><p>Your photos, video, and music are inside the card.</p><p style="color:#addaf0;font-size:13px">${library} Keep this link private.</p><p>Give a HUG. Get a HUG.<br>HUGSLinks · Produced by Resile Corp</p></div>`};
 }
 export function makeStore(sql) {
  return {
   async init(){
    await sql`CREATE TABLE IF NOT EXISTS hugs_card_limits (key TEXT PRIMARY KEY,hits INTEGER NOT NULL,expires_at TIMESTAMPTZ NOT NULL)`;
    await sql`CREATE TABLE IF NOT EXISTS hugs_card_codes (id TEXT PRIMARY KEY,email TEXT NOT NULL,code_hash TEXT NOT NULL,attempts INTEGER NOT NULL DEFAULT 0,expires_at TIMESTAMPTZ NOT NULL,used_at TIMESTAMPTZ)`;
-   await sql`CREATE TABLE IF NOT EXISTS hugs_private_cards (id TEXT PRIMARY KEY,owner TEXT NOT NULL,request_key TEXT NOT NULL,view_hash TEXT NOT NULL,card JSONB NOT NULL,recipient_email TEXT NOT NULL,recipient_name TEXT NOT NULL,note TEXT NOT NULL,state TEXT NOT NULL DEFAULT 'uploading',email_state TEXT NOT NULL DEFAULT 'pending',email_started_at TIMESTAMPTZ,provider_id TEXT,created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),expires_at TIMESTAMPTZ NOT NULL,deleted_at TIMESTAMPTZ,purged_at TIMESTAMPTZ,UNIQUE(owner,request_key))`;
+   await sql`CREATE TABLE IF NOT EXISTS hugs_private_cards (id TEXT PRIMARY KEY,owner TEXT NOT NULL,request_key TEXT NOT NULL,view_hash TEXT NOT NULL,card JSONB NOT NULL,recipient_email TEXT NOT NULL,recipient_name TEXT NOT NULL,note TEXT NOT NULL,state TEXT NOT NULL DEFAULT 'uploading',email_state TEXT NOT NULL DEFAULT 'pending',email_started_at TIMESTAMPTZ,provider_id TEXT,created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),expires_at TIMESTAMPTZ,deleted_at TIMESTAMPTZ,purged_at TIMESTAMPTZ,UNIQUE(owner,request_key))`;
+   await sql`DO $$
+   BEGIN
+    IF (SELECT attnotnull FROM pg_attribute WHERE attrelid='hugs_private_cards'::regclass AND attname='expires_at') THEN
+     ALTER TABLE hugs_private_cards ALTER COLUMN expires_at DROP NOT NULL;
+     UPDATE hugs_private_cards SET expires_at=NULL WHERE deleted_at IS NULL AND purged_at IS NULL;
+    END IF;
+   END $$`;
+   await sql`CREATE INDEX IF NOT EXISTS hugs_private_cards_received ON hugs_private_cards (recipient_email,created_at DESC,id DESC) WHERE deleted_at IS NULL AND purged_at IS NULL AND state='ready' AND email_state='sent'`;
    await sql`ALTER TABLE hugs_private_cards ADD COLUMN IF NOT EXISTS view_token TEXT`;
    await sql`CREATE INDEX IF NOT EXISTS hugs_private_cards_owner_created ON hugs_private_cards(owner,created_at DESC)`;
   },
@@ -52,7 +60,7 @@ export function makeStore(sql) {
   async attempt(id){return (await sql`UPDATE hugs_card_codes SET attempts=attempts+1 WHERE id=${id} AND used_at IS NULL AND expires_at>NOW() AND attempts<5 RETURNING *`)[0];},
   async useCode(id){return (await sql`UPDATE hugs_card_codes SET used_at=NOW() WHERE id=${id} AND used_at IS NULL RETURNING id`).length>0;},
   async find(owner,key){return (await sql`SELECT * FROM hugs_private_cards WHERE owner=${owner} AND request_key=${key}`)[0];},
-  async list(owner,offset=0){return await sql`SELECT id,card->'fields'->>'title' AS title,recipient_name,recipient_email,created_at,expires_at,state,email_state,view_token FROM hugs_private_cards WHERE owner=${owner} AND deleted_at IS NULL ORDER BY created_at DESC,id DESC LIMIT 51 OFFSET ${offset}`;},
+  async list(owner,offset=0){return await sql`SELECT id,card->'fields'->>'title' AS title,recipient_name,recipient_email,created_at,state,email_state,owner<>${owner} AS received,CASE WHEN owner=${owner} THEN view_token END AS view_token FROM hugs_private_cards WHERE deleted_at IS NULL AND purged_at IS NULL AND (owner=${owner} OR (recipient_email=${owner} AND state='ready' AND email_state='sent')) ORDER BY created_at DESC,id DESC LIMIT 51 OFFSET ${offset}`;},
   async rememberLink(id,value){await sql`UPDATE hugs_private_cards SET view_token=${value} WHERE id=${id} AND deleted_at IS NULL`;},
   async get(id){return (await sql`SELECT * FROM hugs_private_cards WHERE id=${id}`)[0];},
   async create(c){return (await sql`INSERT INTO hugs_private_cards(id,owner,request_key,view_hash,card,recipient_email,recipient_name,note,expires_at,view_token) VALUES(${c.id},${c.owner},${c.request_key},${c.view_hash},${JSON.stringify(c.card)}::jsonb,${c.recipient_email},${c.recipient_name},${c.note},${c.expires_at},${c.view_token||null}) ON CONFLICT(owner,request_key) DO UPDATE SET request_key=EXCLUDED.request_key RETURNING *`)[0];},
@@ -62,7 +70,7 @@ export function makeStore(sql) {
   async mailFailed(id){await sql`UPDATE hugs_private_cards SET email_state='pending' WHERE id=${id} AND email_state='sending'`;},
   async revoke(id){await sql`UPDATE hugs_private_cards SET deleted_at=COALESCE(deleted_at,NOW()) WHERE id=${id}`;},
   async purged(id){await sql`UPDATE hugs_private_cards SET purged_at=NOW(),card='{}'::jsonb,recipient_email='',recipient_name='',note='',view_token=NULL WHERE id=${id}`;},
-  async expired(){return await sql`SELECT * FROM hugs_private_cards WHERE purged_at IS NULL AND (deleted_at IS NOT NULL OR expires_at<NOW() OR (state='uploading' AND created_at<NOW()-INTERVAL '1 day')) LIMIT 20`;},
+  async expired(){return await sql`SELECT * FROM hugs_private_cards WHERE purged_at IS NULL AND (deleted_at IS NOT NULL OR (state='uploading' AND created_at<NOW()-INTERVAL '1 day')) LIMIT 20`;},
   async cleanCodes(){await sql`DELETE FROM hugs_card_codes WHERE expires_at<NOW()`;await sql`DELETE FROM hugs_card_limits WHERE expires_at<NOW()`;}
  };
 }
@@ -109,15 +117,15 @@ export function dependencies(source=process.env) {
 const headers={'Cache-Control':'no-store','X-Content-Type-Options':'nosniff','Referrer-Policy':'no-referrer'};
 const json=(status,body)=>Response.json(body,{status,headers});
 async function body(req){if(Number(req.headers.get('content-length'))>30000)throw failure(413,'Request too large.');const text=await req.text();if(text.length>30000)throw failure(413,'Request too large.');try{return JSON.parse(text)}catch{throw failure(400,'Invalid request.')}}
-function active(row){if(!row||row.deleted_at||new Date(row.expires_at).getTime()<=Date.now())throw failure(404,'This HUG is unavailable, removed, or expired.');return row;}
+function active(row){if(!row||row.deleted_at||row.purged_at)throw failure(404,'This HUG is unavailable or was removed.');return row;}
 function partFor(row,url){const slot=url.searchParams.get('slot'),part=Number(url.searchParams.get('part')),m=row.card.media[slot];if(!m||!/^\d+$/.test(url.searchParams.get('part')||'')||!Number.isInteger(part)||part<0||part>=m.parts)throw failure(400,'Invalid media part.');return {slot,part,m,size:Math.min(CHUNK_SIZE,m.size-part*CHUNK_SIZE)};}
 export function makeHandler(deps) {
  return async req=>{
   const url=new URL(req.url),action=url.searchParams.get('action')||'status';
   if(!isCardsHost(url.host))return json(403,{error:'Open HUGS Cards on hugslinks.com or an official HUGS Cards deploy preview.'});
   if(req.method!=='GET'&&req.headers.get('origin')!==url.origin)return json(403,{error:'Open this request from HUGSLinks.'});
-  const expected=['status','view','part','list','owner-view','owner-part'].includes(action)?'GET':'POST';if(req.method!==expected)return json(405,{error:'Method not allowed.'});
-  if(action==='status')return json(200,{configured:deps.configured,expiresInDays:DAYS,maxCardsPerDay:3});
+  const expected=['status','view','part','list','owner-view','owner-part','received-view','received-part','library-identity'].includes(action)?'GET':'POST';if(req.method!==expected)return json(405,{error:'Method not allowed.'});
+  if(action==='status')return json(200,{configured:deps.configured,expiresInDays:null,maxCardsPerDay:3});
   if(!deps.configured)return json(503,{error:'Card delivery needs storage, database, and verified email configuration. Your draft is still saved on this device.'});
   const {store,storage,secret}=deps;
   try{
@@ -127,7 +135,7 @@ export function makeHandler(deps) {
     await store.limit('code-ip:'+digest(secret+ip),10,3600);await store.limit('code-mail:'+digest(address),3,3600);
     const id=randomBytes(16).toString('hex'),code=String(randomInt(100000,1000000));
     await store.putCode({id,email:address,code_hash:digest(secret+id+code),expires_at:new Date(Date.now()+10*60000).toISOString()});
-    await deps.send(address,{subject:'Verify your HUGS Card sender email',text:`Your HUGS Cards verification code is ${code}. It expires in 10 minutes. This verifies your sender email; it does not send your card. If you did not request this, ignore this message.`},'hugs-verify-'+id);
+    await deps.send(address,{subject:'Your HUGS Cards sign-in code',text:`Your HUGS Cards verification code is ${code}. It expires in 10 minutes. If you did not request this, ignore this message.`},'hugs-verify-'+id);
     return json(200,{challenge:id,message:'Verification code sent. Check your inbox and spam folder.'});
    }
    if(action==='verify-code'){
@@ -143,10 +151,11 @@ export function makeHandler(deps) {
     if(action==='view')return json(200,{card:row.card,expiresAt:row.expires_at});
     const {slot,part}=partFor(row,url);return new Response(await storage.get(id,slot,part),{headers:{...headers,'Content-Type':'application/octet-stream'}});
    }
-   const owner=readSession(bearer,secret);if(!owner)throw failure(401,'Verify your sender email to continue.');
+   const owner=readSession(bearer,secret);if(!owner)throw failure(401,'Verify your email to continue.');
+   if(action==='library-identity')return json(200,{email:owner});
    if(action==='list'){
     const raw=url.searchParams.get('offset')||'0';if(!/^\d{1,5}$/.test(raw))throw failure(400,'Invalid page.');const offset=Number(raw),rows=await store.list(owner,offset),hasMore=rows.length>50;
-    const cards=rows.slice(0,50).map(r=>{let viewToken=null;try{if(r.view_token)viewToken=openMedia(Buffer.from(r.view_token,'base64'),secret,r.id+'/share-link').toString();}catch{}return {id:r.id,title:r.title||'Your HUG Card',recipientName:r.recipient_name,recipientEmail:r.recipient_email,createdAt:r.created_at,expiresAt:r.expires_at,state:r.state,emailState:r.email_state,viewToken,viewUrl:viewToken?url.origin+'/app/view-card.html#'+r.id+'.'+viewToken:null};});
+    const cards=rows.slice(0,50).map(r=>{let viewToken=null;try{if(r.view_token)viewToken=openMedia(Buffer.from(r.view_token,'base64'),secret,r.id+'/share-link').toString();}catch{}return {id:r.id,title:r.title||'Your HUG Card',recipientName:r.recipient_name,recipientEmail:r.received?undefined:r.recipient_email,received:r.received,createdAt:r.created_at,expiresAt:null,state:r.state,emailState:r.email_state,viewToken,viewUrl:viewToken?url.origin+'/app/view-card.html#'+r.id+'.'+viewToken:null};});
     return json(200,{email:owner,cards,nextOffset:hasMore?offset+50:null});
    }
    if(action==='create'){
@@ -155,11 +164,18 @@ export function makeHandler(deps) {
     const card=validateCard(b),recipient_email=email(b.recipientEmail);
     await store.limit('create:'+digest(owner),3,86400);
     const newID=randomBytes(16).toString('hex'),sealed=protectMedia(Buffer.from(b.viewToken),secret,newID+'/share-link').toString('base64');
-    const row=await store.create({id:newID,view_token:sealed,owner,request_key:b.requestKey,view_hash:digest(b.viewToken),card,recipient_email,recipient_name:clean(b.recipientName,80),note:clean(b.note,500),expires_at:new Date(Date.now()+DAYS*86400000).toISOString()});
+    const row=await store.create({id:newID,view_token:sealed,owner,request_key:b.requestKey,view_hash:digest(b.viewToken),card,recipient_email,recipient_name:clean(b.recipientName,80),note:clean(b.note,500),expires_at:null});
     return json(200,{id:row.id,ready:row.state==='ready',expiresAt:row.expires_at});
    }
    if(!validID(id))throw failure(400,'Invalid card.');
-   const row=await store.get(id);if(!row||row.owner!==owner)throw failure(404,'Card not found.');
+   const row=await store.get(id);
+   if(action==='received-view'||action==='received-part'){
+    if(!row||row.recipient_email!==owner||row.email_state!=='sent'||row.state!=='ready')throw failure(404,'Card not found.');
+    active(row);
+    if(action==='received-view')return json(200,{card:row.card,expiresAt:null});
+    const {slot,part}=partFor(row,url);return new Response(await storage.get(id,slot,part),{headers:{...headers,'Content-Type':'application/octet-stream'}});
+   }
+   if(!row||row.owner!==owner)throw failure(404,'Card not found.');
    if(action==='delete'){
     await store.revoke(id);await storage.remove(row);await store.purged(id);return json(200,{deleted:true});
    }
