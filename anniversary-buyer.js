@@ -1,6 +1,7 @@
 "use strict";
 
 const get = id => document.getElementById(id);
+const cardApp = "https://hugslinks-card-app.netlify.app/.netlify/functions/anniversary-live";
 const functions = "/.netlify/functions/";
 const slug = "anniversary-motion";
 const sections = ["choose", "personalization", "preview", "delivery", "recipient-gift"];
@@ -32,7 +33,7 @@ function preview(card) {
 }
 
 async function post(endpoint, payload) {
-  const response = await fetch(functions + endpoint, {
+  const response = await fetch(endpoint, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify(payload)
@@ -73,8 +74,8 @@ get("checkout").onclick = async () => {
   button.disabled = true;
   status.textContent = "Opening secure checkout…";
   try {
-    const result = await post("create-motion-hug-checkout", {
-      card_slug: slug, recipient_name: draft.recipient, sender_name: draft.sender, message: draft.message
+    const result = await post(cardApp, {
+      action: "checkout", recipient_name: draft.recipient, sender_name: draft.sender, message: draft.message
     });
     const destination = new URL(result.checkout_url);
     if (destination.origin !== "https://checkout.stripe.com") throw new Error("Unable to open checkout.");
@@ -95,8 +96,9 @@ async function openPurchasedCard() {
   get("retry").hidden = true;
   status.textContent = isBuyer ? "Confirming your payment…" : "Opening your HUG…";
   try {
-    const result = await post("motion-hug-access", {
-      order_id: orderId, access_key: accessKey, session_id: sessionId
+    const endpoint = orderId?.startsWith("ANNIVERSARY-") ? cardApp : functions + "motion-hug-access";
+    const result = await post(endpoint, {
+      action: "open", order_id: orderId, access_key: accessKey, session_id: sessionId
     });
     if (result.slug !== slug) throw new Error("This link does not belong to an Anniversary HUG.");
     if (!isBuyer) {

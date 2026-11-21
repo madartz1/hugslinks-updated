@@ -18,7 +18,7 @@ function parseCardLink(value) {
   try {
     const url = new URL(value);
     if (url.origin !== location.origin || ![recipientPath, "/app/open-hug"].includes(url.pathname)) return null;
-    const match = /^#(MOTION-\d{4}-[A-F0-9]{12})\.([a-f0-9]{64})$/.exec(url.hash);
+    const match = /^#((?:MOTION|ANNIVERSARY)-\d{4}-[A-F0-9]{12})\.([a-f0-9]{64})$/.exec(url.hash);
     return match ? { order_id: match[1], access_key: match[2] } : null;
   } catch {
     return null;
@@ -44,10 +44,14 @@ async function openGift(link) {
   }
   statusLabel.textContent = "Finding your HUG…";
   try {
-    const response = await fetch("/.netlify/functions/motion-hug-access", {
+    const reference = parseCardLink(link);
+    const endpoint = reference.order_id.startsWith("ANNIVERSARY-")
+      ? "https://hugslinks-card-app.netlify.app/.netlify/functions/anniversary-live"
+      : "/.netlify/functions/motion-hug-access";
+    const response = await fetch(endpoint, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ ...parseCardLink(link), mode: installed ? "app" : "preview" })
+      body: JSON.stringify({ ...reference, action: "open", mode: installed ? "app" : "preview" })
     });
     const result = await response.json();
     if (!response.ok || result.slug !== "anniversary-motion") {
