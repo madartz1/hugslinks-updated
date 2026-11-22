@@ -36,6 +36,7 @@ function mountAnniversaryStory(container, card) {
         </div>
       </article>
       <article class="story-page story-message" hidden>
+        <div class="floating-hearts" aria-hidden="true"><span>♥</span><span>♡</span><span>♥</span><span>♡</span><span>♥</span><span>♡</span><span>♥</span><span>♡</span></div>
         <div class="story-ornament" aria-hidden="true">✦ ♡ ✦</div>
         <h2 tabindex="-1">To My Forever Love</h2>
         <p class="story-to"></p>
