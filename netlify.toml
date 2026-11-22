@@ -5,3 +5,8 @@
 
 [functions]
   node_bundler = "esbuild"
+
+# Preview branch only: this value is used as an email From address.
+# Keep scanning enabled for all other configured credentials.
+[context.branch-deploy.environment]
+  SECRETS_SCAN_OMIT_KEYS = "HUGS_MEMBER_FROM_EMAIL,SECRETS_SCAN_OMIT_KEYS"
