@@ -18,3 +18,4 @@
 /api/support-checkout  /.netlify/functions/support-checkout  200
 /api/prodigi-check  /.netlify/functions/prodigi-check  200
 /api/prodigi-catalog  /.netlify/functions/prodigi-catalog  200
+/api/wall-art-checkout-test  /.netlify/functions/wall-art-checkout-test  200
