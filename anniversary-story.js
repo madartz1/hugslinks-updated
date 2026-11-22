@@ -50,7 +50,8 @@ function mountAnniversaryStory(container, card) {
       <button class="secondary story-back" type="button" hidden>Back</button>
       <span class="story-count" aria-live="polite"></span>
       <button class="story-next" type="button"></button>
-    </nav>`;
+    </nav>
+    <p class="final-mission" hidden><span>Every HUG Helps Make a Difference</span><small>Discover the purpose behind HUGSLinks Cards.</small><a href="/how-your-card-helps.html">Explore the HUGSLinks Mission</a></p>`;
 
   container.querySelector(".story-to").textContent = "For " + card.recipient;
   container.querySelector("blockquote").textContent = card.message;
@@ -65,6 +66,7 @@ function mountAnniversaryStory(container, card) {
   const next = container.querySelector(".story-next");
   const back = container.querySelector(".story-back");
   const count = container.querySelector(".story-count");
+  const mission = container.querySelector(".final-mission");
   const film = container.querySelector(".story-film");
   function showArtworkFallback() {
     film.hidden = true;
@@ -84,6 +86,7 @@ function mountAnniversaryStory(container, card) {
     back.hidden = current === 0;
     count.textContent = (current + 1) + " of " + pages.length;
     next.textContent = nextLabels[current];
+    mission.hidden = current !== pages.length - 1;
     if (focusHeading) pages[current].querySelector("h2").focus();
   }
 
@@ -113,7 +116,7 @@ function mountAnniversaryStory(container, card) {
       return;
     }
     show(0, false);
-    story.hidden = navigation.hidden = true;
+    story.hidden = navigation.hidden = mission.hidden = true;
     sealed.hidden = false;
     unfolded.hidden = true;
     open.disabled = false;
