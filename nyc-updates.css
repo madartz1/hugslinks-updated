@@ -548,3 +548,24 @@
   .nycu-feed{grid-template-columns:1fr 1fr}
   .nycu-card{break-inside:avoid;box-shadow:none}
 }
+
+/* Daily community edition: keyboard/touch accessible, no obstructing overlays. */
+.hugs-headlines,.hugs-directory{max-width:1140px;margin:24px auto;padding:0 20px}
+.hugs-headline-grid,.hugs-directory-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px}
+.hugs-directory{padding:24px;background:#fff;border:1px solid var(--nycu-line);border-radius:18px;margin:24px 0}
+.hugs-directory-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
+.hugs-directory a{padding:18px;border-radius:12px;background:var(--nycu-ice);color:var(--nycu-ink);text-decoration:none}
+.hugs-directory a strong,.hugs-directory a span{display:block}.hugs-directory a span{margin-top:8px;line-height:1.5}
+.hugs-ticker{display:flex;align-items:center;gap:16px;background:var(--nycu-navy);color:white;padding:14px 20px;overflow:hidden}
+.hugs-ticker strong{font-size:12px;letter-spacing:.08em;flex-shrink:0;color:var(--nycu-gold)}
+.hugs-ticker-window{overflow:hidden;flex:1;min-width:0}.hugs-ticker-track{display:flex;gap:48px;width:max-content;animation:hugs-news-scroll 65s linear infinite}
+.hugs-ticker-track a{color:white;text-decoration:none;white-space:nowrap}.hugs-ticker-track a:hover{text-decoration:underline}
+.hugs-pause{background:#fff;color:#061b34;border:0;border-radius:6px;padding:8px 12px;cursor:pointer;flex-shrink:0}
+.hugs-ticker:hover .hugs-ticker-track,.hugs-ticker:focus-within .hugs-ticker-track,.hugs-ticker.is-paused .hugs-ticker-track{animation-play-state:paused}
+.hugs-ticker:focus-within .hugs-ticker-window,.hugs-ticker.is-paused .hugs-ticker-window{overflow-x:auto}
+.hugs-ticker:focus-within .hugs-ticker-track,.hugs-ticker.is-paused .hugs-ticker-track{animation:none;transform:none}
+.hugs-ticker a:focus-visible,.hugs-pause:focus-visible{outline:3px solid #f2d889;outline-offset:3px}
+.hugs-ticker-bottom{margin-top:32px}
+@keyframes hugs-news-scroll{from{transform:translateX(0)}to{transform:translateX(-85%)}}
+@media(max-width:700px){.hugs-headline-grid,.hugs-directory-grid{grid-template-columns:1fr}.hugs-ticker{gap:10px;padding:12px}.hugs-ticker strong{max-width:90px;font-size:10px}.hugs-pause{max-width:95px}.hugs-headlines{padding:0 16px}}
+@media(prefers-reduced-motion:reduce){.hugs-ticker-track{animation:none}.hugs-ticker-window{overflow-x:auto}}
