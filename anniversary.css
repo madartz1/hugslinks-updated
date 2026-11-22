@@ -197,3 +197,10 @@ input,textarea { border-color:#8fb8d4; }
 .floating-hearts span:nth-child(8){left:12%;animation-delay:6.2s;color:#d7aa61}
 @keyframes anniversary-hearts {0%{transform:translate3d(0,0,0) scale(.7);opacity:0}12%{opacity:.28}75%{opacity:.23}100%{transform:translate3d(18px,-440px,0) scale(1.2);opacity:0}}
 @media(prefers-reduced-motion:reduce){.floating-hearts span{animation:none;opacity:0}}
+
+/* Mission recognition is outside the card, directly below Replay. */
+.final-mission { margin:12px auto 0; text-align:center; color:#153658; }
+.final-mission span,.final-mission small,.final-mission a { display:block; }
+.final-mission span { font-weight:750; }
+.final-mission small { margin:4px 0 8px; font-size:.82rem; }
+.final-mission a { color:#075c9d; font-weight:750; text-underline-offset:3px; }
