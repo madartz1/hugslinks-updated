@@ -1,0 +1,77 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Digital Wall Art | HUGSLinks × Swan the Artist</title>
+<meta name="description" content="Discover meditative digital wall art by Swan the Artist, curated for homes, offices and thoughtful spaces through HUGSLinks.">
+<meta name="theme-color" content="#0A1A2A">
+<link rel="stylesheet" href="styles.css">
+<style>
+:root{--wa-bg:#0A1A2A;--wa-deep:#07131f;--wa-card:rgba(255,255,255,.06);--wa-border:rgba(255,255,255,.14);--wa-text:#EAF2FF;--wa-muted:rgba(234,242,255,.72);--wa-cyan:#00E5FF;--wa-blue:#00BFFF;--wa-glow:rgba(0,229,255,.22)}
+body{background:radial-gradient(circle at 12% 8%,rgba(0,229,255,.12),transparent 32%),linear-gradient(145deg,var(--wa-bg),var(--wa-deep));color:var(--wa-text)}
+.wall-wrap{max-width:1200px;margin:auto;padding:42px 20px 88px}
+.wall-hero{display:grid;grid-template-columns:1.02fr .98fr;gap:38px;align-items:center;padding:35px 0 64px}
+.wall-kicker{color:var(--wa-cyan);font-size:.76rem;font-weight:900;letter-spacing:.18em;text-transform:uppercase}
+.wall-hero h1{font-size:clamp(3rem,7vw,6.2rem);line-height:.91;letter-spacing:-.06em;margin:16px 0 20px;color:var(--wa-text)}
+.wall-hero p,.wall-section-intro{color:var(--wa-muted);font-size:1.08rem;line-height:1.8;max-width:650px}
+.wall-hero-art{position:relative;border:1px solid var(--wa-border);border-radius:28px;overflow:hidden;box-shadow:0 0 45px var(--wa-glow),0 25px 65px rgba(0,0,0,.28);background:#081321}
+.wall-hero-art img{display:block;width:100%;height:500px;object-fit:cover;opacity:.94}
+.wall-hero-art span{position:absolute;left:18px;bottom:18px;background:rgba(7,19,31,.82);border:1px solid var(--wa-border);border-radius:999px;padding:9px 13px;font-size:.75rem;letter-spacing:.1em;font-weight:800}
+.wall-actions{display:flex;gap:12px;flex-wrap:wrap;margin-top:25px}
+.wall-btn{display:inline-flex;align-items:center;justify-content:center;padding:13px 18px;border-radius:999px;text-decoration:none;font-weight:900;transition:transform .2s,box-shadow .2s;border:1px solid var(--wa-border);color:var(--wa-text);background:rgba(255,255,255,.04)}
+.wall-btn.primary{color:#03131d;border:0;background:linear-gradient(100deg,var(--wa-cyan),var(--wa-blue));box-shadow:0 0 22px var(--wa-glow)}
+.wall-btn:hover{transform:translateY(-2px);box-shadow:0 0 24px var(--wa-glow)}
+.wall-section{margin-top:24px;padding:36px 0}
+.wall-section-head{display:flex;justify-content:space-between;align-items:end;gap:24px;margin-bottom:26px}
+.wall-section h2{font-size:clamp(2rem,4vw,3.5rem);letter-spacing:-.045em;line-height:1;margin:8px 0;color:var(--wa-text)}
+.wall-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:18px}
+.wall-card{overflow:hidden;border:1px solid var(--wa-border);border-radius:22px;background:var(--wa-card);box-shadow:0 16px 36px rgba(0,0,0,.16);transition:transform .24s,border-color .24s,box-shadow .24s}
+.wall-card:hover{transform:translateY(-5px);border-color:rgba(0,229,255,.55);box-shadow:0 0 28px var(--wa-glow),0 18px 40px rgba(0,0,0,.22)}
+.wall-card img{display:block;width:100%;aspect-ratio:4/5;object-fit:cover;background:#091725}
+.wall-card-copy{padding:19px}
+.wall-card h3{margin:0 0 8px;font-size:1.3rem;color:var(--wa-text)}
+.wall-card p{margin:0 0 16px;color:var(--wa-muted);line-height:1.65;font-size:.95rem}
+.wall-meta{display:inline-block;color:var(--wa-cyan);font-size:.7rem;font-weight:900;letter-spacing:.13em;text-transform:uppercase;margin-bottom:10px}
+.wall-note{border:1px solid var(--wa-border);background:rgba(0,229,255,.055);border-radius:22px;padding:23px 25px;margin-top:24px;color:var(--wa-muted);line-height:1.75}
+.wall-note strong{color:var(--wa-text)}
+.wall-cta{margin-top:54px;padding:34px;border:1px solid rgba(0,229,255,.28);border-radius:28px;background:linear-gradient(135deg,rgba(0,229,255,.12),rgba(255,255,255,.035));display:grid;grid-template-columns:1fr auto;gap:24px;align-items:center}
+.wall-cta h2{margin:0 0 10px;font-size:clamp(1.8rem,4vw,3rem)}
+.wall-cta p{margin:0;line-height:1.7;color:var(--wa-muted);max-width:720px}
+.wall-footer-note{font-size:.84rem;color:var(--wa-muted);text-align:center;margin-top:28px;line-height:1.6}
+@media(max-width:800px){.wall-hero{grid-template-columns:1fr;padding-top:20px}.wall-hero-art img{height:390px}.wall-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.wall-section-head{display:block}.wall-cta{grid-template-columns:1fr}}
+@media(max-width:560px){.wall-wrap{padding:24px 14px 60px}.wall-grid{grid-template-columns:1fr}.wall-card img{aspect-ratio:5/4}.wall-hero-art img{height:330px}.wall-cta{padding:24px}}
+</style>
+</head>
+<body>
+<header class="topbar"><nav class="nav">
+<a class="brand" href="index.html">Hugslinks</a>
+<div class="seal"><img src="assets/HUGS_Header_Logo_Transparent.png" alt="HUGS logo" class="header-logo"></div>
+<button class="menu" type="button" aria-expanded="false" aria-label="Open navigation menu">Menu</button>
+<div class="navlinks"><a href="index.html">Home</a><a href="shop.html">Shop</a><a href="hugs-cards.html">HUGS Cards</a><a href="art-community.html">Art</a><a href="wall-art.html" aria-current="page">Wall Art</a><a href="about.html">About</a><a href="contact.html">Contact</a></div>
+</nav></header>
+<main class="wall-wrap">
+<section class="wall-hero">
+<div>
+<div class="wall-kicker">HUGSLinks Art Collection · Swan the Artist</div>
+<h1>Art that lets a space breathe.</h1>
+<p>Discover meditative artwork created to bring depth, quiet energy and a sense of connection into homes, offices and thoughtfully designed spaces. Explore the collection, find a piece that speaks to you, and help bring independent art into everyday life.</p>
+<div class="wall-actions"><a class="wall-btn primary" href="#collection">Explore the collection</a><a class="wall-btn" href="contact.html">Ask about artwork</a></div>
+</div>
+<div class="wall-hero-art"><img src="assets/golden-horizon.jpg" alt="Golden Horizon, abstract artwork by Swan the Artist"><span>FEATURED WORK · GOLDEN HORIZON</span></div>
+</section>
+<section class="wall-section" id="collection">
+<div class="wall-section-head"><div><div class="wall-kicker">The digital gallery</div><h2>Find your point of calm.</h2></div><p class="wall-section-intro">A growing selection of original visual work, curated for different moods and spaces. Digital editions and download formats will be listed when the artist-approved files and checkout are ready.</p></div>
+<div class="wall-grid">
+<article class="wall-card"><img src="assets/golden-horizon.jpg" alt="Golden Horizon abstract art by Swan the Artist" loading="lazy"><div class="wall-card-copy"><span class="wall-meta">Abstract · Light</span><h3>Golden Horizon</h3><p>Warm light and open space for a room that needs a quiet focal point.</p><a class="wall-btn" href="contact.html">Ask about this piece</a></div></article>
+<article class="wall-card"><img src="assets/swan-eye.jpg" alt="Swan — The Eye, black and gold artwork by Swan the Artist" loading="lazy"><div class="wall-card-copy"><span class="wall-meta">Black & Gold · Focus</span><h3>Swan — The Eye</h3><p>A striking signature work built around observation, contrast and depth.</p><a class="wall-btn" href="contact.html">Ask about this piece</a></div></article>
+<article class="wall-card"><img src="assets/art-community.jpeg" alt="HUGSLinks art and creative community featured artwork" loading="lazy"><div class="wall-card-copy"><span class="wall-meta">Creative Collection</span><h3>Art With Connection</h3><p>Explore the broader HUGSLinks art community and discover future collection releases.</p><a class="wall-btn" href="art-community.html">Explore Art Community</a></div></article>
+</div>
+<div class="wall-note"><strong>About digital editions:</strong> This page is a gallery preview, not a completed digital-download checkout. Before sales open, each work will be prepared in approved high-resolution print ratios, with clear personal-use license terms and secure post-purchase delivery. No physical print is included with a digital download.</div>
+</section>
+<section class="wall-cta"><div><div class="wall-kicker">For collectors & interior spaces</div><h2>Looking for art with a specific feeling?</h2><p>Tell HUGSLinks about your room, office, palette or collection goals. Ask about current work, commissions and upcoming digital editions.</p></div><a class="wall-btn primary" href="contact.html">Contact HUGSLinks</a></section>
+<p class="wall-footer-note">Original artwork remains the property of its artist unless a separate written license states otherwise. Images on this page are previews; download products and prices will be added after the files and merchant checkout are configured.</p>
+</main>
+<script src="live-help-config.js"></script><script src="script.js"></script>
+</body>
+</html>
