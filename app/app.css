@@ -9,3 +9,9 @@
 .card-coming-soon img{display:block;width:100%;max-width:560px;height:auto;max-height:340px;object-fit:contain;object-position:center;margin:0 auto 14px;border-radius:16px}
 .card-coming-soon p{max-width:460px;margin:10px auto;color:#24465f;line-height:1.5}
 @media(max-width:600px){.card-cover img{padding:6px}.card-coming-soon{padding:14px;margin:16px auto}.card-coming-soon img{max-height:260px}}
+
+/* Full-artwork cards: do not force portrait covers into a landscape crop. */
+.card-grid .card-cover{aspect-ratio:auto!important;min-height:0;height:auto;display:block;overflow:hidden;background:#edf2f6}
+.card-grid .card-cover>img{display:block;width:100%;height:auto!important;max-height:none!important;aspect-ratio:auto!important;object-fit:contain!important;object-position:center!important;padding:0!important;margin:0 auto}
+.card-grid .card-cover .save{z-index:2}
+@media(max-width:760px){.card-grid .card-cover{aspect-ratio:auto!important}.card-grid .card-cover>img{height:auto!important;max-height:none!important}}
