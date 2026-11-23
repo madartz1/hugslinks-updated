@@ -234,7 +234,7 @@
   (()=>{const buttons=[...document.querySelectorAll('[data-home-lang]')];if(!buttons.length)return;const sync=()=>{const lang=document.documentElement.dataset.hugsLanguage||document.documentElement.lang||'en';buttons.forEach(b=>{const on=b.dataset.homeLang===lang;b.classList.toggle('active',on);b.setAttribute('aria-pressed',String(on))})};buttons.forEach(b=>b.addEventListener('click',()=>{const select=document.getElementById('hugs-language-select');if(select){select.value=b.dataset.homeLang;select.dispatchEvent(new Event('change',{bubbles:true}))}sync()}));document.addEventListener('hugs-language-change',sync);sync()})();
   </script>
   <script src="/featured-hug.js" defer></script>
-</body>
+<script src="/card-purchase-effects.js" defer></script></body>
 </html>
 
 
