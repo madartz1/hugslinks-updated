@@ -72,7 +72,8 @@
     textarea { min-height: 90px; resize: vertical; }
     .notice { font-size: .92rem; color: #c3d9f1; }
     .back { display: inline-flex; align-items: center; min-height: 44px; padding: 6px 12px; margin-bottom: 14px; }
-    #filters { display: flex; flex-wrap: wrap; gap: 8px; margin: 20px 0; scroll-margin-top: 16px; }
+    .browse-cards { display: inline-flex; align-items: center; min-height: 44px; padding: 8px 16px; border-radius: 12px; background: #65daff; color: #061735; font-weight: 750; text-decoration: none; }
+    #filters { display: flex; flex-wrap: wrap; gap: 8px; margin: 20px 0 14px; padding: 4px; border: 3px solid #a6e8ff; max-width: 950px; scroll-margin-top: 16px; }
     #filters button { min-height: 44px; padding: 8px 12px; }
     #filters button[aria-pressed="true"] { font-weight: 750; color: #061735; background: #65daff; }
     @media (max-width: 900px) { .cards { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
@@ -83,9 +84,12 @@
   
     .selected-cover { overflow: hidden; }
     .selected-cover img { display: block; width: 100%; height: auto; }
-    .card-face { display: grid; grid-template-rows: minmax(0, 1fr) 34%; width: 100%; aspect-ratio: 3 / 4; padding: 5%; background: #092347; color: #fff4de; }
-    .card-face img, .story-cover .card-face img { width: 100%; height: 100%; aspect-ratio: auto; object-fit: cover; border-radius: 7px; }
-    .card-face strong { display: grid; place-content: center; padding: 4px 2px; font: 700 clamp(.82rem, 2.8vw, 1.3rem)/1.15 Georgia, serif; text-wrap: balance; }
+    .card-face { display: grid; position: relative; isolation: isolate; grid-template-rows: 1fr auto; align-items: start; width: 100%; height: 100%; aspect-ratio: 3 / 4; padding: 9% 8% 7%; background: #081b34; color: #ffedba; text-align: center; }
+    .card-face::before { content: ""; position: absolute; inset: 0; z-index: -1; background: linear-gradient(180deg, rgb(4 15 33 / 96%), rgb(4 15 33 / 64%) 21%, transparent 45%, transparent 72%, rgb(4 15 33 / 98%)); }
+    .card-face::after { content: ""; position: absolute; inset: 3%; border: 1px solid #e6be69; border-radius: 9px; box-shadow: inset 0 0 0 2px #071c3d80; pointer-events: none; }
+    .card-face img, .story-cover .card-face img { position: absolute; inset: 0; z-index: -2; width: 100%; height: 100%; aspect-ratio: auto; object-fit: cover; }
+    .card-face strong { font: 700 italic clamp(.9rem, 3.25vw, 1.6rem)/1.06 Georgia, serif; text-wrap: balance; text-shadow: 0 1px 4px #000; }
+    .card-brand { font: 700 clamp(.62rem, 2vw, 1rem)/1.1 Georgia, serif; }
   </style>
 </head>
 <body>
@@ -94,12 +98,19 @@
     <div id="gallery">
       <p class="muted">Lies Cut. Truth Heals. · Collection preview</p>
       <h1>Thinking of You</h1>
-      <p>Choose a card, make the message yours, and open it the way your recipient would.</p>
+      <p>Choose a Thinking of You card, make the message yours, and open it the way your recipient would.</p>
+      <a class="browse-cards" href="#filters">Ready-Made Traditional Cards</a>
+      <p><a href="https://hugslinks-card-app.netlify.app/how-your-card-helps.html">Explore the HUGSLinks mission</a></p>
       <nav id="filters" aria-label="Card categories">
-        <button type="button" data-tone="all" aria-pressed="true">All cards</button>
-        <button type="button" data-tone="comedy" aria-pressed="false">A laugh and a hug</button>
-        <button type="button" data-tone="gentle" aria-pressed="false">A gentle check-in</button>
-        <button type="button" data-tone="warmth" aria-pressed="false">A warm hug</button>
+        <button type="button" data-category="all" aria-pressed="true">All</button>
+        <button type="button" data-category="humor" aria-pressed="false">Humor</button>
+        <button type="button" data-category="peace" aria-pressed="false">Peace</button>
+        <button type="button" data-category="support" aria-pressed="false">Support</button>
+        <button type="button" data-category="healing" aria-pressed="false">Healing</button>
+        <button type="button" data-category="family" aria-pressed="false">Family</button>
+        <button type="button" data-category="apology" aria-pressed="false">Apology</button>
+        <button type="button" data-category="boundaries" aria-pressed="false">Boundaries</button>
+        <button type="button" data-category="connection" aria-pressed="false">Connection</button>
       </nav>
       <section class="cards" id="cards" aria-label="Thinking of You card covers" tabindex="-1"></section>
     </div>
@@ -159,24 +170,24 @@
   </main>
   <script>
     const cards = [
-      {"tone": "comedy", "title": "This Family Group Chat Needs a Referee", "wish": "I gave myself a timeout. My phone is serving it face down.", "greeting": "Want to take a walk and talk about literally anything else?"},
-      {"tone": "warmth", "title": "I’m Glad You Told Me", "wish": "I know what it cost you to tell me. And I get how you can miss them and still need to stay away.", "greeting": "I can come sit with you if you want. We can talk or put something on TV."},
-      {"tone": "gentle", "title": "I Heard What You Said", "wish": "You said it hurt. Somehow everybody wanted to discuss your tone. I heard what you said the first time.", "greeting": "If you want to finish telling me, I’m listening."},
-      {"tone": "warmth", "title": "It Made Sense to Feel Hurt", "wish": "You told one person. Somehow the whole family got a copy. I’d be hurt, too.", "greeting": "Whatever you tell me stays with me."},
-      {"tone": "comedy", "title": "Dinner Has a Service Fee Now?", "wish": "Between the delivery fee and the other delivery fee, I’ve decided toast is dinner.", "greeting": "Bring whatever you’ve got. I’ll put plates out."},
-      {"tone": "gentle", "title": "You Can Take Your Time", "wish": "I’ve heard three versions of that conversation, and I wasn’t even there. Take whatever time you need to sit with yours.", "greeting": "If you want to tell me what you remember, I’ve got time."},
-      {"tone": "warmth", "title": "I Should Have Spoken Up", "wish": "I laughed when they put you down. That was lousy of me. I’m sorry. If it happens again, I’ll speak up.", "greeting": "You can take all the space you need. I’ll respect it."},
-      {"tone": "warmth", "title": "You Deserve a Peaceful Evening", "wish": "I saw why you left. I’m glad you got somewhere you could breathe.", "greeting": "If you want somewhere quiet to sit, I can put the kettle on."},
-      {"tone": "warmth", "title": "I’ll Respect Your Space", "wish": "You asked for space. I heard you.", "greeting": "Thinking of you today. No reply needed."},
-      {"tone": "comedy", "title": "My Pajamas Accepted the Invitation", "wish": "I took the extra shift, looked up the trip across town, and asked my pajamas what they thought. They made a strong case.", "greeting": "I’d still love to see you. Pancakes Sunday? Just us."},
-      {"tone": "gentle", "title": "I’ll Ask You First", "wish": "That group chat has three theories about how you’re doing. I figured I’d ask you.", "greeting": "Tell me whatever you feel like telling me. I can keep it between us."},
-      {"tone": "warmth", "title": "Your Address Can Change. I’m Still Here.", "wish": "I hate that a rent notice can turn your whole life into a pile of boxes.", "greeting": "I can bring lunch or help pack on Saturday. Which would help?"},
-      {"tone": "comedy", "title": "Can We Meet Before Our Next Shift?", "wish": "We’ve rescheduled so many times our calendars should start paying rent together.", "greeting": "Got ten minutes between shifts? I’d take a park bench with you."},
-      {"tone": "comedy", "title": "Who Put the Blender in Charge?", "wish": "I couldn’t hear myself think over that blender either. I can turn things down and set aside a quiet room next time.", "greeting": "I’d love to see you. Tell me what would make the visit feel easier."},
-      {"tone": "gentle", "title": "Tell Me What Works for You", "wish": "We put together a whole plan and somehow skipped asking the person it was for. I’m sorry.", "greeting": "If you feel like going out, you pick the place. I’d love to come."},
-      {"tone": "comedy", "title": "Apparently Your Day Has 37 Hours", "wish": "Between work, appointments, and texting everyone back, you’re doing about three jobs. I can take one thing off your list.", "greeting": "I can bring dinner Wednesday or get groceries Saturday. Which helps more?"},
-      {"tone": "warmth", "title": "Let’s Start Again, a Little Slower", "wish": "You were trying to tell me what you needed. I cut you off. I’m sorry. I want to hear the rest whenever you feel like telling me.", "greeting": "We can talk, text, or leave it for another day. Your call."},
-      {"tone": "gentle", "title": "We Can Afford a New Tradition", "wish": "I miss the parts we actually liked. The seating chart and the bill can stay in the past.", "greeting": "Saturday breakfast at my place? You bring the music. I’ll make the pancakes."}
+      {"categories": "humor family boundaries", "tone": "comedy", "title": "This Family Group Chat Needs a Referee", "wish": "I gave myself a timeout. My phone is serving it face down.", "greeting": "Want to take a walk and talk about literally anything else?"},
+      {"categories": "support healing family", "tone": "warmth", "title": "I’m Glad You Told Me", "wish": "I know what it cost you to tell me. And I get how you can miss them and still need to stay away.", "greeting": "I can come sit with you if you want. We can talk or put something on TV."},
+      {"categories": "support healing", "tone": "gentle", "title": "I Heard What You Said", "wish": "You said it hurt. Somehow everybody wanted to discuss your tone. I heard what you said the first time.", "greeting": "If you want to finish telling me, I’m listening."},
+      {"categories": "support healing family", "tone": "warmth", "title": "It Made Sense to Feel Hurt", "wish": "You told one person. Somehow the whole family got a copy. I’d be hurt, too.", "greeting": "Whatever you tell me stays with me."},
+      {"categories": "humor connection", "tone": "comedy", "title": "Dinner Has a Service Fee Now?", "wish": "Between the delivery fee and the other delivery fee, I’ve decided toast is dinner.", "greeting": "Bring whatever you’ve got. I’ll put plates out."},
+      {"categories": "peace healing", "tone": "gentle", "title": "You Can Take Your Time", "wish": "I’ve heard three versions of that conversation, and I wasn’t even there. Take whatever time you need to sit with yours.", "greeting": "If you want to tell me what you remember, I’ve got time."},
+      {"categories": "apology healing family", "tone": "warmth", "title": "I Should Have Spoken Up", "wish": "I laughed when they put you down. That was lousy of me. I’m sorry. If it happens again, I’ll speak up.", "greeting": "You can take all the space you need. I’ll respect it."},
+      {"categories": "peace support", "tone": "warmth", "title": "You Deserve a Peaceful Evening", "wish": "I saw why you left. I’m glad you got somewhere you could breathe.", "greeting": "If you want somewhere quiet to sit, I can put the kettle on."},
+      {"categories": "peace boundaries", "tone": "warmth", "title": "I’ll Respect Your Space", "wish": "You asked for space. I heard you.", "greeting": "Thinking of you today. No reply needed."},
+      {"categories": "humor connection", "tone": "comedy", "title": "My Pajamas Accepted the Invitation", "wish": "I took the extra shift, looked up the trip across town, and asked my pajamas what they thought. They made a strong case.", "greeting": "I’d still love to see you. Pancakes Sunday? Just us."},
+      {"categories": "support connection family", "tone": "gentle", "title": "I’ll Ask You First", "wish": "That group chat has three theories about how you’re doing. I figured I’d ask you.", "greeting": "Tell me whatever you feel like telling me. I can keep it between us."},
+      {"categories": "support family", "tone": "warmth", "title": "Your Address Can Change. I’m Still Here.", "wish": "I hate that a rent notice can turn your whole life into a pile of boxes.", "greeting": "I can bring lunch or help pack on Saturday. Which would help?"},
+      {"categories": "humor connection", "tone": "comedy", "title": "Can We Meet Before Our Next Shift?", "wish": "We’ve rescheduled so many times our calendars should start paying rent together.", "greeting": "Got ten minutes between shifts? I’d take a park bench with you."},
+      {"categories": "humor family peace", "tone": "comedy", "title": "Who Put the Blender in Charge?", "wish": "I couldn’t hear myself think over that blender either. I can turn things down and set aside a quiet room next time.", "greeting": "I’d love to see you. Tell me what would make the visit feel easier."},
+      {"categories": "apology support", "tone": "gentle", "title": "Tell Me What Works for You", "wish": "We put together a whole plan and somehow skipped asking the person it was for. I’m sorry.", "greeting": "If you feel like going out, you pick the place. I’d love to come."},
+      {"categories": "humor support", "tone": "comedy", "title": "Apparently Your Day Has 37 Hours", "wish": "Between work, appointments, and texting everyone back, you’re doing about three jobs. I can take one thing off your list.", "greeting": "I can bring dinner Wednesday or get groceries Saturday. Which helps more?"},
+      {"categories": "apology healing connection", "tone": "warmth", "title": "Let’s Start Again, a Little Slower", "wish": "You were trying to tell me what you needed. I cut you off. I’m sorry. I want to hear the rest whenever you feel like telling me.", "greeting": "We can talk, text, or leave it for another day. Your call."},
+      {"categories": "connection family", "tone": "gentle", "title": "We Can Afford a New Tradition", "wish": "I miss the parts we actually liked. The seating chart and the bill can stay in the past.", "greeting": "Saturday breakfast at my place? You bring the music. I’ll make the pancakes."}
     ];
     const byId = id => document.getElementById(id);
     const drafts = new Map();
@@ -197,7 +208,7 @@
     const artworkRoot = "/assets/thinking-of-you/";
     const originalCard = 1;
     const toneNames = { comedy: "A laugh and a hug", gentle: "A gentle check-in", warmth: "A warm hug" };
-    let tone = "all";
+    let category = "all";
 
     function artworkPath(index) {
       return artworkRoot + "card-" + String(index + 1).padStart(2, "0") + ".webp";
@@ -215,7 +226,10 @@
       face.className = "card-face";
       const title = document.createElement("strong");
       title.textContent = card.title;
-      face.append(image, title);
+      const brand = document.createElement("span");
+      brand.className = "card-brand";
+      brand.textContent = "♡ HUGSLinks";
+      face.append(image, title, brand);
       return face;
     }
 
@@ -242,7 +256,7 @@
 
     function renderCards() {
       byId("cards").replaceChildren(...cards.flatMap((card, index) => {
-        if (tone !== "all" && tone !== card.tone) return [];
+        if (category !== "all" && !card.categories.split(" ").includes(category)) return [];
         const button = document.createElement("button");
         button.type = "button";
         button.className = "cover";
@@ -333,7 +347,7 @@
     const filters = Array.from(byId("filters").querySelectorAll("button"));
     for (const filter of filters) {
       filter.addEventListener("click", () => {
-        tone = filter.dataset.tone;
+        category = filter.dataset.category;
         for (const button of filters) button.setAttribute("aria-pressed", String(button === filter));
         renderCards();
       });
