@@ -4,8 +4,7 @@
   <meta name="referrer" content="no-referrer">
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="robots" content="noindex, nofollow">
-  <title>Thinking of You · HUGSLinks Cards Preview</title>
+  <title>Thinking of You · HUGSLinks Cards</title>
   <link rel="stylesheet" href="/app/thinking-of-you.css">
   <style>
     :root { font-family: system-ui, sans-serif; color: #eef8ff; background: #061735; color-scheme: dark; }
@@ -70,6 +69,8 @@
     input, textarea, select { width: 100%; min-height: 44px; padding: 9px; margin-top: 5px; border-radius: 9px; border: 1px solid #7896b6; background: #192f49; color: #eef8ff; }
     input::placeholder, textarea::placeholder { color: #adbed0; opacity: 1; }
     textarea { min-height: 90px; resize: vertical; }
+    #send-hug button, #retry-delivery { min-height: 44px; padding: 8px 16px; }
+    #send-hug button { background: #65daff; color: #061735; font-weight: 750; }
     .notice { font-size: .92rem; color: #c3d9f1; }
     .back { display: inline-flex; align-items: center; min-height: 44px; padding: 6px 12px; margin-bottom: 14px; }
     .browse-cards { display: inline-flex; align-items: center; min-height: 44px; padding: 8px 16px; border-radius: 12px; background: #65daff; color: #061735; font-weight: 750; text-decoration: none; }
@@ -95,8 +96,13 @@
 <body>
   <header><div class="logo">♡ HUGS<span>Links</span> Cards</div><a href="/app/#occasions">Back to Occasions</a></header>
   <main>
+    <section id="delivery-result" class="panel" hidden>
+      <p id="delivery-status" role="status"></p>
+      <button id="retry-delivery" type="button" hidden>Retry delivery</button>
+      <a id="delivered-card" hidden>View your sent HUG</a>
+    </section>
     <div id="gallery">
-      <p class="muted">Lies Cut. Truth Heals. · Collection preview</p>
+      <p class="muted">Lies Cut. Truth Heals.</p>
       <h1>Thinking of You</h1>
       <p>Choose a Thinking of You card, make the message yours, and open it the way your recipient would.</p>
       <a class="browse-cards" href="#filters">Ready-Made Traditional Cards</a>
@@ -118,7 +124,7 @@
         <button type="button" class="back" id="back-to-cards">← Back to cards</button>
         <div class="selected-cover" id="selected-cover"></div>
         <h1 id="preview-heading" tabindex="-1"></h1>
-        <p class="notice" style="text-align:center">Personalize and preview your three-page HUG.</p>
+        <p id="price-note" class="notice" style="text-align:center">Personalize and preview your three-page HUG.</p>
         <div id="personalize">
         <label>Personal note <textarea id="message" maxlength="600"></textarea></label>
         <label>Recipient name <input id="recipient" maxlength="80" placeholder="Optional"></label>
@@ -128,6 +134,12 @@
           <option value="mist">Blue Mist</option>
           <option value="electric">Electric Blue</option>
         </select></label>
+        <form id="send-hug" hidden>
+          <label>Your email <input id="sender-email" type="email" autocomplete="email" maxlength="254" required></label>
+          <label>Recipient email <input id="recipient-email" type="email" autocomplete="off" maxlength="254" required></label>
+          <button type="submit">Send This HUG · $2.99</button>
+          <p id="checkout-status" role="status">Your recipient gets the card by email. Your receipt goes to your email.</p>
+        </form>
         </div>
         <section class="preview" aria-label="Recipient preview">
           <button id="open-envelope" class="gift-open" type="button">
@@ -353,6 +365,101 @@
       });
     }
     renderCards();
+
+    if (location.origin === "https://hugslinks.com") {
+      const endpoint = "https://hugslinks-card-app.netlify.app/.netlify/functions/thinking-of-you-live";
+      const sendForm = byId("send-hug");
+      const delivery = byId("delivery-result");
+      const status = byId("delivery-status");
+      const retry = byId("retry-delivery");
+      const hash = new URLSearchParams(location.hash.slice(1));
+      const session = new URLSearchParams(location.search).get("session_id");
+
+      async function request(body, token) {
+        const url = new URL(endpoint);
+        if (token) url.searchParams.set("hug", token);
+        const response = await fetch(url, body ? {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(body)
+        } : {});
+        const result = await response.json();
+        if (!response.ok) throw new Error(result.error || "This step could not be completed.");
+        return result;
+      }
+
+      async function finishDelivery() {
+        retry.hidden = true;
+        status.textContent = "Verifying payment and sending your emails…";
+        try {
+          const { link } = await request({ action: "finish", session, buyer: hash.get("buyer") });
+          const cardLink = byId("delivered-card");
+          cardLink.href = link;
+          cardLink.hidden = false;
+          status.textContent = "Your HUG and receipt were sent.";
+          history.replaceState(null, "", location.pathname);
+        } catch (error) {
+          status.textContent = error.message;
+          retry.hidden = false;
+        }
+      }
+
+      async function openDeliveredCard(token) {
+        gallery.hidden = true;
+        status.textContent = "Opening your HUG…";
+        try {
+          const { card } = await request(null, token);
+          byId("recipient").value = card.recipient;
+          byId("sender").value = card.sender;
+          byId("color").value = card.color;
+          drafts.set(card.card, card.message);
+          byId("personalize").hidden = true;
+          byId("back-to-cards").hidden = true;
+          byId("price-note").hidden = true;
+          delivery.hidden = true;
+          showSelectedCard(card.card);
+          selectedCover.hidden = true;
+          openEnvelope.focus();
+        } catch (error) {
+          status.textContent = error.message;
+        }
+      }
+
+      if (hash.has("hug")) {
+        delivery.hidden = false;
+        openDeliveredCard(hash.get("hug"));
+      } else {
+        sendForm.hidden = false;
+        byId("price-note").textContent = "$2.99 per recipient";
+        sendForm.addEventListener("submit", async event => {
+          event.preventDefault();
+          const button = sendForm.querySelector("button");
+          const checkoutStatus = byId("checkout-status");
+          button.disabled = true;
+          checkoutStatus.textContent = "Opening secure Stripe checkout…";
+          try {
+            const { url } = await request({
+              card: selected,
+              email: byId("sender-email").value,
+              recipientEmail: byId("recipient-email").value,
+              color: byId("color").value,
+              sender: byId("sender").value,
+              recipient: byId("recipient").value,
+              message: byId("message").value
+            });
+            location.assign(url);
+          } catch (error) {
+            checkoutStatus.textContent = error.message;
+            button.disabled = false;
+          }
+        });
+        if (session && hash.has("buyer")) {
+          delivery.hidden = false;
+          retry.addEventListener("click", finishDelivery);
+          finishDelivery();
+        }
+      }
+    }
   </script>
 </body>
 </html>
