@@ -1,6 +1,6 @@
 'use strict';
 const catalog=[
- {id:'thinking-of-you',type:'ready',occasion:'thinking-of-you',title:['Lies Cut. Truth Heals.','Las mentiras duelen. La verdad sana.'],tag:['CARD PREVIEW','VISTA PREVIA'],description:['Browse 18 three-page cards with humor and support for hard family moments.','Explora 18 tarjetas de tres páginas con humor y apoyo para momentos familiares difíciles.'],image:'/assets/thinking-of-you/cover.webp',url:'/app/thinking-of-you.html'},
+ {id:'thinking-of-you',type:'ready',occasion:'thinking-of-you',title:['Lies Cut. Truth Heals.','Las mentiras duelen. La verdad sana.'],tag:['CARD PREVIEW','VISTA PREVIA'],description:['Browse 18 three-page cards with humor and support for hard family moments.','Explora 18 tarjetas de tres páginas con humor y apoyo para momentos familiares difíciles.'],image:'/assets/thinking-of-you/cover.webp',url:'/app/thinking-of-you.html#filters'},
  {id:'anniversary-motion',type:'ready',title:['Anniversary Motion Card','Tarjeta animada de aniversario'],tag:['READY TO SEND · $3.99','LISTA PARA ENVIAR · $3.99'],description:['Send the Moma and Poppa Bear anniversary video with your own message.','Envía el video de aniversario de Moma y Poppa Bear con tu propio mensaje.'],image:'https://hugslinks-card-app.netlify.app/assets/anniversary/motion-poster.webp',url:'/anniversary-motion.html',sendUrl:'https://hugslinks-card-app.netlify.app/'},
  {id:'christmas-2026',type:'ready',holiday:true,title:['Christmas HUGs','HUGs de Navidad'],tag:['READY TO SEND · $2.99','LISTA PARA ENVIAR · $2.99'],description:['Choose a Christmas cover, personalize your message, and send your three-page HUG by email.','Elige una portada navideña, personaliza tu mensaje y envía tu HUG de tres páginas por correo.'],image:'https://hugslinks-card-app.netlify.app/assets/christmas-2026/card-16.webp',url:'https://hugslinks-card-app.netlify.app/christmas.html#filters'},
  {id:'thanksgiving-2026',type:'ready',holiday:true,title:['Thanksgiving HUG','HUG de Acción de Gracias'],tag:['READY TO SEND · $2.99','LISTA PARA ENVIAR · $2.99'],description:['Choose a Thanksgiving design, add your message, and send a HUG by email.','Elige un diseño de Acción de Gracias, agrega tu mensaje y envía un HUG por correo.'],image:'https://hugslinks-card-app.netlify.app/assets/thanksgiving-2026/card-01.webp',url:'https://hugslinks-card-app.netlify.app/thanksgiving.html#filters'},
@@ -45,7 +45,7 @@ function renderCards(){
    title:['Thinking of You','Pensando en ti'],
    tag:['OCCASION','OCASIÓN'],
    description:['Find a card for a gentle check-in.','Encuentra una tarjeta para acompañar a alguien.'],
-   url:'/app/#occasion-thinking-of-you'
+   url:'/app/thinking-of-you.html#filters'
  }]:catalog.filter(card=>filter==='all'||(filter==='holidays'?card.holiday:filter==='anniversary'?card.id==='anniversary-motion':filter==='thinking-of-you'?card.occasion===filter:filter==='birthday'||filter==='wedding'?false:card.type===filter));
  grid.replaceChildren(...cards.map(cardNode));
  document.getElementById('occasion-heading').hidden=filter!=='anniversary';
