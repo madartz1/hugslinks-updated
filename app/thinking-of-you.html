@@ -210,8 +210,8 @@
     const toneNames = { comedy: "A laugh and a hug", gentle: "A gentle check-in", warmth: "A warm hug" };
     let category = "all";
 
-    function artworkPath(index) {
-      return artworkRoot + "card-" + String(index + 1).padStart(2, "0") + ".webp";
+    function artworkPath(index, prefix = "card") {
+      return artworkRoot + prefix + "-" + String(index + 1).padStart(2, "0") + ".webp";
     }
 
     function cardFace(index) {
@@ -241,7 +241,7 @@
       byId("front").textContent = card.title;
       byId("preview-cover").replaceChildren(cardFace(index));
       const wishArt = byId("wish-art");
-      wishArt.src = index === originalCard ? artworkRoot + "inside.webp" : artworkPath(index);
+      wishArt.src = index === originalCard ? artworkRoot + "inside.webp" : artworkPath(index, "inside");
       wishArt.classList.toggle("portrait-art", index !== originalCard);
       wishArt.hidden = false;
       byId("wish").textContent = card.wish;
