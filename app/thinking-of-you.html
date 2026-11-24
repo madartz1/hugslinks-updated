@@ -23,7 +23,7 @@
     button, select, input, textarea { font: inherit; }
     button { cursor: pointer; border: 1px solid #54c9f5; border-radius: 12px; color: #fff; background: #123d75; }
     :focus-visible { outline: 3px solid #a6e8ff; outline-offset: 3px; }
-    .cards { display: grid; grid-template-columns: minmax(0, 260px); gap: 12px; max-width: 950px; }
+    .cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 175px), 1fr)); gap: 12px; max-width: 1080px; }
     .cover { display: block; width: 100%; padding: 0; border-radius: 14px; overflow: hidden; aspect-ratio: 3 / 4; }
     .cover img { display: block; width: 100%; height: 100%; object-fit: contain; }
     .panel { max-width: 545px; margin: 0 auto; background: #102d55; border: 1px solid #3377b3; border-radius: 18px; padding: 16px; }
@@ -75,6 +75,17 @@
       header, main { padding: 16px; }
     }
   
+    .selected-cover { overflow: hidden; }
+    .selected-cover img { display: block; width: 100%; height: auto; }
+    .card-face { display: grid; position: relative; place-content: center; justify-items: center; gap: 12px; width: 100%; aspect-ratio: 3 / 4; padding: 12%; color: #f5faff; background: radial-gradient(ellipse at 50% 20%, #285885, #092347 76%); text-align: center; }
+    .card-face[data-tone="comedy"] { background: radial-gradient(ellipse at 50% 18%, #206f9c, #08264a 75%); }
+    .card-face[data-tone="warmth"] { background: radial-gradient(ellipse at 50% 18%, #3e6682, #102a47 75%); }
+    .card-face::before { content: ""; position: absolute; inset: 7px; border: 1px solid #a3d8ff75; border-radius: 9px; pointer-events: none; }
+    .card-face strong { font: 700 clamp(1rem, 3vw, 1.4rem)/1.12 Georgia, serif; text-wrap: balance; }
+    .card-symbol { font-size: 1.8rem; color: #a8def9; }
+    .card-mark { color: #b8dcef; font-size: .68rem; }
+    .story-cover .card-face strong { font-size: clamp(1.55rem, 6vw, 2.55rem); }
+    .story-cover .card-symbol { font-size: 3rem; }
   </style>
 </head>
 <body>
@@ -88,7 +99,7 @@
     </div>
     <section class="panel" id="card-editor" aria-labelledby="preview-heading" hidden>
         <button type="button" class="back" id="back-to-cards">← Back to cards</button>
-        <img class="selected-cover" id="selected-cover" alt="" width="720" height="960">
+        <div class="selected-cover" id="selected-cover"></div>
         <h1 id="preview-heading" tabindex="-1"></h1>
         <p class="notice" style="text-align:center">Personalize and preview your three-page HUG.</p>
         <div id="personalize">
@@ -113,7 +124,7 @@
           <div class="story-card" id="story" hidden>
             <article class="story-page story-cover">
               <h3 id="front" tabindex="-1"></h3>
-              <img id="preview-cover" alt="" width="720" height="960">
+              <div id="preview-cover"></div>
             </article>
             <article class="story-page story-wish" hidden>
               <h3 id="wish-heading" tabindex="-1">The inside of your card</h3>
@@ -142,9 +153,24 @@
   </main>
   <script>
     const cards = [
-      ["I’m Glad You Told Me",
-       "If you’d like company, I’d love to sit with you. I hope tonight feels a little easier.",
-       "You can miss your family and still need space. I’m glad you trusted me enough to tell me."]
+      {"tone": "comedy", "symbol": "⌁", "title": "This Family Group Chat Needs a Referee", "wish": "I gave myself a timeout. My phone is spending it face down.", "greeting": "Want to take a walk and talk about absolutely anything else? I’d love the company."},
+      {"tone": "warmth", "symbol": "♡", "title": "I’m Glad You Told Me", "wish": "You can miss your family and still need space. I’m glad you trusted me enough to tell me.", "greeting": "If you’d like company, I’d love to sit with you. I hope tonight feels a little easier."},
+      {"tone": "gentle", "symbol": "♪", "title": "I Heard What You Said", "wish": "You said the joke hurt. Somehow the room held a whole panel discussion about your reaction. I heard what you said the first time.", "greeting": "If you feel like talking, I’ll listen. We can take our time."},
+      {"tone": "warmth", "symbol": "◇", "title": "It Made Sense to Feel Hurt", "wish": "You told someone something private, and it came back through somebody else. I understand why you’re more careful about what you share now.", "greeting": "I’m glad you’re here. Share whatever feels right to you."},
+      {"tone": "comedy", "symbol": "☕", "title": "Dinner Has a Service Fee Now?", "wish": "Between groceries, delivery fees, and the tip screen that turns around to look at you, I’m starting to miss toast.", "greeting": "Want to bring whatever’s in the fridge and eat together? I can host."},
+      {"tone": "gentle", "symbol": "…", "title": "You Can Take Your Time", "wish": "Three retellings of the same conversation is two sequels too many. It makes sense to take a little time to sort through what you remember.", "greeting": "If talking it through would help, I can listen. We can leave it there for today."},
+      {"tone": "warmth", "symbol": "♡", "title": "I Should Have Spoken Up", "wish": "I laughed along when they put you down. I hurt you, and I’m sorry. The next time I hear someone speak to you that way, I’ll say something.", "greeting": "Take whatever space you need. I’ll respect it."},
+      {"tone": "warmth", "symbol": "☾", "title": "You Deserve a Peaceful Evening", "wish": "I know what it cost you to leave early. When the voices got loud and you felt unsafe, you made a choice to look after yourself.", "greeting": "If you’d like somewhere quiet to sit, I can put the kettle on."},
+      {"tone": "warmth", "symbol": "✦", "title": "I’ll Respect Your Space", "wish": "You asked for a little distance, and the calls kept coming. I hear you. I’ll give you the space you asked for.", "greeting": "I’m thinking of you. There’s no need to reply."},
+      {"tone": "comedy", "symbol": "☾", "title": "My Pajamas Accepted the Invitation", "wish": "Between the extra shift, the trip across town, and the family group chat doing play-by-play, my pajamas were the only ones with an opening.", "greeting": "I’d still love to see you. Pancakes Sunday, just us?"},
+      {"tone": "gentle", "symbol": "…", "title": "I’ll Ask You First", "wish": "The family chat has already produced three theories and a diagram. If I want to know how you’re doing, I’ll ask you.", "greeting": "You get to decide what you share with me. I’ll follow your lead."},
+      {"tone": "warmth", "symbol": "◇", "title": "Your Address Can Change. I’m Still Here.", "wish": "Another rent notice, another round of figuring out where everything goes. I know a move can cost more than the boxes.", "greeting": "I can come by Saturday to pack a few boxes or bring lunch. Which would help?"},
+      {"tone": "comedy", "symbol": "✦", "title": "Can We Meet Before Our Next Shift?", "wish": "We’ve rescheduled so many times our calendars should start paying rent together.", "greeting": "Want a ten-minute park bench catch-up? Tell me what fits between shifts."},
+      {"tone": "comedy", "symbol": "♫", "title": "Who Put the Blender in Charge?", "wish": "The kitchen was louder than the whole party. This time we can turn things down and set aside a quiet room.", "greeting": "I’d love to see you. We can plan a visit that feels comfortable for you."},
+      {"tone": "gentle", "symbol": "◇", "title": "Tell Me What Works for You", "wish": "We made a whole plan and managed to skip the part where we asked you. I’d like to hear what you’d enjoy.", "greeting": "If you feel like it, pick the place. I’d love to spend time with you."},
+      {"tone": "comedy", "symbol": "✦", "title": "Apparently Your Day Has 37 Hours", "wish": "There’s the paid shift, the appointments, and the job of convincing everyone you’re fine. I’ve got room in my day to take a turn.", "greeting": "I can bring dinner Wednesday or pick up groceries Saturday. Which would help more?"},
+      {"tone": "warmth", "symbol": "♡", "title": "Let’s Start Again, a Little Slower", "wish": "I talked over you when you were telling me what you needed. I’m sorry. I can slow down and give you time.", "greeting": "We can talk, write it down, or pick another day. You choose."},
+      {"tone": "gentle", "symbol": "☕", "title": "We Can Afford a New Tradition", "wish": "The old group dinner had a seating chart and a bill nobody wanted to look at. The new one can start with two chairs and a pot of coffee.", "greeting": "Saturday breakfast at my place? You bring the music. I’ll make the pancakes."}
     ];
     const byId = id => document.getElementById(id);
     const drafts = new Map();
@@ -165,21 +191,48 @@
     const coverArt = "/assets/thinking-of-you/cover.webp";
     const insideArt = "/assets/thinking-of-you/inside.webp";
 
+    const toneNames = { comedy: "A laugh and a hug", gentle: "A gentle laugh", warmth: "A warm hug" };
+
+    function cardFace(card) {
+      if (card.title === "I’m Glad You Told Me") {
+        const image = document.createElement("img");
+        image.src = coverArt;
+        image.alt = "";
+        image.loading = "lazy";
+        return image;
+      }
+
+      const face = document.createElement("span");
+      face.className = "card-face";
+      face.dataset.tone = card.tone;
+      const symbol = document.createElement("span");
+      symbol.className = "card-symbol";
+      symbol.setAttribute("aria-hidden", "true");
+      symbol.textContent = card.symbol;
+      const title = document.createElement("strong");
+      title.textContent = card.title;
+      const mark = document.createElement("span");
+      mark.className = "card-mark";
+      mark.textContent = "Lies Cut. Truth Heals.";
+      face.append(symbol, title, mark);
+      return face;
+    }
+
     function showSelectedCard(index) {
       selected = index;
-      const [title, greeting, wish] = cards[index];
-      byId("preview-heading").textContent = title;
-      selectedCover.src = coverArt;
-      selectedCover.alt = title + " card cover";
-      byId("front").textContent = title;
-      const cover = byId("preview-cover");
-      cover.src = coverArt;
+      const card = cards[index];
+      byId("preview-heading").textContent = card.title;
+      selectedCover.replaceChildren(cardFace(card));
+      byId("front").textContent = card.title;
+      byId("preview-cover").replaceChildren(cardFace(card));
       const wishArt = byId("wish-art");
-      wishArt.hidden = false;
-      wishArt.alt = "Moma Bear holds a warm mug while Poppa Bear sits with her.";
-      wishArt.src = insideArt;
-      byId("wish").textContent = wish;
-      byId("message").value = drafts.get(index) ?? greeting;
+      wishArt.hidden = card.title !== "I’m Glad You Told Me";
+      if (!wishArt.hidden) {
+        wishArt.alt = "Moma Bear holds a warm mug while Poppa Bear sits with her.";
+        wishArt.src = insideArt;
+      }
+      byId("wish").textContent = card.wish;
+      byId("message").value = drafts.get(index) ?? card.greeting;
       updatePreview();
       resetStory();
       gallery.hidden = true;
@@ -189,17 +242,13 @@
     }
 
     function renderCards() {
-      byId("cards").replaceChildren(...cards.map(([title], index) => {
+      byId("cards").replaceChildren(...cards.map((card, index) => {
         const button = document.createElement("button");
         button.type = "button";
         button.className = "cover";
         button.dataset.card = index;
-        button.setAttribute("aria-label", "Select " + title);
-        const cover = document.createElement("img");
-        cover.src = coverArt;
-        cover.alt = "";
-        cover.loading = "lazy";
-        button.append(cover);
+        button.setAttribute("aria-label", "Select " + card.title + " · " + toneNames[card.tone]);
+        button.append(cardFace(card));
         button.addEventListener("click", () => showSelectedCard(index));
         return button;
       }));
