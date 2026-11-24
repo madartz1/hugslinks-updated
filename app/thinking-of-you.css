@@ -1,0 +1,23 @@
+.hug-finale { overflow: hidden; }
+.message-brand { position: relative; display: grid; place-items: center; width: 58px; height: 58px; border-radius: 50%; background: #d1e9f7; box-shadow: 0 0 18px #65daff55; }
+.message-brand img { display: block; width: 44px; height: 44px; object-fit: contain; }
+.message-hearts { position: absolute; inset: 0; pointer-events: none; color: #82e7ff; }
+.message-hearts span {
+  position: absolute; bottom: 13%; left: var(--left); font: var(--size) / 1 system-ui, sans-serif; opacity: 0;
+  text-shadow: 0 0 7px #49cfff, 0 0 15px #23abff;
+  animation: float-hearts 3.4s ease-out var(--delay) both;
+}
+.message-hearts span:nth-child(1) { --left: 5%; --size: 17px; --delay: .15s; --drift: 8px; }
+.message-hearts span:nth-child(2) { --left: 91%; --size: 17px; --delay: .3s; --drift: -8px; }
+.message-hearts span:nth-child(3) { --left: 10%; --size: 12px; --delay: .65s; --drift: -5px; }
+.message-hearts span:nth-child(4) { --left: 85%; --size: 12px; --delay: .9s; --drift: 6px; }
+.message-hearts span:nth-child(5) { --left: 50%; --size: 15px; --delay: .45s; --drift: 12px; bottom: auto; top: 16%; }
+.hug-finale > :not(.message-hearts) { position: relative; }
+@keyframes float-hearts {
+  0% { opacity: 0; transform: translate(0, 10px) scale(.7); }
+  23% { opacity: .8; }
+  100% { opacity: 0; transform: translate(var(--drift), -86px) scale(1.08); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .message-hearts { display: none; }
+}
