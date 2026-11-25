@@ -3,7 +3,7 @@ import { neon } from '@neondatabase/serverless';
 import { S3Client, PutObjectCommand, GetObjectCommand, HeadObjectCommand, DeleteObjectsCommand } from '@aws-sdk/client-s3';
 
 export const CHUNK_SIZE = 2 * 1024 * 1024;
-const isCardsHost = host => /^(?:www\.)?hugslinks\.com$/i.test(host || '') || /^deploy-preview-\d+--hugslinks-web-build\.netlify\.app$/i.test(host || '');
+const isCardsHost = host => /^(?:www\.)?hugslinks\.com$/i.test(host || '') || /^(?:deploy-preview-\d+|[a-f0-9]{24})--hugslinks-web-build\.netlify\.app$/i.test(host || '');
 const slots = { cover: [8, ['image/jpeg','image/png','image/webp','image/gif']], inside: [8, ['image/jpeg','image/png','image/webp','image/gif']], video: [25, ['video/mp4','video/webm']], audio: [8, ['audio/mpeg','audio/wav','audio/mp4','audio/x-m4a','audio/x-wav']] };
 const digest = s => createHash('sha256').update(s).digest('hex');
 const token = () => randomBytes(32).toString('hex');
