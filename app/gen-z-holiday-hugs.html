@@ -8,6 +8,11 @@
   <link rel="stylesheet" href="/app/thinking-of-you.css">
   <style>
     :root { font-family: system-ui, sans-serif; color: #eef8ff; background: #061735; color-scheme: dark; }
+    :root {
+      --frame-mat: #b8ddf2;
+      --frame-edge: #638fac;
+      --frame-highlight: #f0f9ff;
+    }
     * { box-sizing: border-box; }
     body { margin: 0; background: radial-gradient(ellipse at top, #12559b, #061735 64%); }
     [hidden] { display: none !important; }
@@ -26,7 +31,7 @@
     .cover { display: block; width: 100%; padding: 0; border-radius: 14px; overflow: hidden; aspect-ratio: 3 / 4; }
     .cover img { display: block; width: 100%; height: 100%; object-fit: contain; }
     .panel { max-width: 545px; margin: 0 auto; background: #102d55; border: 1px solid #3377b3; border-radius: 18px; padding: 16px; }
-    .selected-cover { display: block; width: min(100%, 252px); height: auto; aspect-ratio: 3 / 4; object-fit: contain; margin: 0 auto 18px; border: 1px solid #537fa5; border-radius: 12px; }
+    .selected-cover { display: block; width: min(100%, 330px); margin: 0 auto 18px; border-radius: 12px; }
     #preview-heading { text-align: center; }
     .preview { text-align: center; overflow-wrap: anywhere; }
     .gift-open { display: block; width: 100%; padding: 0; border: 0; background: transparent; }
@@ -40,12 +45,12 @@
     .gift-open-label { color: #061735; background: #65daff; }
     #to { display: block; margin: 6px 0 10px; }
     .story-card { perspective: 1000px; }
-    .story-page { position: relative; display: grid; align-content: center; justify-items: center; gap: 10px; width: 100%; min-height: clamp(285px, 71vw, 400px); padding: 26px 22px; border: 1px solid #537fa5; border-radius: 16px; background: #071c3d; color: #f4ead9; font-family: Georgia, serif; box-shadow: 0 12px 26px #00112b50; transform-origin: left center; animation: page-turn .38s ease-out both; }
+    .story-page { position: relative; display: grid; align-content: center; justify-items: center; gap: 10px; width: 100%; min-height: clamp(285px, 71vw, 400px); padding: 26px 22px; border: 1px solid var(--frame-edge); border-radius: 16px; background: #071c3d; color: #f4ead9; font-family: Georgia, serif; box-shadow: 0 12px 26px #00112b50; transform-origin: left center; animation: page-turn .38s ease-out both; }
     .story-card[data-direction="back"] .story-page { transform-origin: right center; animation-name: page-turn-back; }
-    .story-page::before { content: ""; position: absolute; inset: 9px; border: 1px solid #65a7cf; border-radius: 9px; pointer-events: none; }
+    .story-page::before { content: ""; position: absolute; inset: 8px; border: 1px solid var(--frame-mat); border-radius: 9px; pointer-events: none; }
     .story-page h3, .story-page p { margin: 0; max-width: 100%; }
     .story-page h3 { font-size: clamp(1.45rem, 5vw, 2rem); line-height: 1.15; }
-    .story-cover { display: block; min-height: 0; padding: 0; overflow: hidden; background: #061735; }
+    .story-cover { display: block; min-height: 0; }
     .story-cover::before { content: none; }
     .story-cover img { display: block; width: 100%; height: auto; aspect-ratio: 3 / 4; object-fit: contain; }
     .story-cover h3, .story-wish h3 { position: absolute; width: 1px; height: 1px; padding: 0; clip-path: inset(50%); overflow: hidden; }
@@ -81,9 +86,25 @@
       .cards { grid-template-columns: repeat(2, minmax(0, 1fr)); }
     }
   
-    .selected-cover { overflow: hidden; }
-    .selected-cover img { display: block; width: 100%; height: auto; }
-    .cover img, .story-cover img { object-fit: contain; background: #081b34; }
+    .cover, .selected-cover, .story-cover {
+      overflow: hidden;
+      border: 1px solid var(--frame-edge);
+      padding: 9px;
+      background: var(--frame-mat);
+      box-shadow: inset 0 0 0 2px var(--frame-highlight), 0 8px 20px #00112b40;
+    }
+    .cover {
+      padding: clamp(4px, 1vw, 7px);
+    }
+    .cover img, .selected-cover img, .story-cover img {
+      display: block;
+      width: 100%;
+      object-fit: contain;
+      border-radius: 6px;
+    }
+    .selected-cover img, .story-cover img {
+      height: auto;
+    }
     #wish-art { width: min(100%, 360px); height: auto; aspect-ratio: 3 / 2; object-fit: cover; object-position: center 66%; }
   </style>
 </head>
