@@ -82,8 +82,7 @@
     }
   
     .selected-cover { overflow: hidden; }
-    .selected-cover img { display: block; width: 100%; height: auto; }
-    .cover img, .story-cover img { object-fit: contain; background: #081b34; }
+    .selected-cover, .story-cover img { background: #061735; }
     #wish-art { width: min(100%, 360px); height: auto; aspect-ratio: 3 / 2; object-fit: cover; object-position: center 66%; }
   </style>
 </head>
@@ -105,7 +104,7 @@
     </div>
     <section class="panel" id="card-editor" aria-labelledby="preview-heading" hidden>
         <button type="button" class="back" id="back-to-cards">← Back to cards</button>
-        <div class="selected-cover" id="selected-cover"></div>
+        <img class="selected-cover" id="selected-cover" alt="" width="720" height="960">
         <h1 id="preview-heading" tabindex="-1"></h1>
         <p id="price-note" class="notice" style="text-align:center">Personalize and preview your three-page HUG.</p>
         <div id="personalize">
@@ -130,7 +129,7 @@
           <div class="story-card" id="story" hidden>
             <article class="story-page story-cover">
               <h3 id="front" tabindex="-1"></h3>
-              <div id="preview-cover"></div>
+              <img id="preview-cover" alt="" width="720" height="960">
             </article>
             <article class="story-page story-wish" hidden>
               <h3 id="wish-heading" tabindex="-1">The inside of your card</h3>
@@ -303,9 +302,9 @@
       selected = index;
       const card = cards[index];
       byId("preview-heading").textContent = card.title;
-      selectedCover.replaceChildren(cardFace(index));
+      selectedCover.src = artworkPath(index);
       byId("front").textContent = card.title;
-      byId("preview-cover").replaceChildren(cardFace(index));
+      byId("preview-cover").src = artworkPath(index);
       const wishArt = byId("wish-art");
       wishArt.src = artworkPath(index);
       wishArt.hidden = false;
