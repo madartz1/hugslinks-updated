@@ -1,0 +1,424 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta name="referrer" content="no-referrer">
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Gen Z Holiday Hugs · HUGSLinks Cards</title>
+  <link rel="stylesheet" href="/app/thinking-of-you.css">
+  <style>
+    :root { font-family: system-ui, sans-serif; color: #eef8ff; background: #061735; color-scheme: dark; }
+    * { box-sizing: border-box; }
+    body { margin: 0; background: radial-gradient(ellipse at top, #12559b, #061735 64%); }
+    [hidden] { display: none !important; }
+    header, main { max-width: 1200px; margin: auto; padding: 20px; }
+    header { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px; }
+    .logo { font-weight: 850; font-size: 1.4rem; }
+    .logo span, a { color: #73e2ff; }
+    h1 { font-size: clamp(2rem, 6vw, 3.6rem); margin: .2em 0; line-height: 1.05; }
+    h2 { margin: 0 0 12px; }
+    p { line-height: 1.5; }
+    .muted { color: #c3d9f1; }
+    button, select, input, textarea { font: inherit; }
+    button { cursor: pointer; border: 1px solid #54c9f5; border-radius: 12px; color: #fff; background: #123d75; }
+    :focus-visible { outline: 3px solid #a6e8ff; outline-offset: 3px; }
+    .cards { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 12px; max-width: 950px; }
+    .cover { display: block; width: 100%; padding: 0; border-radius: 14px; overflow: hidden; aspect-ratio: 3 / 4; }
+    .cover img { display: block; width: 100%; height: 100%; object-fit: contain; }
+    .panel { max-width: 545px; margin: 0 auto; background: #102d55; border: 1px solid #3377b3; border-radius: 18px; padding: 16px; }
+    .selected-cover { display: block; width: min(100%, 252px); height: auto; aspect-ratio: 3 / 4; object-fit: contain; margin: 0 auto 18px; border: 1px solid #537fa5; border-radius: 12px; }
+    #preview-heading { text-align: center; }
+    .preview { text-align: center; overflow-wrap: anywhere; }
+    .gift-open { display: block; width: 100%; padding: 0; border: 0; background: transparent; }
+    .envelope-art { position: relative; display: block; aspect-ratio: 1.9; overflow: hidden; margin-bottom: 12px; background: #071f3b; border: 1px solid #537fa5; border-radius: 16px; }
+    .envelope-art img { position: absolute; width: 100%; inset: 0 0 auto; }
+    .envelope-art .envelope-sealed { transform: translateY(-19%); }
+    .envelope-art .envelope-open { height: 100%; object-fit: cover; object-position: center 51%; animation: envelope-open .38s ease-out both; }
+    .envelope-art[data-color="mist"] img { filter: grayscale(.65) brightness(1.25); }
+    .envelope-art[data-color="electric"] img { filter: saturate(1.45) brightness(1.12); }
+    .gift-open-label, .page-controls button { display: inline-flex; align-items: center; justify-content: center; min-height: 44px; padding: 8px 16px; border-radius: 24px; font-weight: 750; }
+    .gift-open-label { color: #061735; background: #65daff; }
+    #to { display: block; margin: 6px 0 10px; }
+    .story-card { perspective: 1000px; }
+    .story-page { position: relative; display: grid; align-content: center; justify-items: center; gap: 10px; width: 100%; min-height: clamp(285px, 71vw, 400px); padding: 26px 22px; border: 1px solid #537fa5; border-radius: 16px; background: #071c3d; color: #f4ead9; font-family: Georgia, serif; box-shadow: 0 12px 26px #00112b50; transform-origin: left center; animation: page-turn .38s ease-out both; }
+    .story-card[data-direction="back"] .story-page { transform-origin: right center; animation-name: page-turn-back; }
+    .story-page::before { content: ""; position: absolute; inset: 9px; border: 1px solid #65a7cf; border-radius: 9px; pointer-events: none; }
+    .story-page h3, .story-page p { margin: 0; max-width: 100%; }
+    .story-page h3 { font-size: clamp(1.45rem, 5vw, 2rem); line-height: 1.15; }
+    .story-cover { display: block; min-height: 0; padding: 0; overflow: hidden; background: #061735; }
+    .story-cover::before { content: none; }
+    .story-cover img { display: block; width: 100%; height: auto; aspect-ratio: 3 / 4; object-fit: contain; }
+    .story-cover h3, .story-wish h3 { position: absolute; width: 1px; height: 1px; padding: 0; clip-path: inset(50%); overflow: hidden; }
+    .story-wish { aspect-ratio: 3 / 4; gap: 14px; background: radial-gradient(ellipse at 50% 32%, #164279, #071c3d 72%); color: #fff4de; }
+    .story-wish img { display: block; width: 100%; height: auto; aspect-ratio: 3 / 2; object-fit: contain; border: 1px solid #65a7cf; border-radius: 8px; }
+    .story-wish .portrait-art { object-fit: cover; object-position: center 38%; }
+    #wish { font-size: clamp(1.16rem, 3vw, 1.5rem); line-height: 1.35; text-wrap: balance; }
+    .story-message { background: radial-gradient(ellipse at 50% 32%, #354d65, #233951 78%); }
+    .story-rule { width: 72px; height: 1px; background: #65a7cf; }
+    #inside { white-space: pre-wrap; }
+    #signature, #message-recipient { font-style: italic; }
+    .page-controls { display: flex; align-items: center; justify-content: center; flex-wrap: wrap; gap: 8px; margin: 12px 0; }
+    #page-count { font-size: .88rem; }
+    @keyframes envelope-open { from { opacity: .4; scale: .98; } }
+    @keyframes page-turn { from { opacity: .75; transform: rotateY(-16deg); } }
+    @keyframes page-turn-back { from { opacity: .75; transform: rotateY(16deg); } }
+    @media (prefers-reduced-motion: reduce) {
+      .story-page, .story-card[data-direction="back"] .story-page, .envelope-art .envelope-open { animation: none; }
+    }
+    label { display: block; margin: 12px 0; font-size: .95rem; }
+    input, textarea, select { width: 100%; min-height: 44px; padding: 9px; margin-top: 5px; border-radius: 9px; border: 1px solid #7896b6; background: #192f49; color: #eef8ff; }
+    input::placeholder, textarea::placeholder { color: #adbed0; opacity: 1; }
+    textarea { min-height: 90px; resize: vertical; }
+    .notice { font-size: .92rem; color: #c3d9f1; }
+    .back { display: inline-flex; align-items: center; min-height: 44px; padding: 6px 12px; margin-bottom: 14px; }
+    .browse-cards { display: inline-flex; align-items: center; min-height: 44px; padding: 8px 16px; border-radius: 12px; background: #65daff; color: #061735; font-weight: 750; text-decoration: none; }
+    #filters { display: flex; flex-wrap: wrap; gap: 8px; margin: 20px 0 14px; padding: 4px; border: 3px solid #a6e8ff; max-width: 950px; scroll-margin-top: 16px; }
+    #filters button { min-height: 44px; padding: 8px 12px; }
+    #filters button[aria-pressed="true"] { font-weight: 750; color: #061735; background: #65daff; }
+    @media (max-width: 900px) { .cards { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
+    @media (max-width: 700px) {
+      header, main { padding: 16px; }
+      .cards { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    }
+  
+    .selected-cover { overflow: hidden; }
+    .selected-cover img { display: block; width: 100%; height: auto; }
+    .cover img, .story-cover img { object-fit: contain; background: #081b34; }
+    #wish-art { width: min(100%, 360px); height: auto; aspect-ratio: 3 / 2; object-fit: cover; object-position: center 66%; }
+  </style>
+</head>
+<body>
+  <header><div class="logo">♡ HUGS<span>Links</span> Cards</div><a href="/app/#holidays">Back to Holidays</a></header>
+  <main>
+    <div id="gallery">
+      <p class="muted">HUGSLinks Cards</p>
+      <h1>Gen Z Holiday Hugs</h1>
+      <p>Pick a holiday hug or a card for someone who could use a little care. Add a personal note and preview all three pages.</p>
+      <a class="browse-cards" href="#filters">Ready-Made Traditional Cards</a>
+      <p><a href="https://hugslinks-card-app.netlify.app/how-your-card-helps.html">Explore the HUGSLinks mission</a></p>
+      <nav id="filters" aria-label="Card categories">
+        <button type="button" data-category="all" aria-pressed="true">All</button>
+        <button type="button" data-category="holiday" aria-pressed="false">Holiday Hugs</button>
+        <button type="button" data-category="care" aria-pressed="false">Peace &amp; Care</button>
+      </nav>
+      <section class="cards" id="cards" aria-label="Gen Z Holiday Hugs card covers" tabindex="-1"></section>
+    </div>
+    <section class="panel" id="card-editor" aria-labelledby="preview-heading" hidden>
+        <button type="button" class="back" id="back-to-cards">← Back to cards</button>
+        <div class="selected-cover" id="selected-cover"></div>
+        <h1 id="preview-heading" tabindex="-1"></h1>
+        <p id="price-note" class="notice" style="text-align:center">Personalize and preview your three-page HUG.</p>
+        <div id="personalize">
+        <label>Personal note <textarea id="message" maxlength="600"></textarea></label>
+        <label>Recipient name <input id="recipient" maxlength="80" placeholder="Optional"></label>
+        <label>Your name <input id="sender" maxlength="80" placeholder="Optional"></label>
+        <label>Envelope color <select id="color">
+          <option value="navy">Midnight Navy</option>
+          <option value="mist">Blue Mist</option>
+          <option value="electric">Electric Blue</option>
+        </select></label>
+        </div>
+        <section class="preview" aria-label="Recipient preview">
+          <button id="open-envelope" class="gift-open" type="button">
+            <span id="envelope" class="envelope-art" data-color="navy">
+              <img class="envelope-sealed" id="envelope-sealed" src="https://hugslinks-card-app.netlify.app/assets/anniversary/envelope-sealed.webp" alt="">
+              <img class="envelope-open" id="envelope-open" src="https://hugslinks-card-app.netlify.app/assets/anniversary/envelope-open.webp" alt="" hidden>
+            </span>
+            <span class="gift-open-label">Open Your HUG</span>
+            <span id="to">A HUG for you</span>
+          </button>
+          <div class="story-card" id="story" hidden>
+            <article class="story-page story-cover">
+              <h3 id="front" tabindex="-1"></h3>
+              <div id="preview-cover"></div>
+            </article>
+            <article class="story-page story-wish" hidden>
+              <h3 id="wish-heading" tabindex="-1">The inside of your card</h3>
+              <img id="wish-art" alt="" width="720" height="480" hidden>
+              <span class="story-rule" aria-hidden="true"></span>
+              <p id="wish"></p>
+            </article>
+            <article class="story-page story-message hug-finale" hidden>
+              <div class="message-hearts" aria-hidden="true"><span>♥</span><span>♡</span><span>♡</span><span>♥</span><span>♡</span></div>
+              <span class="message-brand"><img src="/assets/HUGS_Header_Logo_Transparent.png" alt="HUGSLinks house and heart" width="44" height="44"></span>
+              <h3 id="message-heading" tabindex="-1">A note for you</h3>
+              <p id="message-recipient" hidden></p>
+              <span class="story-rule" aria-hidden="true"></span>
+              <p id="inside"></p>
+              <p id="signature" hidden></p>
+            </article>
+          </div>
+          <nav id="page-controls" class="page-controls" aria-label="Card pages" hidden>
+            <button id="previous-page" type="button" hidden>Back</button>
+            <span id="page-count" role="status"></span>
+            <button id="next-page" type="button">Turn the Page</button>
+          </nav>
+          <p id="final-mission" hidden style="text-align:center;margin:12px auto 0"><strong style="display:block">Every HUG Helps Make a Difference</strong><small style="display:block;margin:4px 0 8px">Discover the purpose behind HUGSLinks Cards.</small><a href="https://hugslinks-card-app.netlify.app/how-your-card-helps.html">Explore the HUGSLinks Mission</a></p>
+        </section>
+    </section>
+  </main>
+  <script>
+    const cards = [
+      {
+        "categories": "holiday",
+        "title": "Bookie, You’re My Favorite",
+        "wish": "Even when our plans turn into pajamas and a plate of leftovers, you’re still my favorite part.",
+        "greeting": "Saving you a seat, a snack, and the biggest hug."
+      },
+      {
+        "categories": "holiday",
+        "title": "It’s Giving Holiday Love",
+        "wish": "The lights are cute, but the best part was laughing with you until the cocoa went cold.",
+        "greeting": "Let’s make time for more of that."
+      },
+      {
+        "categories": "holiday",
+        "title": "No Cap, You’re the Gift",
+        "wish": "The thing I’m most grateful for this season doesn’t come with a tracking number.",
+        "greeting": "Thanks for showing up for me. Sending that love right back."
+      },
+      {
+        "categories": "holiday",
+        "title": "You Ate This Year, Bestie",
+        "wish": "You handled a lot this year, including things nobody clapped for. I saw you.",
+        "greeting": "I’m proud of you, bestie. Let’s celebrate in a way that feels good to you."
+      },
+      {
+        "categories": "holiday",
+        "title": "Big Hugs, Little Legend",
+        "wish": "You made more memories than you know just by being your funny, curious self.",
+        "greeting": "Keep being you. I’m cheering for you and saving you a big hug."
+      },
+      {
+        "categories": "holiday",
+        "title": "Sending You Big Holiday Hugs",
+        "wish": "I wish I could hand you a warm mug and pull up a chair beside you today.",
+        "greeting": "I’m thinking of you from here. Want to catch up when you have a minute?"
+      },
+      {
+        "categories": "care",
+        "title": "Everyone Needs a Hug",
+        "wish": "Wherever this season finds you, I hope there’s a moment when you feel safe, cared for, and at ease.",
+        "greeting": "Here’s a hug from me. I’d love to hear how you’re doing whenever you feel like talking."
+      },
+      {
+        "categories": "care",
+        "title": "Love Is the Assignment",
+        "wish": "Today I’m thinking about the little ways we show love, like saving someone a plate or calling when we said we would.",
+        "greeting": "I’ve got a little time this week. Want to spend some of it together?"
+      },
+      {
+        "categories": "care",
+        "title": "Protect Our Planet",
+        "wish": "I want our kids to have shady trees, clean water, and places they can play outside.",
+        "greeting": "Want to join me for a neighborhood cleanup sometime? I’ll bring the gloves."
+      },
+      {
+        "categories": "care",
+        "title": "Working Hard and Barely Surviving",
+        "wish": "It’s exhausting to work so hard and still have to choose which bill can wait. I see how much you’re carrying.",
+        "greeting": "I can bring dinner this week or sit with you while you make calls. Would either help?"
+      },
+      {
+        "categories": "care",
+        "title": "Children Deserve Childhoods",
+        "wish": "Kids deserve safe places to play, enough to eat, and grown-ups who listen when something hurts.",
+        "greeting": "I’m thinking of the little ones today and the people who help them feel safe."
+      },
+      {
+        "categories": "care",
+        "title": "Less Ego. More Empathy.",
+        "wish": "I’ve caught myself planning my reply while you were still talking. I want to do a better job hearing you.",
+        "greeting": "If there’s something you still want to say, I’ll make time to listen."
+      },
+      {
+        "categories": "care",
+        "title": "Healing Takes Time",
+        "wish": "Some days the smallest thing takes all the energy you have. I’m thinking of you on those days, too.",
+        "greeting": "Want a check-in this week? I can text first and follow your lead."
+      },
+      {
+        "categories": "care",
+        "title": "Kindness Is a Flex",
+        "wish": "You made time for me on a day when I was having a hard time asking for help. I still remember.",
+        "greeting": "I hope someone makes today a little easier for you. It can be me."
+      },
+      {
+        "categories": "care",
+        "title": "Protect Your Peace",
+        "wish": "If the group chat gets loud and you need to mute it, I understand.",
+        "greeting": "I’ll be around for a quiet walk or a call whenever you feel up to it."
+      },
+      {
+        "categories": "care",
+        "title": "A Safe Home for Everyone",
+        "wish": "Everybody deserves a door they can close and a place where they can sleep without worrying.",
+        "greeting": "I’m thinking of you. If there’s a practical way I can help this week, I’m here to listen."
+      },
+      {
+        "categories": "care",
+        "title": "You Deserve Rest",
+        "wish": "I hope you get an afternoon with warm socks, a quiet phone, and absolutely nowhere you have to be.",
+        "greeting": "Take it easy if you can. I’ll check in another day."
+      },
+      {
+        "categories": "care",
+        "title": "No One Should Go Hungry",
+        "wish": "A warm meal can make a hard day easier. Sharing one can make it feel a little less lonely.",
+        "greeting": "I’d love to share a meal with you. Let’s find a time that works."
+      }
+    ];
+    const byId = id => document.getElementById(id);
+    const drafts = new Map();
+    const gallery = byId("gallery");
+    const editor = byId("card-editor");
+    const selectedCover = byId("selected-cover");
+    const story = byId("story");
+    const pages = Array.from(story.children);
+    const openEnvelope = byId("open-envelope");
+    const nextPage = byId("next-page");
+    const previousPage = byId("previous-page");
+    const reducedMotion = matchMedia("(prefers-reduced-motion: reduce)");
+    const nextLabels = ["Turn the Page", "Read Your Message", "Replay"];
+    let selected;
+    let page = 0;
+    let openingTimer;
+
+    const artworkRoot = "/assets/gen-z-holiday-hugs/";
+    let category = "all";
+
+    function artworkPath(index) {
+      return artworkRoot + "card-" + String(index + 1).padStart(2, "0") + ".webp";
+    }
+
+    function cardFace(index) {
+      const image = document.createElement("img");
+      image.alt = "";
+      image.loading = "lazy";
+      image.src = artworkPath(index);
+      return image;
+    }
+
+    function showSelectedCard(index) {
+      selected = index;
+      const card = cards[index];
+      byId("preview-heading").textContent = card.title;
+      selectedCover.replaceChildren(cardFace(index));
+      byId("front").textContent = card.title;
+      byId("preview-cover").replaceChildren(cardFace(index));
+      const wishArt = byId("wish-art");
+      wishArt.src = artworkPath(index);
+      wishArt.hidden = false;
+      byId("wish").textContent = card.wish;
+      byId("message").value = drafts.get(index) ?? card.greeting;
+      updatePreview();
+      resetStory();
+      gallery.hidden = true;
+      editor.hidden = false;
+      byId("preview-heading").focus({ preventScroll: true });
+      editor.scrollIntoView({ block: "start" });
+    }
+
+    function renderCards() {
+      byId("cards").replaceChildren(...cards.flatMap((card, index) => {
+        if (category !== "all" && !card.categories.split(" ").includes(category)) return [];
+        const button = document.createElement("button");
+        button.type = "button";
+        button.className = "cover";
+        button.dataset.card = index;
+        button.setAttribute("aria-label", "Select " + card.title);
+        button.append(cardFace(index));
+        button.addEventListener("click", () => showSelectedCard(index));
+        return button;
+      }));
+    }
+
+    function updatePreview() {
+      byId("inside").textContent = byId("message").value;
+      const sender = byId("sender").value.trim();
+      const signature = byId("signature");
+      signature.textContent = sender ? "With care, " + sender : "";
+      signature.hidden = !sender;
+      const recipient = byId("recipient").value.trim();
+      byId("to").textContent = recipient ? "To " + recipient : "A HUG for you";
+      const messageRecipient = byId("message-recipient");
+      messageRecipient.textContent = recipient ? "For " + recipient : "";
+      messageRecipient.hidden = !recipient;
+      byId("envelope").dataset.color = byId("color").value;
+    }
+
+    function showPage(index) {
+      story.dataset.direction = index < page ? "back" : "forward";
+      page = index;
+      pages.forEach((item, i) => { item.hidden = i !== page; });
+      previousPage.hidden = page === 0;
+      byId("page-count").textContent = (page + 1) + " of " + pages.length;
+      nextPage.textContent = nextLabels[page];
+      byId("final-mission").hidden = page !== pages.length - 1;
+      pages[page].querySelector("h3").focus();
+    }
+
+    function resetStory() {
+      clearTimeout(openingTimer);
+      byId("final-mission").hidden = true;
+      story.hidden = byId("page-controls").hidden = true;
+      selectedCover.hidden = false;
+      byId("envelope-sealed").hidden = false;
+      byId("envelope-open").hidden = true;
+      openEnvelope.disabled = openEnvelope.hidden = false;
+      page = 0;
+    }
+
+    function revealStory() {
+      openEnvelope.hidden = true;
+      selectedCover.hidden = true;
+      story.hidden = byId("page-controls").hidden = false;
+      showPage(0);
+    }
+
+    openEnvelope.addEventListener("click", () => {
+      const unfolded = byId("envelope-open");
+      if (reducedMotion.matches || !unfolded.complete || !unfolded.naturalWidth) {
+        revealStory();
+        return;
+      }
+      openEnvelope.disabled = true;
+      byId("envelope-sealed").hidden = true;
+      unfolded.hidden = false;
+      openingTimer = setTimeout(revealStory, 380);
+    });
+    nextPage.addEventListener("click", () => {
+      if (page < pages.length - 1) {
+        showPage(page + 1);
+        return;
+      }
+      resetStory();
+      openEnvelope.focus();
+    });
+    previousPage.addEventListener("click", () => showPage(page - 1));
+    byId("back-to-cards").addEventListener("click", () => {
+      resetStory();
+      editor.hidden = true;
+      gallery.hidden = false;
+      byId("cards").querySelector('[data-card="' + selected + '"]').focus();
+    });
+    byId("wish-art").addEventListener("error", event => { event.currentTarget.hidden = true; });
+
+    byId("message").addEventListener("input", () => {
+      drafts.set(selected, byId("message").value);
+      updatePreview();
+    });
+    for (const id of ["recipient", "sender", "color"]) byId(id).addEventListener("input", updatePreview);
+    const filters = Array.from(byId("filters").querySelectorAll("button"));
+    for (const filter of filters) {
+      filter.addEventListener("click", () => {
+        category = filter.dataset.category;
+        for (const button of filters) button.setAttribute("aria-pressed", String(button === filter));
+        renderCards();
+      });
+    }
+    renderCards();
+
+  </script>
+</body>
+</html>
