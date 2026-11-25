@@ -92,7 +92,7 @@
    state.textContent=card.received?t('Received','Recibida'):card.anniversary?t('Purchased','Comprada'):ready?(card.emailState==='sent'?t('Sent','Enviada'):t('Ready to send','Lista para enviar')):t('Upload incomplete','Carga incompleta');
    const title=document.createElement('h2');title.textContent=card.title;
    const recipient=document.createElement('p');
-   const name=card.anniversary?card.name:!card.received?card.recipientName||card.recipientEmail:'';
+   const name=card.anniversary?card.name:!card.received?card.recipientName||card.recipientEmail||card.recipientPhone:'';
    recipient.textContent=name?(card.received?t('From ','De '):t('For ','Para '))+name:'';
    const dates=document.createElement('p');dates.textContent=t('Saved ','Guardada ')+date(card.createdAt);
    const actions=document.createElement('div');actions.className='card-actions';
@@ -111,7 +111,11 @@
    if(ready){
     if(card.viewToken){
      const copy=document.createElement('button');copy.textContent=t('Copy link','Copiar enlace');copy.onclick=async()=>{try{await navigator.clipboard.writeText(card.viewUrl);get('libraryStatus').textContent=t('Private link copied. Anyone with the link can open the card.','Enlace privado copiado. Quien tenga el enlace podrá abrir la tarjeta.');}catch{window.prompt(t('Copy your private card link:','Copia tu enlace privado:'),card.viewUrl);}};actions.append(copy);
-     if(card.emailState!=='sent'){
+     if(card.recipientPhone){
+      const text=document.createElement('a');text.textContent=t('Text card','Enviar por SMS');
+      text.href=window.hugsCardTextUrl(card.recipientPhone,card.viewUrl);actions.append(text);
+     }
+     if(card.recipientEmail&&card.emailState!=='sent'){
       const send=document.createElement('button');send.textContent=t('Email card','Enviar tarjeta');send.onclick=async()=>{if(!confirm(t('Email this card to ','¿Enviar esta tarjeta a ')+card.recipientEmail+'?'))return;send.disabled=true;try{await request('send',{id:card.id,body:{viewToken:card.viewToken}});card.emailState='sent';render();get('libraryStatus').textContent=t('Email accepted for sending. Inbox delivery is not confirmed.','Correo aceptado para envío. La entrega no está confirmada.');}catch(e){get('libraryStatus').textContent=e.message;send.disabled=false;}};actions.append(send);
      }
     }else{const hint=document.createElement('p');hint.textContent=t('Your original share link stays on the sending device. Sign in there once to restore it here.','El enlace original está en el dispositivo desde el que enviaste. Entra allí una vez para restaurarlo aquí.');article.append(hint);}

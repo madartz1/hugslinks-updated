@@ -16,14 +16,61 @@
   const q=new URLSearchParams({action});if(id)q.set('id',id);if(slot)q.set('slot',slot);if(part!==undefined)q.set('part',String(part));
   const headers={};if(auth&&session)headers.Authorization='Bearer '+session.session;
   if(bytes)headers['Content-Type']='application/octet-stream';else if(body)headers['Content-Type']='application/json';
-  const r=await fetch(api+'?'+q,{method:action==='status'?'GET':'POST',headers,body:bytes|| (body?JSON.stringify(body):undefined),cache:'no-store',referrerPolicy:'no-referrer'});
+  const r=await fetch(api+'?'+q,{method:['status','contacts'].includes(action)?'GET':'POST',headers,body:bytes|| (body?JSON.stringify(body):undefined),cache:'no-store',referrerPolicy:'no-referrer'});
   let data;try{data=await r.json()}catch{throw Error('The connection was interrupted. Keep this page open and try again.');}
-  if(!r.ok){if(r.status===401&&auth){session=null;try{sessionStorage.removeItem('hugs-card-sender')}catch{}get('senderStatus').textContent='Verify your sender email again to continue.';buttons();}throw Error(data.error||'Unable to complete this step. Please try again.');}return data;
+  if(!r.ok){if(r.status===401&&auth){session=null;try{sessionStorage.removeItem('hugs-card-sender')}catch{}get('senderStatus').textContent='Verify your sender email again to continue.';get('cardContacts').hidden=true;buttons();}throw Error(data.error||'Unable to complete this step. Please try again.');}return data;
  }
+ const picker=get('deliveryContact'), contactStatus=get('contactStatus');
+ let contacts=[],contactVersion=0;
+ function renderContacts(list){
+  contacts=list;
+  picker.replaceChildren(new Option('Choose a contact',''));
+  for(const contact of contacts){
+   picker.add(new Option([contact.name,contact.email,contact.phone].filter(Boolean).join(' · '),contact.id));
+  }
+  get('removeDeliveryContact').disabled=true;
+ }
+ async function loadContacts(){
+  const version=++contactVersion;
+  get('cardContacts').hidden=!verified();
+  renderContacts([]);
+  if(!verified())return;
+  try{
+   const result=await request('contacts');
+   if(version===contactVersion&&verified())renderContacts(result.contacts);
+  }catch(e){if(version===contactVersion)contactStatus.textContent=e.message;}
+ }
+ picker.onchange=()=>{
+  const contact=contacts.find(item=>item.id===picker.value);
+  get('removeDeliveryContact').disabled=!contact;
+  if(!contact)return;
+  get('deliveryName').value=contact.name;
+  get('deliveryEmail').value=contact.email;
+  get('deliveryPhone').value=contact.phone;
+  invalidate();
+ };
+ async function changeContacts(action,body){
+  if(!verified())return;
+  const version=++contactVersion,save=get('saveDeliveryContact'),remove=get('removeDeliveryContact');
+  save.disabled=true;picker.disabled=true;remove.disabled=true;
+  try{
+   const result=await request(action,{body});
+   if(version!==contactVersion||!verified())return;
+   renderContacts(result.contacts);
+   contactStatus.textContent=action==='save-contact'?'Contact saved to your account.':'Contact removed.';
+  }catch(e){if(version===contactVersion)contactStatus.textContent=e.message;}
+  finally{save.disabled=false;picker.disabled=false;remove.disabled=!picker.value;}
+ }
+ get('saveDeliveryContact').onclick=()=>changeContacts('save-contact',{
+  name:get('deliveryName').value,email:get('deliveryEmail').value.trim(),phone:get('deliveryPhone').value
+ });
+ get('removeDeliveryContact').onclick=()=>{
+  if(picker.value&&confirm('Remove this saved contact?'))changeContacts('remove-contact',{id:picker.value});
+ };
  function invalidate(){revision++;prepared=null;job=null;get('deliveryReady').hidden=true;get('emailResult').textContent='';if(!busy)say(verified()?'Your edits will be included when you prepare a new link. Existing saved links keep their original card.':'Verify your sender email, then prepare your private card link. No card email has been sent.');}
  document.addEventListener('card:changed',invalidate);
- for(const id of ['deliveryName','deliveryEmail','deliveryNote'])get(id).addEventListener('input',invalidate);
- get('senderEmail').addEventListener('input',()=>{challenge=null;get('senderCodeStep').hidden=true;get('senderStatus').textContent=verified()?'Email verified.':'Verify this email before sending.';invalidate();buttons();});
+ for(const id of ['deliveryName','deliveryEmail','deliveryPhone','deliveryNote'])get(id).addEventListener('input',invalidate);
+ get('senderEmail').addEventListener('input',()=>{challenge=null;get('senderCodeStep').hidden=true;get('senderStatus').textContent=verified()?'Email verified.':'Verify this email before sending.';invalidate();buttons();loadContacts();});
  get('requestSenderCode').onclick=async()=>{
   if(!get('senderEmail').reportValidity()||!address())return;
   busy=true;buttons();get('senderStatus').textContent='Sending your verification code…';
@@ -31,7 +78,7 @@
  };
  get('verifySenderCode').onclick=async()=>{
   if(!challenge)return;busy=true;buttons();
-  try{session=await request('verify-code',{body:{challenge,code:get('senderCode').value.trim()},auth:false});remember('hugs-card-sender',session,sessionStorage);get('senderCodeStep').hidden=true;get('senderCode').value='';get('senderStatus').textContent='Email verified. You can now prepare and send your HUG.';say('Add your recipient and prepare your private card link.');history();}catch(e){get('senderStatus').textContent=e.message;}finally{busy=false;buttons();}
+  try{session=await request('verify-code',{body:{challenge,code:get('senderCode').value.trim()},auth:false});remember('hugs-card-sender',session,sessionStorage);get('senderCodeStep').hidden=true;get('senderCode').value='';get('senderStatus').textContent='Email verified. You can now prepare and send your HUG.';say('Add your recipient and prepare your private card link.');history();loadContacts();}catch(e){get('senderStatus').textContent=e.message;}finally{busy=false;buttons();}
  };
  async function filesFor(snapshot){
   const files={},media={};
@@ -46,25 +93,36 @@
  get('prepareDelivery').onclick=async()=>{
   if(busy||!verified())return;if(processing){say('Wait for your uploads to finish.');return;}
   if(!get('deliveryEmail').reportValidity())return;
+  const rawPhone=get('deliveryPhone').value.trim().replace(/[().\s-]/g,'');
+  const recipientPhone=/^\d{10}$/.test(rawPhone)?'+1'+rawPhone:rawPhone;
+  if(get('deliveryPhone').value.trim()&&!/^\+[1-9]\d{7,14}$/.test(recipientPhone)){say('Enter a 10-digit US number or include the country code.');return;}
+  if(!recipientPhone&&!get('deliveryEmail').value.trim()){say('Enter the recipient’s email address or phone number.');return;}
   const current=revision;busy=true;buttons();get('deliveryProgress').hidden=false;get('deliveryProgress').value=0;
   say('Preparing your private card and checking its media…');
   try{
-   if(!job){const snapshot=state();delete snapshot.fields.brief;const files=await filesFor(snapshot);job={...files,requestKey:random(16),viewToken:random(32),recipientEmail:get('deliveryEmail').value.trim(),recipientName:get('deliveryName').value.trim()||snapshot.fields.to,note:get('deliveryNote').value.trim()};}
+   if(!job){const snapshot=state();delete snapshot.fields.brief;const files=await filesFor(snapshot);job={...files,requestKey:random(16),viewToken:random(32),recipientPhone,recipientEmail:get('deliveryEmail').value.trim(),recipientName:get('deliveryName').value.trim()||snapshot.fields.to,note:get('deliveryNote').value.trim()};}
    const pending=job;const unchanged=()=>{if(current!==revision)throw Error('Your card changed while preparing. Prepare again to include your latest edits.');};unchanged();
-   const r=await request('create',{body:{card:pending.card,requestKey:pending.requestKey,viewToken:pending.viewToken,recipientEmail:pending.recipientEmail,recipientName:pending.recipientName,note:pending.note}});pending.id=r.id;
+   const r=await request('create',{body:{card:pending.card,requestKey:pending.requestKey,viewToken:pending.viewToken,recipientPhone:pending.recipientPhone,recipientEmail:pending.recipientEmail,recipientName:pending.recipientName,note:pending.note}});pending.id=r.id;
    let uploaded=0;const total=Object.values(pending.files).reduce((n,b)=>n+b.size,0);
    if(!r.ready)for(const [slot,blob] of Object.entries(pending.files))for(let start=0;start<blob.size;start+=CHUNK){
     unchanged();const bytes=await blob.slice(start,start+CHUNK).arrayBuffer();await request('upload',{id:r.id,slot,part:start/CHUNK,bytes});uploaded+=bytes.byteLength;get('deliveryProgress').value=total?Math.round(uploaded/total*100):100;say('Saving your card securely… '+get('deliveryProgress').value+'%');
    }
    unchanged();const done=await request('finish',{id:r.id,body:{}});unchanged();
    const url=location.origin+'/app/view-card.html#'+r.id+'.'+pending.viewToken;
-   prepared={id:r.id,viewToken:pending.viewToken,url,recipientEmail:pending.recipientEmail,recipientName:pending.recipientName,expiresAt:done.expiresAt,owner:session.email};
-   saveRecord(prepared);get('deliveryProgress').value=100;get('deliveryReady').hidden=false;get('deliverySummary').textContent=`Ready for ${prepared.recipientName||prepared.recipientEmail} · ${prepared.recipientEmail} · Saved in My Cards`;
-   get('viewSavedCard').href=url;get('sendCardEmail').disabled=false;get('shareCardLink').hidden=!navigator.share;say('Your private card link is ready. Tap Send HUGS Card to email it. No card email has been sent yet.');
+   prepared={id:r.id,viewToken:pending.viewToken,url,recipientPhone:pending.recipientPhone,recipientEmail:pending.recipientEmail,recipientName:pending.recipientName,expiresAt:done.expiresAt,owner:session.email};
+   saveRecord(prepared);get('deliveryProgress').value=100;get('deliveryReady').hidden=false;get('deliverySummary').textContent=`Ready for ${prepared.recipientName||prepared.recipientPhone||prepared.recipientEmail} · Saved in My Cards`;
+   get('viewSavedCard').href=url;get('sendCardEmail').hidden=!prepared.recipientEmail;
+   get('sendCardEmail').disabled=false;
+   const textLink=get('sendCardText');
+   textLink.hidden=!prepared.recipientPhone;
+   if(prepared.recipientPhone)textLink.href=window.hugsCardTextUrl(prepared.recipientPhone,url,pending.note);
+   else textLink.removeAttribute('href');
+   get('shareCardLink').hidden=!navigator.share;
+   say('Your private card link is ready to send.');
   }catch(e){say(e.message);}finally{busy=false;buttons();}
  };
  get('sendCardEmail').onclick=async()=>{
-  if(!prepared||busy)return;const card=prepared;busy=true;buttons();get('sendCardEmail').disabled=true;get('emailResult').textContent='Sending your HUGS Card email…';
+  if(!prepared?.recipientEmail||busy)return;const card=prepared;busy=true;buttons();get('sendCardEmail').disabled=true;get('emailResult').textContent='Sending your HUGS Card email…';
   try{await request('send',{id:card.id,body:{viewToken:card.viewToken}});get('emailResult').textContent='Email accepted for sending to '+card.recipientEmail+'. Inbox delivery is not yet confirmed. Ask the recipient to check spam if needed.';saveRecord({...card,emailed:true});}catch(e){get('emailResult').textContent=e.message;get('sendCardEmail').disabled=false;}finally{busy=false;buttons();}
  };
  async function copy(url){try{await navigator.clipboard.writeText(url);say('Private card link copied. Anyone with this link can open it.');}catch{const input=document.createElement('input');input.value=url;input.readOnly=true;get('deliveryStatus').replaceChildren(input);input.focus();input.select();}}
@@ -73,9 +131,13 @@
  function history(){
   const list=get('savedCardList');list.replaceChildren();const saved=records().filter(r=>verified()&&r.owner===session.email&&/^[a-f0-9]{32}$/.test(r.id));get('savedCardHistory').hidden=!saved.length;
   for(const record of saved){
-   const li=document.createElement('li'),label=document.createElement('span');label.textContent=(record.recipientName||record.recipientEmail)+(record.emailed?' · emailed':' · link ready');li.append(label);
+   const li=document.createElement('li'),label=document.createElement('span');label.textContent=(record.recipientName||record.recipientEmail||record.recipientPhone)+(record.emailed?' · emailed':' · link ready');li.append(label);
    const copyButton=document.createElement('button');copyButton.className='secondary';copyButton.textContent='Copy link';copyButton.onclick=()=>copy(record.url);li.append(copyButton);
-   if(!record.emailed){const send=document.createElement('button');send.className='secondary';send.textContent='Email card';send.onclick=async()=>{if(!verified()||session.email!==record.owner){say('Verify '+record.owner+' above to email this saved card.');return;}send.disabled=true;try{await request('send',{id:record.id,body:{viewToken:record.viewToken}});saveRecord({...record,emailed:true});say('Email accepted for sending to '+record.recipientEmail+'. Inbox delivery is not yet confirmed.');}catch(e){say(e.message);send.disabled=false;}};li.append(send);}
+   if(record.recipientPhone){
+    const text=document.createElement('a');text.className='secondary';text.textContent='Text card';
+    text.href=window.hugsCardTextUrl(record.recipientPhone,record.url);li.append(text);
+   }
+   if(record.recipientEmail&&!record.emailed){const send=document.createElement('button');send.className='secondary';send.textContent='Email card';send.onclick=async()=>{if(!verified()||session.email!==record.owner){say('Verify '+record.owner+' above to email this saved card.');return;}send.disabled=true;try{await request('send',{id:record.id,body:{viewToken:record.viewToken}});saveRecord({...record,emailed:true});say('Email accepted for sending to '+record.recipientEmail+'. Inbox delivery is not yet confirmed.');}catch(e){say(e.message);send.disabled=false;}};li.append(send);}
    const remove=document.createElement('button');remove.className='secondary';remove.textContent='Remove card';remove.onclick=async()=>{
     if(!verified()||session.email!==record.owner){say('Verify '+record.owner+' above to remove this saved card.');get('senderEmail').focus();return;}
     if(!confirm('Remove this online card and its media? Its link will stop working for everyone. Your local draft stays on this device.'))return;
@@ -85,6 +147,6 @@
   }
  }
  session=read('hugs-card-sender',sessionStorage,null);if(session){get('senderEmail').value=session.email;get('senderStatus').textContent='Sender email verified for this browser session.';}
- history();buttons();
+ history();buttons();loadContacts();
  request('status',{auth:false}).then(r=>{configured=r.configured;buttons();if(!configured)say('Online card delivery is temporarily unavailable. Your draft and offline download remain available.');}).catch(e=>say(e.message));
 })();
