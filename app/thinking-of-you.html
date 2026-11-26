@@ -460,6 +460,10 @@
         }
       }
     }
-  </script>
+      window.addEventListener("DOMContentLoaded", () => {
+      window.HugsCardOwnerTest?.mount({ collection: "thinking-of-you", selected: () => selected });
+    });
+</script>
+  <script src="/app/owner-card-test.js" defer></script>
 </body>
 </html>

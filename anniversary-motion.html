@@ -73,5 +73,11 @@
     </section>
     <p id="status" role="status" class="status"></p>
   </main>
+  <script src="/app/owner-card-test.js" defer></script>
+  <script>
+    window.addEventListener("DOMContentLoaded", () => {
+      window.HugsCardOwnerTest?.mount({ collection: "motion", selected: () => 0, host: "preview", anniversary: true });
+    });
+  </script>
 </body>
 </html>
