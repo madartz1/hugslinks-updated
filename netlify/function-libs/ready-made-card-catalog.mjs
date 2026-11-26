@@ -1,3 +1,4 @@
+import { cards as infinityCards } from "../../app/all-infinity-cards.mjs";
 import { cards as truthCards } from "../../app/thanksgiving-truth-cards.mjs";
 import { cards as birthdayCards } from "../../app/birthday-hugs-cards.mjs";
 
@@ -11,7 +12,11 @@ const thanksgivingTruth = { id: "thanksgiving-truth", title: "Thanksgiving Truth
   return { ...card, cover, inside: cover, titleOnCover: true };
 }) };
 
-export const collections = [birthday, thanksgivingTruth, ...[
+const infinity = { id: "all-infinity", title: "All Infinity", cards: infinityCards.map((card, index) => ({
+  ...card, cover: "/assets/all-infinity/card-" + String(index + 1).padStart(2, "0") + ".webp"
+})) };
+
+export const collections = [birthday, thanksgivingTruth, infinity, ...[
   {
     "id": "gen-z-holiday-hugs",
     "title": "Gen Z Holiday Hugs",
