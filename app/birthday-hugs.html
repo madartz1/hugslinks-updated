@@ -1,0 +1,564 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta name="referrer" content="no-referrer">
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Birthday Hugs · HUGSLinks Cards</title>
+  <link rel="stylesheet" href="/app/thinking-of-you.css">
+  <style>
+    :root { font-family: system-ui, sans-serif; color: #eef8ff; background: #061735; color-scheme: dark; }
+    * { box-sizing: border-box; }
+    body { margin: 0; background: radial-gradient(ellipse at top, #12559b, #061735 64%); }
+    [hidden] { display: none !important; }
+    header, main { max-width: 1200px; margin: auto; padding: 20px; }
+    header { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px; }
+    .logo { font-weight: 850; font-size: 1.4rem; }
+    .logo span, a { color: #73e2ff; }
+    h1 { font-size: clamp(2rem, 6vw, 3.6rem); margin: .2em 0; line-height: 1.05; }
+    h2 { margin: 0 0 12px; }
+    p { line-height: 1.5; }
+    .muted { color: #c3d9f1; }
+    button, select, input, textarea { font: inherit; }
+    button { cursor: pointer; border: 1px solid #54c9f5; border-radius: 12px; color: #fff; background: #123d75; }
+    :focus-visible { outline: 3px solid #a6e8ff; outline-offset: 3px; }
+    .cards { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 12px; max-width: 950px; }
+    .cover { display: block; width: 100%; padding: 0; border-radius: 14px; overflow: hidden; aspect-ratio: 3 / 4; }
+
+    .panel { max-width: 545px; margin: 0 auto; background: #102d55; border: 1px solid #3377b3; border-radius: 18px; padding: 16px; }
+    .selected-cover { width: min(100%, 252px); margin: 0 auto 18px; }
+    #preview-heading { text-align: center; }
+    .preview { text-align: center; overflow-wrap: anywhere; }
+    .gift-open { display: block; width: 100%; padding: 0; border: 0; background: transparent; }
+    .envelope-art { position: relative; display: block; aspect-ratio: 1.9; overflow: hidden; margin-bottom: 12px; background: #071f3b; border: 1px solid #537fa5; border-radius: 16px; }
+    .envelope-art img { position: absolute; width: 100%; inset: 0 0 auto; }
+    .envelope-art .envelope-sealed { transform: translateY(-19%); }
+    .envelope-art .envelope-open { height: 100%; object-fit: cover; object-position: center 51%; animation: envelope-open .38s ease-out both; }
+    .envelope-art[data-color="mist"] img { filter: grayscale(.65) brightness(1.25); }
+    .envelope-art[data-color="electric"] img { filter: saturate(1.45) brightness(1.12); }
+    .gift-open-label, .page-controls button { display: inline-flex; align-items: center; justify-content: center; min-height: 44px; padding: 8px 16px; border-radius: 24px; font-weight: 750; }
+    .gift-open-label { color: #061735; background: #65daff; }
+    #to { display: block; margin: 6px 0 10px; }
+    .story-card { perspective: 1000px; }
+    .story-page { position: relative; display: grid; align-content: center; justify-items: center; gap: 10px; width: 100%; min-height: clamp(285px, 71vw, 400px); padding: 26px 22px; border: 1px solid #537fa5; border-radius: 16px; background: #071c3d; color: #f4ead9; font-family: Georgia, serif; box-shadow: 0 12px 26px #00112b50; transform-origin: left center; animation: page-turn .38s ease-out both; }
+    .story-card[data-direction="back"] .story-page { transform-origin: right center; animation-name: page-turn-back; }
+    .story-page::before { content: ""; position: absolute; inset: 9px; border: 1px solid #65a7cf; border-radius: 9px; pointer-events: none; }
+    .story-page h3, .story-page p { margin: 0; max-width: 100%; }
+    .story-page h3 { font-size: clamp(1.45rem, 5vw, 2rem); line-height: 1.15; }
+    .story-cover { display: block; min-height: 0; padding: 0; overflow: hidden; background: #061735; }
+    .story-cover::before { content: none; }
+
+    .story-cover h3, .story-wish h3 { position: absolute; width: 1px; height: 1px; padding: 0; clip-path: inset(50%); overflow: hidden; }
+    .story-wish { aspect-ratio: 3 / 4; gap: 14px; background: radial-gradient(ellipse at 50% 32%, #164279, #071c3d 72%); color: #fff4de; }
+    .story-wish img { display: block; width: 100%; height: auto; aspect-ratio: 3 / 2; object-fit: contain; border: 1px solid #65a7cf; border-radius: 8px; }
+    .story-wish .portrait-art { object-fit: cover; object-position: center 38%; }
+    #wish { font-size: clamp(1.16rem, 3vw, 1.5rem); line-height: 1.35; text-wrap: balance; }
+    .story-message { background: radial-gradient(ellipse at 50% 32%, #354d65, #233951 78%); }
+    .story-rule { width: 72px; height: 1px; background: #65a7cf; }
+    #inside { white-space: pre-wrap; }
+    #signature, #message-recipient { font-style: italic; }
+    .page-controls { display: flex; align-items: center; justify-content: center; flex-wrap: wrap; gap: 8px; margin: 12px 0; }
+    #page-count { font-size: .88rem; }
+    @keyframes envelope-open { from { opacity: .4; scale: .98; } }
+    @keyframes page-turn { from { opacity: .75; transform: rotateY(-16deg); } }
+    @keyframes page-turn-back { from { opacity: .75; transform: rotateY(16deg); } }
+    @media (prefers-reduced-motion: reduce) {
+      .story-page, .story-card[data-direction="back"] .story-page, .envelope-art .envelope-open { animation: none; }
+    }
+    label { display: block; margin: 12px 0; font-size: .95rem; }
+    input, textarea, select { width: 100%; min-height: 44px; padding: 9px; margin-top: 5px; border-radius: 9px; border: 1px solid #7896b6; background: #192f49; color: #eef8ff; }
+    input::placeholder, textarea::placeholder { color: #adbed0; opacity: 1; }
+    textarea { min-height: 90px; resize: vertical; }
+    #send-hug button, #retry-delivery { min-height: 44px; padding: 8px 16px; }
+    #send-hug button { background: #65daff; color: #061735; font-weight: 750; }
+    #checkout-status, #delivery-status { min-height: 1.5em; }
+    .notice { font-size: .92rem; color: #c3d9f1; }
+    .back { display: inline-flex; align-items: center; min-height: 44px; padding: 6px 12px; margin-bottom: 14px; }
+    .browse-cards { display: inline-flex; align-items: center; min-height: 44px; padding: 8px 16px; border-radius: 12px; background: #65daff; color: #061735; font-weight: 750; text-decoration: none; }
+    #filters { display: flex; flex-wrap: wrap; gap: 8px; margin: 20px 0 14px; padding: 4px; border: 3px solid #a6e8ff; max-width: 950px; scroll-margin-top: 16px; }
+    #filters button { min-height: 44px; padding: 8px 12px; }
+    #filters button[aria-pressed="true"] { font-weight: 750; color: #061735; background: #65daff; }
+    @media (max-width: 900px) { .cards { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
+    @media (max-width: 700px) {
+      header, main { padding: 16px; }
+      .cards { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    }
+  
+    .selected-cover { overflow: hidden; }
+    .birthday-face {
+      display: grid;
+      grid-template-rows: minmax(0, 1fr) auto;
+      width: 100%;
+      height: 100%;
+      aspect-ratio: 3 / 4;
+      background: #f5f9ff;
+      color: #0b2849;
+      text-align: center;
+      container-type: inline-size;
+    }
+    .birthday-face img { display: block; width: 100%; height: 100%; object-fit: cover; }
+    .birthday-face strong {
+      display: grid;
+      place-items: center;
+      min-height: 32cqw;
+      padding: 4cqw 5cqw;
+      border-top: 2px solid #9cc9e6;
+      font: 700 clamp(.8rem, 8cqw, 2rem)/1.1 Georgia, serif;
+      text-wrap: balance;
+    }
+    .selected-cover { overflow: hidden; border: 1px solid #537fa5; border-radius: 12px; }
+    .story-cover { max-width: 360px; margin-inline: auto; }
+    #wish-art { width: min(100%, 360px); height: auto; aspect-ratio: 3 / 2; object-fit: cover; object-position: center 66%; }
+  </style>
+</head>
+<body>
+  <header><div class="logo">♡ HUGS<span>Links</span> Cards</div><a href="/app/#birthdays">Back to Birthdays</a></header>
+  <main>
+    <section id="delivery-result" class="panel" hidden>
+      <p id="delivery-status" role="status"></p>
+      <button id="retry-delivery" type="button" hidden>Retry delivery</button>
+      <a id="delivered-card" hidden>View your sent HUG</a>
+    </section>
+    <div id="gallery">
+      <p class="muted">HUGSLinks Cards</p>
+      <h1>Birthday Hugs</h1>
+      <p>Choose a birthday card, add your own note, and preview how it opens.</p>
+      <a class="browse-cards" href="#filters">Ready-Made Traditional Cards</a>
+      <p><a href="https://hugslinks-card-app.netlify.app/how-your-card-helps.html">Explore the HUGSLinks mission</a></p>
+      <nav id="filters" aria-label="Card categories">
+        <button type="button" data-category="all" aria-pressed="true">All</button>
+        <button type="button" data-category="friends" aria-pressed="false">Best Friends</button>
+        <button type="button" data-category="family" aria-pressed="false">Family</button>
+        <button type="button" data-category="funny" aria-pressed="false">Funny</button>
+        <button type="button" data-category="gentle" aria-pressed="false">Heartfelt</button>
+      </nav>
+      <section class="cards" id="cards" aria-label="Birthday Hugs card covers" tabindex="-1"></section>
+    </div>
+    <section class="panel" id="card-editor" aria-labelledby="preview-heading" hidden>
+        <button type="button" class="back" id="back-to-cards">← Back to cards</button>
+        <div class="selected-cover" id="selected-cover"></div>
+        <h1 id="preview-heading" tabindex="-1"></h1>
+        <p id="price-note" class="notice" style="text-align:center">Personalize and preview your three-page HUG.</p>
+        <div id="personalize">
+        <label>Personal note <textarea id="message" maxlength="600"></textarea></label>
+        <label>Recipient name <input id="recipient" maxlength="80" placeholder="Optional"></label>
+        <label>Your name <input id="sender" maxlength="80" placeholder="Optional"></label>
+        <label>Envelope color <select id="color">
+          <option value="navy">Midnight Navy</option>
+          <option value="mist">Blue Mist</option>
+          <option value="electric">Electric Blue</option>
+        </select></label>
+        <form id="send-hug" hidden>
+          <label>Your email <input id="sender-email" type="email" autocomplete="email" maxlength="254" required></label>
+          <label>Recipient email <input id="recipient-email" type="email" autocomplete="off" maxlength="254" required></label>
+          <button type="submit">Send This HUG · $2.99</button>
+          <p id="checkout-status" role="status">Your recipient gets the card by email. Your receipt goes to your email.</p>
+        </form>
+        </div>
+        <section class="preview" aria-label="Recipient preview">
+          <button id="open-envelope" class="gift-open" type="button">
+            <span id="envelope" class="envelope-art" data-color="navy">
+              <img class="envelope-sealed" id="envelope-sealed" src="https://hugslinks-card-app.netlify.app/assets/anniversary/envelope-sealed.webp" alt="">
+              <img class="envelope-open" id="envelope-open" src="https://hugslinks-card-app.netlify.app/assets/anniversary/envelope-open.webp" alt="" hidden>
+            </span>
+            <span class="gift-open-label">Open Your HUG</span>
+            <span id="to">A HUG for you</span>
+          </button>
+          <div class="story-card" id="story" hidden>
+            <article class="story-page story-cover">
+              <h3 id="front" tabindex="-1"></h3>
+              <div id="preview-cover"></div>
+            </article>
+            <article class="story-page story-wish" hidden>
+              <h3 id="wish-heading" tabindex="-1">The inside of your card</h3>
+              <img id="wish-art" alt="" width="720" height="480" hidden>
+              <span class="story-rule" aria-hidden="true"></span>
+              <p id="wish"></p>
+            </article>
+            <article class="story-page story-message hug-finale" hidden>
+              <div class="message-hearts" aria-hidden="true"><span>♥</span><span>♡</span><span>♡</span><span>♥</span><span>♡</span></div>
+              <span class="message-brand"><img src="/assets/HUGS_Header_Logo_Transparent.png" alt="HUGSLinks house and heart" width="44" height="44"></span>
+              <h3 id="message-heading" tabindex="-1">A note for you</h3>
+              <p id="message-recipient" hidden></p>
+              <span class="story-rule" aria-hidden="true"></span>
+              <p id="inside"></p>
+              <p id="signature" hidden></p>
+            </article>
+          </div>
+          <nav id="page-controls" class="page-controls" aria-label="Card pages" hidden>
+            <button id="previous-page" type="button" hidden>Back</button>
+            <span id="page-count" role="status"></span>
+            <button id="next-page" type="button">Turn the Page</button>
+          </nav>
+          <p id="final-mission" hidden style="text-align:center;margin:12px auto 0"><strong style="display:block">Every HUG Helps Make a Difference</strong><small style="display:block;margin:4px 0 8px">Discover the purpose behind HUGSLinks Cards.</small><a href="https://hugslinks-card-app.netlify.app/how-your-card-helps.html">Explore the HUGSLinks Mission</a></p>
+        </section>
+    </section>
+  </main>
+  <script>
+    const cards = [
+      {
+        "categories": "friends",
+        "title": "You Make Getting Older Look Suspiciously Good.",
+        "wish": "Another year and somehow the evidence keeps pointing to you getting cooler.",
+        "greeting": "Happy birthday, bestie. I’m ready for cake and whatever story we swear we’ll never tell."
+      },
+      {
+        "categories": "funny",
+        "title": "No Cap, You’re the Birthday Gift.",
+        "wish": "I was going to get you something legendary. Then I realized you already showed up.",
+        "greeting": "Happy birthday. You’re still getting cake, though."
+      },
+      {
+        "categories": "friends",
+        "title": "Your Birthday Has Main Character Energy.",
+        "wish": "Today’s schedule is looking like good music, good food, and everyone rooting for you.",
+        "greeting": "Happy birthday. Send me the playlist when you make it."
+      },
+      {
+        "categories": "family",
+        "title": "Big Birthday Hugs, Little Legend.",
+        "wish": "You’ve gotten a little taller and somehow even funnier since last year.",
+        "greeting": "Happy birthday! I hope you get to pick the game and the biggest slice."
+      },
+      {
+        "categories": "friends",
+        "title": "Different Zip Codes. Same Birthday Chaos.",
+        "wish": "If I were there, I’d sing too loud and pretend I remembered to buy candles.",
+        "greeting": "Happy birthday from over here. Let’s make a video call and eat cake together."
+      },
+      {
+        "categories": "friends",
+        "title": "Bestie, You’re a Whole Celebration.",
+        "wish": "You’re the friend who turns a quick stop into a story we’re still laughing about months later.",
+        "greeting": "Happy birthday. I’m free this weekend if you want to make another one."
+      },
+      {
+        "categories": "family",
+        "title": "Birthday Brunch? Say Less.",
+        "wish": "Today I want to do the ordering, the dishes, and the part where someone remembers to take a picture.",
+        "greeting": "Happy birthday. You get to pick the place and take your sweet time."
+      },
+      {
+        "categories": "gentle",
+        "title": "A Soft Birthday for You.",
+        "wish": "If this year has been a lot, it’s okay to want a quiet birthday. I hope today gives you a little room to breathe.",
+        "greeting": "I’m thinking of you. I can drop off a treat or keep you company, whichever feels right."
+      },
+      {
+        "categories": "family",
+        "title": "I Saved You the Last Slice. Allegedly.",
+        "wish": "Some of my favorite stories start with us arguing over something small and laughing before either of us could win.",
+        "greeting": "Happy birthday. This year I’ll save you a real slice. You can hold me to it."
+      },
+      {
+        "categories": "family",
+        "title": "Cool Aunt Energy Is Ageless.",
+        "wish": "You always knew when to give advice and when to put on music and let me talk.",
+        "greeting": "Happy birthday to the aunt who made growing up a little more fun."
+      },
+      {
+        "categories": "family",
+        "title": "Little Legend, Huge Birthday.",
+        "wish": "I hope your day has pancakes, a very loud song, and at least one game where the grown-ups lose.",
+        "greeting": "Happy birthday, little one. I’m cheering for you all year."
+      },
+      {
+        "categories": "gentle",
+        "title": "A Little Birthday Magic After Midnight.",
+        "wish": "I’m glad you’re here. I hope this year brings more of the ordinary nights we wish could last a little longer.",
+        "greeting": "Happy birthday, love. I saved you a cupcake."
+      },
+      {
+        "categories": "funny",
+        "title": "Even the Train Can’t Delay Your Birthday.",
+        "wish": "If the train decides it has other plans, I’m still getting this birthday hug to you.",
+        "greeting": "Happy birthday. You pick the neighborhood and I’ll meet you there."
+      },
+      {
+        "categories": "funny",
+        "title": "Another Trip Around the Sun. Drop the Playlist.",
+        "wish": "If I made a playlist for all the times you got me through a long day, we’d be listening till morning.",
+        "greeting": "Happy birthday. What song are we starting with?"
+      },
+      {
+        "categories": "gentle",
+        "title": "Every Year With You Belongs in the Album.",
+        "wish": "One of my favorite memories is an ordinary day you probably don’t even remember. That’s how often you make life better.",
+        "greeting": "Happy birthday. I’d love to hear which memories you’d put in the album."
+      },
+      {
+        "categories": "funny",
+        "title": "Birthday Level Unlocked.",
+        "wish": "New character perks include choosing dinner and pausing the game whenever you want cake.",
+        "greeting": "Happy birthday. I’ll join for a round whenever you’re ready."
+      },
+      {
+        "categories": "gentle",
+        "title": "I’m Glad You Were Born.",
+        "wish": "There are days I got through because you picked up the phone, asked a real question, or sat with me for a while.",
+        "greeting": "I hope you feel some of that care coming back to you today. Happy birthday."
+      },
+      {
+        "categories": "gentle",
+        "title": "Cake Can Be Quiet, Too.",
+        "wish": "Some birthdays call for a crowd. Some call for a bench, a slice, and a friend who can sit awhile.",
+        "greeting": "Happy birthday. If a low-key day sounds good, I’m up for it."
+      }
+    ];
+    const byId = id => document.getElementById(id);
+    const drafts = new Map();
+    const gallery = byId("gallery");
+    const editor = byId("card-editor");
+    const selectedCover = byId("selected-cover");
+    const story = byId("story");
+    const pages = Array.from(story.children);
+    const openEnvelope = byId("open-envelope");
+    const nextPage = byId("next-page");
+    const previousPage = byId("previous-page");
+    const reducedMotion = matchMedia("(prefers-reduced-motion: reduce)");
+    const nextLabels = ["Turn the Page", "Read Your Message", "Replay"];
+    let selected;
+    let recipientView = false;
+    let page = 0;
+    let openingTimer;
+
+    const artworkRoot = "/assets/birthday-hugs/";
+    let category = "all";
+
+    function artworkPath(index) {
+      return artworkRoot + "card-" + String(index + 1).padStart(2, "0") + ".webp";
+    }
+
+    function cardFace(index) {
+      const image = document.createElement("img");
+      image.alt = "";
+      image.loading = "lazy";
+      image.src = artworkPath(index);
+      const face = document.createElement("span");
+      face.className = "birthday-face";
+      const title = document.createElement("strong");
+      title.textContent = cards[index].title;
+      face.append(image, title);
+      return face;
+    }
+
+    function showSelectedCard(index) {
+      selected = index;
+      const card = cards[index];
+      byId("preview-heading").textContent = card.title;
+      selectedCover.replaceChildren(cardFace(index));
+      byId("front").textContent = card.title;
+      byId("preview-cover").replaceChildren(cardFace(index));
+      const wishArt = byId("wish-art");
+      wishArt.src = artworkPath(index);
+      wishArt.hidden = false;
+      byId("wish").textContent = card.wish;
+      byId("message").value = drafts.get(index) ?? card.greeting;
+      updatePreview();
+      resetStory();
+      gallery.hidden = true;
+      editor.hidden = false;
+      byId("preview-heading").focus({ preventScroll: true });
+      editor.scrollIntoView({ block: "start" });
+    }
+
+    function renderCards() {
+      byId("cards").replaceChildren(...cards.flatMap((card, index) => {
+        if (category !== "all" && !card.categories.split(" ").includes(category)) return [];
+        const button = document.createElement("button");
+        button.type = "button";
+        button.className = "cover";
+        button.dataset.card = index;
+        button.setAttribute("aria-label", "Select " + card.title);
+        button.append(cardFace(index));
+        button.addEventListener("click", () => showSelectedCard(index));
+        return button;
+      }));
+    }
+
+    function updatePreview() {
+      byId("inside").textContent = byId("message").value;
+      const sender = byId("sender").value.trim();
+      const signature = byId("signature");
+      signature.textContent = sender ? "With care, " + sender : "";
+      signature.hidden = !sender;
+      const recipient = byId("recipient").value.trim();
+      byId("to").textContent = recipient ? "To " + recipient : "A HUG for you";
+      const messageRecipient = byId("message-recipient");
+      messageRecipient.textContent = recipient ? "For " + recipient : "";
+      messageRecipient.hidden = !recipient;
+      byId("envelope").dataset.color = byId("color").value;
+    }
+
+    function showPage(index) {
+      story.dataset.direction = index < page ? "back" : "forward";
+      page = index;
+      pages.forEach((item, i) => { item.hidden = i !== page; });
+      previousPage.hidden = page === 0;
+      byId("page-count").textContent = (page + 1) + " of " + pages.length;
+      nextPage.textContent = nextLabels[page];
+      byId("final-mission").hidden = page !== pages.length - 1;
+      pages[page].querySelector("h3").focus();
+    }
+
+    function resetStory() {
+      clearTimeout(openingTimer);
+      byId("final-mission").hidden = true;
+      story.hidden = byId("page-controls").hidden = true;
+      selectedCover.hidden = recipientView;
+      byId("envelope-sealed").hidden = false;
+      byId("envelope-open").hidden = true;
+      openEnvelope.disabled = openEnvelope.hidden = false;
+      page = 0;
+    }
+
+    function revealStory() {
+      openEnvelope.hidden = true;
+      selectedCover.hidden = true;
+      story.hidden = byId("page-controls").hidden = false;
+      showPage(0);
+    }
+
+    openEnvelope.addEventListener("click", () => {
+      const unfolded = byId("envelope-open");
+      if (reducedMotion.matches || !unfolded.complete || !unfolded.naturalWidth) {
+        revealStory();
+        return;
+      }
+      openEnvelope.disabled = true;
+      byId("envelope-sealed").hidden = true;
+      unfolded.hidden = false;
+      openingTimer = setTimeout(revealStory, 380);
+    });
+    nextPage.addEventListener("click", () => {
+      if (page < pages.length - 1) {
+        showPage(page + 1);
+        return;
+      }
+      resetStory();
+      openEnvelope.focus();
+    });
+    previousPage.addEventListener("click", () => showPage(page - 1));
+    byId("back-to-cards").addEventListener("click", () => {
+      resetStory();
+      editor.hidden = true;
+      gallery.hidden = false;
+      byId("cards").querySelector('[data-card="' + selected + '"]').focus();
+    });
+    byId("wish-art").addEventListener("error", event => { event.currentTarget.hidden = true; });
+
+    byId("message").addEventListener("input", () => {
+      drafts.set(selected, byId("message").value);
+      updatePreview();
+    });
+    for (const id of ["recipient", "sender", "color"]) byId(id).addEventListener("input", updatePreview);
+    const filters = Array.from(byId("filters").querySelectorAll("button"));
+    for (const filter of filters) {
+      filter.addEventListener("click", () => {
+        category = filter.dataset.category;
+        for (const button of filters) button.setAttribute("aria-pressed", String(button === filter));
+        renderCards();
+      });
+    }
+    renderCards();
+
+    if (location.origin === "https://hugslinks.com") {
+      const endpoint = "https://hugslinks-card-app.netlify.app/.netlify/functions/birthday-hugs-live";
+      const sendForm = byId("send-hug");
+      const delivery = byId("delivery-result");
+      const status = byId("delivery-status");
+      const retry = byId("retry-delivery");
+      const hash = new URLSearchParams(location.hash.slice(1));
+      const session = new URLSearchParams(location.search).get("session_id");
+
+      async function request(body, token) {
+        const url = new URL(endpoint);
+        if (token) url.searchParams.set("hug", token);
+        const response = await fetch(url, body ? {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(body)
+        } : {});
+        const result = await response.json();
+        if (!response.ok) throw new Error(result.error || "This step could not be completed.");
+        return result;
+      }
+
+      async function finishDelivery() {
+        retry.hidden = true;
+        status.textContent = "Verifying payment and sending your emails…";
+        try {
+          const { link } = await request({ action: "finish", session, buyer: hash.get("buyer") });
+          const cardLink = byId("delivered-card");
+          cardLink.href = link;
+          cardLink.hidden = false;
+          status.textContent = "Your HUG and receipt were sent.";
+          history.replaceState(null, "", location.pathname);
+        } catch (error) {
+          status.textContent = error.message;
+          retry.hidden = false;
+        }
+      }
+
+      async function openDeliveredCard(token) {
+        gallery.hidden = true;
+        status.textContent = "Opening your HUG…";
+        try {
+          const { card } = await request(null, token);
+          if (!Number.isInteger(card?.card) || !cards[card.card]) throw new Error("This HUG could not be found.");
+          byId("recipient").value = card.recipient;
+          byId("sender").value = card.sender;
+          byId("color").value = card.color;
+          drafts.set(card.card, card.message);
+          byId("personalize").hidden = true;
+          byId("back-to-cards").hidden = true;
+          byId("price-note").hidden = true;
+          delivery.hidden = true;
+          showSelectedCard(card.card);
+          selectedCover.hidden = true;
+          openEnvelope.focus();
+        } catch (error) {
+          status.textContent = error.message;
+        }
+      }
+
+      if (hash.has("hug")) {
+        recipientView = true;
+        delivery.hidden = false;
+        openDeliveredCard(hash.get("hug"));
+      } else {
+        sendForm.hidden = false;
+        byId("price-note").textContent = "$2.99 per recipient";
+        sendForm.addEventListener("submit", async event => {
+          event.preventDefault();
+          const button = sendForm.querySelector("button");
+          const checkoutStatus = byId("checkout-status");
+          button.disabled = true;
+          checkoutStatus.textContent = "Opening secure Stripe checkout…";
+          try {
+            const { url } = await request({
+              card: selected,
+              email: byId("sender-email").value,
+              recipientEmail: byId("recipient-email").value,
+              color: byId("color").value,
+              sender: byId("sender").value,
+              recipient: byId("recipient").value,
+              message: byId("message").value
+            });
+            location.assign(url);
+          } catch (error) {
+            checkoutStatus.textContent = error.message;
+            button.disabled = false;
+          }
+        });
+        if (session && hash.has("buyer")) {
+          gallery.hidden = true;
+          delivery.hidden = false;
+          retry.addEventListener("click", finishDelivery);
+          finishDelivery();
+        }
+      }
+    }
+  </script>
+</body>
+</html>
