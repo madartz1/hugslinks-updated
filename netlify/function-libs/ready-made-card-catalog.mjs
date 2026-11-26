@@ -12,9 +12,11 @@ const thanksgivingTruth = { id: "thanksgiving-truth", title: "Thanksgiving Truth
   return { ...card, cover, inside: cover, titleOnCover: true };
 }) };
 
-const infinity = { id: "all-infinity", title: "All Infinity", cards: infinityCards.map((card, index) => ({
-  ...card, cover: "/assets/all-infinity/card-" + String(index + 1).padStart(2, "0") + ".webp"
-})) };
+const infinity = { id: "all-infinity", title: "All Infinity", cards: infinityCards.map((card, index) => {
+  const suffix = String(index + 1).padStart(2, "0") + ".webp";
+  const assets = "/assets/all-infinity/";
+  return { ...card, cover: assets + "card-" + suffix, inside: assets + "inside-" + suffix };
+}) };
 
 export const collections = [birthday, thanksgivingTruth, infinity, ...[
   {
