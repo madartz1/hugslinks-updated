@@ -1,7 +1,7 @@
 export const cards = [
   {
     "categories": "accountability",
-    "title": "Stop saying you sorry and act like you sorry and do better!",
+    "title": "Stop saying you’re sorry. Show me you mean it by doing better.",
     "wish": "I hear your apology. What would help me trust it is seeing the behavior change, especially the next time we disagree.",
     "greeting": "If you want to make this right, tell me what you’ll do differently and give me time to see it."
   },
