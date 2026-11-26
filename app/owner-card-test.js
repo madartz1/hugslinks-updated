@@ -10,7 +10,7 @@
   };
   const paths = href => href.pathname.replace(/\.html$/, "");
   const trusted = url => {
-    if (url.origin === liveOrigin) return url.pathname === "/app/" || url.pathname === "/app" || Boolean(pages[paths(url)]);
+    if (url.origin === liveOrigin) return url.pathname.startsWith("/app/") || url.pathname === "/app" || Boolean(pages[paths(url)]);
     if (url.origin === "https://hugslinks-card-app.netlify.app") {
       return ["/christmas", "/thanksgiving"].includes(paths(url));
     }

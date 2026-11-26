@@ -1,3 +1,4 @@
+import { cards as truthCards } from "../../app/thanksgiving-truth-cards.mjs";
 import { cards as birthdayCards } from "../../app/birthday-hugs-cards.mjs";
 
 const birthday = { id: "birthday", title: "Birthday Hugs", cards: birthdayCards.map((card, index) => {
@@ -5,7 +6,12 @@ const birthday = { id: "birthday", title: "Birthday Hugs", cards: birthdayCards.
   return { ...card, cover, inside: cover, titleOnCover: true };
 }) };
 
-export const collections = [birthday, ...[
+const thanksgivingTruth = { id: "thanksgiving-truth", title: "Thanksgiving Truth & Healing", cards: truthCards.map((card, index) => {
+  const cover = "/assets/thanksgiving-truth/card-" + String(index + 1).padStart(2, "0") + ".webp";
+  return { ...card, cover, inside: cover, titleOnCover: true };
+}) };
+
+export const collections = [birthday, thanksgivingTruth, ...[
   {
     "id": "gen-z-holiday-hugs",
     "title": "Gen Z Holiday Hugs",
