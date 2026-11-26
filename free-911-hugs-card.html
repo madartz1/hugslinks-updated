@@ -35,5 +35,11 @@
     document.getElementById('mobileOpen').addEventListener('click',openTribute);
     document.getElementById('shareTribute').addEventListener('click',async()=>{const note=document.getElementById('shareNote');const data={title:'A HUGS Community 9/11 Tribute',text:'Always Remembered & Always With Us — a free memorial tribute from HUGSLinks.',url:location.href};try{if(navigator.share){await navigator.share(data);note.textContent='Thank you for sharing this tribute.';}else{await navigator.clipboard.writeText(location.href);note.textContent='Page link copied. You can now share it.';}}catch(error){if(error.name!=='AbortError')note.textContent='Use your browser menu to share this page.';}});
   </script>
+  <script src="/app/owner-card-test.js" defer></script>
+  <script>
+    window.addEventListener("DOMContentLoaded", () => {
+      window.HugsCardOwnerTest?.mount({ collection: "memorial", selected: () => 0, host: "tribute", standalone: true });
+    });
+  </script>
 </body>
 </html>

@@ -546,5 +546,11 @@
 
   </script>
 
+  <script src="/app/owner-card-test.js" defer></script>
+  <script>
+    window.addEventListener("DOMContentLoaded", () => {
+      window.HugsCardOwnerTest?.mount({ collection: "motion", selected: () => 1, host: "previewBox", standalone: true });
+    });
+  </script>
 </body>
 </html>

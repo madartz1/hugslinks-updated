@@ -1070,22 +1070,11 @@
     <section class="admin-section" id="birthdaySendSection">
       <div class="record-card">
         <h3>Test Card Delivery</h3>
-        <p>Choose a specific card and send it to a test inbox without checkout.</p>
-        <div class="field"><label for="testCardCollection">Card collection</label><select id="testCardCollection"></select></div>
-        <div id="testCardGallery" class="test-card-gallery" aria-label="Card covers"></div>
-        <form id="birthdaySendForm">
-          <div id="testCardSelection" class="test-card-selection" hidden>
-            <img id="testCardCover" alt="" width="120" height="160">
-            <div><h4 id="testCardTitle"></h4><p id="testCardWish"></p></div>
-          </div>
-          <div class="field"><label for="birthdaySendEmail">Recipient email</label><input id="birthdaySendEmail" type="email" maxlength="254" required><button id="useCardTestInbox" class="secondary-button" type="button">Use HUGSLinks test inbox</button></div>
-          <div class="field"><label for="birthdaySendRecipient">Recipient name</label><input id="birthdaySendRecipient" maxlength="80"></div>
-          <div class="field"><label for="birthdaySendSender">From</label><input id="birthdaySendSender" maxlength="80" value="HUGSLinks"></div>
-          <div class="field"><label for="birthdaySendMessage">Personal note</label><textarea id="birthdaySendMessage" maxlength="600"></textarea></div>
-          <div class="field"><label for="birthdaySendColor">Envelope color</label><select id="birthdaySendColor"><option value="navy">Midnight Navy</option><option value="mist">Blue Mist</option><option value="electric">Electric Blue</option></select></div>
-          <button class="primary-button" type="submit" id="birthdaySendButton" disabled>Send test without payment</button>
-          <p id="birthdaySendStatus" role="status"></p>
-          <a id="birthdaySendLink" hidden target="_blank" rel="noopener noreferrer">Open sent card</a>
+        <p>Choose a test inbox, then pick and personalize a card in Ready to Send.</p>
+        <form id="launchCardTest">
+          <div class="field"><label for="ownerCardTestEmail">Test recipient email</label><input id="ownerCardTestEmail" type="email" maxlength="254" value="hugslinkscards@gmail.com" required></div>
+          <button class="primary-button" type="submit">Open Ready to Send in test mode</button>
+          <p id="ownerCardTestStatus" role="status"></p>
         </form>
       </div>
     </section>
@@ -4744,111 +4733,22 @@ window.addEventListener(
 
 const g=id=>document.getElementById(id);
 
-const testCardAPI = "/.netlify/functions/admin-send-birthday-hug";
-const testCollection = g("testCardCollection");
-const testGallery = g("testCardGallery");
-const testForm = g("birthdaySendForm");
-const testSend = g("birthdaySendButton");
-const testStatus = g("birthdaySendStatus");
-const testNote = g("birthdaySendMessage");
-const testEmail = g("birthdaySendEmail");
-const testLink = g("birthdaySendLink");
-let testCollections = [];
-let selectedTestCard;
-let testRequestId;
-let testSending = false;
-
-function resetTestSend() {
-  testRequestId = undefined;
-  testLink.hidden = true;
-  testSend.disabled = !selectedTestCard || testSending;
-}
-
-function renderTestCards() {
-  selectedTestCard = undefined;
-  g("testCardSelection").hidden = true;
-  testNote.value = "";
-  testStatus.textContent = "";
-  const collection = testCollections.find(item => item.id === testCollection.value);
-  testGallery.replaceChildren(...(collection?.cards || []).map((card, index) => {
-    const button = document.createElement("button");
-    button.type = "button";
-    button.className = "test-card-cover";
-    button.setAttribute("aria-pressed", "false");
-    const cover = document.createElement("img");
-    cover.src = card.cover;
-    cover.alt = "";
-    cover.loading = "lazy";
-    const title = document.createElement("span");
-    title.textContent = card.title;
-    button.append(cover, title);
-    button.addEventListener("click", () => {
-      if (testSending) return;
-      for (const item of testGallery.children) item.setAttribute("aria-pressed", String(item === button));
-      selectedTestCard = { collection: collection.id, card: index };
-      g("testCardCover").src = card.cover;
-      g("testCardTitle").textContent = card.title;
-      g("testCardWish").textContent = card.wish;
-      g("testCardSelection").hidden = false;
-      testNote.value = card.greeting;
-      testStatus.textContent = "";
-      resetTestSend();
-    });
-    return button;
-  }));
-  resetTestSend();
-}
-
-g("birthdaySendTab").addEventListener("click", async () => {
-  if (testCollections.length) return;
-  try {
-    const { collections } = await adminFetch(testCardAPI);
-    testCollections = collections;
-    testCollection.replaceChildren(...collections.map(item => new Option(item.title, item.id)));
-    renderTestCards();
-  } catch (error) {
-    testStatus.textContent = error.message;
-  }
-});
-testCollection.addEventListener("change", renderTestCards);
-testForm.addEventListener("input", () => {
-  if (!testSending) resetTestSend();
-});
-g("useCardTestInbox").addEventListener("click", () => {
-  if (testSending) return;
-  testEmail.value = "hugslinkscards@gmail.com";
-  resetTestSend();
-});
-testForm.addEventListener("submit", async event => {
+try { sessionStorage.removeItem("hugslinks-owner-card-test"); } catch {}
+g("launchCardTest").addEventListener("submit", async event => {
   event.preventDefault();
-  if (testSending || !selectedTestCard) return;
-  testSending = true;
-  testRequestId ||= crypto.randomUUID();
-  testCollection.disabled = testSend.disabled = true;
-  testStatus.textContent = "Sending the selected card…";
-  const payload = {
-    ...selectedTestCard,
-    id: testRequestId,
-    email: testEmail.value,
-    recipient: g("birthdaySendRecipient").value,
-    sender: g("birthdaySendSender").value,
-    message: testNote.value,
-    color: g("birthdaySendColor").value
-  };
-  const controls = Array.from(testForm.querySelectorAll("input, textarea, select, #useCardTestInbox"));
-  controls.forEach(control => { control.disabled = true; });
+  const button = event.currentTarget.querySelector("button");
+  const status = g("ownerCardTestStatus");
+  button.disabled = true;
+  status.textContent = "Opening Ready to Send…";
   try {
-    const { link } = await adminFetch(testCardAPI, { method: "POST", body: JSON.stringify(payload) });
-    testLink.href = link;
-    testLink.hidden = false;
-    testStatus.textContent = "Email accepted for sending. No payment was taken.";
+    const email = g("ownerCardTestEmail").value;
+    const { token } = await adminFetch("/.netlify/functions/admin-send-birthday-hug?grant=1", {
+      method: "POST", body: JSON.stringify({ email })
+    });
+    location.assign("/app/#" + new URLSearchParams({ "owner-test": token, show: "collection" }));
   } catch (error) {
-    testStatus.textContent = error.message;
-    testSend.disabled = false;
-  } finally {
-    testSending = false;
-    testCollection.disabled = false;
-    controls.forEach(control => { control.disabled = false; });
+    status.textContent = error.message;
+    button.disabled = false;
   }
 });
 

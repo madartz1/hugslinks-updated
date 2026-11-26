@@ -418,6 +418,10 @@
     }
     renderCards();
 
-  </script>
+      window.addEventListener("DOMContentLoaded", () => {
+      window.HugsCardOwnerTest?.mount({ collection: "gen-z-holiday-hugs", selected: () => selected });
+    });
+</script>
+  <script src="/app/owner-card-test.js" defer></script>
 </body>
 </html>
