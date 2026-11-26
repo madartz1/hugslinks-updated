@@ -1,5 +1,6 @@
 'use strict';
 const catalog=[
+ {id:'all-infinity',type:'ready',holiday:true,occasion:'thinking-of-you',collection:true,title:['All Infinity','All Infinity'],tag:['READY TO SEND · $2.99','LISTA PARA ENVIAR · $2.99'],description:['18 illustrated cards for honest conversations, family boundaries, and showing up for each other.','18 tarjetas ilustradas para conversar con honestidad, respetar los límites y apoyarse en familia.'],image:'/assets/all-infinity/card-01.webp',url:'/app/all-infinity.html'},
  {id:'thanksgiving-truth',type:'ready',holiday:true,occasion:'thinking-of-you',collection:true,title:['Thanksgiving Truth & Healing','Verdad y sanación en Acción de Gracias'],tag:['READY TO SEND · $2.99','LISTA PARA ENVIAR · $2.99'],description:['18 Thanksgiving cards for honest conversations and making things right.','18 tarjetas de Acción de Gracias para conversar con honestidad y reparar el daño.'],image:'/assets/thanksgiving-truth/card-01.webp',url:'/app/thanksgiving-truth.html'},
  {id:'birthday-hugs',type:'ready',birthday:true,collection:true,title:['Birthday Hugs','HUGs de cumpleaños'],tag:['READY TO SEND · $2.99','LISTA PARA ENVIAR · $2.99'],description:['Browse 18 illustrated birthday cards for friends and family.','Explora 18 tarjetas de cumpleaños ilustradas para amistades y familiares.'],image:'/assets/birthday-hugs/card-01.webp',url:'/app/birthday-hugs.html'},
  {id:'thinking-of-you',type:'ready',occasion:'thinking-of-you',title:['Lies Cut. Truth Heals.','Las mentiras duelen. La verdad sana.'],tag:['READY TO SEND · $2.99','LISTA PARA ENVIAR · $2.99'],description:['Browse 18 three-page cards with humor and support for hard family moments.','Explora 18 tarjetas de tres páginas con humor y apoyo para momentos familiares difíciles.'],image:'/assets/thinking-of-you/cover.webp',url:'/app/thinking-of-you.html'},
@@ -49,7 +50,7 @@ function renderCards(){
    tag:['OCCASION','OCASIÓN'],
    description:['Find a card for a gentle check-in.','Encuentra una tarjeta para acompañar a alguien.'],
    url:'/app/thinking-of-you.html'
- }, catalog.find(card=>card.id==='thanksgiving-truth')]:catalog.filter(card=>filter==='all'||(filter==='holidays'?card.holiday:filter==='anniversary'?card.id==='anniversary-motion':filter==='thinking-of-you'?card.occasion===filter:filter==='birthday'?card.birthday:filter==='wedding'?false:card.type===filter));
+ }, catalog.find(card=>card.id==='thanksgiving-truth'), catalog.find(card=>card.id==='all-infinity')]:catalog.filter(card=>filter==='all'||(filter==='holidays'?card.holiday:filter==='anniversary'?card.id==='anniversary-motion':filter==='thinking-of-you'?card.occasion===filter:filter==='birthday'?card.birthday:filter==='wedding'?false:card.type===filter));
  grid.replaceChildren(...cards.map(cardNode));
  document.getElementById('occasion-heading').hidden=filter!=='anniversary';
  document.getElementById('category-empty').hidden=grid.childElementCount>0;

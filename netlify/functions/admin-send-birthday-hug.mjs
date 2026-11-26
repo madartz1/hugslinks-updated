@@ -113,7 +113,8 @@ export function makeBirthdayAdminHandler({ getStore, authorize, mail, secret = (
       if (saved.email !== email || JSON.stringify({ collection: "birthday", ...saved.payload }) !== JSON.stringify({ collection, ...payload })) {
         return respond(409, { error: "This send has different card details. Edit the form before retrying." });
       }
-      const link = origin + "/app/birthday-hugs.html#complimentary=" + saved.token;
+      const page = collection === "all-infinity" ? "all-infinity" : "birthday-hugs";
+      const link = origin + "/app/" + page + ".html#complimentary=" + saved.token;
       if (!saved.sent) {
         await store.setJSON("card/" + saved.token, saved.payload, { onlyIfNew: true });
         await mail(email, messageFor(saved.payload, link), "birthday-admin/" + id);
