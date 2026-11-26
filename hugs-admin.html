@@ -863,7 +863,7 @@
       <button class="tab-button" data-tab="artists" type="button">Artists</button>
       <button class="tab-button" data-tab="gallery" type="button">Art Gallery</button><button class="tab-button" data-tab="contest" type="button">Art Competition</button>
 
-      <button class="tab-button" data-tab="birthdaySend" id="birthdaySendTab" type="button">Send Birthday Hugs</button>
+      <button class="tab-button" data-tab="birthdaySend" id="birthdaySendTab" type="button">Test Card Delivery</button>
       <button class="tab-button" data-tab="motionCards" type="button">Motion Cards</button>
       <button class="tab-button" data-tab="projectManager" type="button">Projects</button>
       <button class="tab-button" data-tab="storeManager" type="button">Store</button>
@@ -1069,16 +1069,21 @@
 
     <section class="admin-section" id="birthdaySendSection">
       <div class="record-card">
-        <h3>Send a Birthday HUG</h3>
-        <p>Email a ready-made birthday card without checkout.</p>
+        <h3>Test Card Delivery</h3>
+        <p>Choose a specific card and send it to a test inbox without checkout.</p>
+        <div class="field"><label for="testCardCollection">Card collection</label><select id="testCardCollection"></select></div>
+        <div id="testCardGallery" class="test-card-gallery" aria-label="Card covers"></div>
         <form id="birthdaySendForm">
-          <div class="field"><label for="birthdaySendCard">Birthday card</label><select id="birthdaySendCard" required></select></div>
-          <div class="field"><label for="birthdaySendEmail">Recipient email</label><input id="birthdaySendEmail" type="email" maxlength="254" required></div>
+          <div id="testCardSelection" class="test-card-selection" hidden>
+            <img id="testCardCover" alt="" width="120" height="160">
+            <div><h4 id="testCardTitle"></h4><p id="testCardWish"></p></div>
+          </div>
+          <div class="field"><label for="birthdaySendEmail">Recipient email</label><input id="birthdaySendEmail" type="email" maxlength="254" required><button id="useCardTestInbox" class="secondary-button" type="button">Use HUGSLinks test inbox</button></div>
           <div class="field"><label for="birthdaySendRecipient">Recipient name</label><input id="birthdaySendRecipient" maxlength="80"></div>
           <div class="field"><label for="birthdaySendSender">From</label><input id="birthdaySendSender" maxlength="80" value="HUGSLinks"></div>
           <div class="field"><label for="birthdaySendMessage">Personal note</label><textarea id="birthdaySendMessage" maxlength="600"></textarea></div>
           <div class="field"><label for="birthdaySendColor">Envelope color</label><select id="birthdaySendColor"><option value="navy">Midnight Navy</option><option value="mist">Blue Mist</option><option value="electric">Electric Blue</option></select></div>
-          <button class="primary-button" type="submit" id="birthdaySendButton" disabled>Send without payment</button>
+          <button class="primary-button" type="submit" id="birthdaySendButton" disabled>Send test without payment</button>
           <p id="birthdaySendStatus" role="status"></p>
           <a id="birthdaySendLink" hidden target="_blank" rel="noopener noreferrer">Open sent card</a>
         </form>
@@ -4739,66 +4744,112 @@ window.addEventListener(
 
 const g=id=>document.getElementById(id);
 
-const birthdaySendAPI = "/.netlify/functions/admin-send-birthday-hug";
-const birthdayPicker = g("birthdaySendCard");
-const birthdayNote = g("birthdaySendMessage");
-const birthdaySend = g("birthdaySendButton");
-const birthdayStatus = g("birthdaySendStatus");
-const birthdayForm = g("birthdaySendForm");
-let birthdayDraftId;
-let birthdaySending = false;
+const testCardAPI = "/.netlify/functions/admin-send-birthday-hug";
+const testCollection = g("testCardCollection");
+const testGallery = g("testCardGallery");
+const testForm = g("birthdaySendForm");
+const testSend = g("birthdaySendButton");
+const testStatus = g("birthdaySendStatus");
+const testNote = g("birthdaySendMessage");
+const testEmail = g("birthdaySendEmail");
+const testLink = g("birthdaySendLink");
+let testCollections = [];
+let selectedTestCard;
+let testRequestId;
+let testSending = false;
+
+function resetTestSend() {
+  testRequestId = undefined;
+  testLink.hidden = true;
+  testSend.disabled = !selectedTestCard || testSending;
+}
+
+function renderTestCards() {
+  selectedTestCard = undefined;
+  g("testCardSelection").hidden = true;
+  testNote.value = "";
+  testStatus.textContent = "";
+  const collection = testCollections.find(item => item.id === testCollection.value);
+  testGallery.replaceChildren(...(collection?.cards || []).map((card, index) => {
+    const button = document.createElement("button");
+    button.type = "button";
+    button.className = "test-card-cover";
+    button.setAttribute("aria-pressed", "false");
+    const cover = document.createElement("img");
+    cover.src = card.cover;
+    cover.alt = "";
+    cover.loading = "lazy";
+    const title = document.createElement("span");
+    title.textContent = card.title;
+    button.append(cover, title);
+    button.addEventListener("click", () => {
+      if (testSending) return;
+      for (const item of testGallery.children) item.setAttribute("aria-pressed", String(item === button));
+      selectedTestCard = { collection: collection.id, card: index };
+      g("testCardCover").src = card.cover;
+      g("testCardTitle").textContent = card.title;
+      g("testCardWish").textContent = card.wish;
+      g("testCardSelection").hidden = false;
+      testNote.value = card.greeting;
+      testStatus.textContent = "";
+      resetTestSend();
+    });
+    return button;
+  }));
+  resetTestSend();
+}
 
 g("birthdaySendTab").addEventListener("click", async () => {
-  if (birthdayPicker.options.length) return;
+  if (testCollections.length) return;
   try {
-    const { cards } = await adminFetch(birthdaySendAPI);
-    birthdayPicker.replaceChildren(...cards.map(({ title, greeting }, index) => {
-      const option = new Option(title, String(index));
-      option.dataset.greeting = greeting;
-      return option;
-    }));
-    birthdayNote.value = birthdayPicker.selectedOptions[0]?.dataset.greeting || "";
-    birthdaySend.disabled = !birthdayPicker.options.length;
-    birthdayStatus.textContent = "";
+    const { collections } = await adminFetch(testCardAPI);
+    testCollections = collections;
+    testCollection.replaceChildren(...collections.map(item => new Option(item.title, item.id)));
+    renderTestCards();
   } catch (error) {
-    birthdayStatus.textContent = error.message;
+    testStatus.textContent = error.message;
   }
 });
-birthdayPicker.addEventListener("change", () => {
-  birthdayNote.value = birthdayPicker.selectedOptions[0]?.dataset.greeting || "";
+testCollection.addEventListener("change", renderTestCards);
+testForm.addEventListener("input", () => {
+  if (!testSending) resetTestSend();
 });
-birthdayForm.addEventListener("input", () => { birthdayDraftId = undefined; });
-birthdayForm.addEventListener("submit", async event => {
+g("useCardTestInbox").addEventListener("click", () => {
+  if (testSending) return;
+  testEmail.value = "hugslinkscards@gmail.com";
+  resetTestSend();
+});
+testForm.addEventListener("submit", async event => {
   event.preventDefault();
-  if (birthdaySending) return;
-  birthdaySending = true;
-  birthdayDraftId ||= crypto.randomUUID();
-  birthdaySend.disabled = true;
-  birthdayStatus.textContent = "Sending your Birthday HUG…";
-  const viewLink = g("birthdaySendLink");
-  viewLink.hidden = true;
+  if (testSending || !selectedTestCard) return;
+  testSending = true;
+  testRequestId ||= crypto.randomUUID();
+  testCollection.disabled = testSend.disabled = true;
+  testStatus.textContent = "Sending the selected card…";
+  const payload = {
+    ...selectedTestCard,
+    id: testRequestId,
+    email: testEmail.value,
+    recipient: g("birthdaySendRecipient").value,
+    sender: g("birthdaySendSender").value,
+    message: testNote.value,
+    color: g("birthdaySendColor").value
+  };
+  const controls = Array.from(testForm.querySelectorAll("input, textarea, select, #useCardTestInbox"));
+  controls.forEach(control => { control.disabled = true; });
   try {
-    const { link } = await adminFetch(birthdaySendAPI, { method: "POST", body: JSON.stringify({
-      id: birthdayDraftId,
-      card: Number(birthdayPicker.value),
-      email: g("birthdaySendEmail").value,
-      recipient: g("birthdaySendRecipient").value,
-      sender: g("birthdaySendSender").value,
-      message: birthdayNote.value,
-      color: g("birthdaySendColor").value
-    }) });
-    viewLink.href = link;
-    viewLink.hidden = false;
-    birthdayStatus.textContent = "The email service accepted your Birthday HUG. No payment was taken.";
+    const { link } = await adminFetch(testCardAPI, { method: "POST", body: JSON.stringify(payload) });
+    testLink.href = link;
+    testLink.hidden = false;
+    testStatus.textContent = "Email accepted for sending. No payment was taken.";
   } catch (error) {
-    birthdayStatus.textContent = error.message;
-    birthdaySend.disabled = false;
+    testStatus.textContent = error.message;
+    testSend.disabled = false;
   } finally {
-    birthdaySending = false;
+    testSending = false;
+    testCollection.disabled = false;
+    controls.forEach(control => { control.disabled = false; });
   }
-});
-birthdayForm.addEventListener("input", () => {
-  if (!birthdaySending) birthdaySend.disabled = !birthdayPicker.options.length;
 });
 
 let ownerProjects=[],ownerStoreProducts=[],ownerReviewBusinesses=[];

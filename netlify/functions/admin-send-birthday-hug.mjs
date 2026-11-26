@@ -1,6 +1,6 @@
 import { randomUUID } from "node:crypto";
 import { getStore } from "@netlify/blobs";
-import { cards } from "../../app/birthday-hugs-cards.mjs";
+import { collections, getDesign } from "../function-libs/ready-made-card-catalog.mjs";
 import { adminAuthorized } from "../function-libs/_motion-hugs.mjs";
 import { dependencies } from "./_shared/hugs-card-links.mjs";
 
@@ -15,14 +15,15 @@ const clean = (value, limit) => typeof value === "string" ? value.trim().slice(0
 const escape = value => value.replace(/[&<>"']/g, ch => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[ch]));
 
 function messageFor(card, link) {
-  const title = escape(cards[card.card].title);
-  const artwork = origin + "/assets/birthday-hugs/card-" + String(card.card + 1).padStart(2, "0") + ".webp";
+  const design = getDesign(card.collection || "birthday", card.card);
+  const title = escape(design.title);
+  const artwork = escape(new URL(design.cover, origin).href);
   const sender = escape(card.sender || "HUGSLinks");
   return {
-    subject: "A Birthday HUG for you from HUGSLinks",
+    subject: "HUGSLinks card delivery test · " + design.title,
     html: '<div style="max-width:520px;margin:auto;background:#0b1c42;color:#eff8ff;text-align:center;padding:24px;font-family:Arial,sans-serif">' +
-      '<p>HUGSLinks Cards</p><h1>' + title + '</h1><p>' + sender + ' sent you a birthday card.</p>' +
-      '<a href="' + link + '"><img alt="Open your Birthday HUG" src="' + artwork + '" width="320" style="width:100%;max-width:320px;height:auto"></a>' +
+      '<p>HUGSLinks Cards</p><h1>' + title + '</h1><p>' + sender + ' sent you a HUGS Card.</p>' +
+      '<a href="' + link + '"><img alt="Open your HUG" src="' + artwork + '" width="320" style="width:100%;max-width:320px;height:auto"></a>' +
       '<p><a href="' + link + '" style="display:inline-block;background:#8cd9ff;color:#102347;padding:14px 24px;border-radius:22px;text-decoration:none">Open Your HUG</a></p></div>'
   };
 }
@@ -35,11 +36,12 @@ export function makeBirthdayAdminHandler({ getStore, authorize, mail }) {
       if (!uuid.test(token)) return reply(404, { error: "This HUG could not be found." });
       const store = getStore({ name: "birthday-admin-sends", consistency: "strong" });
       const card = await store.get("card/" + token, { type: "json" });
-      return card ? reply(200, { card }) : reply(404, { error: "This HUG could not be found." });
+      const design = card && getDesign(card.collection || "birthday", card.card);
+      return design ? reply(200, { card, design }) : reply(404, { error: "This HUG could not be found." });
     }
     if (!authorize(request)) return reply(401, { error: "Owner Workspace is locked." });
     if (request.method === "GET") {
-      return reply(200, { ok: true, cards: cards.map(({ title, greeting }) => ({ title, greeting })) });
+      return reply(200, { ok: true, collections });
     }
     if (request.method !== "POST") return reply(405, { error: "Method not allowed." });
     if (url.origin !== origin || request.headers.get("origin") !== origin) {
@@ -55,16 +57,16 @@ export function makeBirthdayAdminHandler({ getStore, authorize, mail }) {
       if (email.length > 254 || !emailPattern.test(email) || /[\r\n]/.test(email)) {
         return reply(400, { error: "Enter a valid recipient email." });
       }
-      const { id, card, color } = body;
-      if (typeof id !== "string" || !uuid.test(id) || !Number.isInteger(card) || !cards[card] || !colors.includes(color)) {
-        return reply(400, { error: "Select a Birthday HUG and envelope." });
+      const { id, card, color, collection = "birthday" } = body;
+      if (typeof id !== "string" || !uuid.test(id) || !Number.isInteger(card) || !getDesign(collection, card) || !colors.includes(color)) {
+        return reply(400, { error: "Select a card and envelope." });
       }
-      const payload = { card, color, recipient: clean(body.recipient, 80), sender: clean(body.sender, 80), message: clean(body.message, 600) };
+      const payload = { card, color, collection, recipient: clean(body.recipient, 80), sender: clean(body.sender, 80), message: clean(body.message, 600) };
       const store = getStore({ name: "birthday-admin-sends", consistency: "strong" });
       const key = "send/" + id;
       await store.setJSON(key, { email, payload, token: randomUUID() }, { onlyIfNew: true });
       const saved = await store.get(key, { type: "json" });
-      if (saved.email !== email || JSON.stringify(saved.payload) !== JSON.stringify(payload)) {
+      if (saved.email !== email || JSON.stringify({ collection: "birthday", ...saved.payload }) !== JSON.stringify({ collection, ...payload })) {
         return reply(409, { error: "This send has different card details. Edit the form before retrying." });
       }
       const link = origin + "/app/birthday-hugs.html#complimentary=" + saved.token;
