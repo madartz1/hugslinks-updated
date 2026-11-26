@@ -2,7 +2,7 @@ export const cards = [
   {
     "categories": "accountability",
     "title": "Okay, Jive Turkey. What Changed?",
-    "wish": "Stop saying you sorry and act like you sorry and do better! Last time everybody laughed, and I felt put on the spot. If it happens again, will you speak up right there at the table?",
+    "wish": "Stop saying you’re sorry. Show me you mean it by doing better. Last time everybody laughed, and I felt put on the spot. If it happens again, will you speak up right there at the table?",
     "greeting": "I’m open to talking. I’d like to hear what you’ll do differently next time."
   },
   {
