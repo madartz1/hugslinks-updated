@@ -51,6 +51,7 @@
     .story-cover h3, .story-wish h3 { position: absolute; width: 1px; height: 1px; padding: 0; clip-path: inset(50%); overflow: hidden; }
     .story-wish { aspect-ratio: 3 / 4; gap: 14px; background: radial-gradient(ellipse at 50% 32%, #164279, #071c3d 72%); color: #fff4de; }
     #wish { font-size: clamp(1.16rem, 3vw, 1.5rem); line-height: 1.35; text-wrap: balance; }
+    .inside-art { display: block; width: min(100%, 360px); height: auto; aspect-ratio: 3 / 2; object-fit: contain; border: 1px solid #65a7cf; border-radius: 8px; }
     .story-message { background: radial-gradient(ellipse at 50% 32%, #354d65, #233951 78%); }
     .story-rule { width: 72px; height: 1px; background: #65a7cf; }
     #inside { white-space: pre-wrap; }
@@ -148,6 +149,7 @@
             </article>
             <article class="story-page story-wish" hidden>
               <h3 id="wish-heading" tabindex="-1">The inside of your card</h3>
+              <img class="inside-art" id="wish-art" alt="" width="720" height="480" hidden>
               <span class="story-rule" aria-hidden="true"></span>
               <p id="wish"></p>
             </article>
@@ -193,8 +195,8 @@
     const artworkRoot = "/assets/all-infinity/";
     let category = "all";
 
-    function artworkPath(index) {
-      return artworkRoot + "card-" + String(index + 1).padStart(2, "0") + ".webp";
+    function artworkPath(index, prefix = "card") {
+      return artworkRoot + prefix + "-" + String(index + 1).padStart(2, "0") + ".webp";
     }
 
     function cardFace(index) {
@@ -212,6 +214,9 @@
       selectedCover.replaceChildren(cardFace(index));
       byId("front").textContent = card.title;
       byId("preview-cover").replaceChildren(cardFace(index));
+      const wishArt = byId("wish-art");
+      wishArt.src = complimentaryDesign?.inside || artworkPath(index, "inside");
+      wishArt.hidden = false;
       byId("wish").textContent = card.wish;
       byId("message").value = drafts.get(index) ?? card.greeting;
       updatePreview();
@@ -305,6 +310,8 @@
       gallery.hidden = false;
       byId("cards").querySelector('[data-card="' + selected + '"]').focus();
     });
+
+    byId("wish-art").addEventListener("error", event => { event.currentTarget.hidden = true; });
 
     byId("message").addEventListener("input", () => {
       drafts.set(selected, byId("message").value);
