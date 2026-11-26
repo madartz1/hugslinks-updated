@@ -863,6 +863,7 @@
       <button class="tab-button" data-tab="artists" type="button">Artists</button>
       <button class="tab-button" data-tab="gallery" type="button">Art Gallery</button><button class="tab-button" data-tab="contest" type="button">Art Competition</button>
 
+      <button class="tab-button" data-tab="birthdaySend" id="birthdaySendTab" type="button">Send Birthday Hugs</button>
       <button class="tab-button" data-tab="motionCards" type="button">Motion Cards</button>
       <button class="tab-button" data-tab="projectManager" type="button">Projects</button>
       <button class="tab-button" data-tab="storeManager" type="button">Store</button>
@@ -1066,6 +1067,23 @@
     </section>
 
 
+    <section class="admin-section" id="birthdaySendSection">
+      <div class="record-card">
+        <h3>Send a Birthday HUG</h3>
+        <p>Email a ready-made birthday card without checkout.</p>
+        <form id="birthdaySendForm">
+          <div class="field"><label for="birthdaySendCard">Birthday card</label><select id="birthdaySendCard" required></select></div>
+          <div class="field"><label for="birthdaySendEmail">Recipient email</label><input id="birthdaySendEmail" type="email" maxlength="254" required></div>
+          <div class="field"><label for="birthdaySendRecipient">Recipient name</label><input id="birthdaySendRecipient" maxlength="80"></div>
+          <div class="field"><label for="birthdaySendSender">From</label><input id="birthdaySendSender" maxlength="80" value="HUGSLinks"></div>
+          <div class="field"><label for="birthdaySendMessage">Personal note</label><textarea id="birthdaySendMessage" maxlength="600"></textarea></div>
+          <div class="field"><label for="birthdaySendColor">Envelope color</label><select id="birthdaySendColor"><option value="navy">Midnight Navy</option><option value="mist">Blue Mist</option><option value="electric">Electric Blue</option></select></div>
+          <button class="primary-button" type="submit" id="birthdaySendButton" disabled>Send without payment</button>
+          <p id="birthdaySendStatus" role="status"></p>
+          <a id="birthdaySendLink" hidden target="_blank" rel="noopener noreferrer">Open sent card</a>
+        </form>
+      </div>
+    </section>
 <section class="admin-section" id="motionCardsSection"><div class="record-card"><h3>Motion Story HUG Builder</h3><p>Duplicate the original motion-card format, replace its storyboard images and music, preview it, set the price and publish a new variation.</p><input id="motionId" type="hidden"><div class="motion-editor-grid"><div class="field"><label>Card title</label><input id="motionTitle"></div><div class="field"><label>URL slug</label><input id="motionSlug"></div><div class="field"><label>Subtitle</label><input id="motionSubtitle"></div><div class="field"><label>Price in dollars</label><input id="motionPrice" type="number" min="1" step=".01" value="6.99"></div><div class="field wide"><label>Description</label><textarea id="motionDescription"></textarea></div><div class="field"><label>Cover image URL</label><input id="motionCoverUrl"><input id="motionCoverFile" type="file" accept="image/jpeg,image/png,image/webp"></div><div class="field"><label>Music URL</label><input id="motionAudioUrl"><input id="motionAudioFile" type="file" accept="audio/mpeg,audio/wav,audio/mp4"></div><div class="field"><label>Free preview scenes</label><input id="motionPreviewCount" type="number" min="1" max="30" value="3"></div><div class="field"><label>Default scene timing (milliseconds)</label><input id="motionInterval" type="number" min="1200" max="15000" value="3600"></div><label><input id="motionHearts" type="checkbox" checked> Floating heart effect</label><label><input id="motionPublished" type="checkbox"> Published for buyers</label></div><h4>Storyboard Scenes</h4><div id="motionScenes"></div><div class="motion-card-actions"><button class="secondary-button" id="motionAddScene" type="button">+ Add Scene</button><button class="secondary-button" id="motionPreviewButton" type="button">Preview Draft</button><button class="primary-button" id="motionSaveButton" type="button">Save Motion Card</button><button class="hold-button" id="motionNewButton" type="button">New Blank Card</button></div><p id="motionStatus" role="status" aria-live="polite"></p><div class="motion-preview" id="motionPreviewBox" hidden><img id="motionPreviewImage" alt=""><div><h3 id="motionPreviewTitle"></h3><p id="motionPreviewCaption"></p><div class="motion-card-actions"><button class="secondary-button" id="motionPreviewPrev" type="button">Previous</button><button class="secondary-button" id="motionPreviewNext" type="button">Next</button></div></div></div></div><h3 style="margin-top:24px">Saved Motion Story HUGS</h3><div class="record-grid" id="motionCardList"></div><h3 style="margin-top:24px">Recent Motion Card Orders</h3><div class="record-grid" id="motionOrderList"></div></section>    <!-- REQUESTS -->
 
     <section
@@ -4720,6 +4738,69 @@ window.addEventListener(
 
 
 const g=id=>document.getElementById(id);
+
+const birthdaySendAPI = "/.netlify/functions/admin-send-birthday-hug";
+const birthdayPicker = g("birthdaySendCard");
+const birthdayNote = g("birthdaySendMessage");
+const birthdaySend = g("birthdaySendButton");
+const birthdayStatus = g("birthdaySendStatus");
+const birthdayForm = g("birthdaySendForm");
+let birthdayDraftId;
+let birthdaySending = false;
+
+g("birthdaySendTab").addEventListener("click", async () => {
+  if (birthdayPicker.options.length) return;
+  try {
+    const { cards } = await adminFetch(birthdaySendAPI);
+    birthdayPicker.replaceChildren(...cards.map(({ title, greeting }, index) => {
+      const option = new Option(title, String(index));
+      option.dataset.greeting = greeting;
+      return option;
+    }));
+    birthdayNote.value = birthdayPicker.selectedOptions[0]?.dataset.greeting || "";
+    birthdaySend.disabled = !birthdayPicker.options.length;
+    birthdayStatus.textContent = "";
+  } catch (error) {
+    birthdayStatus.textContent = error.message;
+  }
+});
+birthdayPicker.addEventListener("change", () => {
+  birthdayNote.value = birthdayPicker.selectedOptions[0]?.dataset.greeting || "";
+});
+birthdayForm.addEventListener("input", () => { birthdayDraftId = undefined; });
+birthdayForm.addEventListener("submit", async event => {
+  event.preventDefault();
+  if (birthdaySending) return;
+  birthdaySending = true;
+  birthdayDraftId ||= crypto.randomUUID();
+  birthdaySend.disabled = true;
+  birthdayStatus.textContent = "Sending your Birthday HUG…";
+  const viewLink = g("birthdaySendLink");
+  viewLink.hidden = true;
+  try {
+    const { link } = await adminFetch(birthdaySendAPI, { method: "POST", body: JSON.stringify({
+      id: birthdayDraftId,
+      card: Number(birthdayPicker.value),
+      email: g("birthdaySendEmail").value,
+      recipient: g("birthdaySendRecipient").value,
+      sender: g("birthdaySendSender").value,
+      message: birthdayNote.value,
+      color: g("birthdaySendColor").value
+    }) });
+    viewLink.href = link;
+    viewLink.hidden = false;
+    birthdayStatus.textContent = "The email service accepted your Birthday HUG. No payment was taken.";
+  } catch (error) {
+    birthdayStatus.textContent = error.message;
+    birthdaySend.disabled = false;
+  } finally {
+    birthdaySending = false;
+  }
+});
+birthdayForm.addEventListener("input", () => {
+  if (!birthdaySending) birthdaySend.disabled = !birthdayPicker.options.length;
+});
+
 let ownerProjects=[],ownerStoreProducts=[],ownerReviewBusinesses=[];
 const ownerText=(tag,text,className="")=>{const node=document.createElement(tag);if(className)node.className=className;node.textContent=text;return node};
 
