@@ -28,7 +28,9 @@
     .panel { max-width: 545px; margin: 0 auto; background: #102d55; border: 1px solid #3377b3; border-radius: 18px; padding: 16px; }
     .selected-cover { width: min(100%, 252px); margin: 0 auto 18px; }
     #preview-heading { text-align: center; }
-    .preview { text-align: center; overflow-wrap: anywhere; }
+    .preview { text-align: center; overflow-wrap: anywhere; scroll-margin-top: 16px; }
+    .preview-intro { text-align: center; margin: 0 auto 18px; }
+    .gift-open:focus-visible { outline-offset: 4px; }
     .gift-open { display: block; width: 100%; padding: 0; border: 0; background: transparent; }
     .envelope-art { position: relative; display: block; aspect-ratio: 1.9; overflow: hidden; margin-bottom: 12px; background: #071f3b; border: 1px solid #537fa5; border-radius: 16px; }
     .envelope-art img { position: absolute; width: 100%; inset: 0 0 auto; }
@@ -124,8 +126,8 @@
     <div id="gallery">
       <p class="muted">HUGSLinks Cards</p>
       <h1>Birthday Hugs</h1>
-      <p>Choose a birthday card, add your own note, and preview how it opens.</p>
-      <a class="browse-cards" href="#filters">Ready-Made Traditional Cards</a>
+      <p>Tap a card cover to choose it. Then tap Preview Full Card to see all three pages before you send.</p>
+      <a class="browse-cards" href="#cards">Browse birthday cards</a>
       <p><a href="https://hugslinks-card-app.netlify.app/how-your-card-helps.html">Explore the HUGSLinks mission</a></p>
       <nav id="filters" aria-label="Card categories">
         <button type="button" data-category="all" aria-pressed="true">All</button>
@@ -138,9 +140,12 @@
     </div>
     <section class="panel" id="card-editor" aria-labelledby="preview-heading" hidden>
         <button type="button" class="back" id="back-to-cards">← Back to cards</button>
-        <div class="selected-cover" id="selected-cover"></div>
         <h1 id="preview-heading" tabindex="-1"></h1>
-        <p id="price-note" class="notice" style="text-align:center">Personalize and preview your three-page HUG.</p>
+        <div class="preview-intro" id="preview-intro">
+          <p class="notice"><span id="price-note">Preview all three pages for free.</span> You can add a personal note before sending.</p>
+          <button type="button" class="browse-cards" id="preview-full-card">Preview Full Card</button>
+        </div>
+        <div class="selected-cover" id="selected-cover"></div>
         <div id="personalize">
         <label>Personal note <textarea id="message" maxlength="600"></textarea></label>
         <label>Recipient name <input id="recipient" maxlength="80" placeholder="Optional"></label>
@@ -157,7 +162,8 @@
           <p id="checkout-status" role="status">Your recipient gets the card by email. Your receipt goes to your email.</p>
         </form>
         </div>
-        <section class="preview" aria-label="Recipient preview">
+        <section class="preview" id="recipient-preview" aria-label="Recipient preview">
+          <p id="preview-instructions" class="notice">Tap <strong>Open Your HUG</strong>, then use the buttons below the card to read all three pages.</p>
           <button id="open-envelope" class="gift-open" type="button">
             <span id="envelope" class="envelope-art" data-color="navy">
               <img class="envelope-sealed" id="envelope-sealed" src="https://hugslinks-card-app.netlify.app/assets/anniversary/envelope-sealed.webp" alt="">
@@ -314,16 +320,22 @@
       byId("envelope-sealed").hidden = false;
       byId("envelope-open").hidden = true;
       openEnvelope.disabled = openEnvelope.hidden = false;
+      byId("preview-instructions").hidden = recipientView;
       page = 0;
     }
 
     function revealStory() {
       openEnvelope.hidden = true;
+      byId("preview-instructions").hidden = true;
       selectedCover.hidden = true;
       story.hidden = byId("page-controls").hidden = false;
       showPage(0);
     }
 
+    byId("preview-full-card").addEventListener("click", () => {
+      byId("recipient-preview").scrollIntoView({ block: "start" });
+      (story.hidden ? openEnvelope : pages[page].querySelector("h3")).focus({ preventScroll: true });
+    });
     openEnvelope.addEventListener("click", () => {
       const unfolded = byId("envelope-open");
       if (reducedMotion.matches || !unfolded.complete || !unfolded.naturalWidth) {
@@ -432,7 +444,7 @@
           drafts.set(card.card, card.message);
           byId("personalize").hidden = true;
           byId("back-to-cards").hidden = true;
-          byId("price-note").hidden = true;
+          byId("preview-intro").hidden = true;
           delivery.hidden = true;
           showSelectedCard(card.card);
           selectedCover.hidden = true;
@@ -448,7 +460,7 @@
         openDeliveredCard(hash.get("complimentary") || hash.get("hug"), hash.has("complimentary"));
       } else {
         sendForm.hidden = false;
-        byId("price-note").textContent = "$2.99 per recipient";
+        byId("price-note").textContent = "Preview all three pages for free.";
         sendForm.addEventListener("submit", async event => {
           event.preventDefault();
           const button = sendForm.querySelector("button");
