@@ -20,7 +20,7 @@
       <div class="envelope-art" aria-hidden="true">
         <img class="envelope-sealed" src="https://hugslinks-card-app.netlify.app/assets/anniversary/envelope-sealed.webp" alt="">
       </div>
-      <button id="preview-card">Preview Card</button>
+      <button id="preview-card">Preview Full Card</button>
       <button id="personalize" class="secondary">Make It Yours</button>
     </section>
     <section id="personalization" class="panel" hidden>
@@ -34,11 +34,11 @@
         <p>Your confirmation and private card link go to the email you enter at checkout.</p>
         <label>From <input name="sender" maxlength="80" required></label>
         <label>Your message <textarea name="message" maxlength="300" rows="4" required></textarea></label>
-        <button type="submit">Preview My HUG</button>
+        <button type="submit">Preview Full Card</button>
       </form>
     </section>
     <section id="preview" class="panel centered" hidden>
-      <p id="preview-label" class="eyebrow">Card preview</p>
+      <p id="preview-label" class="eyebrow" hidden></p>
       <h1 id="preview-title" tabindex="-1">An Anniversary HUG</h1>
       <div id="preview-story"></div>
       <div class="actions">
